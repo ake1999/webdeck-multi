@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session Viewer</title>
+  <link rel="stylesheet" href="./shared/deck.css" />
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <div class="deck-scale" id="deckScale">
+    <div class="deck-container" id="deck">
+      <!-- Top brand bar -->
+      <div class="brand-bar"></div>
+
+      <!-- Home button with icon -->
+      <a class="home-btn" id="homeBtn" href="./index.html" aria-label="Home">
+        <i class="fa fa-home" aria-hidden="true"></i>
+      </a>
+
+      <!-- HUD label -->
+      <div class="course-code" id="hudLabel">Loading session…</div>
+
+      <!-- NOTE: removed top-right logo img on purpose -->
+
+      <!-- Bottom email + TTS -->
+      <div class="email-footer">
+        <span class="email-label" style="font-weight:900;">Email:</span>
+        <a id="emailLink" href="mailto:karimza@algonquincollege.com">
+          karimza@algonquincollege.com
+        </a>
+
+        <div class="tts-controls" title="Text-to-Speech">
+          <select id="ttsMode" aria-label="TTS mode">
+            <option value="bullets" selected>Bullets</option>
+            <option value="notes">Notes</option>
+          </select>
+
+          <select id="ttsVoice" aria-label="Voice">
+            <option value="">Auto voice</option>
+          </select>
+
+          <button class="tts-btn" id="ttsPrev" type="button" aria-label="Previous line">
+            <i class="fa-solid fa-backward-step"></i>
+          </button>
+          <button class="tts-btn" id="ttsPlay" type="button" aria-label="Play">
+            <i class="fa-solid fa-play"></i>
+          </button>
+          <button class="tts-btn" id="ttsPause" type="button" aria-label="Pause">
+            <i class="fa-solid fa-pause"></i>
+          </button>
+          <button class="tts-btn" id="ttsStop" type="button" aria-label="Stop">
+            <i class="fa-solid fa-stop"></i>
+          </button>
+          <button class="tts-btn" id="ttsNext" type="button" aria-label="Next line">
+            <i class="fa-solid fa-forward-step"></i>
+          </button>
+
+          <input class="tts-rate" id="ttsRate" type="range" min="0.8" max="1.4" step="0.1" value="1.0"
+                 aria-label="Speech rate" />
+        </div>
+      </div>
+
+      <!-- Slide counter -->
+      <div class="slide-counter" id="counter"></div>
+
+      <!-- Nav buttons with icons -->
+      <div class="controls">
+        <button type="button" class="nav-btn" id="prevBtn" aria-label="Previous">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <button type="button" class="nav-btn pdf-btn" id="pdfBtn" aria-label="Export PDF">
+          <i class="fa-regular fa-file-pdf"></i>
+          <!-- <span style="margin-left:4px;">PDF</span> -->
+        </button>
+
+        <button type="button" class="nav-btn" id="nextBtn" aria-label="Next">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <!-- Slides -->
+      <div id="slidesRoot"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initDeck } from "./shared/deck.js";
+    import { bootSession } from "./shared/session_loader.js";
+
+    bootSession({ initDeck });
+  </script>
+</body>
+
+</html>

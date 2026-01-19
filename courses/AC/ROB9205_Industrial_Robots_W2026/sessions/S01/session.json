@@ -1,0 +1,12 @@
+{
+  "title": "Session 1 – Course Intro & Safety",
+  "code": "S01",
+  "courseCode": "ROB9205",
+  "courseName": "Industrial Robots",
+  "term": "W2026",
+  "school": "AC",
+  "topics": [
+    "01_course_intro_and_expectations",
+    "02_robot_safety"
+  ]
+}

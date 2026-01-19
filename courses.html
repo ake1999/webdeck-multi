@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose Course — Teaching Decks</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 30px;
+    }
+
+    p {
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    a.card {
+      background: #0b1220;
+      border: 1px solid rgba(226, 232, 240, 0.15);
+      border-radius: 16px;
+      padding: 16px;
+      color: #e2e8f0;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      transition: border-color 0.15s ease, transform 0.15s ease;
+      display: block;
+    }
+
+    a.card:hover {
+      border-color: rgba(226, 232, 240, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(226, 232, 240, 0.2);
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 16px;
+      color: #93c5fd;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <a class="back-link" href="index.html">← Back to schools</a>
+    <h1 id="title">Choose a course</h1>
+    <p id="subtitle"></p>
+
+    <div class="grid" id="courseGrid"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const school = params.get("school") || "AC";
+
+    const allCourses = [
+      {
+        school: "AC",
+        code: "ROB9205",
+        term: "W2026",
+        fullId: "ROB9205_Industrial_Robots_W2026",
+        title: "Industrial Robots",
+        desc: "School of Advanced Technology — Industrial Robot Fundamentals.",
+      },
+      {
+        school: "UO",
+        code: "MCG5138",
+        term: "W2026",
+        fullId: "MCG5138_Autonomous_Mobile_Robots_W2026",
+        title: "Autonomous Mobile Robots (Lab)",
+        desc: "Mobile robotics lab with TurtleBot3 simulation and ROS 2.",
+      },
+    ];
+
+    const bySchool = allCourses.filter(c => c.school === school);
+
+    const titleEl = document.getElementById("title");
+    const subtitleEl = document.getElementById("subtitle");
+    const gridEl = document.getElementById("courseGrid");
+
+    if (school === "AC") {
+      titleEl.textContent = "Algonquin College — Choose a course";
+      subtitleEl.textContent = "School of Advanced Technology (OTFT / SAT).";
+    } else if (school === "UO") {
+      titleEl.textContent = "University of Ottawa — Choose a course";
+      subtitleEl.textContent = "MCG 5138 Autonomous Mobile Robots (lab sequence).";
+    } else {
+      titleEl.textContent = "Choose a course";
+      subtitleEl.textContent = "";
+    }
+
+    if (!bySchool.length) {
+      gridEl.innerHTML = "<p>No courses configured for this school yet.</p>";
+    } else {
+      gridEl.innerHTML = "";
+      bySchool.forEach(c => {
+        const a = document.createElement("a");
+        a.className = "card";
+        // NEXT PAGE (we will build sessions.html in the next step)
+        a.href = `sessions.html?school=${encodeURIComponent(c.school)}&course=${encodeURIComponent(c.fullId)}`;
+        a.innerHTML = `
+          <div class="tag">${c.code} • ${c.term}</div>
+          <h2 style="margin:10px 0 6px 0; color:${c.school === "AC" ? "#86efac" : "#f97373"};">
+            ${c.title}
+          </h2>
+          <p style="margin:0;">${c.desc}</p>
+        `;
+        gridEl.appendChild(a);
+      });
+    }
+  </script>
+</body>
+
+</html>

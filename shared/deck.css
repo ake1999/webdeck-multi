@@ -1,0 +1,720 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0f172a;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fit-to-screen scaling wrapper (JS updates --deck-scale) */
+.deck-scale {
+  transform-origin: center center;
+  transform: scale(var(--deck-scale, 1));
+}
+
+/* The "slide canvas" size */
+.deck-container {
+  width: 1280px;
+  height: 720px;
+  background: #fff;
+  position: relative;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* ================== AC DEFAULT THEME (GREEN) ================== */
+/* These are the default Algonquin styles (theme-ac).
+   UOttawa overrides are added later with .theme-uo …          */
+
+/* Global HUD */
+.brand-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(90deg, #00703c 0%, #00502b 100%);
+  z-index: 50;
+}
+
+.logo-corner {
+  position: absolute;
+  top: 25px;
+  right: 40px;
+  height: 50px;
+  object-fit: contain;
+  z-index: 60;
+}
+
+.course-code {
+  position: absolute;
+  top: 35px;
+  left: 60px;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+    Arial, sans-serif;
+  letter-spacing: 1px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  z-index: 60;
+  user-select: none;
+}
+
+/* Home button (top-left) */
+.home-btn {
+  position: absolute;
+  top: 28px;
+  left: 18px;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.home-btn:hover {
+  background: #00703c;
+  color: #fff;
+  border-color: #00703c;
+}
+
+/* Footer email + TTS controls */
+.email-footer {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 230;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.email-footer a {
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.email-footer a:hover {
+  text-decoration: underline;
+}
+
+.tts-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 6px;
+  padding-left: 10px;
+  border-left: 1px solid #e2e8f0;
+}
+
+.tts-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tts-btn:hover {
+  background: #f1f5f9;
+}
+
+.tts-rate {
+  width: 86px;
+}
+
+/* Page number */
+/* Per-slide page number for PDF/print (injected by JS) */
+.print-page-number {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  z-index: 5;
+  user-select: none;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  display: inline-flex;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+/* Force page number to anchor to the slide, never content */
+body.print-mode .slide .print-page-number {
+  position: absolute !important; /* relative to .slide */
+  bottom: 18px !important;
+  left: 18px !important;
+  z-index: 999 !important;
+  display: inline-flex !important;
+  width: fit-content !important;
+  white-space: nowrap !important;
+}
+
+.slide-counter {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  z-index: 240;
+  user-select: none;
+  pointer-events: none;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Nav controls (bottom-right) */
+.controls {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  display: flex;
+  gap: 10px;
+  z-index: 200;
+}
+
+.nav-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #cbd5e1;
+  background: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.nav-btn:hover {
+  background: #00703c;
+  color: #fff;
+  border-color: #00703c;
+}
+
+/* Export PDF button (near nav) */
+.pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0 14px;
+}
+
+/* Slides */
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 40px 60px;
+  opacity: 0;
+  transform: translateX(50px);
+  transition: all 0.35s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  background: #fff;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+  z-index: 10;
+}
+
+/* Typography */
+h1 {
+  font-size: 64px;
+  margin: 0 0 14px 0;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: #0f172a;
+}
+
+h2 {
+  font-size: 42px;
+  margin: 30px 0 22px 0;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 10px;
+  color: #00703c; /* AC accent */
+}
+
+p,
+li {
+  font-size: 22px;
+  color: #334155;
+  line-height: 1.45;
+  margin: 0 0 10px 0;
+}
+
+ul {
+  padding-left: 30px;
+  margin: 0;
+}
+
+li::marker {
+  color: #00703c; /* AC accent */
+}
+
+.muted {
+  color: #64748b;
+  font-size: 16px;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  height: calc(100% - 90px); /* adjust if your header height differs */
+  min-height: 0;
+  align-items: stretch;
+  padding-top: 10px;
+}
+
+.two-col > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.two-col .col {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.two-col .media-stage {
+  min-height: 420px; /* adjust */
+}
+
+.panel {
+  background: #f1f5f9;
+  padding: 16px;
+  border-radius: 10px;
+  margin-top: 12px;
+}
+
+/* Media (optional) */
+.media {
+  width: 100%;
+  height: 280px;
+  background: #0b1220;
+  border-radius: 12px;
+  border: 2px solid #cbd5e1;
+  overflow: hidden;
+}
+
+.media > img,
+.media > iframe,
+.media > video {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.fit-cover {
+  object-fit: cover;
+}
+
+.fit-contain {
+  object-fit: contain;
+  background: transparent;
+}
+
+.media-source {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.media-source a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.media {
+  background: transparent;
+}
+
+/* Also good to ensure image doesn't bring its own background */
+.media img {
+  background: transparent;
+}
+
+/* MCQ (optional) */
+.quiz-container {
+  background: #f0fdf4;
+  border: 2px dashed #00703c;
+  border-radius: 14px;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.quiz-question {
+  font-size: 28px;
+  font-weight: 900;
+  margin: 0;
+  color: #0f172a;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.option-btn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.option-btn:hover {
+  border-color: #00703c;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.option-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.95;
+}
+
+.badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 900;
+}
+
+.option-btn.correct {
+  border-color: #16a34a;
+}
+
+.option-btn.correct .badge {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.option-btn.wrong {
+  border-color: #ef4444;
+}
+
+.option-btn.wrong .badge {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.feedback {
+  display: none;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.feedback.visible {
+  display: block;
+}
+
+/* TTS highlighting */
+.tts-active {
+  outline: 3px solid rgba(0, 112, 60, 0.35);
+  background: rgba(0, 112, 60, 0.06);
+  border-radius: 8px;
+  padding: 2px 6px;
+}
+
+/* ------------------- PRINT / PDF ------------------- */
+body.print-mode {
+  background: #fff;
+  overflow: visible;
+  display: block;
+  margin: 0;
+}
+
+body.print-mode .deck-scale {
+  transform: none !important;
+}
+
+/* KEY CHANGE: container must NOT be fixed height, and must NOT hide overflow */
+body.print-mode .deck-container {
+  width: 1280px !important;
+  height: auto !important; /* <- allow stacking */
+  box-shadow: none !important;
+  overflow: visible !important; /* <- don't clip pages */
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Each slide is a fixed canvas, one per printed page */
+body.print-mode .slide {
+  position: relative !important;
+  width: 1280px !important;
+  height: 720px !important; /* <- fixed size */
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: all !important;
+  overflow: hidden !important; /* <- clip inside the slide */
+  page-break-after: always;
+  break-after: page;
+}
+
+/* Hide UI controls in print */
+body.print-mode .controls,
+body.print-mode .slide-counter,
+body.print-mode .email-footer,
+body.print-mode .home-btn,
+body.print-mode .course-code,
+body.print-mode .logo-corner,
+body.print-mode .brand-bar {
+  display: none !important;
+}
+
+@media print {
+  @page {
+    size: 13.333in 7.5in;
+    margin: 0;
+  } /* 16:9 page */
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+@media print {
+  .print-page-number {
+    position: absolute;
+    left: 50%;
+    bottom: 10px; /* adjust up/down */
+    transform: translateX(6in);
+    font-size: 10pt;
+    opacity: 0.85;
+    z-index: 9999;
+    pointer-events: none;
+    width: auto;
+    text-align: center;
+  }
+}
+
+/* ---------- Footer watermark (theme-aware) ---------- */
+
+:root {
+  --footer-h: 90px;          /* footer height */
+  --footer-opacity: 1;       /* watermark opacity */
+}
+
+/* Reserve space so content never overlaps footer */
+.theme-ac .slide,
+.theme-uo .slide {
+  padding-bottom: calc(40px + var(--footer-h) + 16px);
+}
+
+/* Base pseudo element for both themes */
+.theme-ac .slide::before,
+.theme-uo .slide::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--footer-h);
+  pointer-events: none;
+  z-index: 1;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: contain;
+  opacity: var(--footer-opacity);
+}
+
+/* AC watermark */
+.theme-ac .slide::before {
+  background-image: url("./media/ac-footer.png");
+}
+
+/* uOttawa watermark */
+.theme-uo .slide::before {
+  background-image: url("./media/uo-footer.png");
+}
+
+/* Keep actual slide content above the watermark */
+.slide > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Improve printing of colors/backgrounds (still enable Background Graphics in print dialog) */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ---------- Media auto layout (images / videos / iframes / widgets) ---------- */
+
+.media-fill {
+  width: 100%;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.media-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(226, 232, 240, 0.12);
+}
+
+.media-caption {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.media-caption a {
+  color: #00703c;
+  text-decoration: none;
+}
+
+.media-caption a:hover {
+  text-decoration: underline;
+}
+
+/* keep aspect ratio, fill as large as possible without cropping */
+.media-stage img,
+.media-stage video {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* iframes/widgets should use full stage */
+.media-stage iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Optional: if you want "cover" style sometimes */
+.media-stage .fit-cover {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* =========================================================
+   UOTTAWA THEME OVERRIDES (RED)
+   These only apply when deck-container has class .theme-uo
+   ========================================================= */
+
+.theme-uo .brand-bar {
+  background: linear-gradient(90deg, #8a1538 0%, #5b0f24 100%);
+}
+
+/* Headings & markers */
+.theme-uo h2 {
+  color: #8a1538;
+}
+
+.theme-uo li::marker {
+  color: #8a1538;
+}
+
+/* Nav buttons hover */
+.theme-uo .nav-btn:hover {
+  background: #8a1538;
+  color: #fff;
+  border-color: #8a1538;
+}
+
+/* Quiz box */
+.theme-uo .quiz-container {
+  background: #fef2f2;
+  border-color: #b91c1c;
+}
+
+/* TTS highlight */
+.theme-uo .tts-active {
+  outline: 3px solid rgba(138, 21, 56, 0.35);
+  background: rgba(138, 21, 56, 0.06);
+}
+
+/* Media caption links */
+.theme-uo .media-caption a {
+  color: #8a1538;
+}
+
+/* You can add more UO-specific tweaks later if you like */

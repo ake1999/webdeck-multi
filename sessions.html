@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose Session & Topic — Teaching Decks</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 30px;
+    }
+
+    h2 {
+      margin: 20px 0 8px 0;
+      font-size: 22px;
+    }
+
+    p {
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 16px;
+      color: #93c5fd;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .session-card {
+      background: #020617;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      margin-top: 16px;
+    }
+
+    .session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .session-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #cbd5e1;
+    }
+
+    .topic-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .topic-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: #020617;
+      color: #e2e8f0;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+    }
+
+    .topic-btn:hover {
+      border-color: #e5e7eb;
+      background: #0b1220;
+      transform: translateY(-1px);
+    }
+
+    code {
+      background: rgba(15, 23, 42, 0.9);
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <a id="backLink" class="back-link" href="courses.html">← Back to courses</a>
+    <h1 id="title">Choose session & topic</h1>
+    <p id="subtitle"></p>
+
+    <div id="sessionsContainer"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const school = params.get("school") || "AC";
+    const courseId = params.get("course") || "";
+
+    // ---- COURSE + SESSION CONFIG (manual for now) ----
+    const courseConfig = {
+      "ROB9205_Industrial_Robots_W2026": {
+        school: "AC",
+        displayName: "ROB9205 — Industrial Robots (W2026)",
+        color: "#86efac",
+        sessions: [
+          {
+            id: "S01",
+            label: "Session 01 — Intro & Safety",
+            desc: "Course introduction, expectations, and robot safety.",
+            topics: [
+              {
+                id: "01_course_intro_and_expectations",
+                label: "Topic 01 — Course intro & expectations"
+              },
+              {
+                id: "02_robot_safety",
+                label: "Topic 02 — Robot safety"
+              }
+            ]
+          }
+        ]
+      },
+
+      "MCG5138_Autonomous_Mobile_Robots_W2026": {
+        school: "UO",
+        displayName: "MCG 5138 — Autonomous Mobile Robots (W2026)",
+        color: "#f97373",
+        sessions: [
+          {
+            id: "S01",
+            label: "Session 01 — Lab intro & expectations",
+            desc: "Mobile robotics lab overview, expectations, and tooling.",
+            topics: [
+              {
+                id: "01_mobile_robotics_lab_intro_and_expectations",
+                label: "Topic 01 — Mobile robotics lab intro & expectations"
+              }
+              // add more topics later as files appear
+            ]
+          }
+        ]
+      }
+    };
+
+    // ---- Apply config ----
+    const cfg = courseConfig[courseId];
+
+    const titleEl = document.getElementById("title");
+    const subtitleEl = document.getElementById("subtitle");
+    const sessionsEl = document.getElementById("sessionsContainer");
+    const backLink = document.getElementById("backLink");
+
+    backLink.href = `courses.html?school=${encodeURIComponent(school)}`;
+
+    if (!cfg) {
+      titleEl.textContent = "Unknown or unconfigured course";
+      subtitleEl.textContent = `course="${courseId}"`;
+      sessionsEl.innerHTML = "<p>No sessions configured yet for this course.</p>";
+    } else {
+      titleEl.textContent = cfg.displayName;
+      subtitleEl.textContent =
+        school === "AC"
+          ? "Algonquin College • School of Advanced Technology"
+          : "University of Ottawa • MCG 5138 Autonomous Mobile Robots";
+
+      sessionsEl.innerHTML = "";
+
+      cfg.sessions.forEach(sess => {
+        const box = document.createElement("div");
+        box.className = "session-card";
+        box.innerHTML = `
+          <div class="session-header">
+            <div>
+              <h2 style="margin:6px 0 4px 0; color:${cfg.color};">${sess.label}</h2>
+            </div>
+            <div style="font-size:13px; color:#cbd5e1;">${sess.desc}</div>
+          </div>
+          <p style="margin:8px 0 4px 0; font-size:14px; color:#cbd5e1;">
+            Choose a topic to open its slide deck.
+          </p>
+        `;
+
+        const topicsWrap = document.createElement("div");
+        topicsWrap.className = "topic-grid";
+
+        sess.topics.forEach(t => {
+          const a = document.createElement("a");
+          a.className = "topic-btn";
+          a.textContent = t.label;
+
+          // This is the FINAL destination:
+          // session.html will load the correct *.slides.js based on school/course/session/topic
+          a.href =
+            `session.html?` +
+            `school=${encodeURIComponent(school)}` +
+            `&course=${encodeURIComponent(courseId)}` +
+            `&session=${encodeURIComponent(sess.id)}` +
+            `&topic=${encodeURIComponent(t.id)}`;
+
+          topicsWrap.appendChild(a);
+        });
+
+        box.appendChild(topicsWrap);
+        sessionsEl.appendChild(box);
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kinematics Viewer</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #0b1220;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Fullscreen viewer container */
+    #viewer {
+      position: fixed;
+      inset: 0;
+    }
+
+    /* A small label overlay (top-left) */
+    #modeLabel {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(11, 18, 32, 0.85);
+      border: 1px solid rgba(226,232,240,0.18);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    /* Bottom controls overlay */
+    #ui {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+
+      background: rgba(11, 18, 32, 0.92);
+      border-top: 1px solid rgba(226,232,240,0.18);
+
+      padding: 10px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+
+      max-height: 38vh;
+      overflow: auto;
+    }
+
+    #ui label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-right: 6px;
+      white-space: nowrap;
+    }
+
+    #ui .row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(226,232,240,0.14);
+      background: rgba(15, 23, 42, 0.55);
+    }
+
+    #ui input[type="range"] { width: 180px; }
+    #ui .val {
+      min-width: 64px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      opacity: 0.95;
+    }
+
+    canvas { display: block; }
+  </style>
+</head>
+
+<body>
+  <div id="viewer"></div>
+  <div id="modeLabel">Type: RRR</div>
+
+  <div id="ui">
+    <div class="row">
+      <label for="q1">Joint 1</label>
+      <input id="q1" type="range" min="-180" max="180" step="1" value="0" />
+      <div class="val" id="q1v">0°</div>
+    </div>
+
+    <div class="row">
+      <label for="q2">Joint 2</label>
+      <input id="q2" type="range" min="-180" max="180" step="1" value="0" />
+      <div class="val" id="q2v">0°</div>
+    </div>
+
+    <div class="row">
+      <label for="q3">Joint 3</label>
+      <input id="q3" type="range" min="-180" max="180" step="1" value="0" />
+      <div class="val" id="q3v">0°</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from "../vendor/three/three.module.js";
+    import { OrbitControls } from "../vendor/three/addons/controls/OrbitControls.js";
+
+    // Read type=RRR / PPP from query string
+    const params = new URLSearchParams(location.search);
+    const TYPE = (params.get("type") || "RRR").toUpperCase();
+    document.getElementById("modeLabel").textContent = `Type: ${TYPE}`;
+
+    const viewer = document.getElementById("viewer");
+
+    // ONE renderer only (fullscreen)
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    viewer.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.01, 100);
+    camera.position.set(1.6, 1.2, 1.6);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0.2, 0.35, 0.0);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.update();
+
+    // Lights
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.9);
+    dl.position.set(2, 3, 2);
+    scene.add(dl);
+
+    // Helpers
+    scene.add(new THREE.GridHelper(6, 12, 0x334155, 0x1f2937));
+    scene.add(new THREE.AxesHelper(0.5));
+
+    // Materials
+    const matBase  = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6 });
+    const matLink  = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.45 });
+    const matJoint = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.35 });
+
+    // Build chain: base -> J1 -> L1 -> J2 -> L2 -> J3 -> L3
+    const base = new THREE.Group();
+    scene.add(base);
+
+    const baseMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.12, 32), matBase);
+    baseMesh.position.y = 0.06;
+    base.add(baseMesh);
+
+    function makeJointVisual() {
+      const j = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.06, 24), matJoint);
+      j.rotation.x = Math.PI / 2;
+      return j;
+    }
+
+    function makeLink(len = 0.45) {
+      const g = new THREE.Group();
+      const link = new THREE.Mesh(new THREE.BoxGeometry(len, 0.08, 0.08), matLink);
+      link.position.x = len / 2;
+      g.add(link);
+      return g;
+    }
+
+    const J1 = new THREE.Group();
+    base.add(J1);
+    J1.position.set(0, 0.12, 0);
+    J1.add(makeJointVisual());
+
+    const L1 = makeLink(0.5);
+    J1.add(L1);
+
+    const J2 = new THREE.Group();
+    L1.add(J2);
+    J2.position.set(0.5, 0, 0);
+    J2.add(makeJointVisual());
+
+    const L2 = makeLink(0.45);
+    J2.add(L2);
+
+    const J3 = new THREE.Group();
+    L2.add(J3);
+    J3.position.set(0.45, 0, 0);
+    J3.add(makeJointVisual());
+
+    const L3 = makeLink(0.35);
+    J3.add(L3);
+
+    // UI refs
+    const q1  = document.getElementById("q1");
+    const q2  = document.getElementById("q2");
+    const q3  = document.getElementById("q3");
+    const q1v = document.getElementById("q1v");
+    const q2v = document.getElementById("q2v");
+    const q3v = document.getElementById("q3v");
+
+    function deg2rad(d){ return (Number(d) * Math.PI) / 180; }
+
+    function setLabels(){
+      if (TYPE === "PPP"){
+        q1.min = "-0.4"; q1.max = "0.8"; q1.step = "0.01"; q1.value = "0.0";
+        q2.min = "-0.4"; q2.max = "0.8"; q2.step = "0.01"; q2.value = "0.0";
+        q3.min = "-0.4"; q3.max = "0.8"; q3.step = "0.01"; q3.value = "0.0";
+        q1v.textContent = "0.00 m"; q2v.textContent = "0.00 m"; q3v.textContent = "0.00 m";
+      } else {
+        q1.min = "-180"; q1.max = "180"; q1.step = "1"; q1.value = "0";
+        q2.min = "-180"; q2.max = "180"; q2.step = "1"; q2.value = "0";
+        q3.min = "-180"; q3.max = "180"; q3.step = "1"; q3.value = "0";
+        q1v.textContent = "0°"; q2v.textContent = "0°"; q3v.textContent = "0°";
+      }
+    }
+    setLabels();
+
+    function applyKinematics(){
+      if (TYPE === "PPP"){
+        const d1 = Number(q1.value), d2 = Number(q2.value), d3 = Number(q3.value);
+        q1v.textContent = `${d1.toFixed(2)} m`;
+        q2v.textContent = `${d2.toFixed(2)} m`;
+        q3v.textContent = `${d3.toFixed(2)} m`;
+
+        J1.rotation.set(0,0,0);
+        J2.rotation.set(0,0,0);
+        J3.rotation.set(0,0,0);
+
+        // Translate along local x by shifting positions
+        L1.position.x = d1;
+        J2.position.x = 0.5 + d2;
+        J3.position.x = 0.45 + d3;
+      } else {
+        const a1 = Number(q1.value), a2 = Number(q2.value), a3 = Number(q3.value);
+        q1v.textContent = `${a1}°`;
+        q2v.textContent = `${a2}°`;
+        q3v.textContent = `${a3}°`;
+
+        // reset any PPP shifts
+        L1.position.x = 0;
+        J2.position.x = 0.5;
+        J3.position.x = 0.45;
+
+        J1.rotation.set(0, 0, deg2rad(a1));
+        J2.rotation.set(0, 0, deg2rad(a2));
+        J3.rotation.set(0, 0, deg2rad(a3));
+      }
+    }
+
+    q1.addEventListener("input", applyKinematics);
+    q2.addEventListener("input", applyKinematics);
+    q3.addEventListener("input", applyKinematics);
+    applyKinematics();
+
+    // Stop wheel from scrolling/zoom fighting when over viewer
+    renderer.domElement.addEventListener("wheel", (e) => e.preventDefault(), { passive: false });
+
+    // Allow scrolling the UI panel without controlling the camera
+    const ui = document.getElementById("ui");
+    ui.addEventListener("wheel", (e) => e.stopPropagation(), { passive: true });
+    ui.addEventListener("pointerdown", (e) => e.stopPropagation());
+    ui.addEventListener("pointermove", (e) => e.stopPropagation());
+    ui.addEventListener("pointerup",   (e) => e.stopPropagation());
+
+    // Proper resize
+    window.addEventListener("resize", () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
+
+    function animate(){
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
+</body>
+</html>
+
