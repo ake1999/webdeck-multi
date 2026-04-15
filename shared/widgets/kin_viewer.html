@@ -6,79 +6,204 @@
   <title>Kinematics Viewer</title>
 
   <style>
+    :root{
+      --bg0:#0b1220;
+      --bg1:#0f172a;
+      --card:rgba(15,23,42,0.60);
+      --card2:rgba(15,23,42,0.78);
+      --stroke:rgba(226,232,240,0.16);
+      --stroke2:rgba(226,232,240,0.22);
+      --text:#e2e8f0;
+      --muted:rgba(226,232,240,0.72);
+      --accent:#22c55e;
+      --warn:#f59e0b;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius:16px;
+    }
+
     html, body {
       margin: 0;
       height: 100%;
       overflow: hidden;
-      background: #0b1220;
-      color: #e2e8f0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 30% 10%, rgba(34,197,94,0.08), transparent 60%),
+                  radial-gradient(1000px 700px at 80% 20%, rgba(245,158,11,0.08), transparent 60%),
+                  var(--bg0);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    /* Fullscreen viewer container */
-    #viewer {
-      position: fixed;
-      inset: 0;
-    }
+    #viewer { position: fixed; inset: 0; }
 
-    /* A small label overlay (top-left) */
-    #modeLabel {
+    /* Top HUD */
+    #hud {
       position: fixed;
       top: 10px;
       left: 10px;
+      right: 10px;
       z-index: 10;
-      padding: 8px 12px;
-      border-radius: 12px;
-      background: rgba(11, 18, 32, 0.85);
-      border: 1px solid rgba(226,232,240,0.18);
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    /* Bottom controls overlay */
-    #ui {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 10;
-
-      background: rgba(11, 18, 32, 0.92);
-      border-top: 1px solid rgba(226,232,240,0.18);
-
-      padding: 10px 12px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px 14px;
+      gap: 10px;
       align-items: center;
-
-      max-height: 38vh;
-      overflow: auto;
+      justify-content: space-between;
+      pointer-events: none;
     }
 
-    #ui label {
-      font-size: 12px;
-      opacity: 0.9;
-      margin-right: 6px;
+    .hud-left, .hud-right{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      pointer-events:none;
+    }
+
+    .chip{
+      pointer-events: none;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(11, 18, 32, 0.82);
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-weight: 800;
+      letter-spacing: .2px;
       white-space: nowrap;
     }
 
-    #ui .row {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 14px;
-      border: 1px solid rgba(226,232,240,0.14);
-      background: rgba(15, 23, 42, 0.55);
+    .chip small{
+      font-weight: 700;
+      opacity: .75;
+      letter-spacing: .1px;
     }
 
-    #ui input[type="range"] { width: 180px; }
-    #ui .val {
-      min-width: 64px;
+    .chip .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.18);
+    }
+
+    .chip .dot.warn{
+      background: var(--warn);
+      box-shadow: 0 0 0 4px rgba(245,158,11,0.18);
+    }
+
+    /* Bottom controls */
+    #ui {
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      z-index: 10;
+
+      background: rgba(11, 18, 32, 0.82);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      max-height: 44vh;
+      overflow: auto;
+    }
+
+    #uiHeader{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(226,232,240,0.10);
+    }
+
+    #uiHeader .title{
+      display:flex;
+      flex-direction: column;
+      gap:2px;
+    }
+
+    #uiHeader .title b{
+      font-size: 14px;
+      letter-spacing: .2px;
+    }
+    #uiHeader .title span{
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .btnRow{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+
+    button{
+      appearance:none;
+      border: 1px solid rgba(226,232,240,0.18);
+      background: rgba(15,23,42,0.55);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    button:hover{ border-color: rgba(226,232,240,0.28); background: rgba(15,23,42,0.68); }
+    button:active{ transform: translateY(1px); }
+
+    #rows{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px 12px;
+      align-items: stretch;
+    }
+
+    .row {
+      flex: 1 1 320px;
+      display: grid;
+      grid-template-columns: 110px 1fr 82px;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(226,232,240,0.14);
+      background: rgba(15, 23, 42, 0.50);
+    }
+
+    .row label{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: .2px;
+      white-space: nowrap;
+    }
+
+    .row input[type="range"]{
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .val{
       text-align: right;
       font-variant-numeric: tabular-nums;
-      opacity: 0.95;
+      font-weight: 900;
+      font-size: 12px;
+      opacity: .95;
+    }
+
+    .hint{
+      font-size: 12px;
+      color: rgba(226,232,240,0.72);
+      line-height: 1.35;
+      padding-top: 2px;
     }
 
     canvas { display: block; }
@@ -87,40 +212,60 @@
 
 <body>
   <div id="viewer"></div>
-  <div id="modeLabel">Type: RRR</div>
+
+  <div id="hud">
+    <div class="hud-left">
+      <div class="chip" id="modeChip"><span class="dot"></span><span id="modeText">Type: PPP</span></div>
+      <div class="chip" id="axesChip"><span class="dot warn"></span><small id="axesText">Axes: default</small></div>
+    </div>
+    <div class="hud-right">
+      <div class="chip"><small>Drag:</small> Orbit • <small>Scroll:</small> Zoom</div>
+    </div>
+  </div>
 
   <div id="ui">
-    <div class="row">
-      <label for="q1">Joint 1</label>
-      <input id="q1" type="range" min="-180" max="180" step="1" value="0" />
-      <div class="val" id="q1v">0°</div>
+    <div id="uiHeader">
+      <div class="title">
+        <b id="uiTitle">Joints</b>
+        <span id="uiSubtitle">Use sliders to move the first joints and see workspace behavior.</span>
+      </div>
+      <div class="btnRow">
+        <button id="btnHome" title="Reset sliders to default">Reset</button>
+        <button id="btnPoseA" title="A clean demonstration pose">Pose A</button>
+        <button id="btnPoseB" title="Another demonstration pose">Pose B</button>
+      </div>
     </div>
 
-    <div class="row">
-      <label for="q2">Joint 2</label>
-      <input id="q2" type="range" min="-180" max="180" step="1" value="0" />
-      <div class="val" id="q2v">0°</div>
-    </div>
+    <div id="rows"></div>
 
-    <div class="row">
-      <label for="q3">Joint 3</label>
-      <input id="q3" type="range" min="-180" max="180" step="1" value="0" />
-      <div class="val" id="q3v">0°</div>
-    </div>
+    <div class="hint" id="hintText"></div>
   </div>
 
   <script type="module">
     import * as THREE from "../vendor/three/three.module.js";
     import { OrbitControls } from "../vendor/three/addons/controls/OrbitControls.js";
 
-    // Read type=RRR / PPP from query string
+    // ---- Query params: type=PPP | RPP | RRP | RRRRRR ----
     const params = new URLSearchParams(location.search);
-    const TYPE = (params.get("type") || "RRR").toUpperCase();
-    document.getElementById("modeLabel").textContent = `Type: ${TYPE}`;
+    const TYPE = (params.get("type") || "PPP").toUpperCase();
 
+    // Optional: axes=perpendicular (for articulated)
+    const AXES_MODE = (params.get("axes") || "default").toLowerCase();
+
+    // ---- HUD ----
+    const modeText = document.getElementById("modeText");
+    const axesText = document.getElementById("axesText");
+    modeText.textContent = `Type: ${TYPE}`;
+    axesText.textContent = `Axes: ${TYPE === "RRRRRR" ? "perpendicular" : AXES_MODE}`;
+
+    // ---- UI container ----
+    const rowsEl = document.getElementById("rows");
+    const hintText = document.getElementById("hintText");
+    const uiTitle = document.getElementById("uiTitle");
+    const uiSubtitle = document.getElementById("uiSubtitle");
+
+    // ---- Viewer ----
     const viewer = document.getElementById("viewer");
-
-    // ONE renderer only (fullscreen)
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -128,149 +273,419 @@
 
     const scene = new THREE.Scene();
 
-    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.set(1.6, 1.2, 1.6);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.01, 200);
+    camera.position.set(1.8, 1.35, 1.8);
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0.2, 0.35, 0.0);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.update();
 
     // Lights
-    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
-    const dl = new THREE.DirectionalLight(0xffffff, 0.9);
-    dl.position.set(2, 3, 2);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.62));
+    const dl = new THREE.DirectionalLight(0xffffff, 0.85);
+    dl.position.set(3, 4, 2);
     scene.add(dl);
 
     // Helpers
-    scene.add(new THREE.GridHelper(6, 12, 0x334155, 0x1f2937));
-    scene.add(new THREE.AxesHelper(0.5));
+    scene.add(new THREE.GridHelper(8, 16, 0x334155, 0x1f2937));
+    scene.add(new THREE.AxesHelper(0.6));
 
     // Materials
-    const matBase  = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6 });
+    const matBase  = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.62 });
     const matLink  = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.45 });
     const matJoint = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.35 });
+    const matTCP   = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.35 });
 
-    // Build chain: base -> J1 -> L1 -> J2 -> L2 -> J3 -> L3
+    // Base
     const base = new THREE.Group();
     scene.add(base);
 
-    const baseMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.12, 32), matBase);
+    const baseMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, 0.12, 32), matBase);
     baseMesh.position.y = 0.06;
     base.add(baseMesh);
 
-    function makeJointVisual() {
-      const j = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.06, 24), matJoint);
-      j.rotation.x = Math.PI / 2;
+    // Visuals
+    function makeJointVisual(axis="z") {
+      const j = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 0.07, 24), matJoint);
+      // cylinder axis is Y by default; rotate so its axis aligns with chosen axis
+      if (axis === "x") j.rotation.z = Math.PI / 2;
+      if (axis === "z") j.rotation.x = Math.PI / 2;
+      // axis === "y" -> no rotation
       return j;
     }
 
-    function makeLink(len = 0.45) {
+    function makeLink(len = 0.55, thickness = 0.09) {
       const g = new THREE.Group();
-      const link = new THREE.Mesh(new THREE.BoxGeometry(len, 0.08, 0.08), matLink);
+      const link = new THREE.Mesh(new THREE.BoxGeometry(len, thickness, thickness), matLink);
       link.position.x = len / 2;
       g.add(link);
       return g;
     }
 
-    const J1 = new THREE.Group();
-    base.add(J1);
-    J1.position.set(0, 0.12, 0);
-    J1.add(makeJointVisual());
+    // TCP marker
+    const tcp = new THREE.Mesh(new THREE.SphereGeometry(0.045, 18, 18), matTCP);
 
-    const L1 = makeLink(0.5);
-    J1.add(L1);
+    // ---- Build a generic chain (6 joints available) ----
+    // base -> J1 -> L1 -> J2 -> L2 -> J3 -> L3 -> J4 -> L4 -> J5 -> L5 -> J6 -> L6 -> TCP
+    const chain = {
+      J: [],
+      L: [],
+      lengths: [0.55, 0.50, 0.45, 0.30, 0.24, 0.20],
+    };
 
-    const J2 = new THREE.Group();
-    L1.add(J2);
-    J2.position.set(0.5, 0, 0);
-    J2.add(makeJointVisual());
+    function addJointAndLink(parent, jointAxis="z", linkLen=0.5){
+      const J = new THREE.Group();
+      parent.add(J);
+      J.add(makeJointVisual(jointAxis));
 
-    const L2 = makeLink(0.45);
-    J2.add(L2);
+      const L = makeLink(linkLen);
+      J.add(L);
 
-    const J3 = new THREE.Group();
-    L2.add(J3);
-    J3.position.set(0.45, 0, 0);
-    J3.add(makeJointVisual());
+      chain.J.push(J);
+      chain.L.push(L);
+      return { J, L };
+    }
 
-    const L3 = makeLink(0.35);
-    J3.add(L3);
+    // Put first joint on top of base
+    const root = new THREE.Group();
+    base.add(root);
+    root.position.set(0, 0.12, 0);
 
-    // UI refs
-    const q1  = document.getElementById("q1");
-    const q2  = document.getElementById("q2");
-    const q3  = document.getElementById("q3");
-    const q1v = document.getElementById("q1v");
-    const q2v = document.getElementById("q2v");
-    const q3v = document.getElementById("q3v");
+    // Axis plan defaults (we will adjust per TYPE)
+    let jointAxes = ["z","z","z","z","z","z"];
 
+    // For articulated: perpendicular-ish axes (classic industrial arm feel)
+    // Not perfect DH, but the idea is: different axis directions.
+    if (TYPE === "RRRRRR") {
+      jointAxes = ["z","y","y","x","y","x"];
+    } else if (TYPE === "RRP") {
+      // yaw then pitch then prismatic extend (third will be prismatic; axis is handled separately)
+      jointAxes = ["z","y","z"];
+    } else if (TYPE === "RPP") {
+      jointAxes = ["z","x","y"];
+    } else {
+      // PPP doesn't use rotation axes; keep for visuals
+      jointAxes = ["x","y","z"];
+    }
+
+    // Build 6-joint chain (some types will only use first 3)
+    let parent = root;
+    for (let i = 0; i < 6; i++) {
+      const axis = jointAxes[Math.min(i, jointAxes.length-1)] || "z";
+      const { J, L } = addJointAndLink(parent, axis, chain.lengths[i]);
+      // move next joint to end of this link
+      parent = L;
+      // place the next joint group at the end of link
+      // (we shift by setting a child group's position later in kinematics when needed)
+      // For simplicity, we put the next joint group position at link end by translating inside the link group:
+      // We'll do it by placing a "socket" group at the end of each link.
+      const socket = new THREE.Group();
+      socket.position.x = chain.lengths[i];
+      L.add(socket);
+      // Store socket as the parent for next step
+      parent = socket;
+      chain.L[i]._socket = socket;
+    }
+
+    // TCP at end of last link socket
+    chain.L[5]._socket.add(tcp);
+
+    // Camera target (nice default)
+    controls.target.set(0.4, 0.45, 0.0);
+    controls.update();
+
+    // ---- UI slider builder ----
+    const sliders = [];
+
+    function clearUI(){
+      rowsEl.innerHTML = "";
+      sliders.length = 0;
+    }
+
+    function addSlider({ id, label, unit, min, max, step, value }){
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const lab = document.createElement("label");
+      lab.setAttribute("for", id);
+      lab.textContent = label;
+
+      const input = document.createElement("input");
+      input.type = "range";
+      input.id = id;
+      input.min = String(min);
+      input.max = String(max);
+      input.step = String(step);
+      input.value = String(value);
+
+      const val = document.createElement("div");
+      val.className = "val";
+      val.id = id + "v";
+      val.textContent = formatValue(value, unit);
+
+      row.appendChild(lab);
+      row.appendChild(input);
+      row.appendChild(val);
+      rowsEl.appendChild(row);
+
+      const s = { input, val, unit, defaultValue: value };
+      sliders.push(s);
+      input.addEventListener("input", () => {
+        val.textContent = formatValue(input.value, unit);
+        applyKinematics();
+      });
+
+      return s;
+    }
+
+    function formatValue(v, unit){
+      const n = Number(v);
+      if (unit === "deg") return `${Math.round(n)}°`;
+      if (unit === "m") return `${n.toFixed(2)} m`;
+      return `${n}`;
+    }
+
+    // ---- Define slider configs + hints per type ----
+    const typeConfig = (() => {
+      if (TYPE === "PPP") {
+        return {
+          title: "Cartesian (PPP)",
+          subtitle: "Three prismatic joints → box workspace (X, Y, Z).",
+          hint:
+            "PPP: three independent linear slides. Great stiffness + simple control. Try moving X/Y/Z and notice the box-like envelope.",
+          sliders: [
+            { label: "P1 (X)", unit:"m", min:-0.6, max:0.9, step:0.01, value:0.00 },
+            { label: "P2 (Y)", unit:"m", min:-0.6, max:0.9, step:0.01, value:0.00 },
+            { label: "P3 (Z)", unit:"m", min:-0.2, max:1.0, step:0.01, value:0.25 },
+          ],
+          poses: {
+            A: [0.40, 0.20, 0.45],
+            B: [-0.20, 0.55, 0.10],
+          }
+        };
+      }
+      if (TYPE === "RPP") {
+        return {
+          title: "Cylindrical (RPP)",
+          subtitle: "Rotate + radial slide + vertical slide → cylindrical workspace.",
+          hint:
+            "RPP: rotate around base (θ), extend radially (r), then move up/down (z). That creates a cylindrical volume.",
+          sliders: [
+            { label: "R1 (θ)", unit:"deg", min:-180, max:180, step:1, value:0 },
+            { label: "P2 (r)", unit:"m",  min:0.00, max:0.90, step:0.01, value:0.25 },
+            { label: "P3 (z)", unit:"m",  min:-0.10, max:0.90, step:0.01, value:0.25 },
+          ],
+          poses: {
+            A: [45, 0.55, 0.35],
+            B: [-120, 0.75, 0.10],
+          }
+        };
+      }
+      if (TYPE === "RRP") {
+        return {
+          title: "Spherical / Polar (RRP)",
+          subtitle: "Yaw + pitch + extension → spherical sector workspace.",
+          hint:
+            "RRP: yaw (θ) sets direction in XY, pitch (φ) tilts up/down, then extension (r) reaches outward. Workspace looks like a spherical sector.",
+          sliders: [
+            { label: "R1 (yaw θ)",   unit:"deg", min:-180, max:180, step:1, value:0 },
+            { label: "R2 (pitch φ)", unit:"deg", min:-80,  max:80,  step:1, value:10 },
+            { label: "P3 (r)",       unit:"m",   min:0.10, max:0.95, step:0.01, value:0.45 },
+          ],
+          poses: {
+            A: [35, 25, 0.70],
+            B: [-90, -20, 0.85],
+          }
+        };
+      }
+      // articulated (RRRRRR)
+      return {
+        title: "Articulated 6-axis (RRRRRR)",
+        subtitle: "Six revolute joints with mostly perpendicular axes → flexible 3D reach + orientation.",
+        hint:
+          "RRRRRR: axes change direction (not parallel). Try J1–J3 to see position, then J4–J6 to see wrist/orientation behavior.",
+        sliders: [
+          { label: "R1", unit:"deg", min:-180, max:180, step:1, value:0 },
+          { label: "R2", unit:"deg", min:-140, max:140, step:1, value:25 },
+          { label: "R3", unit:"deg", min:-140, max:140, step:1, value:-30 },
+          { label: "R4", unit:"deg", min:-180, max:180, step:1, value:0 },
+          { label: "R5", unit:"deg", min:-120, max:120, step:1, value:35 },
+          { label: "R6", unit:"deg", min:-360, max:360, step:1, value:0 },
+        ],
+        poses: {
+          A: [20, 35, -40, 0, 45, 0],
+          B: [-70, 20, 25, 60, -30, 90],
+        }
+      };
+    })();
+
+    uiTitle.textContent = typeConfig.title;
+    uiSubtitle.textContent = typeConfig.subtitle;
+    hintText.textContent = typeConfig.hint;
+
+    clearUI();
+    typeConfig.sliders.forEach((cfg, idx) => {
+      addSlider({
+        id: `q${idx+1}`,
+        label: cfg.label,
+        unit: cfg.unit,
+        min: cfg.min,
+        max: cfg.max,
+        step: cfg.step,
+        value: cfg.value,
+      });
+    });
+
+    // ---- Reset & pose buttons ----
+    document.getElementById("btnHome").addEventListener("click", () => {
+      sliders.forEach((s) => {
+        s.input.value = String(s.defaultValue);
+        s.val.textContent = formatValue(s.defaultValue, s.unit);
+      });
+      applyKinematics();
+    });
+
+    document.getElementById("btnPoseA").addEventListener("click", () => {
+      const p = typeConfig.poses?.A;
+      if (!p) return;
+      for (let i=0;i<sliders.length;i++){
+        sliders[i].input.value = String(p[i] ?? sliders[i].defaultValue);
+        sliders[i].val.textContent = formatValue(sliders[i].input.value, sliders[i].unit);
+      }
+      applyKinematics();
+    });
+
+    document.getElementById("btnPoseB").addEventListener("click", () => {
+      const p = typeConfig.poses?.B;
+      if (!p) return;
+      for (let i=0;i<sliders.length;i++){
+        sliders[i].input.value = String(p[i] ?? sliders[i].defaultValue);
+        sliders[i].val.textContent = formatValue(sliders[i].input.value, sliders[i].unit);
+      }
+      applyKinematics();
+    });
+
+    // ---- Kinematics helpers ----
     function deg2rad(d){ return (Number(d) * Math.PI) / 180; }
 
-    function setLabels(){
-      if (TYPE === "PPP"){
-        q1.min = "-0.4"; q1.max = "0.8"; q1.step = "0.01"; q1.value = "0.0";
-        q2.min = "-0.4"; q2.max = "0.8"; q2.step = "0.01"; q2.value = "0.0";
-        q3.min = "-0.4"; q3.max = "0.8"; q3.step = "0.01"; q3.value = "0.0";
-        q1v.textContent = "0.00 m"; q2v.textContent = "0.00 m"; q3v.textContent = "0.00 m";
-      } else {
-        q1.min = "-180"; q1.max = "180"; q1.step = "1"; q1.value = "0";
-        q2.min = "-180"; q2.max = "180"; q2.step = "1"; q2.value = "0";
-        q3.min = "-180"; q3.max = "180"; q3.step = "1"; q3.value = "0";
-        q1v.textContent = "0°"; q2v.textContent = "0°"; q3v.textContent = "0°";
+    function resetTransforms(){
+      // reset all joint rotations
+      for (let i=0;i<chain.J.length;i++){
+        chain.J[i].rotation.set(0,0,0);
       }
+      // reset link sockets (positions are fixed)
+      // we only change some positions on prismatic joints, so reset those
+      for (let i=0;i<chain.L.length;i++){
+        // default: sockets at nominal length
+        chain.L[i]._socket.position.x = chain.lengths[i];
+        chain.L[i]._socket.position.y = 0;
+        chain.L[i]._socket.position.z = 0;
+      }
+      // reset root position
+      root.position.set(0, 0.12, 0);
     }
-    setLabels();
 
+    // Apply rotation around a chosen axis on joint i
+    function setRevolute(i, axis, angleRad){
+      const J = chain.J[i];
+      if (!J) return;
+      if (axis === "x") J.rotation.x = angleRad;
+      else if (axis === "y") J.rotation.y = angleRad;
+      else J.rotation.z = angleRad;
+    }
+
+    // Apply prismatic along a chosen axis by moving the SOCKET of link i
+    // i.e. changing the transform between link i and joint i+1.
+    function setPrismaticOnLink(i, axis, delta){
+      const socket = chain.L[i]?._socket;
+      if (!socket) return;
+      if (axis === "x") socket.position.x = chain.lengths[i] + delta;
+      if (axis === "y") socket.position.y = delta;
+      if (axis === "z") socket.position.z = delta;
+    }
+
+    // ---- Type-specific kinematics mapping ----
     function applyKinematics(){
-      if (TYPE === "PPP"){
-        const d1 = Number(q1.value), d2 = Number(q2.value), d3 = Number(q3.value);
-        q1v.textContent = `${d1.toFixed(2)} m`;
-        q2v.textContent = `${d2.toFixed(2)} m`;
-        q3v.textContent = `${d3.toFixed(2)} m`;
+      resetTransforms();
 
-        J1.rotation.set(0,0,0);
-        J2.rotation.set(0,0,0);
-        J3.rotation.set(0,0,0);
+      if (TYPE === "PPP") {
+        // Use root position + link socket shifts to mimic XYZ stages
+        const x = Number(sliders[0].input.value);
+        const y = Number(sliders[1].input.value);
+        const z = Number(sliders[2].input.value);
 
-        // Translate along local x by shifting positions
-        L1.position.x = d1;
-        J2.position.x = 0.5 + d2;
-        J3.position.x = 0.45 + d3;
-      } else {
-        const a1 = Number(q1.value), a2 = Number(q2.value), a3 = Number(q3.value);
-        q1v.textContent = `${a1}°`;
-        q2v.textContent = `${a2}°`;
-        q3v.textContent = `${a3}°`;
+        // We'll interpret PPP as:
+        // P1: translate whole chain in X
+        // P2: translate whole chain in Z (sideways) to show box
+        // P3: translate whole chain in Y (up)
+        root.position.x = x;
+        root.position.z = y;
+        root.position.y = 0.12 + z;
 
-        // reset any PPP shifts
-        L1.position.x = 0;
-        J2.position.x = 0.5;
-        J3.position.x = 0.45;
+        // Keep joints unrotated; keep nominal link lengths
+        controls.target.set(0.4 + x*0.5, 0.45 + z*0.5, 0.0 + y*0.5);
 
-        J1.rotation.set(0, 0, deg2rad(a1));
-        J2.rotation.set(0, 0, deg2rad(a2));
-        J3.rotation.set(0, 0, deg2rad(a3));
+      } else if (TYPE === "RPP") {
+        const th = deg2rad(sliders[0].input.value); // rotate about Z
+        const r  = Number(sliders[1].input.value);  // radial extension
+        const z  = Number(sliders[2].input.value);  // vertical
+
+        // R1: rotate joint1 about Z
+        setRevolute(0, "z", th);
+
+        // P2: radial extension along X (link1 socket)
+        setPrismaticOnLink(0, "x", r);
+
+        // P3: vertical along Y at the next stage (link2 socket)
+        setPrismaticOnLink(1, "y", z);
+
+        controls.target.set(0.35, 0.35, 0);
+
+      } else if (TYPE === "RRP") {
+        const yaw   = deg2rad(sliders[0].input.value); // about Z
+        const pitch = deg2rad(sliders[1].input.value); // about Y
+        const r     = Number(sliders[2].input.value);  // extension
+
+        // R1: yaw at base (Z)
+        setRevolute(0, "z", yaw);
+
+        // R2: pitch (Y) at second joint
+        setRevolute(1, "y", pitch);
+
+        // P3: extend along X at link2
+        setPrismaticOnLink(1, "x", r);
+
+        controls.target.set(0.35, 0.45, 0);
+
+      } else if (TYPE === "RRRRRR") {
+        // 6 revolute joints with perpendicular-ish axes (z,y,y,x,y,x)
+        const a = sliders.map(s => deg2rad(s.input.value));
+        const axes = ["z","y","y","x","y","x"];
+
+        for (let i=0;i<6;i++){
+          setRevolute(i, axes[i], a[i] || 0);
+        }
+
+        controls.target.set(0.45, 0.5, 0.0);
       }
+
+      controls.update();
     }
 
-    q1.addEventListener("input", applyKinematics);
-    q2.addEventListener("input", applyKinematics);
-    q3.addEventListener("input", applyKinematics);
+    // initial
     applyKinematics();
 
-    // Stop wheel from scrolling/zoom fighting when over viewer
+    // Stop wheel from scrolling the page when over viewer
     renderer.domElement.addEventListener("wheel", (e) => e.preventDefault(), { passive: false });
 
-    // Allow scrolling the UI panel without controlling the camera
+    // Allow scrolling the UI panel without controlling camera
     const ui = document.getElementById("ui");
     ui.addEventListener("wheel", (e) => e.stopPropagation(), { passive: true });
     ui.addEventListener("pointerdown", (e) => e.stopPropagation());
     ui.addEventListener("pointermove", (e) => e.stopPropagation());
     ui.addEventListener("pointerup",   (e) => e.stopPropagation());
 
-    // Proper resize
+    // Resize
     window.addEventListener("resize", () => {
       const w = window.innerWidth;
       const h = window.innerHeight;

@@ -355,21 +355,6 @@ const slidesData = [
     notes:
       "Correct answer is B. ‘Robot not moving’ does not mean ‘safe to touch wiring.’ The safe default is: assume live until proven otherwise. Then you verify properly. This mindset prevents most electrical accidents because it forces you to slow down, test, and plan instead of guessing.",
   },
-  {
-    type: "two-col",
-    title: "Manipulator type: RRR",
-    left: {
-      bullets: ["Rotate the joints and observe the end-effector motion."],
-    },
-    right: {
-      media: {
-        kind: "iframe",
-        src: "../../shared/widgets/kin_viewer.html?type=RRR",
-        source: "Interactive viewer (local)",
-      },
-    },
-    notes: "...",
-  },
 ];
 
 export default slidesData;

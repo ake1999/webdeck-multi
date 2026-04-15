@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>2D Frame Transform Playground</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Arial;margin:16px;}
+    #wrap{display:flex;gap:16px;align-items:flex-start;}
+    canvas{border:1px solid #ccc;cursor:crosshair;}
+    pre{background:#f6f6f6;padding:10px;border-radius:8px;max-width:520px;overflow:auto;}
+    .hint{font-size:14px;opacity:.85}
+  </style>
+</head>
+<body>
+<h2>2D Frame Transform Playground (Translation + Rotation)</h2>
+<div class="hint">
+Drag <b>User origin</b> (square) to translate. Drag <b>Rotation handle</b> (circle on +X axis) to rotate.
+Drag the <b>Point</b> (filled circle) to change p<sub>u</sub>. Values update live.
+</div>
+<div id="wrap">
+  <canvas id="c" width="640" height="420"></canvas>
+  <div>
+    <pre id="txt"></pre>
+    <div class="hint">
+      World ↔ User formulas:
+      <br>p_w = R(θ) p_u + t
+      <br>p_u = R(θ)^T (p_w - t)
+    </div>
+  </div>
+</div>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const txt = document.getElementById('txt');
+
+const S = 40; // pixels per 1 unit
+const world = {ox: c.width/2, oy: c.height/2};
+
+let state = {
+  tx: 3.0, ty: 1.5, theta: Math.PI/6,
+  pu: {x: 1.5, y: 0.7},
+};
+
+function R(theta){
+  const c=Math.cos(theta), s=Math.sin(theta);
+  return [[c,-s],[s,c]];
+}
+function RT(theta){
+  const c=Math.cos(theta), s=Math.sin(theta);
+  return [[c,s],[-s,c]];
+}
+function matVec(M,v){ return {x:M[0][0]*v.x + M[0][1]*v.y, y:M[1][0]*v.x + M[1][1]*v.y}; }
+function add(a,b){ return {x:a.x+b.x, y:a.y+b.y}; }
+function sub(a,b){ return {x:a.x-b.x, y:a.y-b.y}; }
+function toPix(p){ return {x: world.ox + p.x*S, y: world.oy - p.y*S}; }
+function fromPix(px){ return {x:(px.x-world.ox)/S, y:(world.oy-px.y)/S}; }
+
+function pwFromPu(){
+  const M = R(state.theta);
+  const t = {x:state.tx, y:state.ty};
+  return add(matVec(M,state.pu), t);
+}
+function puFromPw(pw){
+  const t = {x:state.tx, y:state.ty};
+  const v = sub(pw,t);
+  return matVec(RT(state.theta), v);
+}
+
+function drawAxis(origin, theta, label){
+  const oPix = toPix(origin);
+  const M = R(theta);
+  const xEnd = add(origin, matVec(M,{x:2,y:0}));
+  const yEnd = add(origin, matVec(M,{x:0,y:2}));
+  const xPix = toPix(xEnd), yPix = toPix(yEnd);
+
+  ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(oPix.x,oPix.y); ctx.lineTo(xPix.x,xPix.y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(oPix.x,oPix.y); ctx.lineTo(yPix.x,yPix.y); ctx.stroke();
+
+  ctx.fillText(label, oPix.x+6, oPix.y-6);
+  ctx.fillText('X', xPix.x+4, xPix.y+4);
+  ctx.fillText('Y', yPix.x+4, yPix.y+4);
+}
+
+function draw(){
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.font='14px system-ui';
+
+  drawAxis({x:0,y:0},0,'World');
+  const uo = {x:state.tx,y:state.ty};
+  drawAxis(uo,state.theta,'User');
+
+  const uoPix = toPix(uo);
+  ctx.strokeRect(uoPix.x-6, uoPix.y-6, 12, 12);
+
+  const xHandleW = add(uo, matVec(R(state.theta), {x:2.2,y:0}));
+  const xHandlePix = toPix(xHandleW);
+  ctx.beginPath(); ctx.arc(xHandlePix.x, xHandlePix.y, 6, 0, Math.PI*2); ctx.stroke();
+
+  const pw = pwFromPu();
+  const pwPix = toPix(pw);
+  ctx.beginPath(); ctx.arc(pwPix.x, pwPix.y, 6, 0, Math.PI*2); ctx.fill();
+
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(uoPix.x, uoPix.y); ctx.lineTo(pwPix.x, pwPix.y); ctx.stroke();
+  ctx.setLineDash([]);
+
+  const M = R(state.theta);
+  txt.textContent =
+`User frame in World:
+  t = [ ${state.tx.toFixed(3)}, ${state.ty.toFixed(3)} ]^T
+  θ = ${(state.theta*180/Math.PI).toFixed(1)} deg
+
+Rotation matrix R(θ):
+  [ ${M[0][0].toFixed(3)}  ${M[0][1].toFixed(3)} ]
+  [ ${M[1][0].toFixed(3)}  ${M[1][1].toFixed(3)} ]
+
+Point in User:
+  p_u = [ ${state.pu.x.toFixed(3)}, ${state.pu.y.toFixed(3)} ]^T
+
+Point in World:
+  p_w = R p_u + t
+      = [ ${pw.x.toFixed(3)}, ${pw.y.toFixed(3)} ]^T
+`;
+}
+
+let drag=null;
+function hit(px,py,cx,cy,r){ const dx=px-cx, dy=py-cy; return dx*dx+dy*dy <= r*r; }
+
+c.addEventListener('mousedown', (e)=>{
+  const rect=c.getBoundingClientRect();
+  const px=e.clientX-rect.left, py=e.clientY-rect.top;
+
+  const uo = {x:state.tx,y:state.ty};
+  const uoPix=toPix(uo);
+
+  const xHandleW = add(uo, matVec(R(state.theta), {x:2.2,y:0}));
+  const xHandlePix = toPix(xHandleW);
+
+  const pw = pwFromPu();
+  const pwPix = toPix(pw);
+
+  if (Math.abs(px-uoPix.x)<=8 && Math.abs(py-uoPix.y)<=8) drag='origin';
+  else if (hit(px,py,xHandlePix.x,xHandlePix.y,10)) drag='rot';
+  else if (hit(px,py,pwPix.x,pwPix.y,10)) drag='point';
+});
+
+window.addEventListener('mouseup', ()=>drag=null);
+
+c.addEventListener('mousemove', (e)=>{
+  if (!drag) return;
+  const rect=c.getBoundingClientRect();
+  const px=e.clientX-rect.left, py=e.clientY-rect.top;
+  const w = fromPix({x:px,y:py});
+
+  if (drag==='origin'){ state.tx=w.x; state.ty=w.y; }
+  else if (drag==='rot'){
+    const uo = {x:state.tx,y:state.ty};
+    const v = sub(w, uo);
+    state.theta = Math.atan2(v.y, v.x);
+  } else if (drag==='point'){
+    state.pu = puFromPw(w);
+  }
+  draw();
+});
+
+draw();
+</script>
+</body>
+</html>

@@ -312,6 +312,7 @@ li::marker {
   min-height: 0;
   align-items: stretch;
   padding-top: 10px;
+  align-items: center;
 }
 
 .two-col > div {
@@ -628,7 +629,7 @@ body.print-mode .brand-bar {
   justify-content: center;
   overflow: hidden;
   border-radius: 14px;
-  background: rgba(15, 23, 42, 0.35);
+  background: rgba(255, 255, 255, 0.35);
   border: 1px solid rgba(226, 232, 240, 0.12);
 }
 
@@ -718,3 +719,86 @@ body.print-mode .brand-bar {
 }
 
 /* You can add more UO-specific tweaks later if you like */
+
+/* ---------- Universal media sizing: never crop, never overflow ---------- */
+
+/* Set the maximum area an image/video is allowed to occupy on a slide */
+:root {
+  --media-max-w: 520px; 
+  --media-max-h: 380px; 
+}
+
+.media-stage,
+.media {
+  width: 100%;
+  max-width: var(--media-max-w);
+  /* Use height: auto or a flexible max-height */
+  height: var(--media-max-h); 
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* This prevents the "container" from cutting off the image */
+  overflow: visible; 
+  background: transparent; /* Ensures no weird boxes behind tall images */
+}
+
+/* The actual image/video fits INSIDE the box */
+.media-stage img,
+.media-stage video,
+.media img,
+.media video {
+  /* Crucial: 'contain' ensures the whole image is visible within the bounds */
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  
+  object-fit: contain; 
+  display: block;
+  
+  /* Added: ensures the image doesn't stretch if it's smaller than the box */
+  flex-shrink: 0; 
+}
+
+/* If you have iframes/widgets, they still need to be contained */
+.media-stage iframe {
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 16 / 9; /* Optional: forces a standard shape */
+}
+
+/* Container for the stacked images */
+.gallery-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Start from top */
+  overflow-y: auto;           /* Allow scrolling if too many images */
+  gap: 0;                     /* Seamless connection */
+  background: #f8fafc;        /* Slight background to define the "unit" */
+}
+
+/* Individual images in the stack */
+.stacked-media {
+  display: block;
+  width: 100%;                /* Stretch to container width */
+  height: auto !important;    /* Let height be natural */
+  max-height: none !important;/* Don't restrict height per-image */
+  border-bottom: 1px solid rgba(0,0,0,0.1); /* Subtle "seam" line */
+}
+
+/* Remove border from the last image */
+.stacked-media:last-child {
+  border-bottom: none;
+}
+
+/* Ensure the scrollbar is thin and clean */
+.gallery-stack::-webkit-scrollbar {
+  width: 6px;
+}
+.gallery-stack::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
