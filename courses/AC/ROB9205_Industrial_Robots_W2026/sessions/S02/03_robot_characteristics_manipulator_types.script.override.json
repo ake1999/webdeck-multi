@@ -1,0 +1,99 @@
+{
+  "schema_version": "phase5-script-override-v1",
+  "topic_id": "03_robot_characteristics_manipulator_types",
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Reach vs Workspace (common confusion)"
+      },
+      "voice_style": "compare_explain",
+      "segments": [
+        {
+          "segment_id": "seg_reach",
+          "target_element": "left_bullet_1",
+          "text": "Reach is just the maximum distance the robot can extend from its base.",
+          "tone": "compare_explain",
+          "energy": 0.58,
+          "pace": 0.95,
+          "emphasis_words": [
+            "maximum distance",
+            "base"
+          ],
+          "attention_mode": "hybrid_focus",
+          "avatar_behavior_hint": "point_right_mid",
+          "delivery_kind": "compare"
+        },
+        {
+          "segment_id": "seg_workspace",
+          "target_element": "left_bullet_2",
+          "text": "Workspace is broader because it means the full region where the end effector can actually operate.",
+          "tone": "compare_explain",
+          "energy": 0.6,
+          "pace": 0.94,
+          "emphasis_words": [
+            "full region",
+            "actually operate"
+          ],
+          "attention_mode": "hybrid_focus",
+          "avatar_behavior_hint": "explain_open_hand",
+          "delivery_kind": "compare"
+        },
+        {
+          "segment_id": "seg_visual",
+          "target_element": "right_image_1",
+          "text": "So for cell planning, the workspace picture matters more than the single reach number.",
+          "tone": "compare_explain",
+          "energy": 0.6,
+          "pace": 0.95,
+          "emphasis_words": [
+            "cell planning",
+            "workspace picture"
+          ],
+          "attention_mode": "hybrid_focus",
+          "avatar_behavior_hint": "point_right_mid",
+          "delivery_kind": "compare"
+        }
+      ]
+    },
+    {
+      "slide_ref": {
+        "index": 29,
+        "source_title": "Interactive: 6-axis articulated joint motion (RRRRRR)"
+      },
+      "voice_style": "energetic_demo",
+      "segments": [
+        {
+          "segment_id": "seg_demo_1",
+          "target_element": "left_iframe_1",
+          "text": "Watch the first three joints first, because they mainly place the arm in space.",
+          "tone": "energetic_demo",
+          "energy": 0.68,
+          "pace": 0.98,
+          "emphasis_words": [
+            "first three joints",
+            "place the arm"
+          ],
+          "attention_mode": "hybrid_focus",
+          "avatar_behavior_hint": "widget_demo",
+          "delivery_kind": "demo"
+        },
+        {
+          "segment_id": "seg_demo_2",
+          "target_element": "left_iframe_1",
+          "text": "Then look at joints four to six, because that wrist set mainly controls orientation.",
+          "tone": "energetic_demo",
+          "energy": 0.69,
+          "pace": 0.99,
+          "emphasis_words": [
+            "joints four to six",
+            "orientation"
+          ],
+          "attention_mode": "hybrid_focus",
+          "avatar_behavior_hint": "widget_demo",
+          "delivery_kind": "demo"
+        }
+      ]
+    }
+  ]
+}

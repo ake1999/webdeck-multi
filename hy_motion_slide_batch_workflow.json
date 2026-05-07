@@ -1,0 +1,339 @@
+{
+  "last_node_id": 8,
+  "last_link_id": 7,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "HYMotionLoadNetwork",
+      "pos": [
+        40,
+        40
+      ],
+      "size": [
+        280,
+        90
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "network",
+          "type": "*",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HYMotionLoadNetwork"
+      },
+      "widgets_values": [
+        "HY-Motion-1.0-Lite"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "HYMotionLoadLLM",
+      "pos": [
+        40,
+        180
+      ],
+      "size": [
+        320,
+        120
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "llm",
+          "type": "*",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HYMotionLoadLLM"
+      },
+      "widgets_values": [
+        "Qwen3-8B-bnb-4bit",
+        "bnb-4bit",
+        true
+      ]
+    },
+    {
+      "id": 3,
+      "type": "HYMotionEncodeText",
+      "pos": [
+        420,
+        150
+      ],
+      "size": [
+        480,
+        180
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "llm",
+          "type": "*",
+          "link": 2
+        }
+      ],
+      "outputs": [
+        {
+          "name": "conditioning",
+          "type": "*",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HYMotionEncodeText"
+      },
+      "widgets_values": [
+        "__HYMOTION_INSTRUCTION__"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "HYMotionGenerate",
+      "pos": [
+        960,
+        110
+      ],
+      "size": [
+        320,
+        160
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "network",
+          "type": "*",
+          "link": 1
+        },
+        {
+          "name": "conditioning",
+          "type": "*",
+          "link": 3
+        }
+      ],
+      "outputs": [
+        {
+          "name": "motion_data",
+          "type": "*",
+          "links": [
+            4,
+            5
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HYMotionGenerate"
+      },
+      "widgets_values": [
+        6,
+        123456789,
+        4.0,
+        1
+      ]
+    },
+    {
+      "id": 5,
+      "type": "HYMotionPreview",
+      "pos": [
+        1330,
+        60
+      ],
+      "size": [
+        280,
+        100
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "motion_data",
+          "type": "*",
+          "link": 4
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "HYMotionPreview"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 6,
+      "type": "HYMotionPreviewAnimation",
+      "pos": [
+        1330,
+        200
+      ],
+      "size": [
+        340,
+        120
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "motion_data",
+          "type": "*",
+          "link": 5
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "HYMotionPreviewAnimation"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 7,
+      "type": "HYMotionSaveNPZ",
+      "pos": [
+        1340,
+        360
+      ],
+      "size": [
+        320,
+        120
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "motion_data",
+          "type": "*",
+          "link": 6
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "HYMotionSaveNPZ"
+      },
+      "widgets_values": [
+        "webdeck_hy_motion",
+        "__SLIDE_ID__"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "HYMotionExportFBX",
+      "pos": [
+        1340,
+        520
+      ],
+      "size": [
+        360,
+        180
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "motion_data",
+          "type": "*",
+          "link": 7
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "HYMotionExportFBX"
+      },
+      "widgets_values": [
+        "webdeck_hy_motion",
+        "__SLIDE_ID__",
+        "",
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      4,
+      0,
+      "*"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      0,
+      "*"
+    ],
+    [
+      3,
+      3,
+      0,
+      4,
+      1,
+      "*"
+    ],
+    [
+      4,
+      4,
+      0,
+      5,
+      0,
+      "*"
+    ],
+    [
+      5,
+      4,
+      0,
+      6,
+      0,
+      "*"
+    ],
+    [
+      6,
+      4,
+      0,
+      7,
+      0,
+      "*"
+    ],
+    [
+      7,
+      4,
+      0,
+      8,
+      0,
+      "*"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.8,
+      "offset": [
+        148.0,
+        37.0
+      ]
+    },
+    "notes": "Basic HY-Motion workflow for WebDeck slide motion generation. The batch runner injects the motion instruction into HYMotionEncodeText, injects slide duration into HYMotionGenerate, then saves NPZ and FBX per slide."
+  },
+  "version": 0.4
+}

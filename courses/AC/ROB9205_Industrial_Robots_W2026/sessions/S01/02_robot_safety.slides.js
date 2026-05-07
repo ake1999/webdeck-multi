@@ -4,6 +4,8 @@ export const topicMeta = {
   duration: 60 // or whatever feels right
 };
 
+const A = (relPath) => new URL(relPath, import.meta.url).href;
+
 const slidesData = [
   // ---------- Page 1 ----------
   {
@@ -83,14 +85,12 @@ const slidesData = [
       ],
     },
     right: {
-      html: `
-        <figure class="media">
-          <img src="./media/robot_safety_estop.png" alt="E-Stop" class="fit-contain"/>
-          <figcaption class="muted" style="font-size:14px; margin-top:8px;">
-            Source: Robot Safety.pdf (E-Stop image).
-          </figcaption>
-        </figure>
-      `,
+      media: {
+        kind: "image",
+        src: A("./media/robot_safety_estop.png"),
+        alt: "E-Stop",
+        source: "Robot Safety.pdf (E-Stop image)",
+      },
     },
     notes:
       "Now; Emergency Stops. Before you run anything, you must physically identify the E-stops in your area. Not ‘I think it’s over there’; you point to it. If anything looks unsafe; unexpected motion, collision risk, someone stepping into the work area; hit the E-stop. You will never be penalized for stopping the robot for safety. In fact, I prefer a ‘false alarm’ over a real injury. Today in the lab we’ll assign one person as the E-stop person; your safety driver.",
@@ -204,14 +204,12 @@ const slidesData = [
     title: "Safety: Safety Measures",
     left: { lead: "Infrared Safety Light Curtains", bullets: [] },
     right: {
-      html: `
-        <figure class="media">
-          <img src="./media/robot_safety_p08.png" alt="Infrared Safety Light Curtains diagram" class="fit-contain"/>
-          <figcaption class="muted" style="font-size:14px; margin-top:8px;">
-            Source: Robot Safety.pdf, page 8.
-          </figcaption>
-        </figure>
-      `,
+      media: {
+        kind: "image",
+        src: A("./media/robot_safety_p08.png"),
+        alt: "Infrared Safety Light Curtains diagram",
+        source: "Robot Safety.pdf, page 8",
+      },
     },
     notes:
       "Here’s an example of an engineered safety control: infrared light curtains. There’s a transmitter and a receiver creating a ‘wall’ of invisible beams. If anything breaks that beam; like a hand entering the cell; the system can trigger a stop. The key idea is layered safety: rules help, but physical safeguards reduce risk even when humans make mistakes.",
@@ -224,14 +222,12 @@ const slidesData = [
     title: "Safety: Safety Measures",
     left: { lead: "Workcell barriers / guarded areas", bullets: [] },
     right: {
-      html: `
-        <figure class="media">
-          <img src="./media/robot_safety_p09.png" alt="Robot workcell illustration with safety barrier" class="fit-contain"/>
-          <figcaption class="muted" style="font-size:14px; margin-top:8px;">
-            Source: Robot Safety.pdf, page 9.
-          </figcaption>
-        </figure>
-      `,
+      media: {
+        kind: "image",
+        src: A("./media/robot_safety_p09.png"),
+        alt: "Robot workcell illustration with safety barrier",
+        source: "Robot Safety.pdf, page 9",
+      },
     },
     notes:
       "This is what a guarded workcell looks like. Barriers, fencing, and controlled access keep people out of the robot’s danger zone during operation. In our lab we may not have a full industrial cell, but the principle is identical: define the envelope, keep people out during motion, and control access with clear procedures and an E-stop person.",

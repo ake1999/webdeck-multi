@@ -1,0 +1,804 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_course_intro_and_expectations",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start by framing the course as applied robotics training, not just a sequence of slides.",
+    "progression": "Move through expectations, course structure, lab behavior, and how students should approach the semester.",
+    "destination": "Students should finish with a clear picture of the course rhythm and the mindset needed for safe, effective labs.",
+    "tone": "welcoming, practical, expectation-setting",
+    "methods": [
+      "intuition",
+      "compare/contrast",
+      "guided practice",
+      "recap",
+      "overview",
+      "examples",
+      "norm-setting"
+    ]
+  },
+  "audience_level": "undergraduate industrial robotics students preparing for labs, robot selection, and basic programming decisions",
+  "topic_goal": "Align students on how the industrial robotics course works, what the labs expect, and what successful participation looks like.",
+  "topic_takeaways": [
+    "Students should know how lectures, labs, and evaluation fit together.",
+    "Students should understand the level of professionalism expected in robotics labs.",
+    "Students should leave knowing the habits that will help them succeed in the course."
+  ],
+  "style_notes": [
+    "Keep the tone practical and shop-floor oriented.",
+    "Translate definitions into robot-cell decisions quickly.",
+    "Prefer concrete industrial examples over abstract theory when possible.",
+    "Be encouraging but clear about responsibility.",
+    "Translate logistics into why they matter for lab quality and teamwork."
+  ],
+  "transition_style": "Move from why the course matters to how students will work, then to how they will be evaluated and supported.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "none",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Welcome to ROB9205"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome everyone to ROB nine two zero five, Industrial Robot Fundamentals. My name is Ali Karimzadeh.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Align students on how the industrial robotics course works, what the labs expect, and what successful participation looks like.",
+      "transition_to_next": "Carry this idea forward into What you can expect from this course so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame Welcome to ROB9205 as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Welcome to ROB9205 connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Welcome to ROB9205 sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "What you can expect from this course"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Here’s the big picture. First, you’ll learn to find and follow safety procedures; because with robots, safety is not optional.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Find, learn, and follow relevant safety procedures when handling robot equipment.",
+        "Learn the basic terminology of industrial robots.",
+        "Understand the dynamics underlying robots.",
+        "Understand the major components of a robot and their function."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Welcome to ROB9205 into What you can expect from this course so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into What you can expect from this course (continued) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use What you can expect from this course to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep What you can expect from this course connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how What you can expect from this course sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "What you can expect from this course (continued)"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "This course is hands-on. You’ll operate a robot arm, and you’ll also troubleshoot; because real work is not perfect.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Gain hands-on experience operating and troubleshooting a robot arm.",
+        "Read and use operators’ manuals and technical resources.",
+        "Interface robotic systems with external components.",
+        "Work independently and learn to operate in a workplace-style environment."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from What you can expect from this course into What you can expect from this course (continued) so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Class expectations so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use What you can expect from this course (continued) to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep What you can expect from this course (continued) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how What you can expect from this course (continued) sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Class expectations"
+      },
+      "slide_role": "setup",
+      "importance": "medium",
+      "narration_seed": "Let’s be clear about expectations. You will work in groups; because that’s how we can share limited equipment fairly and safely.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Work in groups.",
+        "Try to troubleshoot on your own before asking for help.",
+        "Be respectful of others and the equipment.",
+        "Manage deadlines on your own."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from What you can expect from this course (continued) into Class expectations so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Lab behaviour (5% of final grade) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Class expectations to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Class expectations connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Class expectations sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Lab behaviour (5% of final grade)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Lab behaviour counts for five percent, and everyone starts at one hundred percent. The way you keep it is simple: complete your labs properly and get your sign-off.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "All students begin the year at 100% for lab behaviour.",
+        "To keep 100%:",
+        "Complete all labs and receive a sign-off.",
+        "Sign-offs require you demonstrate the lab and answer questions about the material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Lab behaviour (5% of final grade) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Lab behaviour (5% of final grade) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Lab behaviour (5% of final grade) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Lab behaviour (5% of final grade) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Lab behaviour (5% of final grade) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Lab behaviour: what causes deductions"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Here are examples of what will cost you marks. Any safety violation is serious.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Breaking safety rules.",
+        "Exposing equipment to risks.",
+        "Disrespecting lab policies (including running or using your cell phone).",
+        "Disrespecting other students or faculty."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Lab behaviour: what causes deductions to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Lab behaviour: what causes deductions is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Lab behaviour: what causes deductions in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Lab behaviour: what causes deductions connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Lab behaviour: what causes deductions accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Preparation & in-class points"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Most classes require preparation, and I’ll post the tasks before class begins. The grading here is straightforward: you earn points by showing up on time, staying to the end, and doing the prep.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Every class will have preparation required.",
+        "Preparation tasks will be posted in an announcement before class begins.",
+        "A-grade points are assigned for each class:",
+        "1 point: arriving on time"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Preparation & in-class points to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Preparation & in-class points is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Preparation & in-class points in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Preparation & in-class points connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Preparation & in-class points accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Course grading scheme"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "This is the grading breakdown. You’ll have a safety quiz, two quizzes that total ten percent, a project proposal worth three percent, a project update worth two percent, and the course project worth twenty percent.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Safety Quiz",
+        "Quizzes (10%, 2 × 5%)",
+        "Project proposal (3%)",
+        "Project update (2%)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Course grading scheme to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Course grading scheme is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Course grading scheme in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Course grading scheme connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Course grading scheme accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Quizzes and tests"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "For quizzes and tests, the rule is: if it was taught in lecture, it can be tested. The one exception is the robot theory test, which is more focused on lab material.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "All material is based on in-class lectures, except the robot theory test which focuses on lab material.",
+        "Quizzes appear online 5 days prior to a test.",
+        "Quizzes act as practice and show the types of questions to expect.",
+        "Give students a moment to decide before explaining the answer.",
+        "Tests may be online during class time or given as a take-home assignment with a 24-hour deadline."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quizzes and tests and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quizzes and tests without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quizzes and tests into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quizzes and tests question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Robot labs"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Because we have fewer robots than students, labs must be done in groups of four, and that aligns with your project groups. Before you touch anything, read the lab instructions carefully; most mistakes come from skipping steps.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "There are significantly fewer robots than students ; labs must be completed in groups of four (same as project groups).",
+        "Review lab instructions thoroughly before starting.",
+        "Complete labs strictly following the provided guidelines.",
+        "Present completed labs to the instructor for approval and sign-off."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Robot labs to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Robot labs is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Robot labs in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Robot labs connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Robot labs accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Lab test"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Near the end of the term, you’ll have a lab test. It’s hands-on and individual.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "The lab test occurs at the end of the term.",
+        "It is a hands-on test.",
+        "Each individual works independently to handle a challenge given on the day of the test."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Lab test to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Lab test is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Lab test in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Lab test connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Lab test accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Final project (overview)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Your final project is about designing a robotics system that uses inputs and outputs to solve a real problem. The full requirements are posted in the FINAL PROJECT section, so read those early.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Design a robotics system involving inputs and outputs to solve a problem.",
+        "Full details are in “Combined Project Requirements” under the FINAL PROJECT section.",
+        "A final project report is required in week 13.",
+        "Two steps to project grading:"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Final project (overview) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Final project (overview) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Final project (overview) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Final project (overview) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Final project (overview) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Project proposal"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "The project proposal is due online in week three. It should clearly define the problem you’re solving, what the solution must do; your requirements; who is on the team, and your high-level plan for how you’ll build it.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Due week 3 (online).",
+        "Must define the project including:",
+        "The problem to be solved",
+        "The requirements of the solution"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Project proposal to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Project proposal is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Project proposal in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Project proposal connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Project proposal accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Project update (week 9)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "In week nine, you’ll give a project update. This is a short progress checkpoint.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Demonstrate the progress made on your project.",
+        "Out of 2:",
+        "2 = reasonable progress (~50% done)",
+        "1 = moderate progress (30–50% done)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Project update (week 9) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Project update (week 9) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Project update (week 9) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Project update (week 9) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Project update (week 9) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Questions?"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Before we move on, what questions do you have? I want you to feel comfortable asking questions; especially about safety and lab procedures.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Ask anytime ; especially about safety and lab procedures.",
+        "If you’re unsure: stop, ask, and verify before proceeding."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Questions? to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Questions? is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Questions? in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Questions? connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Questions? accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Where to find information (and who to talk to)"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "In industry, your job is often to figure things out quickly and safely. Start with the people closest to the equipment: operators usually know the practical details and common issues.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Operators: the people already working on equipment often know it best. Be respectful, listen, and remember.",
+        "Other technicians: stay engaged with others; their experience can point you in the right direction.",
+        "Equipment company contact: suppliers frequently provide support; contact them for significant repair issues.",
+        "Internet forums (be careful)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Where to find information (and who to talk to) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Keep Where to find information (and who to talk to) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Where to find information (and who to talk to) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Important documents"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "These are the three document types you will use constantly. The user’s manual teaches safe operation, setup, maintenance, and troubleshooting.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "User’s Manual (Robot)",
+        "Programming Manual (Robot)",
+        "Datasheets (Electronic components)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Important documents to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Important documents is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Important documents in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Important documents connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Important documents accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "User’s Manual: what it should contain"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "When you open a user’s manual, look for specific sections. Safety comes first: e-stops, recovery steps, and warnings.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Safety concerns, e-stops, and how to reset/recover safely.",
+        "Model and manufacturer information.",
+        "Technical specifications (robot arm, controller, teach pendant, optional hardware).",
+        "Unpacking and setup procedures."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use User’s Manual: what it should contain to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once User’s Manual: what it should contain is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define User’s Manual: what it should contain in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep User’s Manual: what it should contain connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain User’s Manual: what it should contain accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Programming Manual: why it matters"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "The programming manual is where you learn how to control the robot correctly. It gives you the exact syntax for motion and commands.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Teaches how to program the robot.",
+        "Provides syntax for specifying robot motion.",
+        "Describes commands available in the robot.",
+        "Sometimes explains how movements are executed (example: approach command in CRS manual)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Programming Manual: why it matters to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Programming Manual: why it matters is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Programming Manual: why it matters in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Programming Manual: why it matters connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Programming Manual: why it matters accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "Datasheets"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Datasheets are the truth for electronic components. They tell you what voltage a device expects, how much current it can draw, and how it communicates; like digital I-O, analog signals, or serial protocols.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Usually associated with specific electronic components.",
+        "Provide specifications such as:",
+        "Input voltage",
+        "Maximum current"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Datasheets to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Datasheets is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Datasheets in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Datasheets connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Datasheets accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "Other important documents"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Finally, remember that there are often multiple documents per system: an operator’s manual, a teach pendant manual, and manuals for accessories like grippers or sensors. The best technicians don’t rely on memory alone; they verify procedures and safety steps before they power up or move a robot.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Operator’s manual",
+        "Teach pendant manual",
+        "Documentation for individual accessories",
+        "Always review relevant documentation before starting up or operating equipment."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Other important documents to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish with a clear picture of the course rhythm and the mindset needed for safe, effective labs.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Other important documents in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Other important documents connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Other important documents accurately and use it in the next step of the lesson."
+    }
+  ]
+}

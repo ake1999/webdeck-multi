@@ -1,0 +1,34 @@
+{
+  "segments": [
+    {
+      "segment_id": "seg_bridge",
+      "text": "We just separated reach from workspace, so now use this number as a quick datasheet check, not as the whole story.",
+      "target_element": "title",
+      "tone": "compare_explain",
+      "energy": 0.58,
+      "pace": 0.95,
+      "emphasis_words": [
+        "datasheet check",
+        "whole story"
+      ],
+      "attention_mode": "hybrid_focus",
+      "avatar_behavior_hint": "explain_open_hand",
+      "delivery_kind": "compare"
+    },
+    {
+      "segment_id": "seg_focus",
+      "text": "When you choose a robot, this is where you ask whether the tool can actually work throughout the region the task needs.",
+      "target_element": "bullet_1",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.94,
+      "emphasis_words": [
+        "actually work",
+        "task needs"
+      ],
+      "attention_mode": "slide_focus",
+      "avatar_behavior_hint": "point_left_mid",
+      "delivery_kind": "explain"
+    }
+  ]
+}

@@ -1,0 +1,1339 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_frames_user_frames_fanuc",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the confusion students usually feel when the same point can be described in different frames.",
+    "progression": "Build intuition first, then connect frames to Fanuc programming practice.",
+    "destination": "Students should finish able to explain and use user frames as a practical programming tool.",
+    "tone": "visual, intuitive, confidence-building",
+    "methods": [
+      "intuition",
+      "compare/contrast",
+      "guided practice",
+      "recap",
+      "mental model",
+      "visual intuition",
+      "Fanuc application"
+    ]
+  },
+  "audience_level": "undergraduate industrial robotics students preparing for labs, robot selection, and basic programming decisions",
+  "topic_goal": "Make frames feel intuitive so students can understand and use user frames confidently in Fanuc programming.",
+  "topic_takeaways": [
+    "Students should understand that a frame changes how motion is described, not where the robot physically is.",
+    "Students should distinguish world, tool, and user frames.",
+    "Students should be able to explain why user frames simplify programming relative to part geometry."
+  ],
+  "style_notes": [
+    "Keep the tone practical and shop-floor oriented.",
+    "Translate definitions into robot-cell decisions quickly.",
+    "Prefer concrete industrial examples over abstract theory when possible.",
+    "Use moving-object examples to make frame attachment intuitive.",
+    "Pause often to separate physical motion from coordinate description."
+  ],
+  "transition_style": "Move from the industrial question students would ask on the job to the next specification, control, or programming choice they need to make.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "preferred",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Frames, Motion, and FANUC User Frames"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "2D first. Then connect to FANUC user frames and Lab 5.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Make frames feel intuitive so students can understand and use user frames confidently in Fanuc programming.",
+      "transition_to_next": "Carry this idea forward into Session Roadmap so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Frame Frames, Motion, and FANUC User Frames as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Frames, Motion, and FANUC User Frames connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Frames, Motion, and FANUC User Frames sets up the lesson and why the topic matters.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Session Roadmap"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use Session Roadmap to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "1) Frames (origin + axes)",
+        "2) 2D translation and rotation",
+        "3) Transform formulas (forward + inverse)",
+        "4) Robot frames: Base / Tool / User"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Frames, Motion, and FANUC User Frames into Session Roadmap so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into What is a Frame? (start in 2D) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Session Roadmap to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Session Roadmap connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Session Roadmap sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "What is a Frame? (start in 2D)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for What is a Frame? (start in 2D) using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "A frame is a local coordinate system",
+        "It has an origin and axes (X, Y in 2D)",
+        "A point like (2,1) only has meaning in a frame",
+        "Robotics uses many frames at once (base, tool, user…)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Quiz: frame meaning so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Build a picture for What is a Frame? (start in 2D) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep What is a Frame? (start in 2D) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture What is a Frame? (start in 2D) clearly before the formal details continue.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Quiz: frame meaning"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: frame meaning into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "You wrote a point as (200, 50). What is missing to make this meaningful?",
+        "Coordinates must be expressed in a specific frame (World, User, Tool, etc.).",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: frame meaning and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Turn Quiz: frame meaning into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: frame meaning question on their own and explain the reasoning.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "In 3D we add Z (right-handed)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define In 3D we add Z (right-handed) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "2D idea stays the same; 3D just adds Z",
+        "Right-hand rule: curl +X to +Y, thumb points +Z",
+        "In FANUC: frames are right-handed (X,Y,Z)",
+        "We won’t do heavy 3D derivations today — focus on correct usage"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use In 3D we add Z (right-handed) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once In 3D we add Z (right-handed) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define In 3D we add Z (right-handed) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep In 3D we add Z (right-handed) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain In 3D we add Z (right-handed) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Main frames you must know"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Main frames you must know using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Base frame: fixed to robot base",
+        "Tool frame (TCP): attached to tool tip",
+        "User frame: attached to table/fixture/part",
+        "Same physical point → different numbers in each frame"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Why frames matter (technician reality) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Build a picture for Main frames you must know first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Main frames you must know connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Main frames you must know clearly before the formal details continue.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Why frames matter (technician reality)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Why frames matter (technician reality) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Wrong frame = robot moves in the wrong direction",
+        "Wrong TCP = correct direction but wrong path/height",
+        "Wrong user frame = points look shifted/tilted on the part",
+        "Best habit: always check active UFRAME/UTOOL before teaching points"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Why frames matter (technician reality) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Why frames matter (technician reality) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Define Why frames matter (technician reality) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Why frames matter (technician reality) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Why frames matter (technician reality) accurately and use it in the next step of the lesson.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Quiz: identify the most likely mistake"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: identify the most likely mistake into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Robot follows the correct XY shape, but the entire path is consistently 5 mm too high everywhere. Most likely issue?",
+        "A constant Z offset everywhere is typically TCP/UTOOL or height reference, not a user-frame axis direction.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: identify the most likely mistake and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: identify the most likely mistake without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: identify the most likely mistake into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: identify the most likely mistake question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "World vs User: same point, different coordinates"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Compare the alternatives or concepts on World vs User: same point, different coordinates clearly, emphasize the trade-off, and end with the decision rule students should remember.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "A point can have different numbers in different frames",
+        "World might show (350,120,0)",
+        "User might show (50,20,0)",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Same physical point — new reference"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Quiz: identify the most likely mistake into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Contrast the alternatives on World vs User: same point, different coordinates explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of World vs User: same point, different coordinates and know which side fits which situation.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Pure translation (2D): shift origin, keep axes parallel"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Pure translation (2D): shift origin, keep axes parallel using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Translation = sliding without turning",
+        "Axes stay parallel (same orientation)",
+        "Only the origin changes: (t=[t_x,t_y]^T)",
+        "This matches a rigid fixture shift (no rotation)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Translation in 2D (exact) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Instructor-generated diagram (original)"
+      ],
+      "explanation_style": "Build a picture for Pure translation (2D): shift origin, keep axes parallel first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Pure translation (2D): shift origin, keep axes parallel connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Pure translation (2D): shift origin, keep axes parallel clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Translation in 2D (exact)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Translation in 2D (exact) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "$$p_w = p_u + t$$",
+        "$$p_w=\\begin{bmatrix}x_w\\\\y_w\\end{bmatrix},\\quad p_u=\\begin{bmatrix}x_u\\\\y_u\\end{bmatrix},\\quad t=\\begin{bmatrix}t_x\\\\t_y\\end{bmatrix}$$",
+        "Meaning: add the new frame’s origin shift to get world coordinates."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Translation in 2D (exact) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Translation in 2D (exact) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Translation in 2D (exact) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Translation in 2D (exact) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Translation in 2D (exact) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Quiz: fixture shifted"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: fixture shifted into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "A fixture moves +10 mm in User X and +0 mm in User Y (no rotation). Your points were taught in that user frame. Best action?",
+        "A rigid shift is exactly what user frames are for: update the frame (origin), not each point.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: fixture shifted and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: fixture shifted without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: fixture shifted into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: fixture shifted question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Pure rotation (2D): same origin, axes turn by θ"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Pure rotation (2D): same origin, axes turn by θ using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Rotation = turning without sliding",
+        "Origin stays fixed",
+        "Axes directions change by angle (\\theta)",
+        "This matches a fixture that is rotated on the table"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Rotation matrix in 2D (exact) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Instructor-generated diagram (original)"
+      ],
+      "explanation_style": "Build a picture for Pure rotation (2D): same origin, axes turn by θ first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Pure rotation (2D): same origin, axes turn by θ connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Pure rotation (2D): same origin, axes turn by θ clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Rotation matrix in 2D (exact)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Rotation matrix in 2D (exact) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "$$R(\\theta)=\\begin{bmatrix}\\cos\\theta & -\\sin\\theta\\\\ \\sin\\theta & \\cos\\theta\\end{bmatrix}$$",
+        "$$p_w = R(\\theta)\\,p_u$$",
+        "Interpretation: multiplying by (R(\\theta)) rotates coordinates."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Rotation matrix in 2D (exact) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Rotation matrix in 2D (exact) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Rotation matrix in 2D (exact) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Rotation matrix in 2D (exact) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Rotation matrix in 2D (exact) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Quiz: wrong rotation direction"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: wrong rotation direction into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "You rotate a frame +90° about Z, but your result looks like −90° (everything turns the opposite way). Most likely mistake?",
+        "For rotations, the inverse is the transpose. Using the inverse flips the direction of rotation.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: wrong rotation direction and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: wrong rotation direction without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: wrong rotation direction into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: wrong rotation direction question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Rotation + translation together (real setups)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Rotation + translation together (real setups) using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Most setups have both: rotate then translate",
+        "This is the standard frame conversion used in controllers",
+        "We call this a rigid transform"
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "frame",
+        "relative",
+        "transform"
+      ],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Forward + inverse formulas (memorize these) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Instructor-generated diagram (original)"
+      ],
+      "explanation_style": "Build a picture for Rotation + translation together (real setups) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Rotation + translation together (real setups) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Rotation + translation together (real setups) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Forward + inverse formulas (memorize these)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Forward + inverse formulas (memorize these) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "$$\\textbf{Forward:}\\quad p_w = R\\,p_u + t$$",
+        "$$\\textbf{Inverse:}\\quad p_u = R^T\\,(p_w - t)$$",
+        "Key fact: (R^{-1}=R^T) for rotation matrices (orthonormal).",
+        "This is why “undoing” a rotation is easy and stable."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "frame",
+        "relative",
+        "transform"
+      ],
+      "transition_from_previous": "Use Forward + inverse formulas (memorize these) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Forward + inverse formulas (memorize these) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Forward + inverse formulas (memorize these) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Forward + inverse formulas (memorize these) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Forward + inverse formulas (memorize these) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Quiz: Y axis is flipped (mirrored)"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: Y axis is flipped (mirrored) into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "You taught a user frame. Jog +X is correct, but jog +Y goes opposite (mirrored). Most likely cause?",
+        "Point 3 defines which side of the X axis is +Y (the plane direction). Wrong side flips Y.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: Y axis is flipped (mirrored) and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: Y axis is flipped (mirrored) without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: Y axis is flipped (mirrored) into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: Y axis is flipped (mirrored) question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "3D uses the same idea (homogeneous transform)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define 3D uses the same idea (homogeneous transform) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "$$T=\\begin{bmatrix}R & t\\\\0 & 1\\end{bmatrix}$$",
+        "$$\\begin{bmatrix}p_w\\\\1\\end{bmatrix}=T\\,\\begin{bmatrix}p_u\\\\1\\end{bmatrix}$$",
+        "$$T^{-1}=\\begin{bmatrix}R^T & -R^T t\\\\0 & 1\\end{bmatrix}$$",
+        "User frames fix rigid motion (translation + rotation), not scaling/warping."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "frame",
+        "relative",
+        "transform"
+      ],
+      "transition_from_previous": "Use 3D uses the same idea (homogeneous transform) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once 3D uses the same idea (homogeneous transform) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define 3D uses the same idea (homogeneous transform) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep 3D uses the same idea (homogeneous transform) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain 3D uses the same idea (homogeneous transform) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "2D Transform Playground (live numbers)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach 2D Transform Playground (live numbers) through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Drag User origin (square) → translation (t)",
+        "Drag rotation handle (circle) → angle (\\theta)",
+        "Drag point (dot) → changes (p_u)",
+        "Tell students exactly what to watch for in the visual or interactive material.",
+        "Observe live:"
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "frame",
+        "relative",
+        "transform"
+      ],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of 2D Transform Playground (live numbers) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Instructor interactive widget — frame2d_playground.html"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on 2D Transform Playground (live numbers) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep 2D Transform Playground (live numbers) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand what to watch for on 2D Transform Playground (live numbers) and why that visible behavior matters technically.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "FK vs IK (concept only — why frames matter)"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Compare the alternatives or concepts on FK vs IK (concept only — why frames matter) clearly, emphasize the trade-off, and end with the decision rule students should remember.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "FK: joints → tool pose (where is tool now?)",
+        "IK: desired pose → joints (how to reach it?)",
+        "Controller uses frames/TCP to define the pose",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Wrong UFRAME/UTOOL = controller solves the wrong target"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from 2D Transform Playground (live numbers) into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Contrast the alternatives on FK vs IK (concept only — why frames matter) explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of FK vs IK (concept only — why frames matter) and know which side fits which situation.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "FANUC User Frame = a frame attached to the job"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for FANUC User Frame = a frame attached to the job using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "User frame matches the fixture/part orientation",
+        "Teach points relative to the job, not the robot base",
+        "If fixture moves rigidly, update the frame → points still work",
+        "This is why user frames save hours of reteaching"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Quiz: weld line on 30° angled surface so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Build a picture for FANUC User Frame = a frame attached to the job first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep FANUC User Frame = a frame attached to the job connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture FANUC User Frame = a frame attached to the job clearly before the formal details continue.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "Quiz: weld line on 30° angled surface"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: weld line on 30° angled surface into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "You must weld a straight line on a surface tilted 30° relative to robot base. Best strategy?",
+        "Aligning the user frame to the part makes straight motion and orientation intuitive; controller handles transforms.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: weld line on 30° angled surface and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: weld line on 30° angled surface without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: weld line on 30° angled surface into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: weld line on 30° angled surface question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "What a User Frame can and cannot fix"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for What a User Frame can and cannot fix using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "User frame fixes rigid motion only",
+        "Rigid = translation + rotation",
+        "Not rigid = scale/warp/bad TCP/geometry change",
+        "If the part is larger (scale) → frame won’t fix it"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Quiz: part scaled (not rigid) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Build a picture for What a User Frame can and cannot fix first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep What a User Frame can and cannot fix connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture What a User Frame can and cannot fix clearly before the formal details continue.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "Quiz: part scaled (not rigid)"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: part scaled (not rigid) into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "A new batch of parts is ~2% larger (scaled). Can you fix it by updating only the User Frame?",
+        "Scaling changes distances between features. User frames only correct rigid shifts/rotations.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: part scaled (not rigid) and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: part scaled (not rigid) without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: part scaled (not rigid) into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: part scaled (not rigid) question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 25,
+        "source_title": "Lab 5 Goal (what you must do)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Lab 5 Goal (what you must do) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Teach a User Frame aligned with the board/template",
+        "Use the Three-Point method",
+        "Use the required frame number (ex: User 6 in your manual)",
+        "Verify +X +Y +Z jog directions before running the program"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Lab 5 Goal (what you must do) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Lab 5 Goal (what you must do) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Lab 5 Goal (what you must do) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Lab 5 Goal (what you must do) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Lab 5 Goal (what you must do) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 26,
+        "source_title": "Three-Point method: what the 3 points mean"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Three-Point method: what the 3 points mean using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "P1: Origin (new zero)",
+        "P2: defines +X direction (P1 → P2)",
+        "P3: defines which side is +Y (sets plane orientation)",
+        "Rule: spread points out for better accuracy"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Quiz: +X jog moves diagonally so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Instructor-generated diagram (original)"
+      ],
+      "explanation_style": "Build a picture for Three-Point method: what the 3 points mean first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Three-Point method: what the 3 points mean connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Three-Point method: what the 3 points mean clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 27,
+        "source_title": "Quiz: +X jog moves diagonally"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: +X jog moves diagonally into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "In User Frame jogging, +X should move along an edge, but it moves diagonally. Best fix?",
+        "Point 2 defines the X axis direction. If it’s off (or too close/noisy), +X becomes rotated/diagonal.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: +X jog moves diagonally and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: +X jog moves diagonally without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: +X jog moves diagonally into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: +X jog moves diagonally question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 28,
+        "source_title": "After teaching: fastest verification"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for After teaching: fastest verification using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Jog +X: should follow template X direction",
+        "Jog +Y: should follow template Y direction",
+        "Jog +Z: should go up (safe height)",
+        "If wrong: re-teach the frame points before running"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Pendant workflow (general) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Instructor-generated diagram (original)"
+      ],
+      "explanation_style": "Build a picture for After teaching: fastest verification first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep After teaching: fastest verification connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture After teaching: fastest verification clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 29,
+        "source_title": "Pendant workflow (general)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Pendant workflow (general) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "MENU → SETUP → FRAMES → USER (UFRAME)",
+        "Select frame number (ex: 6)",
+        "METHOD → Three Point",
+        "Record: Origin → X point → XY-plane point"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Pendant workflow (general) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Pendant workflow (general) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Pendant workflow (general) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Pendant workflow (general) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Pendant workflow (general) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 30,
+        "source_title": "Program habit (must-do every time)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Program habit (must-do every time) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "At start of program set frames explicitly:",
+        "Reason: if operator changed active frame, your program still runs correctly",
+        "If you forget this, robot can execute points in the wrong frame"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Program habit (must-do every time) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Program habit (must-do every time) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Program habit (must-do every time) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Program habit (must-do every time) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Program habit (must-do every time) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 31,
+        "source_title": "Fast troubleshooting checklist (shop flow)"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Fast troubleshooting checklist (shop flow) as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "1) Confirm active UFRAME_NUM and UTOOL_NUM",
+        "2) Jog +X/+Y/+Z in user frame (does it match the part?)",
+        "3) If X wrong → re-teach Point 2",
+        "Students should understand that a frame changes how motion is described, not where the robot physically is.",
+        "4) If Y flipped → re-teach Point 3 (wrong side)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Fast troubleshooting checklist (shop flow) to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "The next slide should compress the lesson into a quick memory or self-check.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Fast troubleshooting checklist (shop flow) as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Fast troubleshooting checklist (shop flow) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Fast troubleshooting checklist (shop flow) with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 32,
+        "source_title": "Core takeaway (remember forever)"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Core takeaway (remember forever) as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Frames define meaning of coordinates",
+        "User frames make programs reusable when fixtures move rigidly",
+        "Math: (p_w = R p_u + t) and (p_u = R^T(p_w - t))",
+        "Students should understand that a frame changes how motion is described, not where the robot physically is.",
+        "Rotation inverse is easy: (R^{-1}=R^T)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Core takeaway (remember forever) to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish able to explain and use user frames as a practical programming tool.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Core takeaway (remember forever) as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Core takeaway (remember forever) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Core takeaway (remember forever) with the main takeaways of the topic compressed into usable memory."
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "character_id": "ali_teacher_v1",
+  "display_name": "Ali",
+  "version": 1,
+  "visual": {
+    "style": "semi_realistic_slightly_cartoony",
+    "identity_priority": "high",
+    "default_expression": "friendly_confident",
+    "default_pose": "idle_talk",
+    "default_screen_anchor": "right_bottom",
+    "background": "transparent",
+    "camera": "full_body_front",
+    "output_format": "webm_alpha"
+  },
+  "voice": {
+    "provider": "qwen3_tts",
+    "mode": "clone",
+    "primary_reference_audio": "assets/voice/ali_ref_neutral_01.wav",
+    "primary_reference_text": "Hello everyone. Today we are going to learn how to choose the right robot by understanding robot characteristics and manipulator types.",
+    "fallback_provider": "ffmpeg_flite",
+    "defaults": {
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "pitch": 0.0
+    }
+  },
+  "voice_styles": {
+    "clear_teacher": {
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "pitch": 0.0,
+      "instruction": "Speak like a clear robotics instructor. Calm, confident, easy to follow, not theatrical."
+    },
+    "serious_clear": {
+      "tone": "serious_clear",
+      "energy": 0.52,
+      "pace": 0.93,
+      "pitch": -0.1,
+      "instruction": "Speak seriously and clearly, like an instructor emphasizing correctness and technical meaning."
+    },
+    "compare_explain": {
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "pitch": 0.0,
+      "instruction": "Speak clearly while comparing two concepts. Slight emphasis on contrast words like versus, but, and difference."
+    },
+    "energetic_demo": {
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "pitch": 0.05,
+      "instruction": "Speak with more energy and curiosity, suitable for demos and interactive slides."
+    },
+    "calm_recap": {
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "pitch": -0.05,
+      "instruction": "Speak calmly and slowly, suitable for summary and recap."
+    }
+  },
+  "behaviors": {
+    "intro": "face_viewer",
+    "neutral": "idle_talk",
+    "explain_left": "point_left_mid",
+    "explain_right": "point_right_mid",
+    "compare": "explain_open_hand",
+    "emphasize": "emphasize",
+    "widget_demo": "point_left_mid",
+    "recap": "explain_open_hand"
+  },
+  "anchors": {
+    "default": "right_bottom",
+    "allowed": [
+      "left_bottom",
+      "right_bottom",
+      "left_mid",
+      "right_mid",
+      "center_bottom"
+    ]
+  }
+}

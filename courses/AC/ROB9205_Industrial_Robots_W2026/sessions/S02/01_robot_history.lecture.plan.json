@@ -1,0 +1,923 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_robot_history",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the question of why robots appeared in manufacturing at all.",
+    "progression": "Move chronologically, but keep tying each milestone to a technical or economic need.",
+    "destination": "Students should finish with a usable story of how industrial robotics developed into current robot families.",
+    "tone": "story-driven, practical, lightly comparative",
+    "methods": [
+      "intuition",
+      "compare/contrast",
+      "guided practice",
+      "recap",
+      "timeline",
+      "cause-and-effect"
+    ]
+  },
+  "audience_level": "undergraduate industrial robotics students preparing for labs, robot selection, and basic programming decisions",
+  "topic_goal": "Show how industrial robots evolved so students understand why modern architectures, applications, and design trade-offs look the way they do.",
+  "topic_takeaways": [
+    "Students should connect major robot milestones to manufacturing needs.",
+    "Students should see how robot capability expanded with better control, sensing, and mechanics.",
+    "Students should leave understanding that robot design choices follow application pressure, not fashion."
+  ],
+  "style_notes": [
+    "Keep the tone practical and shop-floor oriented.",
+    "Translate definitions into robot-cell decisions quickly.",
+    "Prefer concrete industrial examples over abstract theory when possible.",
+    "Tell history as engineering motivation, not trivia.",
+    "Use transitions that connect each era to the next capability jump."
+  ],
+  "transition_style": "Each slide should answer what changed, why it changed, and what new capability that unlocked.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Robot History"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Alright everyone—let’s do robot history as a story, not a list of dates. Today I want you to leave with a way of thinking: when you see a robot, you’ll know what questions to ask—without memorizing a timeline.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Show how industrial robots evolved so students understand why modern architectures, applications, and design trade-offs look the way they do.",
+      "transition_to_next": "Carry this idea forward into When you hear “robot”… what do you picture? so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame Robot History as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Robot History connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Robot History sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "When you hear “robot”… what do you picture?"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "When most people hear the word robot, they immediately imagine a humanoid: two arms, two legs, maybe a face. That image comes mostly from movies.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Most people imagine a humanoid (movies)",
+        "Real robots are often arms, carts, machines",
+        "Robot history starts with a better question:",
+        "“What do we even mean by a robot?”"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into A practical definition of a robot so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Honda ASIMO"
+      ],
+      "explanation_style": "Build a picture for When you hear “robot”… what do you picture? first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep When you hear “robot”… what do you picture? connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture When you hear “robot”… what do you picture? clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "A practical definition of a robot"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "A simple way to think about it is this: a robot is a machine that can sense, decide, and act—with at least some level of automatic behavior. Also, robots are typically programmable, meaning you can change what they do without rebuilding the machine from scratch.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Sense → Orient → Decide → Act",
+        "Some automatic behavior (not every move from a human)",
+        "Programmable: change behavior without rebuilding hardware",
+        "Autonomy matters more than appearance"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Autonomous robot vs remote-controlled tool so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Build a picture for A practical definition of a robot first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep A practical definition of a robot connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture A practical definition of a robot clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Autonomous robot vs remote-controlled tool"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "This is why something like a robot vacuum can be a robot: it senses walls and obstacles, it makes decisions, and it moves and cleans—without you controlling every second. And this is also why a purely remote-controlled device is a bit different: if a human is doing the “thinking” in real time, the machine is more like a tool than an autonomous robot.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Robot vacuum: senses obstacles, decides, moves, cleans",
+        "Remote-controlled device: human does the thinking live",
+        "Lesson: “robot-ness” is about autonomy, not shape",
+        "State the contrast clearly and finish with the practical decision rule."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from A practical definition of a robot into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "end effector",
+        "part",
+        "mounting bracket"
+      ],
+      "explanation_style": "Contrast the alternatives on Autonomous robot vs remote-controlled tool explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Autonomous robot vs remote-controlled tool and know which side fits which situation.",
+      "scene_hint": "Briefly show the tool, part, and mounting hardware together at the wrist so the full payload is visually obvious."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "The robot idea is older than robotics"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Now here’s what’s interesting: the idea of robots is way older than real robotics. Humans have imagined artificial life for centuries.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Humans imagined artificial life for centuries",
+        "Theme: we create a helper… then fear losing control",
+        "Robots were linked to labor, power, and anxiety early on"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Automata: lifelike motion without computers so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Frankenstein (1831) illustration"
+      ],
+      "explanation_style": "Build a picture for The robot idea is older than robotics first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The robot idea is older than robotics connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture The robot idea is older than robotics clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Automata: lifelike motion without computers"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "But humans didn’t only imagine robots—they also tried to build early “living machines” long before computers existed. These were called automata.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Pure mechanics: gears, springs, cams",
+        "Not “useful robots” yet — but a proof of possibility",
+        "Machines can produce lifelike motion"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into The Mechanical Turk: a key warning so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Vaucanson duck (automaton)"
+      ],
+      "explanation_style": "Build a picture for Automata: lifelike motion without computers first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Automata: lifelike motion without computers connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Automata: lifelike motion without computers clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "The Mechanical Turk: a key warning"
+      },
+      "slide_role": "caution",
+      "importance": "high",
+      "narration_seed": "And then there’s another historical event that teaches a really important lesson—something that still matters today: the Mechanical Turk. The Mechanical Turk was presented as a chess-playing machine in the 1700s.",
+      "voice_style": "serious_clear",
+      "tone": "serious_clear",
+      "energy": 0.52,
+      "pace": 0.93,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Looked like a thinking machine",
+        "Reality: a hidden human operator",
+        "Lesson: appearance ≠ intelligence",
+        "State the consequence of getting this wrong, then give the clear safe rule.",
+        "Simple-looking systems can be truly robotic (and vice versa)"
+      ],
+      "must_say": [
+        "Do not treat this as optional; treat it as an operating rule."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Automata: lifelike motion without computers into The Mechanical Turk: a key warning so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into The word “robot” enters society (R.U.R.) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "cautionary_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Explain The Mechanical Turk: a key warning like an operating warning: state the risk, the consequence, and the safe rule.",
+      "story_hint": "Use a believable lab or shop-floor mistake rather than abstract warning language.",
+      "delivery_goal": "Students should feel the practical consequence of getting The Mechanical Turk: a key warning wrong and remember the safe rule."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "The word “robot” enters society (R.U.R.)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Now we jump to the early 1900s, when the word “robot” becomes popular through a play called R.U.R. (Rossum’s Universal Robots) by Karel Čapek.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Robots as cheap workers (not cute helpers)",
+        "Automation, jobs, and fear were there from day one",
+        "The word came from a story — not engineering"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Why robots succeeded first in factories so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — R.U.R. cover (1920)"
+      ],
+      "explanation_style": "Build a picture for The word “robot” enters society (R.U.R.) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The word “robot” enters society (R.U.R.) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture The word “robot” enters society (R.U.R.) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Why robots succeeded first in factories"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "So by the time we reach the mid-1900s, the world already has stories about artificial workers, fear about control, and mechanical machines that imitate life. Now engineering starts catching up—and this is where robot history becomes a story of practical needs.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Industry needed repetitive, dangerous, dirty tasks done consistently",
+        "Factories are structured environments",
+        "Fixed parts + repeated tasks + controlled space",
+        "Safety fences + rules + predictable workflows"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Master–slave manipulators: extending human skill safely so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Industrial robots in BMW Leipzig body shop"
+      ],
+      "explanation_style": "Build a picture for Why robots succeeded first in factories first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Why robots succeeded first in factories connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Why robots succeeded first in factories clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Master–slave manipulators: extending human skill safely"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "In the 1940s and 1950s, one big step was the development of master–slave manipulators—teleoperated robot arms. The human moves one arm (the “master”), and the remote arm (the “slave”) copies it.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Human moves the “master”",
+        "Remote “slave” copies motion",
+        "Used in radiation / hazardous environments",
+        "Milestone: robot arm as an extension of capability"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Numerical control: motion becomes programmable so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "robot arm",
+        "workspace volume",
+        "robot silhouette"
+      ],
+      "explanation_style": "Build a picture for Master–slave manipulators: extending human skill safely first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should be able to picture Master–slave manipulators: extending human skill safely clearly before the formal details continue.",
+      "scene_hint": "Use a simplified robot silhouette and workspace volume so students can see how geometry shapes where the robot can work."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Numerical control: motion becomes programmable"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Next comes a huge turning point: numerical control in manufacturing—machines controlled by numeric instructions. Once industry learns that a machine can follow programmed motion reliably, the idea of a programmable robot becomes much more realistic.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Machines follow numeric instructions reliably",
+        "Once motion is programmable, robots become realistic tools",
+        "Foundation for industrial robot control"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Industrial robots become real tools so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Paper tape reader on CNC control"
+      ],
+      "explanation_style": "Build a picture for Numerical control: motion becomes programmable first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Numerical control: motion becomes programmable connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Numerical control: motion becomes programmable clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Industrial robots become real tools"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Now we enter the early industrial robot era: people like George Devol, and later companies like Unimation, and the famous installation for General Motors. This is the moment when robots become real industrial tools.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Early industrial era: programmable manipulators",
+        "Robots succeed because they do real jobs reliably",
+        "Not humanoids — arms that move tools and parts"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Why robot arms dominated so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "end effector",
+        "part",
+        "mounting bracket"
+      ],
+      "explanation_style": "Build a picture for Industrial robots become real tools first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Industrial robots become real tools connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Industrial robots become real tools clearly before the formal details continue.",
+      "scene_hint": "Briefly show the tool, part, and mounting hardware together at the wrist so the full payload is visually obvious."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Why robot arms dominated"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Because arms do real factory jobs: welding painting moving heavy parts repetitive handling So the story so far is: The robot concept starts in imagination, Then becomes mechanical imitation (automata), Then enters society through labor stories (R.U.R.), Then becomes practical in factories through arms.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Welding",
+        "Painting",
+        "Handling & moving heavy parts",
+        "Repetitive pick-and-place"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Turning point: from repeaters → adapters so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — ABB welding robot"
+      ],
+      "explanation_style": "Build a picture for Why robot arms dominated first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Why robot arms dominated connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Why robot arms dominated clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Turning point: from repeaters → adapters"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Now we reach the next big turning point: sensing. Early robots were often “blind” in a sense: they repeated a programmed path assuming the world is always the same.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Early robots assumed the world never changes",
+        "Sensors (especially vision) enable flexibility",
+        "Robots start reacting to the environment"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Why 6-axis arms became the industrial standard so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Shakey the Robot (SRI)"
+      ],
+      "explanation_style": "Build a picture for Turning point: from repeaters → adapters first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Turning point: from repeaters → adapters connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Turning point: from repeaters → adapters clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Why 6-axis arms became the industrial standard"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Then in the 1970s, industrial robots evolve strongly: more axes, better control systems, and the modern standard appears: the 6-axis articulated robot arm. Why six axes?",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "6 axes ≈ 6 degrees of freedom",
+        "Position in 3D + orientation of the tool",
+        "Flexibility is why 6-axis arms dominate industry",
+        "Specialized robots also appear (SCARA, etc.)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Robot shape follows the job (not the movie) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Six degrees of freedom diagram"
+      ],
+      "explanation_style": "Build a picture for Why 6-axis arms became the industrial standard first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Why 6-axis arms became the industrial standard connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Why 6-axis arms became the industrial standard clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Robot shape follows the job (not the movie)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This teaches another key lesson of robot history: Robot shape follows the job. Not the movie.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "SCARA: fast assembly on a table (planar tasks)",
+        "Articulated: flexible 3D positioning",
+        "History lesson: pick the robot to match the task"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into 1990s: specialization gets extreme (Delta robots) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — KUKA KR10 SCARA"
+      ],
+      "explanation_style": "Build a picture for Robot shape follows the job (not the movie) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Robot shape follows the job (not the movie) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Robot shape follows the job (not the movie) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "1990s: specialization gets extreme (Delta robots)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Now the story shifts again in the 1990s with two trends: Trend 1: Speed specialization Delta robots become important—parallel robots that can do very fast pick-and-place, especially in packaging and food industries. Again: shape follows the job.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Delta (parallel) robots: very fast pick-and-place",
+        "Packaging & food industries love them",
+        "Again: shape follows the job"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Computing takes over so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "robot arm",
+        "workspace volume",
+        "robot silhouette"
+      ],
+      "explanation_style": "Build a picture for 1990s: specialization gets extreme (Delta robots) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep 1990s: specialization gets extreme (Delta robots) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture 1990s: specialization gets extreme (Delta robots) clearly before the formal details continue.",
+      "scene_hint": "Use a simplified robot silhouette and workspace volume so students can see how geometry shapes where the robot can work."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Computing takes over"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Trend 2: Computing takes over Control systems become more powerful. Robots start coordinating with each other—two robots working as a team.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Controllers become more powerful",
+        "Robots coordinate (multi-robot workcells)",
+        "Robotics becomes more software-driven"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Computing takes over to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Computing takes over is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Computing takes over in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Computing takes over connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Computing takes over accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Robots enter the messy real world"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "And this sets up the modern era: robots leaving the factory. Factories are controlled.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Factories are controlled; the real world is not",
+        "Warehouses/hospitals/homes: people move, layouts change",
+        "Now the hard problem is perception + navigation",
+        "This is where AI matters"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Two modern categories you’ll see everywhere so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Warehouse mobile robot"
+      ],
+      "explanation_style": "Build a picture for Robots enter the messy real world first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Robots enter the messy real world connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Robots enter the messy real world clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "Two modern categories you’ll see everywhere"
+      },
+      "slide_role": "setup",
+      "importance": "medium",
+      "narration_seed": "And then we reach today’s two very visible modern robot categories: Collaborative robots (cobots) These are designed around humans—working near humans, force limits, safer interactions, easier programming. Not maximum speed, but safe flexibility.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Collaborative robots (cobots): designed around humans",
+        "Autonomous Mobile Robots (AMRs): move through changing environments",
+        "Modern robots = software + perception + safety"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Robots enter the messy real world into Two modern categories you’ll see everywhere so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Humanoids: exciting… and very hard so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Two modern categories you’ll see everywhere to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Two modern categories you’ll see everywhere connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Two modern categories you’ll see everywhere sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "Humanoids: exciting… and very hard"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Then in the 1980s, you start seeing humanoid research become serious—like Honda’s early biped work (E0). This is exciting, but it’s also a reminder: humanoids are hard.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Walking needs balance + continuous control",
+        "Unstructured environments are unpredictable",
+        "That’s why industry chose reliability first"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into A simple story of robot history so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Wikimedia Commons — Honda E0 early biped robot"
+      ],
+      "explanation_style": "Build a picture for Humanoids: exciting… and very hard first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Humanoids: exciting… and very hard connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Humanoids: exciting… and very hard clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "A simple story of robot history"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "So if I summarize robot history in a simple story, it’s this: Humans imagined artificial life long before engineering. Automata proved machines can mimic lifelike motion.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Imagination → automata → labor stories",
+        "Factories first (structured world)",
+        "Sensing + computing → adaptable robots",
+        "Robots now operate in messy human environments"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use A simple story of robot history to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once A simple story of robot history is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define A simple story of robot history in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep A simple story of robot history connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain A simple story of robot history accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "The 4 questions that beat memorizing dates"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "And I’ll end with a question that connects history to your future learning: When you see a robot, don’t ask: “Does it look like a robot?” Ask: What does it sense? How does it decide?",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "What does it sense?",
+        "How does it decide?",
+        "How does it act?",
+        "Structured environment… or messy environment?"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use The 4 questions that beat memorizing dates to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish with a usable story of how industrial robotics developed into current robot families.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define The 4 questions that beat memorizing dates in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep The 4 questions that beat memorizing dates connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain The 4 questions that beat memorizing dates accurately and use it in the next step of the lesson."
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "character_id": "ali_teacher_v1",
+  "voice_references": [
+    {
+      "id": "neutral_01",
+      "file": "assets/voice/ali_ref_neutral_01.wav",
+      "transcript": "Hello everyone. Today we are going to learn how to choose the right robot by understanding robot characteristics and manipulator types.",
+      "style": "clear_teacher",
+      "duration_target_sec": 12
+    },
+    {
+      "id": "neutral_02",
+      "file": "assets/voice/ali_ref_neutral_02.wav",
+      "transcript": "When you read a robot datasheet, you should immediately think about payload, reach, workspace, repeatability, and the real task requirements.",
+      "style": "clear_teacher",
+      "duration_target_sec": 12
+    },
+    {
+      "id": "serious_01",
+      "file": "assets/voice/ali_ref_serious_01.wav",
+      "transcript": "Accuracy and repeatability are not the same thing, and confusing them can lead to the wrong robot choice.",
+      "style": "serious_clear",
+      "duration_target_sec": 10
+    },
+    {
+      "id": "compare_01",
+      "file": "assets/voice/ali_ref_compare_01.wav",
+      "transcript": "Reach is the maximum distance from the base, while workspace is the total region where the end effector can actually operate.",
+      "style": "compare_explain",
+      "duration_target_sec": 11
+    },
+    {
+      "id": "demo_01",
+      "file": "assets/voice/ali_ref_demo_01.wav",
+      "transcript": "Now let us compare the motion of a six-axis articulated robot with the simpler motion of other manipulator types.",
+      "style": "energetic_demo",
+      "duration_target_sec": 10
+    },
+    {
+      "id": "recap_01",
+      "file": "assets/voice/ali_ref_recap_01.wav",
+      "transcript": "If you remember the main tradeoffs between stiffness, speed, workspace, and flexibility, you can make much better robot selections.",
+      "style": "calm_recap",
+      "duration_target_sec": 12
+    }
+  ],
+  "image_references": [
+    {
+      "id": "face_front_neutral",
+      "file": "assets/avatar/ali_face_front_neutral.png",
+      "purpose": "identity reference"
+    },
+    {
+      "id": "face_front_smile",
+      "file": "assets/avatar/ali_face_front_smile.png",
+      "purpose": "identity reference"
+    },
+    {
+      "id": "face_front_serious",
+      "file": "assets/avatar/ali_face_front_serious.png",
+      "purpose": "identity reference"
+    },
+    {
+      "id": "fullbody_front_idle",
+      "file": "assets/avatar/ali_fullbody_front_idle.png",
+      "purpose": "base full-body reference"
+    },
+    {
+      "id": "fullbody_front_open_hand",
+      "file": "assets/avatar/ali_fullbody_front_open_hand.png",
+      "purpose": "explain pose reference"
+    },
+    {
+      "id": "fullbody_point_left",
+      "file": "assets/avatar/ali_fullbody_point_left.png",
+      "purpose": "point-left pose reference"
+    },
+    {
+      "id": "fullbody_point_right",
+      "file": "assets/avatar/ali_fullbody_point_right.png",
+      "purpose": "point-right pose reference"
+    },
+    {
+      "id": "fullbody_emphasize",
+      "file": "assets/avatar/ali_fullbody_emphasize.png",
+      "purpose": "strong emphasis pose reference"
+    },
+    {
+      "id": "fullbody_three_quarter_left",
+      "file": "assets/avatar/ali_fullbody_three_quarter_left.png",
+      "purpose": "pose/identity consistency"
+    },
+    {
+      "id": "fullbody_three_quarter_right",
+      "file": "assets/avatar/ali_fullbody_three_quarter_right.png",
+      "purpose": "pose/identity consistency"
+    }
+  ],
+  "preferred_minimum_pack": {
+    "voice_files_required": 6,
+    "image_files_required": 8
+  },
+  "recording_rules": {
+    "audio_format": "wav",
+    "sample_rate_hz": 24000,
+    "channels": 1,
+    "environment": "quiet_room",
+    "processing": "no_music_no_reverb_no_noise_reduction_artifacts",
+    "delivery_note": "Each voice file must have an exact transcript."
+  },
+  "image_rules": {
+    "background": "plain_or_easy_to_cut_out",
+    "framing": "full_body_visible_head_to_toe_when_fullbody",
+    "lighting": "soft_even_lighting",
+    "consistency": "same outfit for most files preferred",
+    "delivery_note": "Transparent PNG is best, but plain solid background is acceptable."
+  }
+}

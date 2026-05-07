@@ -1,0 +1,34 @@
+{
+  "segments": [
+    {
+      "segment_id": "seg_intro",
+      "text": "Reach is the maximum distance the robot can extend from its base.",
+      "target_element": "left_bullet_1",
+      "tone": "compare_explain",
+      "energy": 0.58,
+      "pace": 0.95,
+      "emphasis_words": [
+        "maximum distance",
+        "base"
+      ],
+      "attention_mode": "hybrid_focus",
+      "avatar_behavior_hint": "point_right_mid",
+      "delivery_kind": "compare"
+    },
+    {
+      "segment_id": "seg_compare",
+      "text": "Workspace is bigger than one number because it describes the full region where the end effector can actually operate.",
+      "target_element": "left_bullet_2",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.94,
+      "emphasis_words": [
+        "full region",
+        "actually operate"
+      ],
+      "attention_mode": "hybrid_focus",
+      "avatar_behavior_hint": "explain_open_hand",
+      "delivery_kind": "compare"
+    }
+  ]
+}

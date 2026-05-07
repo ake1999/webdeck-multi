@@ -1,0 +1,1468 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_branching_instructions",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the question of what a robot program should do when the world does not match the happy path.",
+    "progression": "Introduce the branching tools, show how they change flow, then practice reading decisions in context.",
+    "destination": "Students should finish with a mental model for when and why branching is necessary.",
+    "tone": "logic-oriented, practical, guided",
+    "methods": [
+      "intuition",
+      "compare/contrast",
+      "guided practice",
+      "recap",
+      "problem framing",
+      "flow comparison"
+    ]
+  },
+  "audience_level": "undergraduate industrial robotics students preparing for labs, robot selection, and basic programming decisions",
+  "topic_goal": "Teach students how branching turns a linear robot program into decision-making logic that reacts to conditions.",
+  "topic_takeaways": [
+    "Students should distinguish unconditional flow from condition-based flow.",
+    "Students should understand how branching supports error handling, sensing, and process variation.",
+    "Students should be able to read and reason about simple Fanuc branching logic."
+  ],
+  "style_notes": [
+    "Keep the tone practical and shop-floor oriented.",
+    "Translate definitions into robot-cell decisions quickly.",
+    "Prefer concrete industrial examples over abstract theory when possible.",
+    "Keep pointing back to real triggers for branches: sensors, errors, and process choices.",
+    "Slow down enough that students can follow the flow change mentally."
+  ],
+  "transition_style": "Move from the industrial question students would ask on the job to the next specification, control, or programming choice they need to make.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Branching Instructions (FANUC TP)"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Goal: students can read branching code confidently and implement Lab 8 tasks safely.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Teach students how branching turns a linear robot program into decision-making logic that reacts to conditions.",
+      "transition_to_next": "Carry this idea forward into Today so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame Branching Instructions (FANUC TP) as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Branching Instructions (FANUC TP) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Branching Instructions (FANUC TP) sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Today"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use Today to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Why branching matters in robotics",
+        "Two types: Unconditional vs Conditional",
+        "Unconditional: JMP/LBL, CALL, WAIT (time)",
+        "Conditional: WAIT (condition), IF, SELECT, FOR/ENDFOR"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Branching Instructions (FANUC TP) into Today so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into What is branching? so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Today to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Today connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Today sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "What is branching?"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define What is branching? in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Branching lets you execute different sequences based on conditions",
+        "It uses instructions like IF, SELECT, ELSE to control program flow",
+        "In real cells, branching is used for:",
+        "• part present / no part • choose bin • retry logic • safety interlocks"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What is branching? to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once What is branching? is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define What is branching? in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep What is branching? connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain What is branching? accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Two categories of branching"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Two categories of branching in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Unconditional branching (always changes flow)",
+        "• JMP/LBL • CALL • WAIT (time delay)",
+        "Conditional branching (changes flow only if condition is satisfied)",
+        "• WAIT (condition) • IF • SELECT • FOR/ENDFOR"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Two categories of branching to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Two categories of branching is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Two categories of branching in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Two categories of branching connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Two categories of branching accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "JMP / LBL (jump inside the same program)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define JMP / LBL (jump inside the same program) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Use LBL[n] to mark a location",
+        "Use JMP LBL[n] to jump to that location",
+        "Important: JMP/LBL can jump only within the same program (not to another program)",
+        "Common use: loops, retry blocks, skip sections"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use JMP / LBL (jump inside the same program) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once JMP / LBL (jump inside the same program) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define JMP / LBL (jump inside the same program) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep JMP / LBL (jump inside the same program) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain JMP / LBL (jump inside the same program) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Example: loop until counter reaches 10"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Example: loop until counter reaches 10 in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Tip: initialize R[1]=0 before the loop if you want exactly 10 iterations"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example: loop until counter reaches 10 to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example: loop until counter reaches 10 is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "robot arm",
+        "workspace volume",
+        "robot silhouette"
+      ],
+      "explanation_style": "Define Example: loop until counter reaches 10 in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Example: loop until counter reaches 10 connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Example: loop until counter reaches 10 accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a simplified robot silhouette and workspace volume so students can see how geometry shapes where the robot can work."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Quiz: JMP/LBL limitation"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: JMP/LBL limitation into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "You want to jump from Program A into Program B using JMP. What is correct?",
+        "JMP/LBL is for flow inside the same TP program. Use CALL for other programs/macros.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: JMP/LBL limitation and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: JMP/LBL limitation without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: JMP/LBL limitation into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: JMP/LBL limitation question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "CALL (run another TP program or macro)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define CALL (run another TP program or macro) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "CALL runs another program/subroutine from the current program",
+        "You can call TP programs and macros (ex: a home routine)",
+        "Best practice: avoid deep nesting (programs calling programs calling programs)",
+        "Reason: nested calls make troubleshooting and tracking flow harder"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use CALL (run another TP program or macro) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once CALL (run another TP program or macro) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define CALL (run another TP program or macro) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep CALL (run another TP program or macro) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain CALL (run another TP program or macro) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Example: call a home routine if condition is met"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Example: call a home routine if condition is met in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Good use: go home on safety condition, reset cycle, or recovery step"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example: call a home routine if condition is met to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example: call a home routine if condition is met is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Example: call a home routine if condition is met in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Example: call a home routine if condition is met connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Example: call a home routine if condition is met accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "WAIT (time-specified delay)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define WAIT (time-specified delay) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Two common forms:",
+        "Use when you need time for: clamp settle, air blow-off, sensor stabilization",
+        "Don’t overuse WAIT: it can hide real problems (like missing sensors)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use WAIT (time-specified delay) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once WAIT (time-specified delay) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define WAIT (time-specified delay) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep WAIT (time-specified delay) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain WAIT (time-specified delay) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Example: delay between motions"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Example: delay between motions in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Time delay is unconditional: it always waits the same amount (or R value)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example: delay between motions to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example: delay between motions is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Example: delay between motions in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Example: delay between motions connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Example: delay between motions accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "WAIT (condition): pause until something becomes true"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define WAIT (condition): pause until something becomes true in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Example (I/O wait):",
+        "Example (register wait):",
+        "You can also add timeout handling using TIMEOUT, LBL[n] (Lab 8)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use WAIT (condition): pause until something becomes true to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once WAIT (condition): pause until something becomes true is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define WAIT (condition): pause until something becomes true in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep WAIT (condition): pause until something becomes true connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain WAIT (condition): pause until something becomes true accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Conditional WAIT with timeout handling"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Conditional WAIT with timeout handling in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "If you omit the processing part, it can wait indefinitely",
+        "Timeout duration is configured in the system setting (Lab manual notes this)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Conditional WAIT with timeout handling to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Conditional WAIT with timeout handling is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Conditional WAIT with timeout handling in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Conditional WAIT with timeout handling connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Conditional WAIT with timeout handling accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "WAIT edge conditions: On+ and Off-"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define WAIT edge conditions: On+ and Off- in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "On+ (rising edge): condition becomes true when signal changes OFF → ON",
+        "Off- (falling edge): condition becomes true when signal changes ON → OFF",
+        "Use edge waits when you need to detect a transition (a moment), not a steady state"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use WAIT edge conditions: On+ and Off- to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once WAIT edge conditions: On+ and Off- is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define WAIT edge conditions: On+ and Off- in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep WAIT edge conditions: On+ and Off- connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain WAIT edge conditions: On+ and Off- accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Quiz: level vs edge WAIT"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: level vs edge WAIT into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "You want the robot to continue only when a sensor changes from OFF to ON (a rising edge). Best WAIT form?",
+        "On+ detects the transition OFF→ON. = ON is a level condition (could already be ON).",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: level vs edge WAIT and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: level vs edge WAIT without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: level vs edge WAIT into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: level vs edge WAIT question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Lab 8: simulate digital inputs (DI) on the pendant"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Lab 8: simulate digital inputs (DI) on the pendant in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Now you can test: WAIT DI[101] = ON safely"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Lab 8: simulate digital inputs (DI) on the pendant to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Lab 8: simulate digital inputs (DI) on the pendant is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Lab 8: simulate digital inputs (DI) on the pendant in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Lab 8: simulate digital inputs (DI) on the pendant connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Lab 8: simulate digital inputs (DI) on the pendant accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Sample Lab 8 program (WAIT on DI then move)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Sample Lab 8 program (WAIT on DI then move) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Run it twice: once with DI OFF (robot waits), then toggle DI ON (robot proceeds)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Sample Lab 8 program (WAIT on DI then move) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Sample Lab 8 program (WAIT on DI then move) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Sample Lab 8 program (WAIT on DI then move) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Sample Lab 8 program (WAIT on DI then move) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Sample Lab 8 program (WAIT on DI then move) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "IF instruction (conditional compare)"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Compare the alternatives or concepts on IF instruction (conditional compare) clearly, emphasize the trade-off, and end with the decision rule students should remember.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "IF executes processing only if the condition is true",
+        "Two main sources of conditions:",
+        "• Register compare: IF R[i] ...",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "• I/O compare: IF DI[i] = ON ..."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Sample Lab 8 program (WAIT on DI then move) into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on IF instruction (conditional compare) explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of IF instruction (conditional compare) and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Example: run different actions based on registers"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Example: run different actions based on registers in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Note: these are two independent IFs (both could run if both are true)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example: run different actions based on registers to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example: run different actions based on registers is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Example: run different actions based on registers in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Example: run different actions based on registers connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Example: run different actions based on registers accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "Caution: comparing real values with ="
+      },
+      "slide_role": "caution",
+      "importance": "high",
+      "narration_seed": "Treat Caution: comparing real values with = as a practical caution: explain the risk, what students often underestimate, and the safe operating rule they should remember.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Avoid: IF R[1] = 1.5, ... for real values",
+        "Prefer ranges, for example:",
+        "Or compare against integer values when possible",
+        "State the consequence of getting this wrong, then give the clear safe rule."
+      ],
+      "must_say": [
+        "Do not treat this as optional; treat it as an operating rule."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Example: run different actions based on registers into Caution: comparing real values with = so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Multiple conditions with AND / OR so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "cautionary_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Explain Caution: comparing real values with = like an operating warning: state the risk, the consequence, and the safe rule.",
+      "story_hint": "Use a believable lab or shop-floor mistake rather than abstract warning language.",
+      "delivery_goal": "Students should feel the practical consequence of getting Caution: comparing real values with = wrong and remember the safe rule."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "Multiple conditions with AND / OR"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Multiple conditions with AND / OR in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "You can combine multiple conditions on one line using:",
+        "Rules from the lab manual:",
+        "• up to five conditions can be combined on a single line",
+        "• mixing AND and OR together is prohibited (readability + editing safety)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Multiple conditions with AND / OR to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Multiple conditions with AND / OR is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Multiple conditions with AND / OR in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Multiple conditions with AND / OR connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Multiple conditions with AND / OR accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "Quiz: AND/OR mixing"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: AND/OR mixing into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Which line is NOT allowed by the controller rules described in the lab manual?",
+        "The manual prohibits using AND and OR in combination on the same instruction line. Split into multiple IF lines.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: AND/OR mixing and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: AND/OR mixing without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: AND/OR mixing into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: AND/OR mixing question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "SELECT instruction (switch/case for registers)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define SELECT instruction (switch/case for registers) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "It compares R[i] to multiple values and executes the first matching action",
+        "Structure:",
+        "Actions are typically CALL or JMP LBL"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use SELECT instruction (switch/case for registers) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once SELECT instruction (switch/case for registers) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define SELECT instruction (switch/case for registers) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep SELECT instruction (switch/case for registers) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain SELECT instruction (switch/case for registers) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "Example: choose a bin program based on R[1]"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Example: choose a bin program based on R[1] in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Use SELECT when you have many mutually-exclusive cases (cleaner than many IF lines)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example: choose a bin program based on R[1] to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example: choose a bin program based on R[1] is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Example: choose a bin program based on R[1] in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Example: choose a bin program based on R[1] connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Example: choose a bin program based on R[1] accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "Important SELECT caution: first match wins"
+      },
+      "slide_role": "caution",
+      "importance": "high",
+      "narration_seed": "Treat Important SELECT caution: first match wins as a practical caution: explain the risk, what students often underestimate, and the safe operating rule they should remember.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Example scenario:",
+        "Result: PROG2 runs; PROG4 does NOT run (even though it matches too)",
+        "State the consequence of getting this wrong, then give the clear safe rule."
+      ],
+      "must_say": [
+        "Do not treat this as optional; treat it as an operating rule."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Example: choose a bin program based on R[1] into Important SELECT caution: first match wins so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Quiz: SELECT behavior so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "cautionary_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Explain Important SELECT caution: first match wins like an operating warning: state the risk, the consequence, and the safe rule.",
+      "story_hint": "Use a believable lab or shop-floor mistake rather than abstract warning language.",
+      "delivery_goal": "Students should feel the practical consequence of getting Important SELECT caution: first match wins wrong and remember the safe rule."
+    },
+    {
+      "slide_ref": {
+        "index": 25,
+        "source_title": "Quiz: SELECT behavior"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: SELECT behavior into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "In a SELECT block, R[1]=2 and you have two cases for =2. What happens?",
+        "SELECT executes the first matching statement and skips the rest, even if other cases match.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: SELECT behavior and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: SELECT behavior without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: SELECT behavior into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: SELECT behavior question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 26,
+        "source_title": "FOR / ENDFOR (repeat a block a fixed number of times)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define FOR / ENDFOR (repeat a block a fixed number of times) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "FOR repeats instructions between FOR and ENDFOR a specified number of times",
+        "Use cases: repeat same sequence, visit series of points, perform repeated operations",
+        "Two directions:",
+        "• TO (count up) • DOWNTO (count down)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use FOR / ENDFOR (repeat a block a fixed number of times) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once FOR / ENDFOR (repeat a block a fixed number of times) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define FOR / ENDFOR (repeat a block a fixed number of times) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep FOR / ENDFOR (repeat a block a fixed number of times) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain FOR / ENDFOR (repeat a block a fixed number of times) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 27,
+        "source_title": "FOR syntax (TO and DOWNTO)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define FOR syntax (TO and DOWNTO) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Count up:",
+        "Count down:",
+        "Initial/target can be Constant, R[i], or AR[i] (argument register)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use FOR syntax (TO and DOWNTO) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once FOR syntax (TO and DOWNTO) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define FOR syntax (TO and DOWNTO) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep FOR syntax (TO and DOWNTO) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain FOR syntax (TO and DOWNTO) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 28,
+        "source_title": "When does a FOR loop run (important rules)?"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define When does a FOR loop run (important rules)? in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "When TO is used: initial value must be ≤ target value",
+        "When DOWNTO is used: initial value must be ≥ target value",
+        "If the condition is not satisfied, the loop runs 0 times (skips to the line after ENDFOR)",
+        "FOR statement itself executes once to initialize the loop counter"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use When does a FOR loop run (important rules)? to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once When does a FOR loop run (important rules)? is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define When does a FOR loop run (important rules)? in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep When does a FOR loop run (important rules)? connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain When does a FOR loop run (important rules)? accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 29,
+        "source_title": "What ENDFOR does each cycle"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define What ENDFOR does each cycle in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "If TO is used: loop counter is incremented each iteration",
+        "If DOWNTO is used: loop counter is decremented each iteration",
+        "Loop repeats while:",
+        "• TO: counter < target"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What ENDFOR does each cycle to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once What ENDFOR does each cycle is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define What ENDFOR does each cycle in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep What ENDFOR does each cycle connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain What ENDFOR does each cycle accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 30,
+        "source_title": "Example: repeat a move sequence 5 times"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Example: repeat a move sequence 5 times in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Note from manual: internal loop delay exists → WAIT is usually not required to “slow down” the loop."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example: repeat a move sequence 5 times to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example: repeat a move sequence 5 times is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Example: repeat a move sequence 5 times in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Example: repeat a move sequence 5 times connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Example: repeat a move sequence 5 times accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 31,
+        "source_title": "FOR/ENDFOR pairing + common alarm"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define FOR/ENDFOR pairing + common alarm in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "FANUC automatically combines the closest FOR with the closest ENDFOR",
+        "If you have a FOR without a matching ENDFOR → execution alarm",
+        "Example alarm name from manual:",
+        "Always ensure number of FOR statements equals number of ENDFOR statements"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use FOR/ENDFOR pairing + common alarm to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once FOR/ENDFOR pairing + common alarm is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define FOR/ENDFOR pairing + common alarm in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep FOR/ENDFOR pairing + common alarm connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain FOR/ENDFOR pairing + common alarm accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 32,
+        "source_title": "Nested loops (FOR inside FOR)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Nested loops (FOR inside FOR) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "You can teach a FOR/ENDFOR inside another FOR/ENDFOR",
+        "Up to 10 nested loops are supported (more can raise an execution alarm)",
+        "Important safety note from manual:",
+        "Do not use the same register as loop counters inside the same nested loop"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Nested loops (FOR inside FOR) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Nested loops (FOR inside FOR) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Nested loops (FOR inside FOR) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Nested loops (FOR inside FOR) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Nested loops (FOR inside FOR) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 33,
+        "source_title": "Nested loops example (2 loops)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Nested loops example (2 loops) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Closest pairing rule: inner FOR pairs with inner ENDFOR first"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Nested loops example (2 loops) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Nested loops example (2 loops) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Nested loops example (2 loops) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Nested loops example (2 loops) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Nested loops example (2 loops) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 34,
+        "source_title": "Quiz: iteration loop"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: iteration loop into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "What happens if you run: FOR R[1] = 10 TO 1 (TO but initial > target)?",
+        "Rule: with TO, initial must be ≤ target. If not, the loop is not executed and control jumps past ENDFOR.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: iteration loop and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: iteration loop without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: iteration loop into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: iteration loop question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 35,
+        "source_title": "Lab 8 workflow (recommended order)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Lab 8 workflow (recommended order) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Do one feature at a time → test → then add the next feature"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Lab 8 workflow (recommended order) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Lab 8 workflow (recommended order) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Lab 8 workflow (recommended order) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Lab 8 workflow (recommended order) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Lab 8 workflow (recommended order) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 36,
+        "source_title": "Where are these instructions on the pendant?"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Where are these instructions on the pendant? in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "General flow:",
+        "Categories you will use today:",
+        "Use Double Display so you can watch registers and I/O while editing/running"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Where are these instructions on the pendant? to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Where are these instructions on the pendant? is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Where are these instructions on the pendant? in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Where are these instructions on the pendant? connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Where are these instructions on the pendant? accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 37,
+        "source_title": "Best practices (keep your program readable)"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Best practices (keep your program readable) into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Prefer SELECT over many IFs when cases are mutually exclusive",
+        "Avoid mixing AND/OR in one IF line → split into multiple IF lines",
+        "Avoid deep CALL nesting (hard to debug)",
+        "Give students a moment to decide before explaining the answer.",
+        "Use labels carefully: name/comment blocks so you remember what LBL means"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Best practices (keep your program readable) and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Best practices (keep your program readable) without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Best practices (keep your program readable) into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Best practices (keep your program readable) question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 38,
+        "source_title": "Quick self-check"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Quick self-check as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Can you explain the difference between WAIT 1.0 sec and WAIT DI[101]=ON?",
+        "Can you choose between JMP vs CALL correctly?",
+        "Can you write an IF with 2 conditions using AND (no OR)?",
+        "Students should distinguish unconditional flow from condition-based flow.",
+        "Do you understand why SELECT only runs the first matching case?"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Quick self-check to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Questions? so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Quick self-check as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Quick self-check connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Quick self-check with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 39,
+        "source_title": "Questions?"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Questions? in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Common issues:",
+        "• WAIT condition never becomes true (DI simulation not enabled)",
+        "• Missing ENDFOR alarm (INTP-670)",
+        "• SELECT doesn’t run the second matching line (first-match behavior)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Questions? to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish with a mental model for when and why branching is necessary.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Questions? in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Questions? connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Questions? accurately and use it in the next step of the lesson."
+    }
+  ]
+}

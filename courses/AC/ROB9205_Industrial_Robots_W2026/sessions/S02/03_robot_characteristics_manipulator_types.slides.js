@@ -478,8 +478,7 @@ const slidesData = [
         kind: "iframe",
         // Adjust path if your widget lives elsewhere:
         src: "./shared/widgets/kin_viewer.html?type=RRRRRR",
-        source:
-          "http://127.0.0.1:8000/shared/widgets/kin_viewer.html?type=RRRRRR",
+        source: "./shared/widgets/kin_viewer.html?type=RRRRRR",
       },
     },
     notes:
@@ -572,4 +571,3 @@ const slidesData = [
 ];
 
 export default slidesData;
-

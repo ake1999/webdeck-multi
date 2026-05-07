@@ -1,0 +1,720 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_fanuc_lab_guide",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the lab workflow students are about to perform.",
+    "progression": "Move step by step through setup, execution, and checks without drifting into unnecessary theory.",
+    "destination": "Students should finish with a practical sequence they can follow during the lab.",
+    "tone": "procedural, calm, confidence-building",
+    "methods": [
+      "intuition",
+      "compare/contrast",
+      "guided practice",
+      "recap",
+      "guided walkthrough",
+      "checkpoints",
+      "caution"
+    ]
+  },
+  "audience_level": "undergraduate industrial robotics students preparing for labs, robot selection, and basic programming decisions",
+  "topic_goal": "Give students a reliable mental and procedural map for working through the Fanuc lab safely and efficiently.",
+  "topic_takeaways": [
+    "Students should know the order of the main Fanuc lab steps.",
+    "Students should know what to verify before moving to the next step.",
+    "Students should understand the common procedural mistakes that slow labs down."
+  ],
+  "style_notes": [
+    "Keep the tone practical and shop-floor oriented.",
+    "Translate definitions into robot-cell decisions quickly.",
+    "Prefer concrete industrial examples over abstract theory when possible.",
+    "Keep explanations efficient and action-oriented.",
+    "Use caution language around steps students often rush."
+  ],
+  "transition_style": "Move from one lab checkpoint to the next, always explaining what students should confirm before continuing.",
+  "scene_policy_default": "none",
+  "object_policy_default": "none",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "FANUC LR Mate 200iD"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome to Lab 1. Safety is our first priority today.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Give students a reliable mental and procedural map for working through the Fanuc lab safely and efficiently.",
+      "transition_to_next": "Carry this idea forward into Quick Review: Robot Design so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame FANUC LR Mate 200iD as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep FANUC LR Mate 200iD connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how FANUC LR Mate 200iD sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Quick Review: Robot Design"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Quick Review: Robot Design using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Articulated: Like a human arm (our Fanuc).",
+        "SCARA: Horizontal movement, very fast.",
+        "Delta: Parallel links for pick-and-place.",
+        "Cartesian: Linear X-Y-Z movement."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into The Big Three Safety Rules so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Build a picture for Quick Review: Robot Design first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Quick Review: Robot Design connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Quick Review: Robot Design clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "The Big Three Safety Rules"
+      },
+      "slide_role": "caution",
+      "importance": "high",
+      "narration_seed": "Remind students: The robot is stronger than you and cannot feel your presence.",
+      "voice_style": "serious_clear",
+      "tone": "serious_clear",
+      "energy": 0.52,
+      "pace": 0.93,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Stay Outside: Never enter the reach of the robot while it is moving.",
+        "One Controller: The person holding the Teach Pendant is the ONLY person allowed inside the safety zone.",
+        "E-Stop Awareness: Always know where the nearest Emergency Stop is before turning the power on.",
+        "State the consequence of getting this wrong, then give the clear safe rule."
+      ],
+      "must_say": [
+        "Do not treat this as optional; treat it as an operating rule."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Quick Review: Robot Design into The Big Three Safety Rules so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into The Mechanical Unit: 6 Axes so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "cautionary_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Explain The Big Three Safety Rules like an operating warning: state the risk, the consequence, and the safe rule.",
+      "story_hint": "Use a believable lab or shop-floor mistake rather than abstract warning language.",
+      "delivery_goal": "Students should feel the practical consequence of getting The Big Three Safety Rules wrong and remember the safe rule."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "The Mechanical Unit: 6 Axes"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for The Mechanical Unit: 6 Axes using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Major Axes (J1, J2, J3): These position the robot in space.",
+        "Minor Axes (J4, J5, J6): These orient the wrist and the tool.",
+        "Each axis is driven by an AC Servo Motor."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Servos & Encoders so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Fanuc Axis Identification"
+      ],
+      "explanation_style": "Build a picture for The Mechanical Unit: 6 Axes first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The Mechanical Unit: 6 Axes connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture The Mechanical Unit: 6 Axes clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Servos & Encoders"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Servos & Encoders using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Servo Motor: Converts electrical energy into precise motion.",
+        "Pulse Coder (Encoder): Attached to the motor; it counts rotations.",
+        "Closed-Loop: The controller constantly compares where the robot *is* vs. where it *should be*."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into The R-30iB Mate Controller so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Build a picture for Servos & Encoders first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Servos & Encoders connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Servos & Encoders clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "The R-30iB Mate Controller"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for The R-30iB Mate Controller using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Main Breaker: Main power switch.",
+        "Mode Switch: T1 (Manual), T2 (Fast Manual), and AUTO.",
+        "Operator Panel: Contains the physical E-Stop and the Start button."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Inside the Controller so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Controller Front Panel"
+      ],
+      "explanation_style": "Build a picture for The R-30iB Mate Controller first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The R-30iB Mate Controller connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture The R-30iB Mate Controller clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Inside the Controller"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Inside the Controller using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Servo Amplifiers: The 'muscles' that send high voltage to motors.",
+        "E-Stop Unit: A hardware-based safety circuit that bypasses software.",
+        "Main Board: The CPU that calculates kinematics and path planning."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into The Teach Pendant (iPendant) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Internal Electronics Architecture"
+      ],
+      "explanation_style": "Build a picture for Inside the Controller first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Inside the Controller connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Inside the Controller clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "The Teach Pendant (iPendant)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for The Teach Pendant (iPendant) using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "USB Port: Used for backing up programs.",
+        "On/Off Switch: Must be ON for manual movement (T1 mode).",
+        "Display: 7-inch color screen showing status and code."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into The 3-Position Deadman Switch so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Fanuc iPendant Interface"
+      ],
+      "explanation_style": "Build a picture for The Teach Pendant (iPendant) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The Teach Pendant (iPendant) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture The Teach Pendant (iPendant) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "The 3-Position Deadman Switch"
+      },
+      "slide_role": "caution",
+      "importance": "high",
+      "narration_seed": "Students often squeeze too hard when they panic. Remind them to find the 'soft middle'.",
+      "voice_style": "serious_clear",
+      "tone": "serious_clear",
+      "energy": 0.52,
+      "pace": 0.93,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Released (Pos 1): Robot is OFF.",
+        "Middle (Pos 2): Robot is ENABLED (Jogging allowed).",
+        "Fully Squeezed (Pos 3): Robot is OFF (Emergency Panic).",
+        "State the consequence of getting this wrong, then give the clear safe rule."
+      ],
+      "must_say": [
+        "Do not treat this as optional; treat it as an operating rule."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from The Teach Pendant (iPendant) into The 3-Position Deadman Switch so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Navigating the Keypad so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "cautionary_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Explain The 3-Position Deadman Switch like an operating warning: state the risk, the consequence, and the safe rule.",
+      "story_hint": "Use a believable lab or shop-floor mistake rather than abstract warning language.",
+      "delivery_goal": "Students should feel the practical consequence of getting The 3-Position Deadman Switch wrong and remember the safe rule."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Navigating the Keypad"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Navigating the Keypad using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "COORD: Changes how the robot moves (Joint, World, Tool).",
+        "RESET: Clears error messages.",
+        "SHIFT: Must be held with other keys to perform actions.",
+        "+/- Override: Changes jogging speed."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "The next slide should compress the lesson into a quick memory or self-check.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Key Groupings"
+      ],
+      "explanation_style": "Build a picture for Navigating the Keypad first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Navigating the Keypad connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Navigating the Keypad clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Startup Checklist"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Startup Checklist as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "1. Turn Main Breaker on the controller to the ON position.",
+        "2. Turn the Pendant Switch to ON.",
+        "3. Release all E-Stops (Twist to release).",
+        "Students should know the order of the main Fanuc lab steps.",
+        "4. Press RESET on the pendant (Red 'Fault' LED should go out)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Startup Checklist to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into The Jogging Handshake so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Startup Checklist as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Startup Checklist connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Startup Checklist with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "The Jogging Handshake"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for The Jogging Handshake using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "1. Grip the Deadman switch in the middle position.",
+        "2. Hold the SHIFT key.",
+        "3. Press and hold a Blue Jog Key (J1-J6)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Understanding COORD Modes so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Manual Jog Interface"
+      ],
+      "explanation_style": "Build a picture for The Jogging Handshake first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The Jogging Handshake connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture The Jogging Handshake clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Understanding COORD Modes"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Understanding COORD Modes using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "JOINT: Moves one motor at a time (e.g., only rotate base).",
+        "WORLD: Moves in a straight line relative to the center of the robot base.",
+        "Press the COORD key to toggle between these modes."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Reading the Screen so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "World vs Joint Movement"
+      ],
+      "explanation_style": "Build a picture for Understanding COORD Modes first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Understanding COORD Modes connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Understanding COORD Modes clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Reading the Screen"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Reading the Screen using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Status Bar: Shows active mode (T1/AUTO) and speed percentage.",
+        "Software LEDs: BUSY (working), STEP (single line mode), FAULT (error active)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Testing a Program so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Build a picture for Reading the Screen first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Reading the Screen connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Reading the Screen clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Testing a Program"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Testing a Program using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "1. Select your program from the SELECT menu.",
+        "2. Press STEP to toggle 'Step Mode' (one line at a time).",
+        "3. Hold Deadman + SHIFT.",
+        "4. Press FWD to execute the highlighted line."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Running a Program in AUTO Mode so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Execution Keys"
+      ],
+      "explanation_style": "Build a picture for Testing a Program first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Testing a Program connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Testing a Program clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Running a Program in AUTO Mode"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This follows the lab manual flow: AUTO mode disables pendant operation and runs from the controller START button. Remind students: ALWAYS validate in T1 step mode first, then switch to AUTO.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "1. In T1, select the program and confirm it runs safely in STEP first.",
+        "2. Turn the controller key to AUTO (mode selector).",
+        "3. Release all E-Stops (controller and teach pendant).",
+        "4. On the pendant, switch the enable key to OFF (pendant is unavailable in AUTO)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Safety Check so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Controller Front Panel (Mode selector, START, E-Stop)."
+      ],
+      "explanation_style": "Build a picture for Running a Program in AUTO Mode first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Running a Program in AUTO Mode connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Running a Program in AUTO Mode clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Safety Check"
+      },
+      "slide_role": "caution",
+      "importance": "high",
+      "narration_seed": "Treat Safety Check as a practical caution: explain the risk, what students often underestimate, and the safe operating rule they should remember.",
+      "voice_style": "serious_clear",
+      "tone": "serious_clear",
+      "energy": 0.52,
+      "pace": 0.93,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "You are jogging the robot and it starts moving toward a table. You panic and squeeze the Deadman switch as hard as you can. What happens?",
+        "The 3-position deadman is designed to trigger an E-stop if you either release it OR squeeze it too hard in a panic.",
+        "State the consequence of getting this wrong, then give the clear safe rule."
+      ],
+      "must_say": [
+        "Do not treat this as optional; treat it as an operating rule."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Running a Program in AUTO Mode into Safety Check so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "The next slide should compress the lesson into a quick memory or self-check.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "cautionary_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Explain Safety Check like an operating warning: state the risk, the consequence, and the safe rule.",
+      "story_hint": "Use a believable lab or shop-floor mistake rather than abstract warning language.",
+      "delivery_goal": "Students should feel the practical consequence of getting Safety Check wrong and remember the safe rule."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Hardware Check"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Hardware Check as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Which axis is responsible for rotating the entire robot base left and right?",
+        "Joint 1 is the base axis for positioning the arm's orientation.",
+        "Students should know the order of the main Fanuc lab steps.",
+        "Students should know what to verify before moving to the next step."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Hardware Check to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish with a practical sequence they can follow during the lab.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Hardware Check as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Hardware Check connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Hardware Check with the main takeaways of the topic compressed into usable memory."
+    }
+  ]
+}

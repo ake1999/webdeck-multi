@@ -1,0 +1,1068 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_ubuntu22_dualboot_install",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the practical goal of building a reliable development machine.",
+    "progression": "Walk through preparation, installation, and verification with clear caution points.",
+    "destination": "Students should finish able to execute the install carefully or identify where they need help before proceeding.",
+    "tone": "procedural, careful, supportive",
+    "methods": [
+      "mental model",
+      "guided build",
+      "debugging checkpoints",
+      "recap",
+      "step-by-step",
+      "caution",
+      "checkpoints"
+    ]
+  },
+  "audience_level": "introductory autonomous mobile robotics students learning ROS 2 through lab-first workflows",
+  "topic_goal": "Help students install Ubuntu safely and understand why the Linux environment matters for the rest of the ROS 2 workflow.",
+  "topic_takeaways": [
+    "Students should know the key preparation and risk points of dual-boot installation.",
+    "Students should understand why a clean Ubuntu environment helps later robotics tooling.",
+    "Students should know the checkpoints to verify before and after installation."
+  ],
+  "style_notes": [
+    "Keep the tone hands-on and confidence-building.",
+    "Connect every concept to what students will debug in a terminal, simulation, or robot lab.",
+    "Use visualization and mental models before deep command details.",
+    "Keep the pacing calm and careful.",
+    "Treat risky steps explicitly and avoid rushing past verification."
+  ],
+  "transition_style": "Move from preparation to installation to post-install checks, always stating what must be verified before the next step.",
+  "scene_policy_default": "none",
+  "object_policy_default": "none",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Ubuntu 22.04 Dual Boot (Windows)"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Follow the steps exactly. Stop and ask if anything looks different.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Help students install Ubuntu safely and understand why the Linux environment matters for the rest of the ROS 2 workflow.",
+      "transition_to_next": "Carry this idea forward into Ubuntu install options (3 choices) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame Ubuntu 22.04 Dual Boot (Windows) as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Ubuntu 22.04 Dual Boot (Windows) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Ubuntu 22.04 Dual Boot (Windows) sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Ubuntu install options (3 choices)"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Ubuntu install options (3 choices) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Dual boot: Windows + Ubuntu on the same machine (best performance for sim)",
+        "Virtual Machine (VM): Ubuntu inside Windows/macOS (lowest risk, but slower for Gazebo)",
+        "Replace OS: Ubuntu only (only if you’re sure you want it)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Ubuntu install options (3 choices) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Ubuntu install options (3 choices) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "What we do in class (and why)"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use What we do in class (and why) to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "In class we focus on dual boot because ROS + Gazebo runs better",
+        "VM is OK for learning commands, but can be slow for simulation",
+        "Dual boot is reversible: Ubuntu can be removed later (general idea)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Ubuntu install options (3 choices) into What we do in class (and why) so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into If you want Windows-only later (general idea) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use What we do in class (and why) to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep What we do in class (and why) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how What we do in class (and why) sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "If you want Windows-only later (general idea)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define If you want Windows-only later (general idea) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Ubuntu is installed in its own partitions (in the free space you created)",
+        "To remove Ubuntu later: boot Windows → delete Ubuntu partitions → extend Windows partition",
+        "Then set Windows Boot Manager as first boot option (BIOS/UEFI)",
+        "If the boot menu remains, we handle it as a class/support step (don’t panic)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use If you want Windows-only later (general idea) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once If you want Windows-only later (general idea) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define If you want Windows-only later (general idea) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep If you want Windows-only later (general idea) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain If you want Windows-only later (general idea) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Before we start (checklist)"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Before we start (checklist) as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Laptop plugged in (charger connected)",
+        "USB flash drive 8 GB+ (empty if possible)",
+        "Download Ubuntu 22.04 LTS Desktop ISO",
+        "Students should know the key preparation and risk points of dual-boot installation.",
+        "Download Rufus (Windows) to make bootable USB"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Before we start (checklist) to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Windows: turn off Fast Startup (recommended) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Before we start (checklist) as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Before we start (checklist) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should leave Before we start (checklist) with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Windows: turn off Fast Startup (recommended)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Windows: turn off Fast Startup (recommended) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Open Control Panel → Power Options",
+        "Click Choose what the power buttons do",
+        "Click Change settings that are currently unavailable",
+        "Uncheck Turn on fast startup → Save changes"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Windows: turn off Fast Startup (recommended) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Windows: turn off Fast Startup (recommended) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Windows: turn off Fast Startup (recommended) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Windows: turn off Fast Startup (recommended) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Windows: turn off Fast Startup (recommended) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Windows: open Disk Management"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Windows: open Disk Management in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Right-click Start button",
+        "Click Disk Management",
+        "Find your main Windows drive (usually C:) in the bottom view"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Windows: open Disk Management to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Windows: open Disk Management is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Windows: open Disk Management in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Windows: open Disk Management connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Windows: open Disk Management accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Windows: create Unallocated space (do this carefully)"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Keep Windows: create Unallocated space (do this carefully) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Right-click (C:) → choose Shrink Volume…",
+        "Enter how much to shrink (suggestion: 60000–120000 MB = 60–120 GB)",
+        "Click Shrink",
+        "Confirm you now see Unallocated space (black bar) on the disk"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Windows: create Unallocated space (do this carefully) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Windows: create Unallocated space (do this carefully) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Make a bootable USB (Rufus) — 준비"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Make a bootable USB (Rufus) — 준비 in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Plug in your USB drive",
+        "Open Rufus",
+        "In Rufus: confirm the correct Device (your USB) is selected"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Make a bootable USB (Rufus) — 준비 to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Make a bootable USB (Rufus) — 준비 is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Make a bootable USB (Rufus) — 준비 in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Make a bootable USB (Rufus) — 준비 connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Make a bootable USB (Rufus) — 준비 accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Rufus: select Ubuntu ISO"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Rufus: select Ubuntu ISO in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Click SELECT",
+        "Choose your downloaded Ubuntu 22.04 ISO file",
+        "Rufus will auto-detect settings (we will confirm them next)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Rufus: select Ubuntu ISO to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Rufus: select Ubuntu ISO is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Rufus: select Ubuntu ISO in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Rufus: select Ubuntu ISO connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Rufus: select Ubuntu ISO accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Rufus: choose partition scheme (important)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Rufus: choose partition scheme (important) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "If your PC uses UEFI (most modern laptops): choose GPT",
+        "If your PC is older and uses Legacy BIOS: choose MBR",
+        "If you are unsure: choose GPT (most students will use GPT/UEFI)",
+        "Click START → confirm erase warning"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Rufus: choose partition scheme (important) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Rufus: choose partition scheme (important) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Rufus: choose partition scheme (important) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Rufus: choose partition scheme (important) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Rufus: choose partition scheme (important) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Boot from the USB drive"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Boot from the USB drive in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Restart your computer (USB plugged in)",
+        "Open Boot Menu key during startup (common keys: F12 / ESC / F9 / F10)",
+        "Choose the USB device (often shows as UEFI: )",
+        "You should see the Ubuntu boot screen"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Boot from the USB drive to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Boot from the USB drive is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Boot from the USB drive in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Boot from the USB drive connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Boot from the USB drive accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Ubuntu boot menu: choose correctly"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Ubuntu boot menu: choose correctly in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Select Try Ubuntu first (recommended)",
+        "Once desktop loads, confirm: mouse/keyboard/Wi-Fi work",
+        "Then click Install Ubuntu 22.04 LTS on the desktop"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Ubuntu boot menu: choose correctly to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Ubuntu boot menu: choose correctly is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Ubuntu boot menu: choose correctly in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Ubuntu boot menu: choose correctly connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Ubuntu boot menu: choose correctly accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Installer: language & keyboard"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Installer: language & keyboard efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Choose English (or preferred language)",
+        "Choose Keyboard layout (test in the box)",
+        "Click Continue"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Installer: language & keyboard efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Installer: language & keyboard and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Installer: updates & third-party software"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Installer: updates & third-party software efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Choose Normal installation",
+        "Check: Download updates while installing Ubuntu",
+        "Check: Install third-party software for graphics and Wi-Fi hardware",
+        "Click Continue"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Installer: updates & third-party software efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Installer: updates & third-party software and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Installer: Installation type (DO NOT pick the wrong one)"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Installer: Installation type (DO NOT pick the wrong one) into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "If you see Install Ubuntu alongside Windows Boot Manager → you can select it (easy option)",
+        "If you want full control (recommended in class): choose Something else",
+        "Click Continue",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Installer: Installation type (DO NOT pick the wrong one) and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Installer: Installation type (DO NOT pick the wrong one) without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Installer: Installation type (DO NOT pick the wrong one) into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should be able to answer a similar Installer: Installation type (DO NOT pick the wrong one) question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Partitioning: find the free space"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Partitioning: find the free space efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "In the partition list, look for Free space (Unallocated)",
+        "Make sure you are NOT selecting Windows partitions",
+        "We will create Ubuntu partitions ONLY inside the free space"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Partitioning: find the free space efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Partitioning: find the free space and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Create the Ubuntu root partition ( / )"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Keep Create the Ubuntu root partition ( / ) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Select Free space → click +",
+        "Size: at least 25 GB (recommend 40–60 GB if possible)",
+        "Type: Primary",
+        "Location: Beginning of this space"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Create the Ubuntu root partition ( / ) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Create the Ubuntu root partition ( / ) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Create /home partition (recommended)"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Keep Create /home partition (recommended) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Select remaining Free space → click +",
+        "Size: use most of the remaining space (leave swap if you want swap)",
+        "Use as: Ext4 journaling file system",
+        "Mount point: /home"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Create /home partition (recommended) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Create /home partition (recommended) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "Swap area (optional)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Swap area (optional) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Swap is extra memory on disk when RAM is full (slower than RAM)",
+        "If you want swap: select remaining free space → +",
+        "Use as: swap area",
+        "Common size: 2–8 GB (or similar to RAM if you want hibernation)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Swap area (optional) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Swap area (optional) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Swap area (optional) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Swap area (optional) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Swap area (optional) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "EFI partition (do NOT create a new one if Windows already has it)"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Keep EFI partition (do NOT create a new one if Windows already has it) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Most Windows UEFI systems already have an EFI System Partition (ESP)",
+        "If you see a small FAT32 partition labeled EFI/ESP → keep it (do not format it)",
+        "Ubuntu will use the existing EFI partition automatically",
+        "Only create EFI if the installer warns you and your disk truly has none"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep EFI partition (do NOT create a new one if Windows already has it) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on EFI partition (do NOT create a new one if Windows already has it) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "Bootloader location (important)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Bootloader location (important) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "At the bottom: Device for boot loader installation",
+        "Choose the main disk (example: /dev/nvme0n1 or /dev/sda)",
+        "Do NOT choose a specific partition like /dev/nvme0n1p5",
+        "Then click Install Now"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Bootloader location (important) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Bootloader location (important) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Bootloader location (important) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Bootloader location (important) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Bootloader location (important) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "Confirm changes (last check before writing to disk)"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Confirm changes (last check before writing to disk) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Confirm Ubuntu partitions are created in free space (Ext4 / and /home)",
+        "Confirm Windows partitions are untouched",
+        "Click Continue to begin installation"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Confirm changes (last check before writing to disk) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Confirm changes (last check before writing to disk) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "Choose location / timezone"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Choose location / timezone efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Select your city/timezone (or click on the map)",
+        "Click Continue"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Choose location / timezone efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Choose location / timezone and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "Create your Ubuntu user"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Create your Ubuntu user efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Enter name, computer name, username, and password",
+        "Choose a password you won’t forget (you’ll use it for installs)",
+        "Click Continue and wait for installation to finish"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Create your Ubuntu user efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Create your Ubuntu user and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 25,
+        "source_title": "Restart and boot into Ubuntu"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Restart and boot into Ubuntu in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "When prompted: click Restart Now",
+        "Remove USB when it asks (or after shutdown)",
+        "You should see a boot menu where you can choose Ubuntu or Windows"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Restart and boot into Ubuntu to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Restart and boot into Ubuntu is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Restart and boot into Ubuntu in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Restart and boot into Ubuntu connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Restart and boot into Ubuntu accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 26,
+        "source_title": "After first boot: update Ubuntu (do this before ROS)"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep After first boot: update Ubuntu (do this before ROS) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Connect to Wi-Fi",
+        "Open Terminal and run:",
+        "sudo apt update",
+        "sudo apt upgrade -y"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep After first boot: update Ubuntu (do this before ROS) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on After first boot: update Ubuntu (do this before ROS) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 27,
+        "source_title": "Optional: drivers (if graphics/Wi-Fi issues)"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Optional: drivers (if graphics/Wi-Fi issues) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Open Software & Updates → Additional Drivers",
+        "Select the recommended driver (if available)",
+        "Apply changes and reboot"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish able to execute the install carefully or identify where they need help before proceeding.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Optional: drivers (if graphics/Wi-Fi issues) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Optional: drivers (if graphics/Wi-Fi issues) and what to verify before moving on."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "opening_intent": "Open by telling students why the topic matters in real robot selection work.",
+  "closing_intent": "Close by turning the topic into a short checklist students can use later.",
+  "lesson_arc": [
+    "Start with the practical decision students need to make.",
+    "Define the technical vocabulary needed to read a datasheet.",
+    "Compare robot families by what each is best at.",
+    "End with a quick selection practice and memory check."
+  ],
+  "slides": [
+    {
+      "slide_id": "robot_characteristics",
+      "speaking_goal": "Frame the topic as a practical robot-selection skill.",
+      "bridge_in": "Start the class by naming the two halves of the lesson.",
+      "bridge_out": "Move from the overview into why specifications matter.",
+      "key_terms_introduced": [
+        "robot characteristics",
+        "manipulator types"
+      ],
+      "likely_callbacks": [
+        "robot selection",
+        "datasheets"
+      ],
+      "student_memory": "Students should know this lesson is about choosing robots from specs and workspace needs."
+    }
+  ]
+}

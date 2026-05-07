@@ -1,0 +1,134 @@
+{
+  "schema_version": "1.0",
+  "slide_id": "test_ai2_side_step_right",
+  "fps": 30,
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "aspect_ratio": "16:9"
+  },
+  "camera_reference": {
+    "camera_type": "orthographic",
+    "render_resolution_px": [
+      1920,
+      1080
+    ],
+    "camera_location_world_m": [
+      0.0,
+      -6.0,
+      1.2375
+    ],
+    "camera_look_direction": "+Y",
+    "camera_up_axis": "+Z",
+    "orthographic_scale_m": 2.775,
+    "character_front_direction": "-Y",
+    "slide_width_m": 4.933,
+    "slide_height_m": 2.775,
+    "pixels_per_meter": 389.19,
+    "meters_per_pixel": 0.002569
+  },
+  "render_policy": {
+    "output_mode": "transparent_webm",
+    "background": "transparent",
+    "render_avatar_only": true,
+    "render_slide_in_blender": false,
+    "target_character_height_fraction": 0.6667
+  },
+  "segments": [
+    {
+      "segment_id": "test_side_step_right_001",
+      "request_id": "test_side_step_right_001",
+      "t0": 0.0,
+      "t1": 5.0,
+      "duration_sec": 5.0,
+      "motion_type": "side_step_right",
+      "motion_key": null,
+      "avatar_base_screen_xy_px": [
+        1350,
+        1030
+      ],
+      "avatar_base_world_xyz_m": [
+        1.002,
+        0.0,
+        0.0
+      ],
+      "screen_path": {
+        "path_type": "linear",
+        "from_avatar_base_screen_xy_px": [
+          1350,
+          1030
+        ],
+        "to_avatar_base_screen_xy_px": [
+          1600,
+          1030
+        ],
+        "from_avatar_base_world_xyz_m": [
+          1.002,
+          0.0,
+          0.0
+        ],
+        "to_avatar_base_world_xyz_m": [
+          1.645,
+          0.0,
+          0.0
+        ],
+        "depth_policy": "keep_y_fixed",
+        "max_depth_y_drift_m": 0.05
+      },
+      "body_control": {
+        "body_facing_bucket": "audience",
+        "body_yaw_deg": 0
+      },
+      "gaze_control": {
+        "gaze_mode": "audience",
+        "gaze_target_element_id": null,
+        "gaze_target_xy_px": null,
+        "gaze_target_world_xyz_m": null,
+        "gaze_direction_bucket": "center"
+      },
+      "point_control": {
+        "pointing": false,
+        "point_target_element_id": null,
+        "point_target_xy_px": null,
+        "point_target_world_xyz_m": null,
+        "point_direction_bucket": "none",
+        "point_hand": "none",
+        "point_intensity_bucket": "none"
+      },
+      "screen_constraints": {
+        "visible_frame_px": {
+          "left": 0,
+          "right": 1920,
+          "top": 0,
+          "bottom": 1080
+        },
+        "movement_box_px": {
+          "left": -120,
+          "right": 2040,
+          "top": 0,
+          "bottom": 1080
+        },
+        "visible_frame_world_m": {
+          "left_x": -2.4665,
+          "right_x": 2.4665,
+          "bottom_z": -0.15,
+          "top_z": 2.625
+        },
+        "movement_box_world_m": {
+          "left_x": -2.775,
+          "right_x": 2.775,
+          "bottom_z": -0.15,
+          "top_z": 2.625
+        },
+        "keep_depth_y_fixed": true,
+        "max_depth_y_drift_m": 0.05,
+        "allow_body_overflow_px": 120,
+        "allow_hand_overflow_px": 0
+      },
+      "blend": {
+        "fade_in_sec": 0.15,
+        "fade_out_sec": 0.15
+      }
+    }
+  ]
+}

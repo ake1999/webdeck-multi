@@ -1,0 +1,959 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_data_registers",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the limitation of hard-coded robot programs.",
+    "progression": "Introduce data registers as programmable memory, then connect them to practical uses in Fanuc code.",
+    "destination": "Students should finish seeing registers as a tool for flexibility rather than just another syntax item.",
+    "tone": "practical, programming-oriented, explanatory",
+    "methods": [
+      "intuition",
+      "compare/contrast",
+      "guided practice",
+      "recap",
+      "problem framing",
+      "define then example",
+      "guided code reading"
+    ]
+  },
+  "audience_level": "undergraduate industrial robotics students preparing for labs, robot selection, and basic programming decisions",
+  "topic_goal": "Show students how data registers make robot programs flexible, parameterized, and easier to debug.",
+  "topic_takeaways": [
+    "Students should understand what data registers store and why that matters.",
+    "Students should see how registers connect to offsets, logic, and reusable programs.",
+    "Students should be able to explain when using a register is better than hard-coding a value."
+  ],
+  "style_notes": [
+    "Keep the tone practical and shop-floor oriented.",
+    "Translate definitions into robot-cell decisions quickly.",
+    "Prefer concrete industrial examples over abstract theory when possible.",
+    "Explain what changes when a value moves from code into a register.",
+    "Keep examples concrete and parameter-driven."
+  ],
+  "transition_style": "Move from the industrial question students would ask on the job to the next specification, control, or programming choice they need to make.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "DATA Registers (R) + Position Registers (PR)"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Goal: students can store numbers, do arithmetic, use IF/loops, capture timer, and do basic PR add/sub.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Show students how data registers make robot programs flexible, parameterized, and easier to debug.",
+      "transition_to_next": "Carry this idea forward into By the end of today, you can… so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame DATA Registers (R) + Position Registers (PR) as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep DATA Registers (R) + Position Registers (PR) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how DATA Registers (R) + Position Registers (PR) sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "By the end of today, you can…"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use By the end of today, you can… to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Explain what a Data Register R[n] is (a numeric variable)",
+        "Insert register instructions on the pendant (fast workflow)",
+        "Do arithmetic: + − × ÷, and understand MOD vs DIV",
+        "Use registers for loops and IF conditions"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from DATA Registers (R) + Position Registers (PR) into By the end of today, you can… so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into What is a Data Register (R[n])? so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use By the end of today, you can… to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep By the end of today, you can… connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how By the end of today, you can… sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "What is a Data Register (R[n])?"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep What is a Data Register (R[n])? efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "A data register is a general-purpose storage location (a variable) for numbers",
+        "Stores integers or real (decimal) values",
+        "Used for: program logic, calculations, counting, decisions, motion-related numbers",
+        "Most controllers provide up to 200 registers: R[1] … R[200]"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep What is a Data Register (R[n])? efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Keep What is a Data Register (R[n])? connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should know the minimum reliable workflow on What is a Data Register (R[n])? and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Key points you should remember"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Key points you should remember as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Storage & access: registers are global inside the controller → any program can read/write them",
+        "Programming: use them to store intermediate results (like a calculator memory)",
+        "Control flow: use in IF statements and loops (count cycles, limit retries, etc.)",
+        "Students should understand what data registers store and why that matters.",
+        "Applications: palletizing, sorting, quality checks, counters, simple decision logic"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Key points you should remember to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into 3 common register types you will see so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Key points you should remember as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Key points you should remember connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Key points you should remember with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "3 common register types you will see"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for 3 common register types you will see using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Data Registers (R[n]) → store numbers (int/real)",
+        "Position Registers (PR[n]) → store positions (Cartesian or Joint)",
+        "Pallet Registers (PL[n]) → palletizing position data",
+        "Today: focus on R and PR (Lab 7)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Best pendant setup: Double Display so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Data Registers Types"
+      ],
+      "explanation_style": "Build a picture for 3 common register types you will see first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep 3 common register types you will see connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture 3 common register types you will see clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Best pendant setup: Double Display"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Best pendant setup: Double Display in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Open any program (or create a new one with a few taught points)",
+        "2) Press SHIFT + DISPLAY → choose Double Display",
+        "3) Press DISP to change what each side shows",
+        "4) Left screen: your program"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Best pendant setup: Double Display to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Best pendant setup: Double Display is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Best pendant setup: Double Display in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Best pendant setup: Double Display connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Best pendant setup: Double Display accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "How to INSERT a register instruction (fast)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for How to INSERT a register instruction (fast) using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Move cursor where you want the line",
+        "2) Press NEXT",
+        "3) Press INST",
+        "4) Select Registers"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into R instruction anatomy: R[i] = (value) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Data Registers Insert"
+      ],
+      "explanation_style": "Build a picture for How to INSERT a register instruction (fast) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep How to INSERT a register instruction (fast) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture How to INSERT a register instruction (fast) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "R instruction anatomy: R[i] = (value)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define R instruction anatomy: R[i] = (value) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "R[i] = target register number (usually 1…200)",
+        "Right side can be:",
+        "• a constant (ex: 50, 12.5)",
+        "• another register R[j]"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use R instruction anatomy: R[i] = (value) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once R instruction anatomy: R[i] = (value) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define R instruction anatomy: R[i] = (value) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep R instruction anatomy: R[i] = (value) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain R instruction anatomy: R[i] = (value) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Basic arithmetic with registers (core patterns)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Basic arithmetic with registers (core patterns) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Use registers like scratchpad memory: compute step-by-step"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Basic arithmetic with registers (core patterns) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Basic arithmetic with registers (core patterns) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Basic arithmetic with registers (core patterns) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Basic arithmetic with registers (core patterns) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Basic arithmetic with registers (core patterns) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Rules that cause the most errors"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Rules that cause the most errors in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Rule 1: Up to five operators on one line (long expressions can fail)",
+        "Rule 2: You can mix + with - on one line",
+        "Rule 3: You can mix * with / on one line",
+        "Rule 4: You cannot mix {+,-} with {*,/} on the same line"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Rules that cause the most errors to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Rules that cause the most errors is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Rules that cause the most errors in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Rules that cause the most errors connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Rules that cause the most errors accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Quiz: why does this fail?"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: why does this fail? into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Student writes: R[2] = R[3] + R[4] * R[5] and the controller rejects it. Best explanation + fix?",
+        "FANUC register math has operator mixing restrictions. Use a temp register to split the expression.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: why does this fail? and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: why does this fail? without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: why does this fail? into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: why does this fail? question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "MOD vs DIV (useful for indexing + patterns)"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Compare the alternatives or concepts on MOD vs DIV (useful for indexing + patterns) clearly, emphasize the trade-off, and end with the decision rule students should remember.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "DIV = integer part of division (quotient without decimals)",
+        "MOD = remainder part (what is left after dividing)",
+        "Example (concept): 17 DIV 5 = 3, and 17 MOD 5 = 2",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Lab manual shows integer-division idea as:"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Quiz: why does this fail? into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on MOD vs DIV (useful for indexing + patterns) explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of MOD vs DIV (useful for indexing + patterns) and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Quiz: pick MOD or DIV"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: pick MOD or DIV into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "You want to cycle through 4 positions repeatedly: 0,1,2,3,0,1,2,3… using a counter R[1] that keeps increasing. Which gives the repeating index?",
+        "MOD gives the repeating remainder (0..3). DIV gives the growing block number (0,0,0,0,1,1,1,1...).",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: pick MOD or DIV and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: pick MOD or DIV without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: pick MOD or DIV into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: pick MOD or DIV question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "How registers are used in real programs"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for How registers are used in real programs using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Math calculations (store intermediate results)",
+        "2) Store motion-related numbers (speed/offset values)",
+        "3) Loop counters (repeat N times safely)",
+        "4) IF logic (decisions based on measurements)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Loop counter pattern (very common) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Data Registers Use"
+      ],
+      "explanation_style": "Build a picture for How registers are used in real programs first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep How registers are used in real programs connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture How registers are used in real programs clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Loop counter pattern (very common)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Loop counter pattern (very common) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Read it as: initialize → do work → increment → if not done, jump back",
+        "Lab habit: use a counter to limit retries (safe automation)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Loop counter pattern (very common) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Loop counter pattern (very common) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Loop counter pattern (very common) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Loop counter pattern (very common) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Loop counter pattern (very common) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Quiz: off-by-one check"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: off-by-one check into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "If you want the loop body to run exactly 10 times, which condition is correct (assuming you increment first)?",
+        "With increment-first, values go 1..10. When it becomes 10, < 10 is false, so it stops after 10 runs.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: off-by-one check and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: off-by-one check without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: off-by-one check into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: off-by-one check question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Using registers in IF decisions"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Using registers in IF decisions in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Example idea (pseudo):",
+        "Use cases: too many failures → stop; part count reached → change routine; sensor reading out of range → alarm"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Using registers in IF decisions to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Using registers in IF decisions is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Using registers in IF decisions in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Using registers in IF decisions connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Using registers in IF decisions accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Lab Task: capture TIMER into a register"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Lab Task: capture TIMER into a register efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Insert these lines (in this order):",
+        "Tip: on the value selection screen, go to next page and choose TIMER",
+        "Timer overflow flag is cleared when you do TIMER[i]=RESET"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Lab Task: capture TIMER into a register efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Keep Lab Task: capture TIMER into a register connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Lab Task: capture TIMER into a register and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Quiz: why is my timer always 0?"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: why is my timer always 0? into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Student runs the program and R[10] is always 0. Most likely mistake?",
+        "If the timer never starts (or is reset after start), the value you capture will be 0 or near 0.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: why is my timer always 0? and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: why is my timer always 0? without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: why is my timer always 0? into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: why is my timer always 0? question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "Advanced: indirect register addressing (powerful)"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Advanced: indirect register addressing (powerful) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Examples (concept):",
+        "Use carefully: it’s powerful, but debugging is harder",
+        "Lab advice: start with direct R[10], R[11] first — then go indirect if needed"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Advanced: indirect register addressing (powerful) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Keep Advanced: indirect register addressing (powerful) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Advanced: indirect register addressing (powerful) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "Position Registers (PR[n]) — what they store"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Position Registers (PR[n]) — what they store in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "A Position Register holds a robot pose",
+        "Typical data: X, Y, Z, W, P, R (Cartesian) or joint values",
+        "Common sources you can load from:",
+        "LPOS (current Cartesian position) • JPOS (current joint position)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Position Registers (PR[n]) — what they store to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Position Registers (PR[n]) — what they store is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Position Registers (PR[n]) — what they store in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Position Registers (PR[n]) — what they store connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Position Registers (PR[n]) — what they store accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "PR instructions (important limitation)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define PR instructions (important limitation) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Load position:",
+        "PR arithmetic (Lab note): addition and subtraction are used with PRs",
+        "Example from lab manual:"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use PR instructions (important limitation) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once PR instructions (important limitation) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define PR instructions (important limitation) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep PR instructions (important limitation) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain PR instructions (important limitation) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "Quiz: choose R or PR"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Turn Quiz: choose R or PR into a short guided practice moment: let students think first, then explain the reasoning in a teacher-like way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "You need to store a number of completed cycles (0,1,2,3...). Which register type is correct?",
+        "Cycle counts are numbers → Data Register R[n]. PR is for position/pose data.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: choose R or PR and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: choose R or PR without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: choose R or PR into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: choose R or PR question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "Lab 7 checklist (what you must demonstrate)"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Lab 7 checklist (what you must demonstrate) as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Set Double Display: program left, registers right",
+        "Insert at least one arithmetic line using R[ ]",
+        "Demonstrate a loop or IF using an R value",
+        "Students should understand what data registers store and why that matters.",
+        "Capture TIMER[1] into R[10] and verify it changes"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Lab 7 checklist (what you must demonstrate) to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "The next slide should compress the lesson into a quick memory or self-check.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Lab 7 checklist (what you must demonstrate) as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Lab 7 checklist (what you must demonstrate) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Lab 7 checklist (what you must demonstrate) with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "Wrap-up (fast self-check)"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Wrap-up (fast self-check) as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "What is R[n] used for?",
+        "Why can R[3] + R[4] * R[5] fail on one line?",
+        "When do you use MOD vs DIV?",
+        "Students should understand what data registers store and why that matters.",
+        "What does PR[1] = LPOS do?"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Wrap-up (fast self-check) to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish seeing registers as a tool for flexibility rather than just another syntax item.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Wrap-up (fast self-check) as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Wrap-up (fast self-check) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Wrap-up (fast self-check) with the main takeaways of the topic compressed into usable memory."
+    }
+  ]
+}

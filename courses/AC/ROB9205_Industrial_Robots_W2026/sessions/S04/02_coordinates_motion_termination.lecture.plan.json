@@ -1,0 +1,1116 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "02_coordinates_motion_termination",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the programmer's question: why did the robot move that way?",
+    "progression": "Move from coordinate frames to motion semantics to termination behavior.",
+    "destination": "Students should finish with a stronger mental model for reading and writing motion instructions.",
+    "tone": "practical, motion-aware, visual",
+    "methods": [
+      "intuition",
+      "compare/contrast",
+      "guided practice",
+      "recap",
+      "visual intuition",
+      "lab interpretation"
+    ]
+  },
+  "audience_level": "undergraduate industrial robotics students preparing for labs, robot selection, and basic programming decisions",
+  "topic_goal": "Help students understand how coordinate choices, motion commands, and termination settings shape actual robot movement.",
+  "topic_takeaways": [
+    "Students should distinguish common coordinate systems used in robot programming.",
+    "Students should understand what motion termination changes physically.",
+    "Students should be able to predict when a motion command will look smooth, slow, or precise."
+  ],
+  "style_notes": [
+    "Keep the tone practical and shop-floor oriented.",
+    "Translate definitions into robot-cell decisions quickly.",
+    "Prefer concrete industrial examples over abstract theory when possible.",
+    "Use movement language students can picture physically.",
+    "Make the connection between programming terms and visible robot behavior explicit."
+  ],
+  "transition_style": "Move from the industrial question students would ask on the job to the next specification, control, or programming choice they need to make.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Coordinates + Motion Systems"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Tell students: this topic is the foundation of safe programming. If you choose the wrong coordinate system or motion type, the robot can move in a completely unexpected way.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Help students understand how coordinate choices, motion commands, and termination settings shape actual robot movement.",
+      "transition_to_next": "Carry this idea forward into Why Coordinate Systems Matter so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Frame Coordinates + Motion Systems as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Coordinates + Motion Systems connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Coordinates + Motion Systems sets up the lesson and why the topic matters.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Why Coordinate Systems Matter"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Emphasize: frame = an origin + 3 axes. The robot’s controller always needs a frame to interpret X/Y/Z and W/P/R.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "They provide reference frames for positioning and orienting the robot’s tool (end effector).",
+        "The same jog key can produce different motion depending on your selected coordinate system.",
+        "Coordinate systems help you program motion relative to the robot, relative to the cell, or relative to the tool.",
+        "Main coordinate systems we use today: WORLD, JOINT, TOOL."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Coordinates + Motion Systems into Why Coordinate Systems Matter so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into One Robot, Multiple Frames so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Use Why Coordinate Systems Matter to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Why Coordinate Systems Matter connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Why Coordinate Systems Matter sets up the lesson and why the topic matters.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "One Robot, Multiple Frames"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain: WORLD is like Earth coordinates in the cell; USER is like coordinates on the table; TOOL is like coordinates attached to the gripper. The robot can show the same pose using any of these frames.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "WORLD frame: fixed to the robot base / cell.",
+        "USER frame: fixed to your table/fixture/workpiece.",
+        "TOOL frame: fixed to the end effector (TCP).",
+        "When you jog, you are telling FANUC: “Move the TCP along this frame’s X/Y/Z.”"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into JOINT Coordinate System so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Build a picture for One Robot, Multiple Frames first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep One Robot, Multiple Frames connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture One Robot, Multiple Frames clearly before the formal details continue.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "JOINT Coordinate System"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Joint mode is great for ‘freeing’ the robot or adjusting posture, but it is NOT intuitive for moving the tool straight. Warn: the TCP can swing widely even when you move only one joint.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Definition: Each axis of the robot is controlled independently.",
+        "Use Case: Direct control of individual robot joints.",
+        "Example: Maintenance or calibration tasks.",
+        "Robot position is shown using joint angles (J1…J6)."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "link",
+        "joint"
+      ],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into CARTESIAN / WORLD Coordinate System so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Build a picture for JOINT Coordinate System first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep JOINT Coordinate System connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture JOINT Coordinate System clearly before the formal details continue.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "CARTESIAN / WORLD Coordinate System"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Quick WPR explanation: W≈roll, P≈pitch, R≈yaw (don’t overdo the math). Emphasize: WORLD jog means “move along the cell axes,” not along the tool axes.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Definition: A fixed coordinate system used for absolute positioning in the robot workspace.",
+        "Origin: Located at the base of the robot (cell/world reference).",
+        "Axes: X (forward), Y (left), Z (up).",
+        "Moves the robot Tool Center Point (TCP) in X/Y/Z and rotates about X (W), Y (P), Z (R)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use CARTESIAN / WORLD Coordinate System to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once CARTESIAN / WORLD Coordinate System is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Define CARTESIAN / WORLD Coordinate System in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep CARTESIAN / WORLD Coordinate System connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain CARTESIAN / WORLD Coordinate System accurately and use it in the next step of the lesson.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "WORLD → WORLD / USER / JGFRAME"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Tell students: USER frames are one of the most important productivity tools. When your part is on a rotated fixture, USER frame lets you program in part coordinates.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "WORLD: Fixed to the robot base/cell. Good for general navigation.",
+        "USER: Fixed to a workpiece/table/fixture. Best for programming relative to the part.",
+        "JGFRAME (JOG FRAME): A jog-only frame used to make manual jogging convenient in certain setups.",
+        "In practice: If your table is rotated, USER frame prevents confusing diagonal moves."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into TOOL Coordinate System so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Build a picture for WORLD → WORLD / USER / JGFRAME first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep WORLD → WORLD / USER / JGFRAME connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture WORLD → WORLD / USER / JGFRAME clearly before the formal details continue.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "TOOL Coordinate System"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "If your TCP is wrong, tool jogging is lying to you. Example: drilling—Tool +Z should move along the drill direction even if angled.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Definition: A coordinate system attached to the robot’s end effector or tool.",
+        "Use Case: Used when programming movements relative to the tool’s orientation.",
+        "Example: Welding, painting, drilling—where the tool angle matters.",
+        "Moves the robot TCP in X/Y/Z and rotates W/P/R in the selected tool frame."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Pose = Position + Orientation so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Build a picture for TOOL Coordinate System first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep TOOL Coordinate System connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture TOOL Coordinate System clearly before the formal details continue.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Pose = Position + Orientation"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Do a quick demo idea: same XYZ different WPR—students can visually see the wrist rotate. Stress: pose must be safe; a wrist flip can hit fixtures.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Position: X, Y, Z (usually in mm).",
+        "Orientation: W, P, R (tool rotation angles shown by FANUC).",
+        "If you keep X/Y/Z the same but change W/P/R, the tool will stay at the same location but rotate.",
+        "This is why wrist joints (J4–J6) matter: they control orientation."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Pose = Position + Orientation to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Pose = Position + Orientation is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Pose = Position + Orientation in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Pose = Position + Orientation connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Pose = Position + Orientation accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Motion Types in FANUC"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Motion type answers ‘How do we travel between points?’ Termination answers ‘What happens as we reach the point?’ Students often mix these up.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "The four types are: JOINT, LINEAR, CIRCULAR, ARC.",
+        "Understanding differences is crucial for precise positioning, smooth motion, and optimized cycle times.",
+        "Think: motion type controls the path between points."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Motion Types in FANUC to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Motion Types in FANUC is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Motion Types in FANUC in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Motion Types in FANUC connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Motion Types in FANUC accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "JOINT (J) Motion"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain: Joint motion optimizes joints, not tool path. Good for ‘air moves.’ Bad when you need a straight approach to a part.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Moves the robot using the shortest path in joint space.",
+        "Fastest movement between points where path accuracy is not critical.",
+        "Command example: J P[x] 100% FINE",
+        "Pros: Fast and efficient."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "link",
+        "joint"
+      ],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into LINEAR (L) Motion so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may think URDF, Xacro, links, and joints are just file syntax instead of a robot-structure model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "p2p_circular.png"
+      ],
+      "explanation_style": "Build a picture for JOINT (J) Motion first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep JOINT (J) Motion connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture JOINT (J) Motion clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "LINEAR (L) Motion"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Linear motion is the default near the part. If the robot must approach a hole or fixture safely, L is your friend.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Moves the robot in a straight line from current position to the target (TCP path).",
+        "Used when you need precise path control (welding, gluing, approach/withdraw).",
+        "Command example: L P[x] 500mm/sec FINE",
+        "Pros: Maintains a straight path."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into CIRCULAR (C) Motion so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "p2p_linear.png"
+      ],
+      "explanation_style": "Build a picture for LINEAR (L) Motion first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep LINEAR (L) Motion connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture LINEAR (L) Motion clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "CIRCULAR (C) Motion"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain: Typically you need a ‘through’ point and an ‘end’ point (implementation depends on setup). Emphasize: circular is about TCP path being an arc.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Moves the robot in a circular arc defined by points.",
+        "Used for curved paths (polishing, contour following, some welding paths).",
+        "Command example: C P[x] P[y] 100mm/sec FINE",
+        "Pros: Smooth, curved motion."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into ARC Motion (Welding-Oriented) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "p2p_circular.png"
+      ],
+      "explanation_style": "Build a picture for CIRCULAR (C) Motion first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep CIRCULAR (C) Motion connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture CIRCULAR (C) Motion clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "ARC Motion (Welding-Oriented)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Tell students: We may not use ARCPATH in this course unless the cell has the welding option. But you should know it exists and why it is different.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Specialized motion for arc welding, maintaining consistent speed and orientation.",
+        "Used in welding applications (requires appropriate options/software).",
+        "Command mentioned in the original slides: ARCPATH",
+        "Pros: Optimized for weld quality and process consistency."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use ARC Motion (Welding-Oriented) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once ARC Motion (Welding-Oriented) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define ARC Motion (Welding-Oriented) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep ARC Motion (Welding-Oriented) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain ARC Motion (Welding-Oriented) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Speed Units: % vs mm/sec vs cm/min"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Students get confused by units. Make it explicit: J% is not the same as mm/sec.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Joint (J) commonly uses % of maximum speed (example: J P[1] 100% ...).",
+        "Linear (L) often uses mm/sec or cm/min (examples: 500mm/sec, 1000cm/min).",
+        "Circular (C) often uses linear-style units too (example: 100mm/sec).",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Speed is independent from termination: you can have fast FINE or slow CNT depending on requirements."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from ARC Motion (Welding-Oriented) into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on Speed Units: % vs mm/sec vs cm/min explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Speed Units: % vs mm/sec vs cm/min and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Program Line Anatomy: Motion Instruction"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Point out: P[] is a taught point stored in the program; PR[] is a variable you can modify. Explain UF/UT briefly: the same XYZ means different physical locations depending on the active frames.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Motion format: J, L, C",
+        "2) Target position: P[i] (taught point) or PR[i] (position register)",
+        "3) Feedrate: J% or mm/sec or cm/min (depends on motion type)",
+        "4) Path/termination: FINE or CNT0…CNT100"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Inside a Point: UF/UT + XYZ + WPR + CONF so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "program_structure.png"
+      ],
+      "explanation_style": "Build a picture for Program Line Anatomy: Motion Instruction first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Program Line Anatomy: Motion Instruction connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Program Line Anatomy: Motion Instruction clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Inside a Point: UF/UT + XYZ + WPR + CONF"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Explain gently: you don’t need to memorize CONF fields today, but you must respect them. If the robot ‘flips’ the wrist unexpectedly, configuration is often involved.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "UF: n = active User Frame number at the time of teaching.",
+        "UT: n = active Tool Frame number at the time of teaching.",
+        "X, Y, Z = TCP position (typically mm).",
+        "W, P, R = TCP orientation angles displayed by FANUC."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Inside a Point: UF/UT + XYZ + WPR + CONF to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Inside a Point: UF/UT + XYZ + WPR + CONF is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Inside a Point: UF/UT + XYZ + WPR + CONF in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Inside a Point: UF/UT + XYZ + WPR + CONF connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Inside a Point: UF/UT + XYZ + WPR + CONF accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Reading the Teach Pendant Program Screen"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Tell students: troubleshooting starts here. If it won’t run, check mode, check alarms, check status, check override, check where the cursor is, and check if FWD is disabled.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Program being executed vs program being edited.",
+        "Line number and current line (where the cursor is).",
+        "Execution status: ABORTED / PAUSED / RUNNING.",
+        "Jog type shown (e.g., JOINT)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Quiz: Coordinate Systems so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "program_teach_pendant.png"
+      ],
+      "explanation_style": "Build a picture for Reading the Teach Pendant Program Screen first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Reading the Teach Pendant Program Screen connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture Reading the Teach Pendant Program Screen clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Quiz: Coordinate Systems"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "After answer: remind them USER is for part/table; WORLD is for cell; JOINT is motor-by-motor; TOOL is for tool-direction moves.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "You are holding a drill tool angled 30°. You want to jog straight forward along the drill direction (the tool’s own +Z). Which coordinate system should you use?",
+        "In TOOL coordinates, X/Y/Z axes are attached to the tool frame. That’s how you move along the tool direction even when it is angled.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: Coordinate Systems and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students often confuse a change in coordinate description with a physical motion of the robot."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "car",
+        "coordinate frame",
+        "robot arm"
+      ],
+      "explanation_style": "Turn Quiz: Coordinate Systems into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: Coordinate Systems question on their own and explain the reasoning.",
+      "scene_hint": "Bring a moving base, car, or robot frame on screen so the attached coordinate frame visibly moves with the object."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Motion Termination: FINE vs CNT"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Motion type = path between points. Termination = behavior at the point.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Two most common termination types: FINE and CNT.",
+        "FINE: robot comes to a complete stop at the target before continuing.",
+        "CNT (0–100): robot blends the motion and does not fully stop at intermediate points.",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Understanding the difference improves accuracy, smoothness, and cycle time."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Quiz: Coordinate Systems into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on Motion Termination: FINE vs CNT explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Motion Termination: FINE vs CNT and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "FINE (Precision Stopping)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain: FINE is like ‘hit the exact point.’ Downside: stopping costs time and can cause jerky motion. Use FINE where it matters most—near parts and fixtures.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "FINE forces the robot to come to a complete stop at the target position before executing the next instruction.",
+        "Ensures maximum accuracy; used when exact positioning is critical.",
+        "Common uses: pick-and-place, assembly, vision-guided operations, stopping at a sensor/fixture.",
+        "Example motion line: L P[2] 500mm/sec FINE"
+      ],
+      "must_say": [
+        "Repeatability is consistency. Accuracy is closeness to the intended target."
+      ],
+      "emphasis_words": [
+        "accuracy",
+        "repeatability",
+        "precision"
+      ],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into FINE: Advantages vs Disadvantages so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often collapse accuracy, repeatability, and precision into one vague idea."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "FINE_CNT.png"
+      ],
+      "explanation_style": "Build a picture for FINE (Precision Stopping) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep FINE (Precision Stopping) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture FINE (Precision Stopping) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "FINE: Advantages vs Disadvantages"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Instructor tip: tell them not to default to FINE everywhere. Use it strategically—final approach and interaction points.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Advantages of FINE",
+        "• Ensures precise stopping at the target point.",
+        "• Essential for operations requiring exact positioning.",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "• Required when interacting with fixtures, sensors, vision systems, or precise assembly points."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from FINE (Precision Stopping) into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on FINE: Advantages vs Disadvantages explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of FINE: Advantages vs Disadvantages and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "CNT (Continuous / Blended Motion)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain CNT numbers: bigger = more corner rounding/blending (less exact at the point). Practical rule: CNT for motion efficiency; FINE for precision events.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "CNT allows blending by not coming to a complete stop at each programmed point.",
+        "Robot starts moving toward the next position before fully reaching the current one (smooth transition).",
+        "CNT value (0–100) determines how much blending occurs.",
+        "Common use: travel moves, smooth scanning/painting paths, material handling."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into CNT: Advantages vs Disadvantages so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "FINE_CNT.png"
+      ],
+      "explanation_style": "Build a picture for CNT (Continuous / Blended Motion) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep CNT (Continuous / Blended Motion) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture CNT (Continuous / Blended Motion) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "CNT: Advantages vs Disadvantages"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Add a warning: if a student uses CNT at a ‘touch’ point (sensor/fixture), the robot might never truly reach it. That’s a common beginner mistake.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Advantages of CNT",
+        "• Improves cycle time by eliminating unnecessary stops.",
+        "• Produces smoother motion between waypoints.",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "• Reduces mechanical stress on robot joints by avoiding sudden stops."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from CNT (Continuous / Blended Motion) into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on CNT: Advantages vs Disadvantages explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of CNT: Advantages vs Disadvantages and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "When to Use FINE vs CNT"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Tell students: ‘Near the part = FINE, in the air = CNT’ is a good beginner rule. Later they’ll learn to tune CNT values for smoothness vs accuracy.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Precise positioning (pick & place, welding, assembly).",
+        "Stopping at a sensor or fixture.",
+        "Vision-guided alignment and measurement.",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Path-following (painting, scanning) → CNT (50–100)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from CNT: Advantages vs Disadvantages into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on When to Use FINE vs CNT explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of When to Use FINE vs CNT and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "Quiz: Motion Types"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "After answer: ask them ‘When would you NOT use linear?’—example: long travel moves where path isn’t important.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Which motion type guarantees the TCP follows a straight line from the current point to the target point?",
+        "Linear (L) is designed for a straight TCP path. Joint motion is fastest but the TCP path can curve.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: Motion Types and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: Motion Types without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: Motion Types into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: Motion Types question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 25,
+        "source_title": "Quiz: Termination"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Reinforce: if they use CNT, the robot may round the corner and never truly reach the exact contact point.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "You must hit a fixture point exactly (touch a hard stop) before closing the gripper. Which termination should you choose?",
+        "FINE forces a full stop at the point, giving maximum positioning accuracy at that target.",
+        "Students should distinguish common coordinate systems used in robot programming.",
+        "Students should understand what motion termination changes physically."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Quiz: Termination to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "The next slide should compress the lesson into a quick memory or self-check.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Quiz: Termination as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Quiz: Termination connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Quiz: Termination with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 26,
+        "source_title": "Summary: The 4 Knobs You Control"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Close with a practical preview: next lab, students will (1) jog in different frames, (2) teach 2–3 points, (3) write J/L moves, (4) try FINE vs CNT and see the difference in smoothness and accuracy.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Coordinate system for jogging/teaching (JOINT, WORLD, USER, TOOL, JGFRAME).",
+        "2) Motion type (J, L, C, ARC/ARCPATH).",
+        "3) Speed (%, mm/sec, cm/min).",
+        "Students should distinguish common coordinate systems used in robot programming.",
+        "4) Termination (FINE vs CNT 0–100)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Summary: The 4 Knobs You Control to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish with a stronger mental model for reading and writing motion instructions.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Summary: The 4 Knobs You Control as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Summary: The 4 Knobs You Control connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Summary: The 4 Knobs You Control with the main takeaways of the topic compressed into usable memory."
+    }
+  ]
+}

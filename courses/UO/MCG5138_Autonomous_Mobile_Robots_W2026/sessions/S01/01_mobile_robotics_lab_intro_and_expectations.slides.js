@@ -545,20 +545,14 @@ const slidesData = [
       ],
     },
     right: {
-      html: `
-        <figure class="media">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/r2EqavRXVo8?rel=0"
-            title="SLAM demo"
-            style="width:100%; height:360px; border:0; border-radius:12px;"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-          <figcaption class="muted" style="font-size:14px; margin-top:8px;">
-            SLAM demo (YouTube)
-          </figcaption>
-        </figure>
-      `,
+      media: {
+        kind: "iframe",
+        src: "https://www.youtube-nocookie.com/embed/r2EqavRXVo8?rel=0",
+        title: "SLAM demo",
+        allow:
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+        caption: "SLAM demo (YouTube)",
+      },
     },
     notes:
       "We’ll use this as a visual reference: exploration → scans → map grows. Your project needs the same story: map first, then navigate on it.",
@@ -594,20 +588,14 @@ const slidesData = [
       ],
     },
     right: {
-      html: `
-        <figure class="media">
-          <iframe
-            src="https://www.youtube-nocookie.com/embed/tHOp-8d1fAg?rel=0"
-            title="Navigation demo"
-            style="width:100%; height:360px; border:0; border-radius:12px;"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-          <figcaption class="muted" style="font-size:14px; margin-top:8px;">
-            Navigation demo (YouTube)
-          </figcaption>
-        </figure>
-      `,
+      media: {
+        kind: "iframe",
+        src: "https://www.youtube-nocookie.com/embed/tHOp-8d1fAg?rel=0",
+        title: "Navigation demo",
+        allow:
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+        caption: "Navigation demo (YouTube)",
+      },
     },
     notes:
       "This is the vibe of your final demo: map ready, localization stable, goals reached consistently.",

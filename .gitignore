@@ -1,0 +1,14 @@
+generated/
+node_modules/
+__pycache__/
+.codex
+.codex/
+.cache/
+
+# Local machine-specific render/remote config
+tools/remote_render/render_machine.config.json
+tools/slide_video_renderer/config.json
+
+# OS/editor scratch
+.DS_Store
+*.swp

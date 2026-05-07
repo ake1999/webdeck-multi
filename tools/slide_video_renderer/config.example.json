@@ -1,0 +1,16 @@
+{
+  "repo_root": ".",
+  "avatar_profile": "avatar_assets/instructor_v1/avatar_profile.json",
+  "backend": "blender3d_basic",
+  "fps": 30,
+  "render_width": 1920,
+  "render_height": 1080,
+  "render_avatar_only": true,
+  "render_slide_in_blender": false,
+  "background": "transparent",
+  "stage_margin_px": 120,
+  "write_mp4_proxy": true,
+  "prefer_manual_alignment": true,
+  "use_hy_motion_if_available": false,
+  "overwrite": false
+}

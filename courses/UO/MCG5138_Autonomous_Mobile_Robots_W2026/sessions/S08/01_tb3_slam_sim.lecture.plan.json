@@ -1,0 +1,1081 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_tb3_slam_sim",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the visible mapping result students want to achieve.",
+    "progression": "Explain the SLAM loop, show what inputs matter, then connect that to simulation behavior and checks.",
+    "destination": "Students should finish able to narrate what the SLAM system is doing as the map is built.",
+    "tone": "visual, systems-oriented, exploratory",
+    "methods": [
+      "mental model",
+      "guided build",
+      "debugging checkpoints",
+      "recap",
+      "visual intuition",
+      "demo"
+    ]
+  },
+  "audience_level": "introductory autonomous mobile robotics students learning ROS 2 through lab-first workflows",
+  "topic_goal": "Help students understand the SLAM loop in simulation well enough to interpret mapping behavior instead of treating it like magic.",
+  "topic_takeaways": [
+    "Students should understand the roles of motion, sensing, and map updates in SLAM.",
+    "Students should know what good versus bad mapping behavior looks like in simulation.",
+    "Students should be able to explain the conditions that help or hurt SLAM quality."
+  ],
+  "style_notes": [
+    "Keep the tone hands-on and confidence-building.",
+    "Connect every concept to what students will debug in a terminal, simulation, or robot lab.",
+    "Use visualization and mental models before deep command details.",
+    "Keep the mapping loop visible in the narration.",
+    "Use map and scan visuals to ground the explanation."
+  ],
+  "transition_style": "Move from the mental model to the concrete lab step students will run next, then close each section by explaining what to verify.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "SLAM in Simulation: Cartographer + SLAM Toolbox"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Today they must learn both pipelines, not only one. For the assignment, they should create maps with both methods and compare them.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Help students understand the SLAM loop in simulation well enough to interpret mapping behavior instead of treating it like magic.",
+      "transition_to_next": "Carry this idea forward into What you must be able to do after this block so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Frame SLAM in Simulation: Cartographer + SLAM Toolbox as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep SLAM in Simulation: Cartographer + SLAM Toolbox connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how SLAM in Simulation: Cartographer + SLAM Toolbox sets up the lesson and why the topic matters.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "What you must be able to do after this block"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use What you must be able to do after this block to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Run Cartographer in simulation and save a map",
+        "Run SLAM Toolbox in simulation and save a map",
+        "Inspect /map, RViz, TF, RobotModel, and LaserScan",
+        "Compare setup, tuning style, map quality, and ease of use"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from SLAM in Simulation: Cartographer + SLAM Toolbox into What you must be able to do after this block so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Cartographer vs SLAM Toolbox — very basic difference so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use What you must be able to do after this block to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep What you must be able to do after this block connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how What you must be able to do after this block sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "Cartographer vs SLAM Toolbox — very basic difference"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Compare the alternatives or concepts on Cartographer vs SLAM Toolbox — very basic difference clearly, emphasize the trade-off, and end with the decision rule students should remember.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Cartographer = default TurtleBot3 sim path; tuning is mainly in a Lua file",
+        "SLAM Toolbox = strong 2D Nav2 workflow; many settings appear as ROS 2 parameters",
+        "SLAM Toolbox is easier to inspect with ros2 param ... while running",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Cartographer is powerful but more configuration-heavy to tune deeply"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from What you must be able to do after this block into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Contrast the alternatives on Cartographer vs SLAM Toolbox — very basic difference explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Keep Cartographer vs SLAM Toolbox — very basic difference connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Cartographer vs SLAM Toolbox — very basic difference and know which side fits which situation.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Step 0: launch one simulation world"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Step 0: launch one simulation world efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Recommended worlds for mapping: World or House",
+        "Do not run Cartographer and SLAM Toolbox at the same time",
+        "or"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 0: launch one simulation world efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 0: launch one simulation world and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Cartographer workflow (method A)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Cartographer workflow (method A) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Terminal 1: Gazebo world is already running",
+        "Terminal 2:",
+        "Terminal 3:",
+        "Later, save with map_saver_cli"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Cartographer workflow (method A) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Cartographer workflow (method A) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Cartographer workflow (method A) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Cartographer workflow (method A) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Cartographer workflow (method A) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "SLAM Toolbox workflow (method B)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach SLAM Toolbox workflow (method B) through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Terminal 1: Gazebo world is already running",
+        "Terminal 2:",
+        "Terminal 3:",
+        "Tell students exactly what to watch for in the visual or interactive material.",
+        "Later, save with the same map_saver_cli command"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of SLAM Toolbox workflow (method B) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on SLAM Toolbox workflow (method B) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep SLAM Toolbox workflow (method B) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on SLAM Toolbox workflow (method B) and why that visible behavior matters technically.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Open RViz and add the key displays yourself"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Open RViz and add the key displays yourself in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Set Fixed Frame = map",
+        "Add displays: Map, TF, RobotModel, LaserScan",
+        "Map topic = /map • LaserScan topic = /scan",
+        "Healthy SLAM should give /map and a map -> odom transform"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Open RViz and add the key displays yourself to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Open RViz and add the key displays yourself is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "RViz panel",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Define Open RViz and add the key displays yourself in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should be able to explain Open RViz and add the key displays yourself accurately and use it in the next step of the lesson.",
+      "scene_hint": "Show the robot model, TF, and RViz displays as a simple pipeline so students can connect each layer to the visual outcome."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "RViz checklist: what each display tells you"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use RViz checklist: what each display tells you as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Map → live occupancy grid",
+        "TF → frame tree health",
+        "RobotModel → robot pose/orientation",
+        "Students should understand the roles of motion, sensing, and map updates in SLAM.",
+        "LaserScan → raw LiDAR hits"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use RViz checklist: what each display tells you to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Look inside the /map topic so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "RViz panel",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Use RViz checklist: what each display tells you as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should leave RViz checklist: what each display tells you with the main takeaways of the topic compressed into usable memory.",
+      "scene_hint": "Show the robot model, TF, and RViz displays as a simple pipeline so students can connect each layer to the visual outcome."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Look inside the /map topic"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "`/map` is not just a picture. It is a message with metadata plus a big row-major data array.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Look for info.resolution, info.width, info.height, and info.origin",
+        "The long data array stores occupancy values cell-by-cell",
+        "-1 usually means unknown",
+        "Values near 0 are free; values near 100 are occupied"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Look inside the /map topic to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Look inside the /map topic is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Look inside the /map topic in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Look inside the /map topic connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Look inside the /map topic accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "How /map becomes the image you save later"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for How /map becomes the image you save later using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "resolution = meters per grid cell",
+        "width, height = number of cells",
+        "origin = real pose of cell (0,0)",
+        "The saved .pgm is a picture of those grid values"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Map cell to real-world position (important for projects) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Build a picture for How /map becomes the image you save later first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep How /map becomes the image you save later connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture How /map becomes the image you save later clearly before the formal details continue.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Map cell to real-world position (important for projects)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "For project code, RViz clicking is easiest because coordinates are already in the map frame. Pixel-to-world conversion is useful when they inspect the saved map image manually.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Cell center formula:",
+        "gx, gy = grid cell indices",
+        "origin_x, origin_y, resolution come from the map metadata",
+        "If you click directly in RViz, RViz already gives you a pose in the map frame"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Map cell to real-world position (important for projects) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Map cell to real-world position (important for projects) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Map cell to real-world position (important for projects) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Map cell to real-world position (important for projects) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Map cell to real-world position (important for projects) accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "How to move the robot to get a better looking map"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "The robot should not race. Smooth motion gives more stable matching.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Move slowly and avoid sudden spins",
+        "Show the laser clear corners, wall edges, and door frames",
+        "Do loop-backs: revisit known areas to help loop closure",
+        "Avoid clipping furniture tightly; keep a little clearance"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use How to move the robot to get a better looking map to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once How to move the robot to get a better looking map is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define How to move the robot to get a better looking map in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep How to move the robot to get a better looking map connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain How to move the robot to get a better looking map accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Save the map from either method"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Save the map from either method in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Cartographer example:",
+        "SLAM Toolbox example:",
+        "This gives you a .pgm image and a .yaml metadata file"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Save the map from either method to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Save the map from either method is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Save the map from either method in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Save the map from either method connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Save the map from either method accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "GIMP cleanup tutorial (Part 1): open and edit safely"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Pencil is better than brush because brush makes soft edges and anti-aliasing. We want crisp map cells, not blurred edges.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "First make a backup: map_toolbox.pgm → map_toolbox_backup.pgm",
+        "Open GIMP, then open the .pgm map image file",
+        "Zoom in a lot: 400%–1600% so you can edit individual pixels",
+        "Use the Pencil Tool, not the Brush tool, for sharp 1-pixel edits"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use GIMP cleanup tutorial (Part 1): open and edit safely to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once GIMP cleanup tutorial (Part 1): open and edit safely is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define GIMP cleanup tutorial (Part 1): open and edit safely in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep GIMP cleanup tutorial (Part 1): open and edit safely connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain GIMP cleanup tutorial (Part 1): open and edit safely accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "GIMP cleanup tutorial (Part 2): what to fix, what not to fix"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "If they change image size or orientation, the YAML metadata may no longer match. This is a last-resort cleanup step, not map redesign.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Okay: reconnect a tiny broken wall edge or remove a tiny black/white speck",
+        "Not okay: invent new walls, erase real obstacles, or close open doors",
+        "Do not crop, rotate, resize, blur, or scale the image",
+        "Save the edited .pgm; keep the YAML matched to the same map geometry"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use GIMP cleanup tutorial (Part 2): what to fix, what not to fix to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once GIMP cleanup tutorial (Part 2): what to fix, what not to fix is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define GIMP cleanup tutorial (Part 2): what to fix, what not to fix in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep GIMP cleanup tutorial (Part 2): what to fix, what not to fix connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain GIMP cleanup tutorial (Part 2): what to fix, what not to fix accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "How to inspect SLAM Toolbox parameters"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "They may see a huge list. That is normal.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Inspect one parameter:",
+        "Focus on the important parameters first, not every solver option",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of How to inspect SLAM Toolbox parameters so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on How to inspect SLAM Toolbox parameters by narrating what students should notice and why it matters.",
+      "story_hint": "Keep How to inspect SLAM Toolbox parameters connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on How to inspect SLAM Toolbox parameters and why that visible behavior matters technically.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Important SLAM Toolbox parameters (part 1)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "If `resolution` is too coarse, thin features may vanish. If too fine, the map looks detailed but costs more.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "resolution → smaller cells = finer detail, more memory/compute",
+        "min_laser_range → ignore very near noisy returns near the robot body",
+        "max_laser_range → ignore very far returns that may be weak or unstable",
+        "Tell students exactly what to watch for in the visual or interactive material.",
+        "minimum_travel_distance → robot must move this far before updating"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Important SLAM Toolbox parameters (part 1) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Important SLAM Toolbox parameters (part 1) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Important SLAM Toolbox parameters (part 1) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Important SLAM Toolbox parameters (part 1) and why that visible behavior matters technically.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Important SLAM Toolbox parameters (part 2)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "If map updates feel slow in RViz, map update interval may be large. Loop closure is one of the big reasons a map can straighten itself after revisiting an area.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "map_update_interval → how often the occupancy map is regenerated",
+        "do_loop_closing → revisited places can be matched to reduce drift",
+        "scan_topic → usually /scan; wrong topic means no mapping data",
+        "Tell students exactly what to watch for in the visual or interactive material.",
+        "transform_publish_period → how often map -> odom is published"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Important SLAM Toolbox parameters (part 2) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Important SLAM Toolbox parameters (part 2) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Important SLAM Toolbox parameters (part 2) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Important SLAM Toolbox parameters (part 2) and why that visible behavior matters technically.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "How to tune SLAM Toolbox live and save your settings"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "In class, CLI is the safest guaranteed path. With rqt, if a parameter or reconfigure-style plugin is installed, they can inspect or change values visually.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Optional GUI view:",
+        "Live CLI example:",
+        "Save current values:",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of How to tune SLAM Toolbox live and save your settings so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on How to tune SLAM Toolbox live and save your settings by narrating what students should notice and why it matters.",
+      "story_hint": "Keep How to tune SLAM Toolbox live and save your settings connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on How to tune SLAM Toolbox live and save your settings and why that visible behavior matters technically.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "How to inspect Cartographer tuning files"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "We are tuning the copy in `~/ros2_ws/src`, not hunting under `/opt/ros`. That makes their own workspace the source of truth for experiments.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Go to your workspace source tree:",
+        "Then open the file you found:",
+        "Typical workflow: edit file → relaunch Cartographer → compare maps"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use How to inspect Cartographer tuning files to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once How to inspect Cartographer tuning files is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define How to inspect Cartographer tuning files in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep How to inspect Cartographer tuning files connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain How to inspect Cartographer tuning files accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "Important Cartographer parameters (part 1)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "`missing_data_ray_length` affects how empty space is represented when the scanner does not get a valid hit. Enabling online correlative scan matching can improve local alignment, but it can also cost more computation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "min_range → ignore scans too close to the robot",
+        "max_range → ignore scans too far away",
+        "missing_data_ray_length → assumed ray length when no obstacle is hit",
+        "use_imu_data → use IMU if available and reliable"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Important Cartographer parameters (part 1) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Important Cartographer parameters (part 1) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Important Cartographer parameters (part 1) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Important Cartographer parameters (part 1) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Important Cartographer parameters (part 1) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "Important Cartographer parameters (part 2)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "If optimization runs more often, the map may improve sooner but computation rises. If match score thresholds are too low, false matches become more likely; too high and good loop closures may be missed.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "motion_filter.max_angle_radians → skip tiny-angle scan updates",
+        "optimize_every_n_nodes → how often global optimization runs",
+        "constraint_builder.min_score → minimum score for accepting a match",
+        "global_localization_min_score → trust threshold for global matches"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Important Cartographer parameters (part 2) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Important Cartographer parameters (part 2) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Important Cartographer parameters (part 2) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Important Cartographer parameters (part 2) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Important Cartographer parameters (part 2) accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "How to tune Cartographer vs SLAM Toolbox"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Compare the alternatives or concepts on How to tune Cartographer vs SLAM Toolbox clearly, emphasize the trade-off, and end with the decision rule students should remember.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "SLAM Toolbox: inspect with ros2 param list/get/describe, then try live changes",
+        "Cartographer: edit the .lua file, relaunch, drive the same path, compare",
+        "Change one parameter at a time and keep notes",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Save map files with different names so you can compare outputs later"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Important Cartographer parameters (part 2) into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Contrast the alternatives on How to tune Cartographer vs SLAM Toolbox explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Keep How to tune Cartographer vs SLAM Toolbox connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of How to tune Cartographer vs SLAM Toolbox and know which side fits which situation.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "Nav2 preview: run navigation with a saved map"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Nav2 preview: run navigation with a saved map in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Launch the world first, then run Nav2 with one saved map:",
+        "Or use your Cartographer YAML instead",
+        "In RViz: set 2D Pose Estimate first, then send a navigation goal",
+        "Next session: AMCL, costmaps, planners, controllers, and goal sending"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Nav2 preview: run navigation with a saved map to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Nav2 preview: run navigation with a saved map is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Nav2 preview: run navigation with a saved map in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Nav2 preview: run navigation with a saved map connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Nav2 preview: run navigation with a saved map accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "Documentation links you should open while working"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Documentation links you should open while working in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "TurtleBot3 SLAM Simulation",
+        "TurtleBot3 SLAM + Cartographer tuning notes",
+        "Nav2: Navigating while Mapping (SLAM)",
+        "slam_toolbox docs (parameters)"
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "link",
+        "joint"
+      ],
+      "transition_from_previous": "Use Documentation links you should open while working to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish able to narrate what the SLAM system is doing as the map is built.",
+      "likely_student_confusion": [
+        "Students may think URDF, Xacro, links, and joints are just file syntax instead of a robot-structure model."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "link labels",
+        "joint markers"
+      ],
+      "explanation_style": "Define Documentation links you should open while working in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Documentation links you should open while working connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Documentation links you should open while working accurately and use it in the next step of the lesson.",
+      "scene_hint": "Bring in a TurtleBot silhouette with links and joints highlighted so the robot description reads as structure, not just XML."
+    }
+  ]
+}

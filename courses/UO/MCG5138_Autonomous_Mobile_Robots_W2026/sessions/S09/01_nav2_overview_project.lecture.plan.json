@@ -1,0 +1,1596 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_nav2_overview_project",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the end-to-end navigation outcome students want to achieve.",
+    "progression": "Move through the Nav2 architecture from inputs to decisions to motion, then connect that structure to the course project.",
+    "destination": "Students should finish with a system map they can use while building and debugging their project.",
+    "tone": "system-level, integrative, forward-looking",
+    "methods": [
+      "mental model",
+      "guided build",
+      "debugging checkpoints",
+      "recap",
+      "architecture overview",
+      "component roles",
+      "project framing"
+    ]
+  },
+  "audience_level": "introductory autonomous mobile robotics students learning ROS 2 through lab-first workflows",
+  "topic_goal": "Give students a high-level navigation architecture map and connect it to the project work they will complete.",
+  "topic_takeaways": [
+    "Students should understand the major Nav2 components and what each contributes.",
+    "Students should know how localization, planning, control, and behavior trees fit together.",
+    "Students should leave seeing the project as an integration task rather than isolated commands."
+  ],
+  "style_notes": [
+    "Keep the tone hands-on and confidence-building.",
+    "Connect every concept to what students will debug in a terminal, simulation, or robot lab.",
+    "Use visualization and mental models before deep command details.",
+    "Keep the big picture visible even when naming components.",
+    "Treat the project as the synthesis point for the course."
+  ],
+  "transition_style": "Move from the mental model to the concrete lab step students will run next, then close each section by explaining what to verify.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Navigation2 (Nav2) — How the Stack Actually Works"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "This is our last lecture. Today we connect your map, localization, planning, control, and project logic into one complete mental model.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Give students a high-level navigation architecture map and connect it to the project work they will complete.",
+      "transition_to_next": "Carry this idea forward into Why this session matters for your final project so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Frame Navigation2 (Nav2) — How the Stack Actually Works as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Navigation2 (Nav2) — How the Stack Actually Works connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Navigation2 (Nav2) — How the Stack Actually Works sets up the lesson and why the topic matters.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Why this session matters for your final project"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use Why this session matters for your final project to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Nav2 is the ROS 2 navigation stack used after you already have a map",
+        "Your project needs more than one clicked goal — it needs programmatic behavior",
+        "Today you learn the structure: navigator, servers, plugins, parameters, costmaps, and filters",
+        "Then we connect that structure to waypoints, room logic, and restricted areas"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Navigation2 (Nav2) — How the Stack Actually Works into Why this session matters for your final project so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Where Nav2 fits in the full robot pipeline so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Why this session matters for your final project to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Why this session matters for your final project connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Why this session matters for your final project sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "Where Nav2 fits in the full robot pipeline"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use Where Nav2 fits in the full robot pipeline to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Build or load a map (map_server or SLAM output)",
+        "2) Localize the robot in that map (often AMCL for a saved static map)",
+        "3) Nav2 plans a path and computes safe velocity commands",
+        "4) Your application sends one goal or many goals to Nav2"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Why this session matters for your final project into Where Nav2 fits in the full robot pipeline so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Nav2 architecture: one stack, many cooperating parts so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "RViz panel",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Use Where Nav2 fits in the full robot pipeline to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Where Nav2 fits in the full robot pipeline connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Where Nav2 fits in the full robot pipeline sets up the lesson and why the topic matters.",
+      "scene_hint": "Show the robot model, TF, and RViz displays as a simple pipeline so students can connect each layer to the visual outcome."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Nav2 architecture: one stack, many cooperating parts"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Nav2 architecture: one stack, many cooperating parts using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Nav2 is not one magic node",
+        "The BT Navigator coordinates the task",
+        "Servers below it do planning, control, smoothing, and behaviors",
+        "Costmaps + TF + localization support all of those decisions"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into What each major Nav2 part does (Part 1) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Build a picture for Nav2 architecture: one stack, many cooperating parts first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Nav2 architecture: one stack, many cooperating parts connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Nav2 architecture: one stack, many cooperating parts clearly before the formal details continue.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "What each major Nav2 part does (Part 1)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define What each major Nav2 part does (Part 1) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "BT Navigator = high-level task logic; coordinates the rest of the stack",
+        "Planner Server = computes a path from current pose to goal using the global costmap",
+        "Controller Server = follows that path and outputs velocity commands using the local costmap",
+        "Smoother Server = improves a rough path before or during execution"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What each major Nav2 part does (Part 1) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once What each major Nav2 part does (Part 1) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define What each major Nav2 part does (Part 1) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep What each major Nav2 part does (Part 1) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain What each major Nav2 part does (Part 1) accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "What each major Nav2 part does (Part 2)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define What each major Nav2 part does (Part 2) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Behavior Server = utility / recovery actions such as spin, backup, wait, drive-on-heading",
+        "Lifecycle Manager = starts and stops the stack in a controlled order",
+        "Map / Localization = gives Nav2 the robot pose in the map frame",
+        "Plugins = the actual algorithms loaded into planner, controller, smoother, and behavior servers"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What each major Nav2 part does (Part 2) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once What each major Nav2 part does (Part 2) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define What each major Nav2 part does (Part 2) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep What each major Nav2 part does (Part 2) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain What each major Nav2 part does (Part 2) accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Nav2 depends on TF: map -> odom -> base_link"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Nav2 depends on TF: map -> odom -> base_link using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "The minimum useful mobile robot TF chain is:",
+        "map -> odom -> base_link -> sensor frames",
+        "map -> odom = global correction from SLAM / AMCL / localization",
+        "odom -> base_link = local motion estimate from odometry"
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "link",
+        "joint"
+      ],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Saved map navigation: where AMCL fits so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may think URDF, Xacro, links, and joints are just file syntax instead of a robot-structure model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "car",
+        "coordinate frame",
+        "TF tree"
+      ],
+      "explanation_style": "Build a picture for Nav2 depends on TF: map -> odom -> base_link first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should be able to picture Nav2 depends on TF: map -> odom -> base_link clearly before the formal details continue.",
+      "scene_hint": "Use a TurtleBot or small car with attached coordinate frames so students can see relative transforms instead of imagining them abstractly."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Saved map navigation: where AMCL fits"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Saved map navigation: where AMCL fits in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "SLAM builds the map; AMCL localizes the robot inside that saved map",
+        "Before sending goals, you must set 2D Pose Estimate in RViz",
+        "This initializes localization so the robot aligns with the map correctly",
+        "TurtleBot3 docs explicitly require pose initialization before normal navigation"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Saved map navigation: where AMCL fits to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Saved map navigation: where AMCL fits is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Saved map navigation: where AMCL fits in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Saved map navigation: where AMCL fits connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Saved map navigation: where AMCL fits accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Map vs Costmap: they are not the same thing"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Compare the alternatives or concepts on Map vs Costmap: they are not the same thing clearly, emphasize the trade-off, and end with the decision rule students should remember.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "A saved map is mostly occupancy information: free / occupied / unknown",
+        "A costmap adds navigation cost information around obstacles",
+        "Global costmap supports path planning across the environment",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "Local costmap supports short-range safe motion around the robot"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Saved map navigation: where AMCL fits into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Contrast the alternatives on Map vs Costmap: they are not the same thing explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Keep Map vs Costmap: they are not the same thing connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Map vs Costmap: they are not the same thing and know which side fits which situation.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Typical costmap layers you should recognize"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Typical costmap layers you should recognize in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Static layer = the saved map or map server data",
+        "Obstacle layer = current sensor obstacles, such as LaserScan readings",
+        "Inflation layer = grows cost around obstacles to create a safety margin",
+        "These layers explain why the robot avoids walls before physically touching them"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Typical costmap layers you should recognize to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Typical costmap layers you should recognize is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Typical costmap layers you should recognize in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Typical costmap layers you should recognize connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Typical costmap layers you should recognize accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Filters: change where the robot may go, not just how it plans"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Filters: change where the robot may go, not just how it plans using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Filters are different from normal costmap layers",
+        "Keepout filter can forbid entry to dangerous or undesirable areas",
+        "Useful project examples: table feet, narrow edges, entrance zones",
+        "A keepout mask is just another map-like image + YAML metadata"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Important keepout filter design idea so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Nav2 docs — keepout filter result"
+      ],
+      "explanation_style": "Build a picture for Filters: change where the robot may go, not just how it plans first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Filters: change where the robot may go, not just how it plans connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Filters: change where the robot may go, not just how it plans clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Important keepout filter design idea"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Important keepout filter design idea in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Global costmap keepout only → planner avoids those zones in the path",
+        "Local costmap keepout only → robot refuses to enter them locally, but path may still cross them",
+        "Best safety behavior usually means enabling keepout in both global and local costmaps",
+        "Keepout is realistic for your project; it is easier than full custom coverage planning"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Important keepout filter design idea to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Important keepout filter design idea is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Important keepout filter design idea in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Important keepout filter design idea connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Important keepout filter design idea accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Behavior Trees (BTs): the logic layer on top of planning and control"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Behavior Trees (BTs): the logic layer on top of planning and control in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "BT Navigator implements tasks like NavigateToPose and NavigateThroughPoses",
+        "A BT may compute a path, follow it, replan, and trigger recovery behaviors if needed",
+        "This is why Nav2 is flexible: task logic is separated from low-level motion logic",
+        "You do not need to write custom BT XML today — just understand the idea"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Behavior Trees (BTs): the logic layer on top of planning and control to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Behavior Trees (BTs): the logic layer on top of planning and control is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Behavior Trees (BTs): the logic layer on top of planning and control in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Behavior Trees (BTs): the logic layer on top of planning and control connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Behavior Trees (BTs): the logic layer on top of planning and control accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Planner plugins: what students should care about"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Planner plugins: what students should care about in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "For this course, focus on the built-in planner families you can actually configure",
+        "NavFn = classic grid planner; can use Dijkstra or A*",
+        "Smac 2D = optimized 2D cost-aware planner for common mobile robots",
+        "Theta Star = any-angle planner that can produce less grid-like paths"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Planner plugins: what students should care about to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Planner plugins: what students should care about is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Planner plugins: what students should care about in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Planner plugins: what students should care about connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Planner plugins: what students should care about accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "How planner plugins are selected in YAML"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define How planner plugins are selected in YAML in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Change the plugin string to switch algorithms",
+        "Then tune that planner’s own parameters in the same namespace",
+        "This is why Nav2 is flexible: same server, different planning algorithm"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use How planner plugins are selected in YAML to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once How planner plugins are selected in YAML is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define How planner plugins are selected in YAML in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep How planner plugins are selected in YAML connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain How planner plugins are selected in YAML accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "The most basic Nav2 workflow in RViz"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define The most basic Nav2 workflow in RViz in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Launch world + Nav2 with a saved map",
+        "2) Use 2D Pose Estimate to initialize AMCL",
+        "3) Use Navigation2 Goal to send one pose goal",
+        "4) Do not keep teleop publishing cmd_vel while Nav2 is navigating"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use The most basic Nav2 workflow in RViz to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once The most basic Nav2 workflow in RViz is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "RViz panel",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Define The most basic Nav2 workflow in RViz in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should be able to explain The most basic Nav2 workflow in RViz accurately and use it in the next step of the lesson.",
+      "scene_hint": "Show the robot model, TF, and RViz displays as a simple pipeline so students can connect each layer to the visual outcome."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "What you can inspect while Nav2 is running"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define What you can inspect while Nav2 is running in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "These commands show that Nav2 is a real multi-node system, not one monolithic node"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What you can inspect while Nav2 is running to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once What you can inspect while Nav2 is running is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define What you can inspect while Nav2 is running in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep What you can inspect while Nav2 is running connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain What you can inspect while Nav2 is running accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "For your project, one clicked goal is not enough"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define For your project, one clicked goal is not enough in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "NavigateToPose = one goal pose",
+        "NavigateThroughPoses = one action request containing multiple poses",
+        "FollowWaypoints = ordered waypoint execution with progress feedback",
+        "For room-to-room tasks, waypoint-style execution is usually the easiest starting point"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use For your project, one clicked goal is not enough to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once For your project, one clicked goal is not enough is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define For your project, one clicked goal is not enough in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep For your project, one clicked goal is not enough connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain For your project, one clicked goal is not enough accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Why we use Nav2 Simple Commander in class"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define Why we use Nav2 Simple Commander in class in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Simple Commander provides goToPose(), goThroughPoses(), and followWaypoints()",
+        "It also gives setInitialPose(), waitUntilNav2Active(), getFeedback(), and getResult()",
+        "This is ideal for your project because you can focus on robot behavior, not ROS plumbing",
+        "We will implement multiple goal execution using this API"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Why we use Nav2 Simple Commander in class to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Why we use Nav2 Simple Commander in class is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Why we use Nav2 Simple Commander in class in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Why we use Nav2 Simple Commander in class connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Why we use Nav2 Simple Commander in class accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "Create a new Python package for your waypoint demo"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Create a new Python package for your waypoint demo through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "This creates package.xml, setup.py, and the Python module folder for you",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Create a new Python package for your waypoint demo so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Teach through the visual or interactive material on Create a new Python package for your waypoint demo by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Create a new Python package for your waypoint demo connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Create a new Python package for your waypoint demo and why that visible behavior matters technically.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "Create the Python node file"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Keep Create the Python node file efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "We will paste the code in the next slides",
+        "The module folder already contains __init__.py, so Python can import it correctly"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Keep Create the Python node file efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Create the Python node file and what to verify before moving on.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "Python waypoint demo (Part 1/6): imports + helper start"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Python waypoint demo (Part 1/6): imports + helper start through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "The helper takes nav so we can timestamp each pose using the navigator clock",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Python waypoint demo (Part 1/6): imports + helper start so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Teach through the visual or interactive material on Python waypoint demo (Part 1/6): imports + helper start by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Python waypoint demo (Part 1/6): imports + helper start connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Python waypoint demo (Part 1/6): imports + helper start and why that visible behavior matters technically.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "Python waypoint demo (Part 2/6): finish the pose helper"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Python waypoint demo (Part 2/6): finish the pose helper through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "For many beginner mobile-robot demos, yaw is the only orientation part we set carefully",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Python waypoint demo (Part 2/6): finish the pose helper so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Teach through the visual or interactive material on Python waypoint demo (Part 2/6): finish the pose helper by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Python waypoint demo (Part 2/6): finish the pose helper connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Python waypoint demo (Part 2/6): finish the pose helper and why that visible behavior matters technically.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "Python waypoint demo (Part 3/6): start main()"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Python waypoint demo (Part 3/6): start main() through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "The initial pose step is important because AMCL must know where the robot starts in the map",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Python waypoint demo (Part 3/6): start main() so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Teach through the visual or interactive material on Python waypoint demo (Part 3/6): start main() by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Python waypoint demo (Part 3/6): start main() connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Python waypoint demo (Part 3/6): start main() and why that visible behavior matters technically.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "Python waypoint demo (Part 4/6): define the waypoint list"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Python waypoint demo (Part 4/6): define the waypoint list through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Each waypoint is a PoseStamped in the map frame",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Python waypoint demo (Part 4/6): define the waypoint list so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Teach through the visual or interactive material on Python waypoint demo (Part 4/6): define the waypoint list by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Python waypoint demo (Part 4/6): define the waypoint list connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Python waypoint demo (Part 4/6): define the waypoint list and why that visible behavior matters technically.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 25,
+        "source_title": "Python waypoint demo (Part 5/6): run and monitor the task"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Python waypoint demo (Part 5/6): run and monitor the task through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "This is the simplest bridge from your saved map to multi-room behavior",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Python waypoint demo (Part 5/6): run and monitor the task so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Teach through the visual or interactive material on Python waypoint demo (Part 5/6): run and monitor the task by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Python waypoint demo (Part 5/6): run and monitor the task connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Python waypoint demo (Part 5/6): run and monitor the task and why that visible behavior matters technically.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 26,
+        "source_title": "Python waypoint demo (Part 6/6): result handling + shutdown"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Python waypoint demo (Part 6/6): result handling + shutdown through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "This is enough for a clean first project-style waypoint node",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Python waypoint demo (Part 6/6): result handling + shutdown so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Teach through the visual or interactive material on Python waypoint demo (Part 6/6): result handling + shutdown by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Python waypoint demo (Part 6/6): result handling + shutdown connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Python waypoint demo (Part 6/6): result handling + shutdown and why that visible behavior matters technically.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 27,
+        "source_title": "Add the console script entry point in setup.py"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Add the console script entry point in setup.py in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Open the file:",
+        "Inside entry_points, add:"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Add the console script entry point in setup.py to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Add the console script entry point in setup.py is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Add the console script entry point in setup.py in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Add the console script entry point in setup.py connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Add the console script entry point in setup.py accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 28,
+        "source_title": "Build the package and check the import"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Keep Build the package and check the import efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Optional quick import check:",
+        "If the import fails, your Nav2 / nav2_simple_commander install is incomplete"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Build the package and check the import efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Build the package and check the import and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 29,
+        "source_title": "Run everything end-to-end"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Run everything end-to-end in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Terminal 1: ros2 launch turtlebot3_gazebo turtlebot3_house.launch.py",
+        "Terminal 2:",
+        "Terminal 3: ros2 run nav2_waypoint_demo house_waypoints_demo",
+        "Before running Terminal 3, make sure Nav2 is active and localization is initialized"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Run everything end-to-end to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Run everything end-to-end is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Run everything end-to-end in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Run everything end-to-end connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Run everything end-to-end accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 30,
+        "source_title": "Where to find parameters to tune"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Where to find parameters to tune efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Search your workspace source tree first:",
+        "Useful searches:",
+        "If your active package is not in the workspace, check ros2 pkg prefix turtlebot3_navigation2"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Where to find parameters to tune efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Where to find parameters to tune and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 31,
+        "source_title": "Where the main parameter groups usually live"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Where the main parameter groups usually live in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "amcl: → localization behavior on a static saved map",
+        "bt_navigator: → task logic / BT settings",
+        "planner_server: → path-generation plugins and related settings",
+        "controller_server: → path-tracking behavior and checking logic"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Where the main parameter groups usually live to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Where the main parameter groups usually live is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Where the main parameter groups usually live in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Where the main parameter groups usually live connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Where the main parameter groups usually live accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 32,
+        "source_title": "Goal checker parameters you should recognize by name"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Goal checker parameters you should recognize by name in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "xy_goal_tolerance = how close the robot must be to the goal position in meters",
+        "yaw_goal_tolerance = how close the robot heading must be to the goal orientation in radians",
+        "path_length_tolerance = how much remaining path length is still acceptable",
+        "stateful = keeps the goal check robust after final orientation correction"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Goal checker parameters you should recognize by name to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Goal checker parameters you should recognize by name is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Goal checker parameters you should recognize by name in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Goal checker parameters you should recognize by name connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Goal checker parameters you should recognize by name accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 33,
+        "source_title": "Other high-value parameters worth understanding first"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Other high-value parameters worth understanding first in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "inflation_radius = how far obstacle cost spreads outward for safety margin",
+        "cost_scaling_factor = how sharply cost decays away from obstacles",
+        "transform_tolerance = how much TF timing lag the node can tolerate",
+        "robot_radius or footprint = what physical space the robot is assumed to occupy"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Other high-value parameters worth understanding first to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Other high-value parameters worth understanding first is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Other high-value parameters worth understanding first in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Other high-value parameters worth understanding first connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Other high-value parameters worth understanding first accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 34,
+        "source_title": "Examples of plugin families you will see in Nav2"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Examples of plugin families you will see in Nav2 in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Planner plugins choose how a path is computed, such as NavFn, Smac, or Theta*",
+        "Controller plugins choose how the robot tracks that path and generates cmd_vel",
+        "Behavior plugins provide extra actions like spin, backup, wait, or drive-on-heading",
+        "Smoother plugins improve path geometry before following it"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Examples of plugin families you will see in Nav2 to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Examples of plugin families you will see in Nav2 is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Define Examples of plugin families you will see in Nav2 in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Examples of plugin families you will see in Nav2 connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Examples of plugin families you will see in Nav2 accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 35,
+        "source_title": "What about Complete Coverage Path Planning (CCPP)?"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define What about Complete Coverage Path Planning (CCPP)? in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Coverage planning exists through the Coverage Server in opennav_coverage",
+        "It is not the basic “just load Nav2 and go” path for beginners",
+        "For this course, the practical order is: map → rooms → waypoints → keepout if needed",
+        "Coverage can be a bonus extension after your basic waypoint project works reliably"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What about Complete Coverage Path Planning (CCPP)? to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once What about Complete Coverage Path Planning (CCPP)? is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define What about Complete Coverage Path Planning (CCPP)? in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep What about Complete Coverage Path Planning (CCPP)? connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain What about Complete Coverage Path Planning (CCPP)? accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 36,
+        "source_title": "Recommended project path from today’s lecture"
+      },
+      "slide_role": "setup",
+      "importance": "medium",
+      "narration_seed": "Use Recommended project path from today’s lecture to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Use your saved SLAM map and reliable AMCL localization",
+        "2) Define room points or room-entry points in the map frame",
+        "3) Send multiple goals using Simple Commander waypoint logic",
+        "4) Add a keepout filter later if there are risky areas near furniture or entrances"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from What about Complete Coverage Path Planning (CCPP)? into Recommended project path from today’s lecture so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "The next slide should compress the lesson into a quick memory or self-check.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Recommended project path from today’s lecture to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Recommended project path from today’s lecture connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Recommended project path from today’s lecture sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 37,
+        "source_title": "What you should remember from this final lecture"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use What you should remember from this final lecture as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Nav2 = BT Navigator + task servers + costmaps + TF + localization + plugins",
+        "Planner ≠ controller; path generation and path tracking are different jobs",
+        "A saved map is not enough — costmaps and TF make navigation practical",
+        "Students should understand the major Nav2 components and what each contributes.",
+        "For your project, start with waypoints, not manual RViz clicking"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What you should remember from this final lecture to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Reference links for today’s session so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use What you should remember from this final lecture as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep What you should remember from this final lecture connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should leave What you should remember from this final lecture with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 38,
+        "source_title": "Reference links for today’s session"
+      },
+      "slide_role": "setup",
+      "importance": "medium",
+      "narration_seed": "Use Reference links for today’s session to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Nav2 Concepts",
+        "Nav2 Configuration Guide",
+        "Simple Commander API",
+        "SimpleGoalChecker"
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "link",
+        "joint"
+      ],
+      "transition_from_previous": "Bridge from What you should remember from this final lecture into Reference links for today’s session so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into More references: planning + filters so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may think URDF, Xacro, links, and joints are just file syntax instead of a robot-structure model."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "link labels",
+        "joint markers"
+      ],
+      "explanation_style": "Use Reference links for today’s session to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Reference links for today’s session connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Reference links for today’s session sets up the lesson and why the topic matters.",
+      "scene_hint": "Bring in a TurtleBot silhouette with links and joints highlighted so the robot description reads as structure, not just XML."
+    },
+    {
+      "slide_ref": {
+        "index": 39,
+        "source_title": "More references: planning + filters"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define More references: planning + filters in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "NavFn Planner",
+        "Smac Planner",
+        "Theta Star Planner",
+        "Keepout Filter Tutorial"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use More references: planning + filters to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish with a system map they can use while building and debugging their project.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define More references: planning + filters in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep More references: planning + filters connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain More references: planning + filters accurately and use it in the next step of the lesson."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "main_repo": "/home/monjazeb/Projects/webdeck",
+  "render_user": "monjazeb",
+  "render_host": "10.0.0.16",
+  "render_repo": "/home/monjazeb/Projects/webdeck",
+  "render_mount": "/run/user/1000/gvfs/sftp:host=10.0.0.16/home/monjazeb/Projects/webdeck",
+  "ssh_port": 22,
+  "default_school": "AC",
+  "default_course": "ROB9205_Industrial_Robots_W2026",
+  "default_session": "S01",
+  "default_topic": "01_course_intro_and_expectations"
+}

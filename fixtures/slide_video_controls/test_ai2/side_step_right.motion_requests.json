@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "slide_id": "test_ai2_side_step_right",
+  "prompt_version": "kimodo_instructor_v001",
+  "fps": 30,
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "aspect_ratio": "16:9"
+  },
+  "camera_reference": {
+    "camera_type": "orthographic",
+    "camera_location_world_m": [
+      0.0,
+      -6.0,
+      1.2375
+    ],
+    "camera_look_direction": "+Y",
+    "camera_up_axis": "+Z",
+    "orthographic_scale_m": 2.775,
+    "character_front_direction": "-Y",
+    "pixels_per_meter": 389.19,
+    "meters_per_pixel": 0.002569
+  },
+  "requests": [
+    {
+      "request_id": "test_side_step_right_001",
+      "t0": 0.0,
+      "t1": 5.0,
+      "duration_sec": 5.0,
+      "duration_bucket": "5s",
+      "motion_type": "side_step_right",
+      "character": "middle_aged_male_professional_instructor",
+      "energy_bucket": "calm",
+      "gesture_bucket": "none",
+      "speed_bucket": "slow",
+      "direction_bucket": "right",
+      "steps_bucket": 2,
+      "body_facing_bucket": "audience",
+      "gaze_direction_bucket": "center",
+      "point_direction_bucket": "none",
+      "pointing": false,
+      "point_hand": "none",
+      "depth_policy": "keep_y_fixed",
+      "max_depth_y_drift_m": 0.05,
+      "canonical_prompt": "A middle-aged male professional instructor takes two small lateral steps to the right while facing the audience. The motion is calm, realistic, and businesslike. The torso stays upright, pelvis stable, shoulders level, and arms relaxed low beside the body. The movement is a controlled side-step, not walking forward or backward. Avoid forward travel, backward travel, turning the back to the audience, dancing, runway walking, exaggerated hip sway, playful motion, jumping, bouncing, spinning, and unstable balance.",
+      "prompt_version": "kimodo_instructor_v001",
+      "hash_source": "kimodo_instructor_v001|side_step_right|5s|calm|none|right|2|audience|gaze_center|point_none|keep_y_fixed"
+    }
+  ]
+}

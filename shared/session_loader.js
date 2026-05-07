@@ -24,6 +24,9 @@ export async function bootSession({ initDeck }) {
   const course = params.get("course") || "";
   const session = params.get("session") || "";
   const topic = params.get("topic") || "";
+  const analysisMode = params.get("analysis") === "1";
+  const debugOverlay = params.get("debug") === "1";
+  const initialSlide = params.get("slide") || null;
 
   const hudLabel = document.getElementById("hudLabel");
   const slidesRoot = document.getElementById("slidesRoot");
@@ -32,16 +35,36 @@ export async function bootSession({ initDeck }) {
   function showError(msg) {
     if (hudLabel) hudLabel.textContent = "Error loading topic";
     if (slidesRoot) {
-      slidesRoot.innerHTML = `
-        <div style="padding:32px; font-size:18px; line-height:1.5;">
-          <strong>${msg}</strong><br/><br/>
-          URL parameters:<br/>
-          <code>school=${school}</code><br/>
-          <code>course=${course}</code><br/>
-          <code>session=${session}</code><br/>
-          <code>topic=${topic}</code>
-        </div>
-      `;
+      slidesRoot.innerHTML = "";
+
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "32px";
+      wrapper.style.fontSize = "18px";
+      wrapper.style.lineHeight = "1.5";
+
+      const title = document.createElement("strong");
+      title.textContent = msg;
+      wrapper.appendChild(title);
+      wrapper.appendChild(document.createElement("br"));
+      wrapper.appendChild(document.createElement("br"));
+
+      const label = document.createElement("div");
+      label.textContent = "URL parameters:";
+      wrapper.appendChild(label);
+
+      [
+        `school=${school}`,
+        `course=${course}`,
+        `session=${session}`,
+        `topic=${topic}`,
+      ].forEach((entry) => {
+        const code = document.createElement("code");
+        code.textContent = entry;
+        wrapper.appendChild(code);
+        wrapper.appendChild(document.createElement("br"));
+      });
+
+      slidesRoot.appendChild(wrapper);
     }
   }
 
@@ -96,20 +119,29 @@ export async function bootSession({ initDeck }) {
     }
 
     // 5) Call the engine
-    initDeck({
+    return initDeck({
       slidesData,
+      topicMeta,
+      topicId: topicMeta?.id || topic,
+      descriptor: {
+        school,
+        course,
+        session,
+        topic,
+      },
       hudDefault,
       hudPrefix,
       email,
-      logoSrc,
       homeHref: `sessions.html?school=${encodeURIComponent(school)}&course=${encodeURIComponent(course)}`,
-      ttsBackend: "piper",
-      ttsEndpoint: "/tts",
-      voicesEndpoint: "/voices",
+      ttsEnabled: false,
       theme: school === "UO" ? "uo" : "ac",
+      analysisMode,
+      debugOverlay,
+      initialSlide,
     });
   } catch (err) {
     console.error("Failed to import slide module:", modulePath, err);
     showError("Could not load the slide module. Check console for details.");
+    return null;
   }
 }

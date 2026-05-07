@@ -1,17 +1,11 @@
 // shared/deck_render.js
 // Rendering helpers:
-// - Title say support: titleSay -> puts data-say on h1/h2
-// - Media source support: media.source + optional media.sourceHref shown under media
-// - Quiz say support: questionSay + option say
-// - ✅ Rich text support (safe): **bold**, `inline code`, ```code blocks```, auto-linkify URLs, [label](url) links
-// - ✅ Math support (KaTeX): $$...$$ or \[...\] for display, \( ... \) for inline
-//
-// NOTE: KaTeX must be loaded in session.html:
-//   <link rel="stylesheet" href="./shared/vendor/katex/katex.min.css" />
-//   <script src="./shared/vendor/katex/katex.min.js"></script>
+// - Stable slide/element metadata in the DOM
+// - Rich text support (safe): **bold**, `inline code`, ```code blocks```,
+//   auto-linkify URLs, [label](url) links
+// - Math support (KaTeX): $$...$$ or \[...\] for display, \( ... \) for inline
 
 function typesetMath(root) {
-  // KaTeX is loaded via <script ...katex.min.js> and attaches to window.katex
   if (!window.katex) return;
 
   root.querySelectorAll("[data-tex]").forEach((el) => {
@@ -25,201 +19,133 @@ function typesetMath(root) {
         trust: false,
       });
     } catch {
-      el.textContent = tex; // fallback
+      el.textContent = tex;
     }
   });
 }
 
-export function renderSlide(s, idx) {
-  const slide = document.createElement("div");
-  slide.className = "slide";
-  if (idx === 0) slide.classList.add("active");
-  slide.dataset.hud = s.hud || "";
-  slide.dataset.notes = (s.notes || "").trim();
+function applyElementMetadata(element, meta = {}) {
+  if (!element || !meta.slideId || !meta.elementId) return element;
 
-  if (s.type === "title") {
-    const title = s.title || "";
-    const titleSay = s.titleSay || title || "";
-
-    slide.innerHTML = `
-      <div style="display:flex; flex-direction:column; justify-content:center; height:100%; padding-top:30px;">
-        <h1 data-say="${escapeAttr(plainTextForSay(titleSay))}">${richTextToHtml(title)}</h1>
-        ${
-          s.subtitle
-            ? `<p style="font-size:28px; color:#64748b; font-weight:500;">${richTextToHtml(
-                s.subtitle,
-              )}</p>`
-            : ""
-        }
-        ${
-          s.meta
-            ? `<p class="muted" style="margin-top:10px;">${richTextToHtml(s.meta)}</p>`
-            : ""
-        }
-      </div>
-    `;
-    typesetMath(slide);
-    return slide;
+  element.dataset.slideId = meta.slideId;
+  element.dataset.elementId = meta.elementId;
+  element.dataset.elementType = meta.elementType || "element";
+  if (meta.parentElementId) {
+    element.dataset.parentElementId = meta.parentElementId;
   }
-
-  if (s.type === "bullets") {
-    const title = s.title || "";
-    const titleSay = s.titleSay || title || "";
-
-    const bullets = (s.bullets || [])
-      .map((b) => {
-        if (typeof b === "string") {
-          return `<li data-say="${escapeAttr(
-            plainTextForSay(b),
-          )}">${richTextToHtml(b)}</li>`;
-        }
-        const text = b.text || "";
-        const say = b.say || b.text || "";
-        return `<li data-say="${escapeAttr(
-          plainTextForSay(say),
-        )}">${richTextToHtml(text)}</li>`;
-      })
-      .join("");
-
-    slide.innerHTML = `
-      <h2 data-say="${escapeAttr(plainTextForSay(titleSay))}">${richTextToHtml(title)}</h2>
-      ${
-        s.lead
-          ? `<p class="muted" style="margin-bottom:14px;" data-say="${escapeAttr(
-              plainTextForSay(s.lead),
-            )}">${richTextToHtml(s.lead)}</p>`
-          : ""
-      }
-      <ul>${bullets}</ul>
-    `;
-    typesetMath(slide);
-    return slide;
+  if (meta.label) {
+    element.dataset.elementLabel = meta.label;
   }
-
-  if (s.type === "two-col") {
-    const title = s.title || "";
-    const titleSay = s.titleSay || title || "";
-
-    const h2 = document.createElement("h2");
-    h2.innerHTML = richTextToHtml(title);
-    h2.setAttribute("data-say", plainTextForSay(titleSay || title));
-    slide.appendChild(h2);
-
-    const grid = document.createElement("div");
-    grid.className = "two-col";
-
-    const leftWrap = document.createElement("div");
-    const rightWrap = document.createElement("div");
-
-    leftWrap.appendChild(renderColumn(s.left));
-    rightWrap.appendChild(renderColumn(s.right));
-
-    grid.appendChild(leftWrap);
-    grid.appendChild(rightWrap);
-
-    slide.appendChild(grid);
-    typesetMath(slide);
-    return slide;
-  }
-
-  if (s.type === "mcq") {
-    const title = s.title || "Quick Quiz";
-    const titleSay = s.titleSay || title || "Quick Quiz";
-
-    const question = s.question || "";
-    const questionSay = s.questionSay || question || "";
-
-    const opts = (s.options || [])
-      .map((o) => {
-        const label = o.label || "";
-        const choice = o.choice || "";
-        const say = o.say || `${choice}. ${label}`; // helpful default (plain)
-        return `<button class="option-btn" type="button"
-                  data-choice="${escapeAttr(choice)}"
-                  data-say="${escapeAttr(plainTextForSay(say))}">
-                  <span class="badge">${escapeHtml(choice)}</span> ${richTextToHtml(label)}
-                </button>`;
-      })
-      .join("");
-
-    slide.innerHTML = `
-      <h2 data-say="${escapeAttr(plainTextForSay(titleSay))}">${richTextToHtml(title)}</h2>
-      <div class="quiz-container mcq"
-           data-correct="${escapeAttr(s.correct || "")}"
-           data-explain="${escapeAttr(s.explain || "")}">
-        <p class="quiz-question" data-say="${escapeAttr(plainTextForSay(questionSay))}">
-          ${richTextToHtml(question)}
-        </p>
-        <div class="options">${opts}</div>
-        <div class="feedback" aria-live="polite"></div>
-      </div>
-    `;
-    typesetMath(slide);
-    return slide;
-  }
-
-  // fallback raw html
-  slide.innerHTML = s.html || `<h2>Empty slide</h2>`;
-  typesetMath(slide);
-  return slide;
+  element.id = `${meta.slideId}__${meta.elementId}`;
+  return element;
 }
 
-function renderColumn(col) {
-  const colEl = document.createElement("div");
-  colEl.className = "col";
-
-  if (!col) return colEl;
-
-  if (col.lead) {
-    const lead = document.createElement("div");
-    lead.className = "lead";
-    lead.innerHTML = richTextToHtml(col.lead);
-    colEl.appendChild(lead);
-  }
-
-  if (Array.isArray(col.bullets) && col.bullets.length) {
-    const ul = document.createElement("ul");
-    ul.className = "bullets";
-
-    col.bullets.forEach((b) => {
-      const li = document.createElement("li");
-
-      if (typeof b === "string") {
-        li.innerHTML = richTextToHtml(b);
-        li.setAttribute("data-say", plainTextForSay(b));
-      } else {
-        const text = b.text || "";
-        const say = b.say || b.text || "";
-        li.innerHTML = richTextToHtml(text);
-        li.setAttribute("data-say", plainTextForSay(say));
-      }
-
-      ul.appendChild(li);
+function annotateRichArtifacts(root, slideId, parentElementId, counters) {
+  root.querySelectorAll("pre.code-block").forEach((block) => {
+    if (block.dataset.elementId) return;
+    applyElementMetadata(block, {
+      slideId,
+      parentElementId,
+      elementId: `code_${counters.code++}`,
+      elementType: "code",
+      label: (block.textContent || "").trim().slice(0, 120),
     });
+  });
 
-    colEl.appendChild(ul);
-  }
-
-  // ✅ auto media
-  if (col.media) {
-    const m = renderMedia(col.media);
-    if (m) colEl.appendChild(m);
-  }
-
-  // (optional) keep html support too
-  if (col.html) {
-    const box = document.createElement("div");
-    box.innerHTML = col.html;
-    colEl.appendChild(box);
-  }
-
-  return colEl;
+  root.querySelectorAll("[data-tex]").forEach((mathEl) => {
+    if (mathEl.dataset.elementId) return;
+    applyElementMetadata(mathEl, {
+      slideId,
+      parentElementId,
+      elementId: `math_${counters.math++}`,
+      elementType: "math",
+      label: (mathEl.dataset.tex || "").trim(),
+    });
+  });
 }
 
-function renderMedia(media) {
+function setRichTextContent(element, text, meta, counters, options = {}) {
+  element.innerHTML = richTextToHtml(text, options);
+  applyElementMetadata(element, meta);
+  annotateRichArtifacts(element, meta.slideId, meta.elementId, counters);
+}
+
+function createRichTextElement(tagName, text, meta, counters, options = {}) {
+  const element = document.createElement(tagName);
+  if (options.className) element.className = options.className;
+  if (options.style) element.setAttribute("style", options.style);
+  if (options.sayText !== undefined) {
+    element.setAttribute("data-say", plainTextForSay(options.sayText));
+  }
+
+  setRichTextContent(element, text, meta, counters, options.richTextOptions || {});
+  return element;
+}
+
+function renderParagraphList(paragraphs, slideId, counters) {
+  const fragment = document.createDocumentFragment();
+
+  paragraphs.forEach((paragraph) => {
+    const p = createRichTextElement(
+      "p",
+      paragraph.text,
+      {
+        slideId,
+        elementId: paragraph.id,
+        elementType: "paragraph",
+        label: plainTextForSay(paragraph.text),
+      },
+      counters,
+      {
+        className: "deck-paragraph",
+        sayText: paragraph.say || paragraph.text,
+      },
+    );
+
+    fragment.appendChild(p);
+  });
+
+  return fragment;
+}
+
+function renderBulletList(items, slideId, counters) {
+  const list = document.createElement("ul");
+  list.className = "bullets";
+
+  items.forEach((item) => {
+    const li = createRichTextElement(
+      "li",
+      item.text,
+      {
+        slideId,
+        elementId: item.id,
+        elementType: "bullet",
+        label: plainTextForSay(item.text),
+      },
+      counters,
+      {
+        sayText: item.say || item.text,
+      },
+    );
+
+    list.appendChild(li);
+  });
+
+  return list;
+}
+
+function renderLegacyHtml(html, meta, counters) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "legacy-html";
+  wrapper.innerHTML = html || "";
+  applyElementMetadata(wrapper, meta);
+  annotateRichArtifacts(wrapper, meta.slideId, meta.elementId, counters);
+  return wrapper;
+}
+
+function renderMedia(media, meta, counters) {
   if (!media) return null;
 
-  // --- Gallery support ---
   if ((media.kind || "").toLowerCase() === "gallery") {
     const items = Array.isArray(media.items) ? media.items : [];
     if (!items.length) return null;
@@ -229,32 +155,52 @@ function renderMedia(media) {
 
     const stage = document.createElement("div");
     stage.className = "media-stage gallery-stack";
+    applyElementMetadata(stage, {
+      slideId: meta.slideId,
+      parentElementId: meta.parentElementId,
+      elementId: media.id,
+      elementType: "gallery",
+      label: media.caption || media.source || media.id,
+    });
 
     const fitDefault = (media.fit || "contain").toLowerCase();
 
-    items.forEach((it) => {
-      if (!it || !it.src) return;
+    items.forEach((item) => {
+      if (!item?.src) return;
 
       const img = document.createElement("img");
-      img.src = it.src;
-      img.alt = it.alt || "";
+      img.src = item.src;
+      img.alt = item.alt || item.caption || "";
+      img.className = ((item.fit || fitDefault) + "").toLowerCase() === "cover"
+        ? "fit-cover stacked-media"
+        : "fit-contain stacked-media";
 
-      const fit = ((it.fit || fitDefault) + "").toLowerCase();
-      img.className = fit === "cover" ? "fit-cover" : "fit-contain";
-      img.classList.add("stacked-media");
+      applyElementMetadata(img, {
+        slideId: meta.slideId,
+        parentElementId: media.id,
+        elementId: item.id,
+        elementType: "image",
+        label: item.caption || item.alt || item.id,
+      });
 
       stage.appendChild(img);
     });
 
     wrap.appendChild(stage);
 
-    // Caption/Source (same as single)
     const srcText = media.source || media.caption;
     const srcHref = media.sourceHref || media.href;
-
     if (srcText) {
       const cap = document.createElement("div");
       cap.className = "media-caption";
+      applyElementMetadata(cap, {
+        slideId: meta.slideId,
+        parentElementId: media.id,
+        elementId: `${media.id}_caption`,
+        elementType: "caption",
+        label: srcText,
+      });
+
       if (srcHref) {
         const a = document.createElement("a");
         a.href = srcHref;
@@ -272,7 +218,6 @@ function renderMedia(media) {
     return wrap;
   }
 
-  // --- existing single-media support (image/video/iframe) ---
   if (!media.src) return null;
 
   const wrap = document.createElement("div");
@@ -282,42 +227,63 @@ function renderMedia(media) {
   stage.className = "media-stage";
 
   const kind = (media.kind || "image").toLowerCase();
-  const fit = (media.fit || "contain").toLowerCase(); // contain | cover
+  const fit = (media.fit || "contain").toLowerCase();
 
-  let el;
+  let element;
 
   if (kind === "video") {
-    el = document.createElement("video");
-    el.src = media.src;
-    el.controls = media.controls ?? true;
-    el.autoplay = media.autoplay ?? false;
-    el.loop = media.loop ?? false;
-    el.muted = media.muted ?? false;
-    el.playsInline = true;
+    element = document.createElement("video");
+    element.src = media.src;
+    element.controls = media.controls ?? true;
+    element.autoplay = media.autoplay ?? false;
+    element.loop = media.loop ?? false;
+    element.muted = media.muted ?? false;
+    element.playsInline = true;
+    if (media.poster) element.poster = media.poster;
   } else if (kind === "iframe" || kind === "widget") {
-    el = document.createElement("iframe");
-    el.src = media.src;
-    el.allow = media.allow || "fullscreen";
+    element = document.createElement("iframe");
+    element.src = media.src;
+    element.allow = media.allow || "fullscreen";
+    element.title = media.title || media.caption || media.source || media.id;
+    element.loading = media.loading || "eager";
+    if (media.allowFullscreen !== false) {
+      element.setAttribute("allowfullscreen", "");
+    }
   } else {
-    el = document.createElement("img");
-    el.src = media.src;
-    el.alt = media.alt || "";
+    element = document.createElement("img");
+    element.src = media.src;
+    element.alt = media.alt || media.caption || "";
+    element.loading = media.loading || "eager";
   }
 
-  if (el.tagName === "IMG" || el.tagName === "VIDEO") {
-    if (fit === "cover") el.classList.add("fit-cover");
-    else el.classList.add("fit-contain");
+  if (element.tagName === "IMG" || element.tagName === "VIDEO") {
+    element.classList.add(fit === "cover" ? "fit-cover" : "fit-contain");
   }
 
-  stage.appendChild(el);
+  applyElementMetadata(element, {
+    slideId: meta.slideId,
+    parentElementId: meta.parentElementId,
+    elementId: media.id,
+    elementType: kind === "widget" ? "widget" : kind,
+    label: media.title || media.caption || media.source || media.alt || media.id,
+  });
+
+  stage.appendChild(element);
   wrap.appendChild(stage);
 
   const srcText = media.source || media.caption;
   const srcHref = media.sourceHref || media.href;
-
   if (srcText) {
     const cap = document.createElement("div");
     cap.className = "media-caption";
+    applyElementMetadata(cap, {
+      slideId: meta.slideId,
+      parentElementId: media.id,
+      elementId: `${media.id}_caption`,
+      elementType: "caption",
+      label: srcText,
+    });
+
     if (srcHref) {
       const a = document.createElement("a");
       a.href = srcHref;
@@ -327,7 +293,6 @@ function renderMedia(media) {
       cap.appendChild(document.createTextNode("Source: "));
       cap.appendChild(a);
     } else {
-      // If source text itself contains a URL, make it clickable automatically
       cap.innerHTML = richTextToHtml(`Source: ${srcText}`);
     }
     wrap.appendChild(cap);
@@ -336,25 +301,413 @@ function renderMedia(media) {
   return wrap;
 }
 
+function renderColumn(column, slideId, counters) {
+  const columnEl = document.createElement("div");
+  columnEl.className = "col";
+
+  if (!column) return columnEl;
+
+  if (column.lead) {
+    const lead = createRichTextElement(
+      "div",
+      column.lead,
+      {
+        slideId,
+        elementId: column.leadId,
+        elementType: "lead",
+        label: plainTextForSay(column.lead),
+      },
+      counters,
+      {
+        className: "lead",
+        sayText: column.lead,
+      },
+    );
+    columnEl.appendChild(lead);
+  }
+
+  if (Array.isArray(column.paragraphs) && column.paragraphs.length) {
+    columnEl.appendChild(renderParagraphList(column.paragraphs, slideId, counters));
+  }
+
+  if (Array.isArray(column.bullets) && column.bullets.length) {
+    columnEl.appendChild(renderBulletList(column.bullets, slideId, counters));
+  }
+
+  if (column.media) {
+    const media = renderMedia(column.media, {
+      slideId,
+      parentElementId: "",
+    }, counters);
+    if (media) columnEl.appendChild(media);
+  }
+
+  if (column.html) {
+    columnEl.appendChild(
+      renderLegacyHtml(
+        column.html,
+        {
+          slideId,
+          elementId: column.htmlId,
+          elementType: "legacy_html",
+          label: column.htmlId,
+        },
+        counters,
+      ),
+    );
+  }
+
+  return columnEl;
+}
+
+function renderTextSlide(slide, slideEl, counters) {
+  if (slide.title) {
+    slideEl.appendChild(
+      createRichTextElement(
+        "h2",
+        slide.title,
+        {
+          slideId: slide.slideId,
+          elementId: slide.titleId,
+          elementType: "title",
+          label: plainTextForSay(slide.title),
+        },
+        counters,
+        {
+          sayText: slide.titleSay || slide.title,
+        },
+      ),
+    );
+  }
+
+  if (slide.lead) {
+    slideEl.appendChild(
+      createRichTextElement(
+        "p",
+        slide.lead,
+        {
+          slideId: slide.slideId,
+          elementId: slide.leadId,
+          elementType: "lead",
+          label: plainTextForSay(slide.lead),
+        },
+        counters,
+        {
+          className: "muted",
+          style: "margin-bottom:14px;",
+          sayText: slide.lead,
+        },
+      ),
+    );
+  }
+
+  if (Array.isArray(slide.paragraphs) && slide.paragraphs.length) {
+    slideEl.appendChild(renderParagraphList(slide.paragraphs, slide.slideId, counters));
+  }
+}
+
+export function renderSlide(slideData, idx) {
+  const slide = document.createElement("div");
+  const slideId = slideData.slideId || slideData.id || `slide_${idx + 1}`;
+  const counters = { code: 1, math: 1 };
+
+  slide.className = "slide";
+  if (idx === 0) slide.classList.add("active");
+  slide.dataset.hud = slideData.hud || "";
+  slide.dataset.notes = (slideData.notes || "").trim();
+  slide.dataset.slideId = slideId;
+  slide.dataset.slideType = slideData.slideType || slideData.type || "unknown";
+  slide.id = `slide__${slideId}`;
+
+  if (slideData.type === "title") {
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.flexDirection = "column";
+    wrap.style.justifyContent = "center";
+    wrap.style.height = "100%";
+    wrap.style.paddingTop = "30px";
+
+    if (slideData.title) {
+      wrap.appendChild(
+        createRichTextElement(
+          "h1",
+          slideData.title,
+          {
+            slideId,
+            elementId: slideData.titleId,
+            elementType: "title",
+            label: plainTextForSay(slideData.title),
+          },
+          counters,
+          {
+            sayText: slideData.titleSay || slideData.title,
+          },
+        ),
+      );
+    }
+
+    if (slideData.subtitle) {
+      wrap.appendChild(
+        createRichTextElement(
+          "p",
+          slideData.subtitle,
+          {
+            slideId,
+            elementId: slideData.subtitleId,
+            elementType: "subtitle",
+            label: plainTextForSay(slideData.subtitle),
+          },
+          counters,
+          {
+            style: "font-size:28px; color:#64748b; font-weight:500;",
+            sayText: slideData.subtitle,
+          },
+        ),
+      );
+    }
+
+    if (slideData.meta) {
+      wrap.appendChild(
+        createRichTextElement(
+          "p",
+          slideData.meta,
+          {
+            slideId,
+            elementId: slideData.metaId,
+            elementType: "meta",
+            label: plainTextForSay(slideData.meta),
+          },
+          counters,
+          {
+            className: "muted",
+            style: "margin-top:10px;",
+            sayText: slideData.meta,
+          },
+        ),
+      );
+    }
+
+    slide.appendChild(wrap);
+    typesetMath(slide);
+    return slide;
+  }
+
+  if (slideData.type === "bullets") {
+    if (slideData.title) {
+      slide.appendChild(
+        createRichTextElement(
+          "h2",
+          slideData.title,
+          {
+            slideId,
+            elementId: slideData.titleId,
+            elementType: "title",
+            label: plainTextForSay(slideData.title),
+          },
+          counters,
+          {
+            sayText: slideData.titleSay || slideData.title,
+          },
+        ),
+      );
+    }
+
+    if (slideData.lead) {
+      slide.appendChild(
+        createRichTextElement(
+          "p",
+          slideData.lead,
+          {
+            slideId,
+            elementId: slideData.leadId,
+            elementType: "lead",
+            label: plainTextForSay(slideData.lead),
+          },
+          counters,
+          {
+            className: "muted",
+            style: "margin-bottom:14px;",
+            sayText: slideData.lead,
+          },
+        ),
+      );
+    }
+
+    slide.appendChild(renderBulletList(slideData.bullets || [], slideId, counters));
+    typesetMath(slide);
+    return slide;
+  }
+
+  if (slideData.type === "text") {
+    renderTextSlide(slideData, slide, counters);
+    typesetMath(slide);
+    return slide;
+  }
+
+  if (slideData.type === "two-col") {
+    if (slideData.title) {
+      slide.appendChild(
+        createRichTextElement(
+          "h2",
+          slideData.title,
+          {
+            slideId,
+            elementId: slideData.titleId,
+            elementType: "title",
+            label: plainTextForSay(slideData.title),
+          },
+          counters,
+          {
+            sayText: slideData.titleSay || slideData.title,
+          },
+        ),
+      );
+    }
+
+    const grid = document.createElement("div");
+    grid.className = "two-col";
+
+    const leftWrap = document.createElement("div");
+    const rightWrap = document.createElement("div");
+
+    leftWrap.appendChild(renderColumn(slideData.left, slideId, counters));
+    rightWrap.appendChild(renderColumn(slideData.right, slideId, counters));
+
+    grid.appendChild(leftWrap);
+    grid.appendChild(rightWrap);
+    slide.appendChild(grid);
+
+    typesetMath(slide);
+    return slide;
+  }
+
+  if (slideData.type === "mcq") {
+    if (slideData.title) {
+      slide.appendChild(
+        createRichTextElement(
+          "h2",
+          slideData.title,
+          {
+            slideId,
+            elementId: slideData.titleId,
+            elementType: "title",
+            label: plainTextForSay(slideData.title),
+          },
+          counters,
+          {
+            sayText: slideData.titleSay || slideData.title,
+          },
+        ),
+      );
+    }
+
+    const quiz = document.createElement("div");
+    quiz.className = "quiz-container mcq";
+    quiz.dataset.correct = slideData.correct || "";
+    quiz.dataset.explain = slideData.explain || "";
+
+    if (slideData.question) {
+      quiz.appendChild(
+        createRichTextElement(
+          "p",
+          slideData.question,
+          {
+            slideId,
+            elementId: slideData.questionId,
+            elementType: "question",
+            label: plainTextForSay(slideData.question),
+          },
+          counters,
+          {
+            className: "quiz-question",
+            sayText: slideData.questionSay || slideData.question,
+          },
+        ),
+      );
+    }
+
+    const options = document.createElement("div");
+    options.className = "options";
+
+    (slideData.options || []).forEach((option) => {
+      const button = document.createElement("button");
+      button.className = "option-btn";
+      button.type = "button";
+      button.dataset.choice = option.choice || "";
+      button.setAttribute("data-say", plainTextForSay(option.say || `${option.choice}. ${option.label}`));
+
+      applyElementMetadata(button, {
+        slideId,
+        elementId: option.id,
+        elementType: "option",
+        label: plainTextForSay(option.label || option.choice || option.id),
+      });
+
+      const badge = document.createElement("span");
+      badge.className = "badge";
+      badge.textContent = option.choice || "";
+      button.appendChild(badge);
+
+      const body = document.createElement("span");
+      body.innerHTML = richTextToHtml(option.label || "");
+      annotateRichArtifacts(body, slideId, option.id, counters);
+      button.appendChild(body);
+
+      options.appendChild(button);
+    });
+
+    quiz.appendChild(options);
+
+    const feedback = document.createElement("div");
+    feedback.className = "feedback";
+    feedback.setAttribute("aria-live", "polite");
+    applyElementMetadata(feedback, {
+      slideId,
+      elementId: slideData.feedbackId,
+      elementType: "feedback",
+      label: "Quiz feedback",
+    });
+    quiz.appendChild(feedback);
+
+    slide.appendChild(quiz);
+    typesetMath(slide);
+    return slide;
+  }
+
+  if (slideData.html) {
+    slide.appendChild(
+      renderLegacyHtml(
+        slideData.html,
+        {
+          slideId,
+          elementId: slideData.htmlId || "legacy_html",
+          elementType: "legacy_html",
+          label: slideData.htmlId || "legacy_html",
+        },
+        counters,
+      ),
+    );
+    typesetMath(slide);
+    return slide;
+  }
+
+  slide.innerHTML = `<h2>Empty slide</h2>`;
+  typesetMath(slide);
+  return slide;
+}
+
 // --- Rich text helpers (SAFE) ---
-// Supports:
-// - **bold**
-// - `inline code`  -> small boxed commands
-// - ```code blocks``` -> boxed multi-line blocks
-// - [label](https://url) and bare https://url auto-linkify
-// - ✅ KaTeX math placeholders: $$...$$ or \[...\] (display), \( ... \) (inline)
 function richTextToHtml(text, opts = {}) {
   const allowBlocks = opts.allowBlocks !== false;
   const linkify = opts.linkify !== false;
 
   let raw = String(text ?? "");
 
-  // 1) Extract fenced code blocks first (protect from linkify/bold parsing)
   const codeBlocks = [];
   if (allowBlocks) {
-    raw = raw.replace(/```(\w+)?\n([\s\S]*?)```/g, (_m, _lang, code) => {
-      const i = codeBlocks.length;
-      const token = `@@CB${i}@@`;
+    raw = raw.replace(/```(\w+)?\n([\s\S]*?)```/g, (_match, _lang, code) => {
+      const index = codeBlocks.length;
+      const token = `@@CB${index}@@`;
       const body = escapeHtml(code).replace(/\n$/, "");
       codeBlocks.push(
         `<pre class="code-block" style="margin:10px 0; padding:12px 14px; border-radius:12px; background:rgba(2,6,23,.06); overflow:auto;"><code style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size:0.95em; line-height:1.35;">${body}</code></pre>`,
@@ -363,49 +716,44 @@ function richTextToHtml(text, opts = {}) {
     });
   }
 
-  // 1.5) Extract TeX math (safe delimiters)
-  // Display: $$...$$ or \[...\]
-  // Inline:  \( ... \)
   const mathBlocks = [];
 
-  raw = raw.replace(/\$\$([\s\S]+?)\$\$/g, (_m, tex) => {
-    const i = mathBlocks.length;
-    const token = `@@MB${i}@@`;
+  raw = raw.replace(/\$\$([\s\S]+?)\$\$/g, (_match, tex) => {
+    const index = mathBlocks.length;
+    const token = `@@MB${index}@@`;
     mathBlocks.push({ tex: String(tex).trim(), display: true });
     return token;
   });
 
-  raw = raw.replace(/\\\[([\s\S]+?)\\\]/g, (_m, tex) => {
-    const i = mathBlocks.length;
-    const token = `@@MB${i}@@`;
+  raw = raw.replace(/\\\[([\s\S]+?)\\\]/g, (_match, tex) => {
+    const index = mathBlocks.length;
+    const token = `@@MB${index}@@`;
     mathBlocks.push({ tex: String(tex).trim(), display: true });
     return token;
   });
 
-  raw = raw.replace(/\\\(([\s\S]+?)\\\)/g, (_m, tex) => {
-    const i = mathBlocks.length;
-    const token = `@@MB${i}@@`;
+  raw = raw.replace(/\\\(([\s\S]+?)\\\)/g, (_match, tex) => {
+    const index = mathBlocks.length;
+    const token = `@@MB${index}@@`;
     mathBlocks.push({ tex: String(tex).trim(), display: false });
     return token;
   });
 
-  // 2) Extract markdown links [label](url)
-  const mdLinks = [];
+  const markdownLinks = [];
   raw = raw.replace(
     /\[([^\]]+?)\]\((https?:\/\/[^\s)]+)\)/g,
-    (_m, label, url) => {
-      const i = mdLinks.length;
-      const token = `@@LK${i}@@`;
-      mdLinks.push({ label: String(label ?? ""), url: String(url ?? "") });
+    (_match, label, url) => {
+      const index = markdownLinks.length;
+      const token = `@@LK${index}@@`;
+      markdownLinks.push({ label: String(label ?? ""), url: String(url ?? "") });
       return token;
     },
   );
 
-  // 3) Extract inline code `...`
   const inlineCodes = [];
-  raw = raw.replace(/`([^`]+?)`/g, (_m, code) => {
-    const i = inlineCodes.length;
-    const token = `@@IC${i}@@`;
+  raw = raw.replace(/`([^`]+?)`/g, (_match, code) => {
+    const index = inlineCodes.length;
+    const token = `@@IC${index}@@`;
     const body = escapeHtml(code);
     inlineCodes.push(
       `<code class="code-inline" style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size:0.95em; padding:2px 7px; border-radius:8px; background:rgba(2,6,23,.08);">${body}</code>`,
@@ -413,57 +761,49 @@ function richTextToHtml(text, opts = {}) {
     return token;
   });
 
-  // 4) Escape the remaining text
-  let s = escapeHtml(raw);
+  let html = escapeHtml(raw);
 
-  // 5) Auto-linkify bare URLs (only if enabled)
   if (linkify) {
     const urlRe = /\bhttps?:\/\/[^\s<>()]+[^\s<>().,;:"')\]]/g;
-    s = s.replace(urlRe, (url) => {
+    html = html.replace(urlRe, (url) => {
       const href = escapeAttr(url);
       return `<a class="auto-link" href="${href}" target="_blank" rel="noreferrer" style="color:#2563eb; text-decoration:underline;">${url}</a>`;
     });
   }
 
-  // 6) Bold **...**
-  s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 
-  // 7) Restore inline codes
-  s = s.replace(/@@IC(\d+)@@/g, (_m, n) => inlineCodes[Number(n)] ?? "");
+  html = html.replace(/@@IC(\d+)@@/g, (_match, index) => inlineCodes[Number(index)] ?? "");
 
-  // 8) Restore markdown links
-  s = s.replace(/@@LK(\d+)@@/g, (_m, n) => {
-    const item = mdLinks[Number(n)];
+  html = html.replace(/@@LK(\d+)@@/g, (_match, index) => {
+    const item = markdownLinks[Number(index)];
     if (!item) return "";
     const href = escapeAttr(item.url);
-    const labelHtml = formatInline(item.label);
-    return `<a class="auto-link" href="${href}" target="_blank" rel="noreferrer" style="color:#2563eb; text-decoration:underline;">${labelHtml}</a>`;
+    const label = formatInline(item.label);
+    return `<a class="auto-link" href="${href}" target="_blank" rel="noreferrer" style="color:#2563eb; text-decoration:underline;">${label}</a>`;
   });
 
-  // 9) Restore code blocks
-  s = s.replace(/@@CB(\d+)@@/g, (_m, n) => codeBlocks[Number(n)] ?? "");
+  html = html.replace(/@@CB(\d+)@@/g, (_match, index) => codeBlocks[Number(index)] ?? "");
 
-  // 9.5) Restore math placeholders (KaTeX typesets later in typesetMath)
-  s = s.replace(/@@MB(\d+)@@/g, (_m, n) => {
-    const it = mathBlocks[Number(n)];
-    if (!it) return "";
-    const texAttr = escapeAttr(it.tex);
-    return it.display
+  html = html.replace(/@@MB(\d+)@@/g, (_match, index) => {
+    const item = mathBlocks[Number(index)];
+    if (!item) return "";
+    const texAttr = escapeAttr(item.tex);
+    return item.display
       ? `<div class="math-block" data-tex="${texAttr}" data-display="true"></div>`
       : `<span class="math-inline" data-tex="${texAttr}" data-display="false"></span>`;
   });
 
-  return s;
+  return html;
 }
 
-// Inline formatter for link labels etc. (safe): **bold** + `inline code` only (no linkify, no blocks)
 function formatInline(text) {
   let raw = String(text ?? "");
 
   const inlineCodes = [];
-  raw = raw.replace(/`([^`]+?)`/g, (_m, code) => {
-    const i = inlineCodes.length;
-    const token = `@@IC${i}@@`;
+  raw = raw.replace(/`([^`]+?)`/g, (_match, code) => {
+    const index = inlineCodes.length;
+    const token = `@@IC${index}@@`;
     const body = escapeHtml(code);
     inlineCodes.push(
       `<code class="code-inline" style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size:0.95em; padding:2px 7px; border-radius:8px; background:rgba(2,6,23,.08);">${body}</code>`,
@@ -471,18 +811,17 @@ function formatInline(text) {
     return token;
   });
 
-  let s = escapeHtml(raw);
-  s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  s = s.replace(/@@IC(\d+)@@/g, (_m, n) => inlineCodes[Number(n)] ?? "");
-  return s;
+  let html = escapeHtml(raw);
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/@@IC(\d+)@@/g, (_match, index) => inlineCodes[Number(index)] ?? "");
+  return html;
 }
 
-// Used for data-say so TTS doesn't speak formatting markers / URLs or TeX.
 function plainTextForSay(text) {
   return String(text ?? "")
     .replace(/\[([^\]]+?)\]\((https?:\/\/[^\s)]+)\)/g, "$1")
     .replace(/```[\s\S]*?```/g, "")
-    .replace(/\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|\$\$[\s\S]*?\$\$/g, "") // strip TeX
+    .replace(/\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|\$\$[\s\S]*?\$\$/g, "")
     .replace(/`([^`]+?)`/g, "$1")
     .replace(/\*\*(.+?)\*\*/g, "$1")
     .replace(/\bhttps?:\/\/\S+/g, "")
@@ -490,21 +829,20 @@ function plainTextForSay(text) {
     .trim();
 }
 
-// --- Escaping helpers ---
-function escapeHtml(s) {
-  return String(s).replace(
+function escapeHtml(text) {
+  return String(text).replace(
     /[&<>"']/g,
-    (m) =>
+    (match) =>
       ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#039;",
-      })[m],
+      })[match],
   );
 }
 
-function escapeAttr(s) {
-  return escapeHtml(s).replace(/`/g, "&#096;");
+function escapeAttr(text) {
+  return escapeHtml(text).replace(/`/g, "&#096;");
 }

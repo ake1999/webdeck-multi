@@ -1,0 +1,756 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_tb3_real_robot_demo",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the excitement of seeing the real robot move, then immediately connect that excitement to disciplined observation.",
+    "progression": "Move through hardware realities, demonstrations, and the differences between simulated and real behavior.",
+    "destination": "Students should finish with a better sense of what changes when the robot leaves simulation and enters the real lab.",
+    "tone": "engaging, practical, observation-driven",
+    "methods": [
+      "mental model",
+      "guided build",
+      "debugging checkpoints",
+      "recap",
+      "demo",
+      "compare/contrast",
+      "lab intuition"
+    ]
+  },
+  "audience_level": "introductory autonomous mobile robotics students learning ROS 2 through lab-first workflows",
+  "topic_goal": "Connect the simulation-first course material to the behavior and constraints students see on the real TurtleBot3 platform.",
+  "topic_takeaways": [
+    "Students should understand what transfers cleanly from simulation to the real robot and what does not.",
+    "Students should see the importance of calibration, sensing limits, and operating discipline on hardware.",
+    "Students should leave with a stronger mental bridge between software commands and physical robot behavior."
+  ],
+  "style_notes": [
+    "Keep the tone hands-on and confidence-building.",
+    "Connect every concept to what students will debug in a terminal, simulation, or robot lab.",
+    "Use visualization and mental models before deep command details.",
+    "Keep energy slightly higher on real-robot demonstrations.",
+    "Always connect the visible behavior back to a software or sensing reason."
+  ],
+  "transition_style": "Move from the mental model to the concrete lab step students will run next, then close each section by explaining what to verify.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "TurtleBot3 (Real Robot) — End-to-End Demo"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Today is not deep theory. It’s a practical demo so you know what the system looks like in real life.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Connect the simulation-first course material to the behavior and constraints students see on the real TurtleBot3 platform.",
+      "transition_to_next": "Carry this idea forward into How today works (important) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "RViz panel",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Frame TurtleBot3 (Real Robot) — End-to-End Demo as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should understand how TurtleBot3 (Real Robot) — End-to-End Demo sets up the lesson and why the topic matters.",
+      "scene_hint": "Show the robot model, TF, and RViz displays as a simple pipeline so students can connect each layer to the visual outcome."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "How today works (important)"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use How today works (important) to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Robot-side commands are already set up by instructor",
+        "You will learn the remote PC workflow (what you run on a laptop)",
+        "Goal: understand the pipeline you will use in simulation later",
+        "Source for commands: TurtleBot3 eManual (links on slides)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from TurtleBot3 (Real Robot) — End-to-End Demo into How today works (important) so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Step 0: Connect to the instructor hotspot so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use How today works (important) to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep How today works (important) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how How today works (important) sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "Step 0: Connect to the instructor hotspot"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Step 0: Connect to the instructor hotspot efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Connect to AWiFi hotspot (no password)",
+        "Open a terminal and confirm you have an IP:",
+        "If you are on a VPN → disconnect it (VPN often blocks discovery)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 0: Connect to the instructor hotspot efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 0: Connect to the instructor hotspot and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Step 1: Set ROS environment on your laptop"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Step 1: Set ROS environment on your laptop efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Sanity check:"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 1: Set ROS environment on your laptop efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 1: Set ROS environment on your laptop and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Step 2: Verify you can see robot topics"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Step 2: Verify you can see robot topics efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "List topics (look for /scan, /tf, /odom, etc.):",
+        "Quick check: read one LiDAR message:",
+        "If you see data → networking is OK ✅"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 2: Verify you can see robot topics efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 2: Verify you can see robot topics and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "If you see no topics (fast fixes)"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Define If you see no topics (fast fixes) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Confirm you are on the same Wi-Fi as the instructor laptop",
+        "Confirm ROS_DOMAIN_ID=30 on your laptop (must match robot)",
+        "Disable firewall temporarily (common DDS issue):",
+        "If still nothing: stop here and just follow the demo visually"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use If you see no topics (fast fixes) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once If you see no topics (fast fixes) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Define If you see no topics (fast fixes) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep If you see no topics (fast fixes) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain If you see no topics (fast fixes) accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Step 3: Visualize the real robot in RViz"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Step 3: Visualize the real robot in RViz efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Launch RViz (Remote PC):",
+        "In RViz, check: Fixed Frame is base_link (or map when SLAM runs)",
+        "Source: TB3 Bringup → RViz"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 3: Visualize the real robot in RViz efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 3: Visualize the real robot in RViz and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "RViz: What you should see (quick checklist)"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use RViz: What you should see (quick checklist) as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Robot model (waffle_pi)",
+        "LaserScan points (LiDAR)",
+        "TF tree is updating",
+        "Students should understand what transfers cleanly from simulation to the real robot and what does not.",
+        "If robot is missing: change Fixed Frame and re-add displays"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use RViz: What you should see (quick checklist) to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Step 4: Drive the robot (keyboard teleop) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "RViz panel",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Use RViz: What you should see (quick checklist) as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should leave RViz: What you should see (quick checklist) with the main takeaways of the topic compressed into usable memory.",
+      "scene_hint": "Show the robot model, TF, and RViz displays as a simple pipeline so students can connect each layer to the visual outcome."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Step 4: Drive the robot (keyboard teleop)"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Step 4: Drive the robot (keyboard teleop) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Run teleop on your laptop (Remote PC):",
+        "Keys: w/x forward/back • a/d turn • space stop",
+        "Source: TB3 SLAM → Teleop"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 4: Drive the robot (keyboard teleop) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 4: Drive the robot (keyboard teleop) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Step 5: Start SLAM (mapping mode)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Step 5: Start SLAM (mapping mode) through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Start SLAM (Remote PC):",
+        "Then drive slowly using teleop and watch the map grow in RViz",
+        "Source: TB3 SLAM",
+        "Tell students exactly what to watch for in the visual or interactive material."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Step 5: Start SLAM (mapping mode) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Step 5: Start SLAM (mapping mode) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Step 5: Start SLAM (mapping mode) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Step 5: Start SLAM (mapping mode) and why that visible behavior matters technically.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Mapping tips (make the map usable)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Teach Mapping tips (make the map usable) through the visual or interactive material, narrating what students should notice, why it matters, and how it connects to the topic goal.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Move slowly (avoid sudden spins and fast acceleration)",
+        "Scan corners and doorway edges (don’t miss boundaries)",
+        "Try to “loop back” to where you started (helps reduce drift)",
+        "Tell students exactly what to watch for in the visual or interactive material.",
+        "If map looks stretched: pause, re-scan area, and loop-close again"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Mapping tips (make the map usable) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Mapping tips (make the map usable) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Mapping tips (make the map usable) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand what to watch for on Mapping tips (make the map usable) and why that visible behavior matters technically.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Step 6: Save the map to files (.pgm + .yaml)"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Step 6: Save the map to files (.pgm + .yaml) efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Save map (Remote PC):",
+        "This saves: ~/tb3_map.pgm and ~/tb3_map.yaml",
+        "Source: TB3 SLAM → Save Map"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 6: Save the map to files (.pgm + .yaml) efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 6: Save the map to files (.pgm + .yaml) and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Occupancy Grid Map (OGM) — what the map means"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Build intuition for Occupancy Grid Map (OGM) — what the map means using the visual or mental model first, then connect that picture back to the exact technical idea students need.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Saved maps are 2D occupancy grids",
+        "White = free space",
+        "Black = occupied (walls/objects)",
+        "Gray = unknown (not scanned yet)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Step 7 (optional): Start navigation using the saved map so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Build a picture for Occupancy Grid Map (OGM) — what the map means first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Occupancy Grid Map (OGM) — what the map means connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Occupancy Grid Map (OGM) — what the map means clearly before the formal details continue.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Step 7 (optional): Start navigation using the saved map"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep Step 7 (optional): Start navigation using the saved map efficient and procedural, highlighting only the information students need to act or debug correctly. Keep the pacing efficient and procedural rather than reading the slide word for word.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "none",
+      "must_cover": [
+        "Start Nav2 with a saved map (Remote PC):",
+        "Then use RViz tools to set pose and goal",
+        "Source: TB3 Navigation"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 7 (optional): Start navigation using the saved map efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 7 (optional): Start navigation using the saved map and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "RViz navigation tools (what you click)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define RViz navigation tools (what you click) in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Set initial pose: click 2D Pose Estimate, then click/drag on the map",
+        "Send a goal: click 2D Nav Goal, then click/drag destination",
+        "The arrow sets the goal orientation (θ)",
+        "Source: TB3 Navigation → RViz goal"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use RViz navigation tools (what you click) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once RViz navigation tools (what you click) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "RViz panel",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Define RViz navigation tools (what you click) in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should be able to explain RViz navigation tools (what you click) accurately and use it in the next step of the lesson.",
+      "scene_hint": "Show the robot model, TF, and RViz displays as a simple pipeline so students can connect each layer to the visual outcome."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Project hint (no deep coding): how to do goals programmatically"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Define Project hint (no deep coding): how to do goals programmatically in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Nav2 provides an action interface (NavigateToPose / FollowWaypoints)",
+        "Your node will publish/send a goal pose (x, y, yaw) in the map frame",
+        "Start with RViz to learn coordinates, then move to code",
+        "Next sessions: we’ll show the minimal “send a goal” node pattern"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Project hint (no deep coding): how to do goals programmatically to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Project hint (no deep coding): how to do goals programmatically is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Project hint (no deep coding): how to do goals programmatically in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Project hint (no deep coding): how to do goals programmatically connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Project hint (no deep coding): how to do goals programmatically accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Quiz: What does map_saver_cli create?"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use Quiz: What does map_saver_cli create? as a final self-check so students can tell whether they now understand the core ideas of the topic.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "When you run ros2 run nav2_map_server map_saver_cli -f ~/tb3_map, you get…",
+        "Map saving produces an occupancy image (.pgm) plus config/metadata (.yaml).",
+        "Students should understand what transfers cleanly from simulation to the real robot and what does not.",
+        "Students should see the importance of calibration, sensing limits, and operating discipline on hardware."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Quiz: What does map_saver_cli create? to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Today’s remote-PC command checklist so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Use Quiz: What does map_saver_cli create? as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Quiz: What does map_saver_cli create? connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should leave Quiz: What does map_saver_cli create? with the main takeaways of the topic compressed into usable memory.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Today’s remote-PC command checklist"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use Today’s remote-PC command checklist to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Set env: export ROS_DOMAIN_ID=30 + export TURTLEBOT3_MODEL=waffle_pi",
+        "Verify topics: ros2 topic list and ros2 topic echo /scan -n 1",
+        "RViz: ros2 launch turtlebot3_bringup rviz2.launch.py",
+        "Teleop: ros2 run turtlebot3_teleop teleop_keyboard"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Quiz: What does map_saver_cli create? into Today’s remote-PC command checklist so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish with a better sense of what changes when the robot leaves simulation and enters the real lab.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Today’s remote-PC command checklist to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Today’s remote-PC command checklist connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Today’s remote-PC command checklist sets up the lesson and why the topic matters."
+    }
+  ]
+}

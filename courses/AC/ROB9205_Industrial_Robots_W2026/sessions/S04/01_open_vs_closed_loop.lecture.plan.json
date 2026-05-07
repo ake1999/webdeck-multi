@@ -1,0 +1,749 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_open_vs_closed_loop",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Start from the everyday question of whether the system knows what actually happened.",
+    "progression": "Define the two control styles, compare them, and then connect them to robotics consequences.",
+    "destination": "Students should finish with a practical test for deciding whether feedback matters in a given system.",
+    "tone": "conceptual, comparative, example-driven",
+    "methods": [
+      "intuition",
+      "compare/contrast",
+      "guided practice",
+      "recap",
+      "definition",
+      "examples"
+    ]
+  },
+  "audience_level": "undergraduate industrial robotics students preparing for labs, robot selection, and basic programming decisions",
+  "topic_goal": "Build a strong intuition for why feedback changes control quality and when open-loop control stops being trustworthy.",
+  "topic_takeaways": [
+    "Students should distinguish open-loop and closed-loop control clearly.",
+    "Students should understand why disturbance rejection and correction require feedback.",
+    "Students should be able to explain when open-loop control is acceptable and when it is risky."
+  ],
+  "style_notes": [
+    "Keep the tone practical and shop-floor oriented.",
+    "Translate definitions into robot-cell decisions quickly.",
+    "Prefer concrete industrial examples over abstract theory when possible.",
+    "Keep returning to the question of disturbance and correction.",
+    "Use simple examples before formal robotics wording."
+  ],
+  "transition_style": "Move from the industrial question students would ask on the job to the next specification, control, or programming choice they need to make.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.96,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Control Systems"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome students and set expectations: this topic is control basics. We’ll connect it directly to robotics: robot servos are closed-loop; some timed processes are open-loop.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Build a strong intuition for why feedback changes control quality and when open-loop control stops being trustworthy.",
+      "transition_to_next": "Carry this idea forward into Industrial Robots are Control Systems so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame Control Systems as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Control Systems connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Control Systems sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Industrial Robots are Control Systems"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Original slide had an automotive robot-line photo. Tell students: robots in factories rely on closed-loop servo control.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "In industry, accuracy and repeatability usually require feedback.",
+        "Many everyday machines are open-loop because they are simpler and cheaper.",
+        "Today: define both systems, study diagrams, and compare advantages / disadvantages."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Control Systems into Industrial Robots are Control Systems so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into OPEN AND CLOSED LOOP so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Industrial Robots are Control Systems to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Industrial Robots are Control Systems connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how Industrial Robots are Control Systems sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "OPEN AND CLOSED LOOP"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Explain: we simplify reality with block diagrams. Tell them we’ll use boxes/arrows all semester.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Control systems are increasingly important in modern civilization and technology.",
+        "Even if a real system is complex, we can model it as:",
+        "• Input (objective) → Control system → Output (result)",
+        "Many day-to-day activities are affected by some type of control system."
+      ],
+      "must_say": [
+        "Closed-loop control can correct itself because it measures what actually happened."
+      ],
+      "emphasis_words": [
+        "feedback",
+        "disturbance",
+        "correction"
+      ],
+      "transition_from_previous": "Bridge from Industrial Robots are Control Systems into OPEN AND CLOSED LOOP so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into What you can expect from this course so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often describe feedback correctly in words but still miss what disturbances do to open-loop behavior."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use OPEN AND CLOSED LOOP to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep OPEN AND CLOSED LOOP connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should understand how OPEN AND CLOSED LOOP sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "What you can expect from this course"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain: this is the tree. Everything today is under open-loop or closed-loop.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Open-loop systems and Closed-loop systems",
+        "This is the high-level classification we will use today."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into OPEN LOOP SYSTEMS so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Gemini Generated"
+      ],
+      "explanation_style": "Build a picture for What you can expect from this course first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep What you can expect from this course connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture What you can expect from this course clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "OPEN LOOP SYSTEMS"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Point to the diagram: r(t) → controller → plant → c(t). Emphasize: **NO feedback arrow** returning.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "A control system that cannot adjust itself to changes is an open-loop control system.",
+        "In general, many manual control systems behave like open-loop systems.",
+        "The block diagram of an open-loop control system is shown here."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Open-loop: Signals and Meaning so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "file:///home/ali/Projects/ai_done_projects/webdeck_multi/courses/AC/ROB9205_Industrial_Robots_W2026/sessions/S04/media/open_loop.png"
+      ],
+      "explanation_style": "Build a picture for OPEN LOOP SYSTEMS first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep OPEN LOOP SYSTEMS connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture OPEN LOOP SYSTEMS clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Open-loop: Signals and Meaning"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Explain slowly: If something goes wrong, the system does not correct itself. A human must change the input.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "r(t) = input (reference) signal.",
+        "u(t) = control / actuating signal (what controller sends to plant).",
+        "c(t) = output signal.",
+        "For a constant input, the output remains unaltered (no automatic correction)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Open-loop: Signals and Meaning to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Open-loop: Signals and Meaning is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Open-loop: Signals and Meaning in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Open-loop: Signals and Meaning connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Open-loop: Signals and Meaning accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Turn each example into a quick discussion: ‘What is missing?’ **Feedback**. Dryer does not measure dryness; washer doesn’t measure cleanliness; toaster doesn’t measure toast color.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Electric Hand Drier: hot air comes out regardless of how dry your hand is.",
+        "Automatic Washing Machine: runs for preset time regardless of whether washing is complete.",
+        "Bread Toaster: runs for adjusted time regardless of whether toasting is complete."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Ask students: which of these could be upgraded into closed-loop? Example: dryer with humidity sensor; light with brightness sensor; stereo with automatic level control (in some systems).",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Automatic Tea/Coffee Maker: functions for pre-adjusted time only.",
+        "Timer Based Clothes Drier: dries for pre-adjusted time regardless of dryness level.",
+        "Light Switch: lamp glows whenever switch is on regardless of whether light is required.",
+        "Stereo Volume: adjusted manually regardless of output volume level."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Open-loop: Advantages vs Disadvantages"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Underline the tradeoff: simplicity vs accuracy. This sets up closed-loop: it improves accuracy but costs complexity.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "a) Simple in construction and design",
+        "b) Economical",
+        "c) Easy to maintain",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "d) Generally stable"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from PRACTICAL EXAMPLES OF OPEN LOOP CONTROL SYSTEM into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on Open-loop: Advantages vs Disadvantages explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Open-loop: Advantages vs Disadvantages and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "CLOSED LOOP SYSTEMS"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Don’t rush this slide. Explain the ‘error’ idea: desired - actual.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "A system that can respond to changes and make corrections by itself is a closed-loop control system.",
+        "Main difference vs open-loop: presence of feedback action.",
+        "Signals (as used in the original explanation):",
+        "r(t) = input signal (reference)."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use CLOSED LOOP SYSTEMS to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once CLOSED LOOP SYSTEMS is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define CLOSED LOOP SYSTEMS in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep CLOSED LOOP SYSTEMS connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain CLOSED LOOP SYSTEMS accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "CLOSED LOOP SYSTEMS (Block Diagram)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Walk through the loop: r(t) enters comparator; comparator outputs e(t); controller produces u(t); plant produces c(t); feedback produces b(t); b(t) goes back to comparator. Then ask: ‘Where is the decision-making happening?’ At the controller based on error.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Closed-loop differs from open-loop by the presence of feedback.",
+        "Key signals:",
+        "• r(t) reference input",
+        "• e(t) error signal"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into PRACTICAL EXAMPLES OF CLOSED LOOP CONTROL SYSTEM so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "file:///home/ali/Projects/ai_done_projects/webdeck_multi/courses/AC/ROB9205_Industrial_Robots_W2026/sessions/S04/media/close_loop.png"
+      ],
+      "explanation_style": "Build a picture for CLOSED LOOP SYSTEMS (Block Diagram) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep CLOSED LOOP SYSTEMS (Block Diagram) connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to picture CLOSED LOOP SYSTEMS (Block Diagram) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "PRACTICAL EXAMPLES OF CLOSED LOOP CONTROL SYSTEM"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "For each example, ask: what is the sensor/measurement? Iron: thermostat; stabilizer: voltage measurement; tank: level sensor; AC: thermostat; car cooling: temperature sensor.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1) Automatic Electric Iron: heating controlled by output temperature of the iron.",
+        "2) Servo Voltage Stabilizer: operates depending upon output voltage.",
+        "3) Water Level Controller: input water controlled by reservoir water level.",
+        "4) Missile + Radar Tracking: direction controlled by comparing target and missile position."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use PRACTICAL EXAMPLES OF CLOSED LOOP CONTROL SYSTEM to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once PRACTICAL EXAMPLES OF CLOSED LOOP CONTROL SYSTEM is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define PRACTICAL EXAMPLES OF CLOSED LOOP CONTROL SYSTEM in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep PRACTICAL EXAMPLES OF CLOSED LOOP CONTROL SYSTEM connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain PRACTICAL EXAMPLES OF CLOSED LOOP CONTROL SYSTEM accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Advantages of CLOSED LOOP Control System"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Explain in plain terms: accuracy improves because errors get corrected. Automation becomes possible because the system can self-correct.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "a) More accurate even in the presence of non-linearity.",
+        "b) Errors are corrected due to feedback → high accuracy. Bandwidth range is large.",
+        "c) Facilitates automation.",
+        "d) Sensitivity can be made small to make system more stable."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Advantages of CLOSED LOOP Control System to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Advantages of CLOSED LOOP Control System is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Advantages of CLOSED LOOP Control System in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Advantages of CLOSED LOOP Control System connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Advantages of CLOSED LOOP Control System accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Disadvantages of CLOSED LOOP Control System"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Key teaching: feedback is powerful but can cause oscillations if poorly designed. Relate to a thermostat that turns on/off too aggressively causing temperature swings (simple intuition).",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "a) Costlier",
+        "b) More complicated to design",
+        "c) Requires more maintenance",
+        "d) Feedback can lead to oscillatory response"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Disadvantages of CLOSED LOOP Control System to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Disadvantages of CLOSED LOOP Control System is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Disadvantages of CLOSED LOOP Control System in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Disadvantages of CLOSED LOOP Control System connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Disadvantages of CLOSED LOOP Control System accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Open-loop vs Closed-loop (Comparison)"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Tell them: this is the tradeoff summary slide. If they remember only one thing: open-loop is simple/cheap but inaccurate; closed-loop is accurate/robust but complex and must be designed for stability.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "1. Inaccurate",
+        "2. Unreliable",
+        "3. Stable",
+        "State the contrast clearly and finish with the practical decision rule.",
+        "4. Bandwidth is small"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Disadvantages of CLOSED LOOP Control System into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Contrast the alternatives on Open-loop vs Closed-loop (Comparison) explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Open-loop vs Closed-loop (Comparison) and know which side fits which situation."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Quiz: Feedback"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "After they answer, point to the closed-loop diagram: show the feedback arrow. Then connect to robots: encoders measure position continuously (feedback).",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Which feature must exist for a system to be called closed-loop?",
+        "Closed-loop control requires feedback: output is measured and compared to the reference to form an error signal.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [
+        "Closed-loop control can correct itself because it measures what actually happened."
+      ],
+      "emphasis_words": [
+        "feedback",
+        "disturbance",
+        "correction"
+      ],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: Feedback and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students often describe feedback correctly in words but still miss what disturbances do to open-loop behavior."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: Feedback into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: Feedback question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Quiz: Open-loop or Closed-loop?"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Ask follow-up: what sensor would make it closed-loop? Answer: color sensor / temperature sensor / smoke sensor, etc.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "A bread toaster runs for a fixed time and stops, regardless of the toast color. What type of control is this?",
+        "This is open-loop because the toaster does not measure the output (toast color) and does not correct itself.",
+        "Give students a moment to decide before explaining the answer."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Quiz: Open-loop or Closed-loop? and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Quiz: Open-loop or Closed-loop? without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Turn Quiz: Open-loop or Closed-loop? into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell students to imagine they are reviewing a robot cell or lab task and need to defend their answer to a teammate.",
+      "delivery_goal": "Students should be able to answer a similar Quiz: Open-loop or Closed-loop? question on their own and explain the reasoning."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Quiz: Robots"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Bridge to next topics: servo motors + encoders + controller = closed-loop. This is why robots can repeat positions accurately.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Industrial robots typically use encoders to measure joint position and correct motion in real time. This is an example of:",
+        "Encoders provide feedback, so the controller can correct errors continuously → closed-loop.",
+        "Students should distinguish open-loop and closed-loop control clearly.",
+        "Students should understand why disturbance rejection and correction require feedback."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Quiz: Robots to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Questions? so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Quiz: Robots as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Quiz: Robots connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should leave Quiz: Robots with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Questions?"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Open the floor. If quiet, ask: ‘Give me one open-loop example from your daily life’ and ‘Give me one closed-loop example.’",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Ask about anything unclear: signals, diagrams, examples, or the comparison."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Questions? to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Close by restating the destination of the topic: Students should finish with a practical test for deciding whether feedback matters in a given system.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Questions? in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Questions? connected to what an industrial robotics student would actually need in lab or robot selection.",
+      "delivery_goal": "Students should be able to explain Questions? accurately and use it in the next step of the lesson."
+    }
+  ]
+}

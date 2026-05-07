@@ -1,32 +1,54 @@
-// shared/deck.js
-// Slide deck engine:
-// - Home button (icon)
-// - Export to PDF (only on slide 1)
-// - TTS (Piper or browser), reads titles + bullets, and quizzes (title/question/options)
-// - Piper voice dropdown (GET /voices -> list) and sends &voice=... to /tts
-// - Notes mode reads slide notes
-// - Highlights the currently read element
-
 import { renderSlide } from "./deck_render.js";
+import {
+  clearDebugOverlay,
+  collectSlideLayout,
+  renderDebugOverlay,
+  waitForDeckAssets,
+} from "./deck_analysis.js";
+import { buildTopicRuntime } from "./deck_model.js";
+
+function nextFrame() {
+  return new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
+}
+
+function escapeSelectorValue(value) {
+  if (window.CSS?.escape) return window.CSS.escape(value);
+  return String(value).replace(/["\\]/g, "\\$&");
+}
+
+function createOverlayLayer(className, id) {
+  const layer = document.createElement("div");
+  layer.className = className;
+  layer.id = id;
+  return layer;
+}
 
 export function initDeck(config) {
   const {
     slidesData = [],
+    topicMeta = null,
+    topicId = "",
+    descriptor = null,
     hudDefault = "ROB9205 — INDUSTRIAL ROBOTS",
     hudPrefix = "",
     email = "karimza@algonquincollege.com",
-    logoSrc = null,
     homeHref = "../index.html",
-
-    // TTS config
-    ttsBackend = "piper", // "piper" | "browser"
-    ttsEndpoint = "/tts", // used when ttsBackend="piper"
-    voicesEndpoint = "/voices", // returns {voices:[...]}
-
     theme = "ac",
+    ttsEnabled = false,
+    analysisMode = false,
+    debugOverlay: startWithDebugOverlay = false,
+    initialSlide = null,
+    deckWidth = 1280,
+    deckHeight = 720,
+    fitPadding = analysisMode ? 1 : 0.96,
   } = config || {};
 
-  // ---------- DOM references ----------
+  const runtime = buildTopicRuntime({
+    topicMeta,
+    slidesData,
+    topicFallback: topicId,
+  });
+
   const slidesRoot = document.getElementById("slidesRoot");
   const hudLabel = document.getElementById("hudLabel");
   const counter = document.getElementById("counter");
@@ -35,47 +57,28 @@ export function initDeck(config) {
 
   const homeBtn = document.getElementById("homeBtn");
   const emailLink = document.getElementById("emailLink");
+  const emailFooter = document.querySelector(".email-footer");
+  const ttsControls = document.querySelector(".tts-controls");
 
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
   const pdfBtn = document.getElementById("pdfBtn");
 
-  const ttsPlay = document.getElementById("ttsPlay");
-  const ttsPause = document.getElementById("ttsPause");
-  const ttsStop = document.getElementById("ttsStop");
-  const ttsPrev = document.getElementById("ttsPrev");
-  const ttsNext = document.getElementById("ttsNext");
-  const ttsRate = document.getElementById("ttsRate");
-  const ttsMode = document.getElementById("ttsMode");
-  const ttsVoice = document.getElementById("ttsVoice"); // browser OR piper list
-
-  if (!slidesRoot) {
-    console.error("deck.js: missing #slidesRoot");
-    return;
+  if (!slidesRoot || !deck || !deckScale) {
+    console.error("deck.js: missing required deck DOM nodes");
+    return null;
   }
 
-  if (deck) {
-    deck.classList.add(`theme-${theme}`);
-  }
+  deck.classList.add(`theme-${theme}`);
+  deck.style.setProperty("--deck-width", `${deckWidth}px`);
+  deck.style.setProperty("--deck-height", `${deckHeight}px`);
 
-  const usePiper = ttsBackend === "piper";
+  document.body.classList.toggle("analysis-mode", analysisMode);
 
-  // ---------- Set globals ----------
   if (homeBtn) {
     homeBtn.href = homeHref;
-
-    // small home icon
-    homeBtn.textContent = "⌂";
     homeBtn.title = "Home";
     homeBtn.setAttribute("aria-label", "Home");
-    homeBtn.style.width = "36px";
-    homeBtn.style.height = "36px";
-    homeBtn.style.padding = "0";
-    homeBtn.style.display = "inline-flex";
-    homeBtn.style.alignItems = "center";
-    homeBtn.style.justifyContent = "center";
-    homeBtn.style.fontSize = "18px";
-    homeBtn.style.lineHeight = "1";
   }
 
   if (emailLink) {
@@ -83,26 +86,31 @@ export function initDeck(config) {
     emailLink.textContent = email;
   }
 
-  // Hide email label to save space
-  const emailLabel = document.querySelector(".email-label");
-  if (emailLabel) emailLabel.style.display = "none";
-
-  if (logoSrc) {
-    const logo = document.getElementById("logo");
-    if (logo) {
-      logo.src = logoSrc;
-      logo.style.display = "block";
-    }
+  if (!ttsEnabled && ttsControls) {
+    ttsControls.style.display = "none";
   }
 
-  // ---------- Build slides from data ----------
+  if (analysisMode && emailFooter) {
+    emailFooter.classList.add("analysis-footer");
+  }
+
   slidesRoot.innerHTML = "";
-  slidesData.forEach((s, idx) => slidesRoot.appendChild(renderSlide(s, idx)));
+  runtime.slides.forEach((slideData, index) => {
+    slidesRoot.appendChild(renderSlide(slideData, index));
+  });
 
   const slides = Array.from(slidesRoot.querySelectorAll(".slide"));
-  let currentSlide = 0;
+  const slideIndexById = new Map(runtime.slides.map((slide, index) => [slide.slideId, index]));
+  const overlayLayer = createOverlayLayer("deck-overlay-layer", "deckOverlayLayer");
+  const debugLayer = createOverlayLayer("deck-debug-layer", "deckDebugLayer");
+  deck.appendChild(overlayLayer);
+  deck.appendChild(debugLayer);
 
-  // ---------- Counter + HUD ----------
+  let currentSlide = 0;
+  let uiPaused = false;
+  let debugEnabled = Boolean(startWithDebugOverlay);
+  let currentScale = 1;
+
   function updateCounter() {
     if (counter) counter.textContent = `${currentSlide + 1} / ${slides.length}`;
   }
@@ -113,25 +121,29 @@ export function initDeck(config) {
     hudLabel.textContent = hudPrefix ? `${hudPrefix}${hud}` : hud;
   }
 
-  // ---------- PDF button only on first slide ----------
   function updateTopButtons() {
     if (!pdfBtn) return;
-    pdfBtn.style.display = currentSlide === 0 ? "inline-flex" : "none";
+    pdfBtn.style.display = currentSlide === 0 && !analysisMode ? "inline-flex" : "none";
   }
 
-  // ---------- Fit-to-screen scaling ----------
+  function syncPauseState() {
+    deck.dataset.runtimePaused = uiPaused ? "true" : "false";
+    [prevBtn, nextBtn, pdfBtn].forEach((button) => {
+      if (!button) return;
+      button.disabled = uiPaused;
+    });
+  }
+
   function fitToScreen() {
-    if (!deck || !deckScale) return;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const scale =
-      Math.min(vw / deck.offsetWidth, vh / deck.offsetHeight) * 0.96;
-    deckScale.style.setProperty("--deck-scale", String(scale));
+    currentScale = Math.min(vw / deckWidth, vh / deckHeight) * fitPadding;
+    deckScale.style.setProperty("--deck-scale", String(currentScale));
   }
 
-  // ---------- MCQ reset ----------
   function resetMCQ(slideEl) {
     if (!slideEl) return;
+
     slideEl.querySelectorAll(".mcq").forEach((mcq) => {
       mcq.dataset.answered = "false";
       const feedback = mcq.querySelector(".feedback");
@@ -139,477 +151,250 @@ export function initDeck(config) {
         feedback.classList.remove("visible");
         feedback.textContent = "";
       }
-      mcq.querySelectorAll(".option-btn").forEach((btn) => {
-        btn.disabled = false;
-        btn.classList.remove("correct", "wrong");
+      mcq.querySelectorAll(".option-btn").forEach((button) => {
+        button.disabled = false;
+        button.classList.remove("correct", "wrong");
       });
     });
   }
 
-  // ---------- TTS state ----------
-  let speaking = false;
-  let paused = false;
-  let speakQueue = []; // array of {el?, text}
-  let speakIndex = 0;
-
-  function clearHighlight() {
+  function clearHighlights() {
     slidesRoot
-      .querySelectorAll(".tts-active")
-      .forEach((el) => el.classList.remove("tts-active"));
+      .querySelectorAll(".element-highlight")
+      .forEach((element) => element.classList.remove("element-highlight"));
   }
 
-  // Build reading order:
-  // - Notes mode: slide notes only
-  // - Bullets mode:
-  //   1) title (h1/h2 if has data-say)
-  //   2) quiz question + options (if exists)
-  //   3) [data-say] bullets/items
-  function buildSpeakQueueForSlide(slideEl) {
-    clearHighlight();
-    const mode = ttsMode?.value || "bullets";
-    const items = [];
-
-    if (mode === "notes") {
-      const notes = (slideEl.dataset.notes || "").trim();
-      if (notes) items.push({ el: null, text: notes });
-      return items;
+  function findSlideIndex(slideRef) {
+    if (typeof slideRef === "number") {
+      if (slideRef < 0 || slideRef >= slides.length) return -1;
+      return slideRef;
     }
 
-    // 1) title first (only if explicitly marked)
-    const titleEl = slideEl.querySelector("h1[data-say], h2[data-say]");
-    if (titleEl) {
-      const t = (
-        titleEl.getAttribute("data-say") ||
-        titleEl.textContent ||
-        ""
-      ).trim();
-      if (t) items.push({ el: titleEl, text: t });
-    }
-
-    // 2) quiz: question then options in order
-    const quizQ = slideEl.querySelector(".quiz-question[data-say]");
-    if (quizQ) {
-      const t = (
-        quizQ.getAttribute("data-say") ||
-        quizQ.textContent ||
-        ""
-      ).trim();
-      if (t) items.push({ el: quizQ, text: t });
-
-      const opts = Array.from(
-        slideEl.querySelectorAll(".option-btn[data-say]"),
-      );
-      for (const opt of opts) {
-        const ot = (
-          opt.getAttribute("data-say") ||
-          opt.textContent ||
-          ""
-        ).trim();
-        if (ot) items.push({ el: opt, text: ot });
-      }
-    }
-
-    // 3) then: all bullets / other data-say (BUT avoid reading quiz elements twice)
-    const sayEls = Array.from(slideEl.querySelectorAll("[data-say]"))
-      .filter((el) => !el.classList.contains("option-btn"))
-      .filter((el) => !el.classList.contains("quiz-question"))
-      .filter((el) => el.tagName !== "H1" && el.tagName !== "H2"); // title already handled
-
-    for (const el of sayEls) {
-      const txt = (el.getAttribute("data-say") || el.textContent || "").trim();
-      if (txt) items.push({ el, text: txt });
-    }
-
-    // fallback: if nothing has data-say, read li
-    if (!items.length) {
-      const lis = Array.from(slideEl.querySelectorAll("li"));
-      for (const li of lis) {
-        const txt = (li.textContent || "").trim();
-        if (txt) items.push({ el: li, text: txt });
-      }
-    }
-
-    return items;
+    if (!slideRef) return -1;
+    return slideIndexById.has(slideRef) ? slideIndexById.get(slideRef) : -1;
   }
 
-  // ---------- Piper voices (from server /voices) ----------
-  let selectedPiperVoice = localStorage.getItem("piperVoice") || "";
-
-  async function populatePiperVoices() {
-    if (!ttsVoice) return;
-
-    ttsVoice.disabled = false;
-    ttsVoice.innerHTML = `<option value="">Default (server)</option>`;
-
-    try {
-      const res = await fetch(voicesEndpoint, { cache: "no-store" });
-      if (!res.ok) throw new Error("GET /voices failed");
-      const data = await res.json();
-      const voices = Array.isArray(data.voices) ? data.voices : [];
-
-      for (const v of voices) {
-        const opt = document.createElement("option");
-        opt.value = v;
-        opt.textContent = v;
-        ttsVoice.appendChild(opt);
-      }
-
-      if (selectedPiperVoice && voices.includes(selectedPiperVoice)) {
-        ttsVoice.value = selectedPiperVoice;
-      } else {
-        selectedPiperVoice = "";
-        ttsVoice.value = "";
-        localStorage.setItem("piperVoice", "");
-      }
-    } catch (e) {
-      console.warn("Could not load Piper voices:", e?.message || e);
-      selectedPiperVoice = "";
-      localStorage.setItem("piperVoice", "");
-      ttsVoice.value = "";
-    }
+  function currentSlideId() {
+    return runtime.slides[currentSlide]?.slideId || "";
   }
 
-  // ---------- Browser voices ----------
-  function populateBrowserVoices() {
-    if (!ttsVoice) return;
-    if (!("speechSynthesis" in window)) return;
-
-    const voices = window.speechSynthesis.getVoices() || [];
-    const current = ttsVoice.value;
-
-    const sorted = voices.slice().sort((a, b) => {
-      const ae = (a.lang || "").toLowerCase().startsWith("en");
-      const be = (b.lang || "").toLowerCase().startsWith("en");
-      if (ae !== be) return (be ? 1 : 0) - (ae ? 1 : 0);
-      return (a.name || "").localeCompare(b.name || "");
-    });
-
-    ttsVoice.innerHTML = "";
-    const optAuto = document.createElement("option");
-    optAuto.value = "";
-    optAuto.textContent = "Auto voice";
-    ttsVoice.appendChild(optAuto);
-
-    for (const v of sorted) {
-      const opt = document.createElement("option");
-      opt.value = v.name;
-      opt.textContent = `${v.name} (${v.lang})`;
-      ttsVoice.appendChild(opt);
-    }
-
-    if (current) {
-      const match = Array.from(ttsVoice.options).find(
-        (o) => o.value === current,
-      );
-      if (match) ttsVoice.value = current;
-    }
-  }
-
-  // ---------- Voice dropdown setup ----------
-  if (ttsVoice) {
-    if (usePiper) {
-      populatePiperVoices();
-    } else {
-      populateBrowserVoices();
-      if (typeof window.speechSynthesis !== "undefined") {
-        window.speechSynthesis.onvoiceschanged = populateBrowserVoices;
-      }
-    }
-
-    ttsVoice.addEventListener("change", () => {
-      if (usePiper) {
-        selectedPiperVoice = ttsVoice.value || "";
-        localStorage.setItem("piperVoice", selectedPiperVoice);
-      }
-      stopTTS();
-    });
-  }
-
-  // ---------- Piper backend ----------
-  const piperAudio = new Audio();
-  piperAudio.preload = "auto";
-
-  let piperObjUrl = null;
-  let piperAbort = null;
-  let piperWatchdog = null;
-
-  function piperStop() {
-    try {
-      if (piperAbort) piperAbort.abort();
-    } catch {}
-    piperAbort = null;
-
-    if (piperWatchdog) {
-      clearInterval(piperWatchdog);
-      piperWatchdog = null;
-    }
-
-    try {
-      piperAudio.onended = null;
-      piperAudio.onerror = null;
-      piperAudio.pause();
-      piperAudio.currentTime = 0;
-      piperAudio.src = "";
-    } catch {}
-
-    if (piperObjUrl) {
-      try {
-        URL.revokeObjectURL(piperObjUrl);
-      } catch {}
-      piperObjUrl = null;
-    }
-  }
-
-  async function piperSpeak(text, onEnd) {
-    piperStop();
-
-    const controller = new AbortController();
-    piperAbort = controller;
-
-    const voiceParam = selectedPiperVoice
-      ? `&voice=${encodeURIComponent(selectedPiperVoice)}`
-      : "";
-
-    const url =
-      `${ttsEndpoint}?text=${encodeURIComponent(text)}${voiceParam}` +
-      `&cb=${Date.now()}_${Math.random().toString(16).slice(2)}`;
-
-    try {
-      const res = await fetch(url, {
-        signal: controller.signal,
-        cache: "no-store",
-      });
-      if (!res.ok) throw new Error(await res.text());
-
-      const blob = await res.blob();
-      piperObjUrl = URL.createObjectURL(blob);
-
-      let finished = false;
-      const finish = () => {
-        if (finished) return;
-        finished = true;
-        piperStop();
-        onEnd && onEnd();
-      };
-
-      piperAudio.onended = finish;
-      piperAudio.onerror = finish;
-
-      // watchdog for Firefox sometimes missing "ended"
-      piperWatchdog = setInterval(() => {
-        try {
-          if (!speaking) return;
-          if (paused) return;
-          if (!piperAudio.src) return;
-          if (!isFinite(piperAudio.duration) || piperAudio.duration <= 0)
-            return;
-
-          if (piperAudio.currentTime >= piperAudio.duration - 0.05) finish();
-
-          if (
-            piperAudio.paused === true &&
-            piperAudio.currentTime > 0 &&
-            piperAudio.currentTime >= piperAudio.duration - 0.2
-          ) {
-            finish();
-          }
-        } catch {}
-      }, 150);
-
-      piperAudio.src = piperObjUrl;
-      piperAudio.load();
-      await piperAudio.play();
-    } catch (e) {
-      if (e && (e.name === "AbortError" || controller.signal.aborted)) return;
-
-      console.error("Piper failed:", e?.message || e);
-
-      // fallback to browser if available
-      if ("speechSynthesis" in window) {
-        browserSpeak(text, onEnd);
-        return;
-      }
-
-      speaking = false;
-      paused = false;
-      clearHighlight();
-      alert(
-        "Piper TTS failed. Check serve_deck.py terminal for errors, then reload.",
-      );
-    }
-  }
-
-  // ---------- Browser backend ----------
-  function browserStop() {
-    try {
-      window.speechSynthesis.cancel();
-    } catch {}
-  }
-
-  function browserSpeak(text, onEnd) {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = Number(ttsRate?.value || 1);
-
-    if (ttsVoice && ttsVoice.value) {
-      const voices = window.speechSynthesis.getVoices() || [];
-      const v = voices.find((x) => x.name === ttsVoice.value);
-      if (v) u.voice = v;
-    }
-
-    u.onend = () => onEnd && onEnd();
-    u.onerror = () => onEnd && onEnd();
-    window.speechSynthesis.speak(u);
-  }
-
-  // ---------- High-level TTS controls ----------
-  function stopTTS() {
-    speaking = false;
-    paused = false;
-    speakQueue = [];
-    speakIndex = 0;
-    clearHighlight();
-
-    piperStop();
-    browserStop();
-  }
-
-  function speakItem(i) {
-    if (!speakQueue.length) return;
-    speakIndex = Math.max(0, Math.min(i, speakQueue.length - 1));
-
-    const { el, text } = speakQueue[speakIndex];
-    clearHighlight();
-    if (el) el.classList.add("tts-active");
-
-    const onEnd = () => {
-      if (!speaking) return;
-      const next = speakIndex + 1;
-      if (next < speakQueue.length) speakItem(next);
-      else {
-        speaking = false;
-        paused = false;
-        clearHighlight();
-      }
-    };
-
-    if (usePiper) piperSpeak(text, onEnd);
-    else browserSpeak(text, onEnd);
-  }
-
-  function playTTS() {
-    if (paused) {
-      if (usePiper) {
-        try {
-          piperAudio.play();
-        } catch {}
-      } else {
-        try {
-          window.speechSynthesis.resume();
-        } catch {}
-      }
-      paused = false;
-      speaking = true;
+  function refreshDebug() {
+    if (!debugEnabled) {
+      clearDebugOverlay(debugLayer);
       return;
     }
 
-    stopTTS();
-    const slideEl = slides[currentSlide];
-    speakQueue = buildSpeakQueueForSlide(slideEl);
-    if (!speakQueue.length) return;
-
-    speaking = true;
-    speakItem(0);
+    const layout = collectSlideLayout(slides[currentSlide]);
+    renderDebugOverlay({
+      overlayRoot: debugLayer,
+      layout: {
+        ...layout,
+        scale: currentScale,
+      },
+    });
   }
 
-  function pauseTTS() {
-    if (!speaking) return;
-    if (usePiper) {
-      try {
-        piperAudio.pause();
-      } catch {}
-    } else {
-      try {
-        window.speechSynthesis.pause();
-      } catch {}
-    }
-    paused = true;
-  }
-
-  function prevTTS() {
-    if (!speakQueue.length) return playTTS();
-    piperStop();
-    browserStop();
-    speaking = true;
-    paused = false;
-    speakItem(speakIndex - 1);
-  }
-
-  function nextTTS() {
-    if (!speakQueue.length) return playTTS();
-    piperStop();
-    browserStop();
-    speaking = true;
-    paused = false;
-    speakItem(speakIndex + 1);
-  }
-
-  // ---------- Slide navigation ----------
-  function showSlide(index) {
-    if (!slides.length) return;
+  function showSlide(index, options = {}) {
+    if (!slides.length) return false;
+    if (!options.force && uiPaused) return false;
 
     slides[currentSlide].classList.remove("active");
     resetMCQ(slides[currentSlide]);
-    stopTTS();
+    if (!options.preserveHighlights) clearHighlights();
 
     currentSlide = (index + slides.length) % slides.length;
-
     slides[currentSlide].classList.add("active");
+    document.body.dataset.currentSlideId = currentSlideId();
+
     updateCounter();
     updateHud();
     updateTopButtons();
+    refreshDebug();
+
+    return true;
   }
 
-  function changeSlide(dir) {
-    showSlide(currentSlide + dir);
+  function goToSlide(slideRef, options = {}) {
+    const targetIndex = findSlideIndex(slideRef);
+    if (targetIndex < 0) return false;
+    return showSlide(targetIndex, { ...options, force: true });
   }
 
-  // ---------- Event listeners ----------
-  if (prevBtn) prevBtn.addEventListener("click", () => changeSlide(-1));
-  if (nextBtn) nextBtn.addEventListener("click", () => changeSlide(1));
+  function nextSlide(options = {}) {
+    return showSlide(currentSlide + 1, { ...options, force: true });
+  }
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight" || e.key === " ") {
-      e.preventDefault();
-      changeSlide(1);
+  function prevSlide(options = {}) {
+    return showSlide(currentSlide - 1, { ...options, force: true });
+  }
+
+  function pause() {
+    uiPaused = true;
+    syncPauseState();
+    return true;
+  }
+
+  function resume() {
+    uiPaused = false;
+    syncPauseState();
+    return true;
+  }
+
+  function highlightElement(slideId, elementId) {
+    if (slideId) goToSlide(slideId);
+    clearHighlights();
+
+    const scope = slides[currentSlide];
+    const target = scope.querySelector(
+      `[data-element-id="${escapeSelectorValue(elementId)}"]`,
+    );
+
+    if (!target) return false;
+    target.classList.add("element-highlight");
+    refreshDebug();
+    return true;
+  }
+
+  function clearOverlay() {
+    overlayLayer.innerHTML = "";
+  }
+
+  function showOverlay(data) {
+    clearOverlay();
+    const items = Array.isArray(data) ? data : data?.items || [];
+
+    items.forEach((item, index) => {
+      const overlay = document.createElement("div");
+      overlay.className = `deck-overlay-item deck-overlay-item--${item.type || "box"}`;
+      overlay.dataset.overlayId = item.id || `overlay_${index + 1}`;
+
+      if (Array.isArray(item.bbox)) {
+        overlay.style.left = `${item.bbox[0] / currentScale}px`;
+        overlay.style.top = `${item.bbox[1] / currentScale}px`;
+        overlay.style.width = `${(item.bbox[2] - item.bbox[0]) / currentScale}px`;
+        overlay.style.height = `${(item.bbox[3] - item.bbox[1]) / currentScale}px`;
+      }
+
+      if (Array.isArray(item.point)) {
+        overlay.style.left = `${item.point[0] / currentScale}px`;
+        overlay.style.top = `${item.point[1] / currentScale}px`;
+      }
+
+      if (item.color) overlay.style.setProperty("--overlay-color", item.color);
+      if (item.opacity != null) overlay.style.opacity = String(item.opacity);
+      if (item.label) {
+        const label = document.createElement("div");
+        label.className = "deck-overlay-label";
+        label.textContent = item.label;
+        overlay.appendChild(label);
+      }
+
+      overlayLayer.appendChild(overlay);
+    });
+  }
+
+  async function waitForSettledState(options = {}) {
+    const timeoutMs = Number(options.assetTimeoutMs)
+      || (analysisMode ? 2500 : 10000);
+    await waitForDeckAssets(slidesRoot, { timeoutMs });
+    await nextFrame();
+    await nextFrame();
+  }
+
+  async function exportLayoutManifest(options = {}) {
+    const viewport = options.viewport || [window.innerWidth, window.innerHeight];
+    const previousSlide = currentSlide;
+    const previousDebugState = debugEnabled;
+
+    debugEnabled = false;
+    clearDebugOverlay(debugLayer);
+
+    await waitForSettledState(options);
+
+    const slideLayouts = [];
+    for (let index = 0; index < slides.length; index += 1) {
+      showSlide(index, { force: true });
+      await waitForSettledState(options);
+      slideLayouts.push(collectSlideLayout(slides[index]));
     }
-    if (e.key === "ArrowLeft") changeSlide(-1);
-    if (e.key.toLowerCase() === "h" && homeBtn) homeBtn.click();
+
+    if (options.restoreCurrent !== false) {
+      showSlide(previousSlide, { force: true });
+      await waitForSettledState(options);
+    }
+
+    debugEnabled = previousDebugState;
+    refreshDebug();
+
+    return {
+      topic_id: runtime.topicId,
+      viewport,
+      slides: slideLayouts,
+    };
+  }
+
+  function setDebugOverlay(enabled) {
+    debugEnabled = Boolean(enabled);
+    refreshDebug();
+    return debugEnabled;
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      if (uiPaused) return;
+      showSlide(currentSlide - 1, { force: true });
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      if (uiPaused) return;
+      showSlide(currentSlide + 1, { force: true });
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (uiPaused) return;
+
+    if (event.key === "ArrowRight" || event.key === " ") {
+      event.preventDefault();
+      showSlide(currentSlide + 1, { force: true });
+    }
+
+    if (event.key === "ArrowLeft") {
+      showSlide(currentSlide - 1, { force: true });
+    }
+
+    if (event.key.toLowerCase() === "h" && homeBtn) {
+      homeBtn.click();
+    }
   });
 
-  // MCQ click handler (delegated)
-  document.addEventListener("click", (e) => {
-    const btn = e.target.closest(".option-btn");
-    if (!btn) return;
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest(".option-btn");
+    if (!button) return;
 
-    const mcq = btn.closest(".mcq");
-    if (!mcq) return;
-    if (mcq.dataset.answered === "true") return;
+    const mcq = button.closest(".mcq");
+    if (!mcq || mcq.dataset.answered === "true") return;
 
     mcq.dataset.answered = "true";
     const correct = mcq.getAttribute("data-correct");
     const explain = mcq.getAttribute("data-explain") || "";
-    const choice = btn.getAttribute("data-choice");
+    const choice = button.getAttribute("data-choice");
 
     const buttons = Array.from(mcq.querySelectorAll(".option-btn"));
-    buttons.forEach((b) => (b.disabled = true));
+    buttons.forEach((item) => {
+      item.disabled = true;
+    });
 
-    if (choice === correct) btn.classList.add("correct");
-    else {
-      btn.classList.add("wrong");
-      const correctBtn = buttons.find(
-        (b) => b.getAttribute("data-choice") === correct,
+    if (choice === correct) {
+      button.classList.add("correct");
+    } else {
+      button.classList.add("wrong");
+      const correctButton = buttons.find(
+        (item) => item.getAttribute("data-choice") === correct,
       );
-      if (correctBtn) correctBtn.classList.add("correct");
+      if (correctButton) correctButton.classList.add("correct");
     }
 
     const feedback = mcq.querySelector(".feedback");
@@ -622,52 +407,78 @@ export function initDeck(config) {
     }
   });
 
-  // ---------- PDF page numbers (print-only) ----------
   function addPrintPageNumbers() {
-    slides.forEach((s, i) => {
-      let el = s.querySelector(".print-page-number");
-      if (!el) {
-        el = document.createElement("div");
-        el.className = "print-page-number";
-        s.appendChild(el);
+    slides.forEach((slideEl, index) => {
+      let pageNumber = slideEl.querySelector(".print-page-number");
+      if (!pageNumber) {
+        pageNumber = document.createElement("div");
+        pageNumber.className = "print-page-number";
+        slideEl.appendChild(pageNumber);
       }
-      el.textContent = `${i + 1} / ${slides.length}`;
+      pageNumber.textContent = `${index + 1} / ${slides.length}`;
     });
   }
 
   function removePrintPageNumbers() {
-    slides.forEach((s) => {
-      const el = s.querySelector(".print-page-number");
-      if (el) el.remove();
+    slides.forEach((slideEl) => {
+      slideEl.querySelector(".print-page-number")?.remove();
     });
   }
 
   function exportPDF() {
+    if (analysisMode || uiPaused) return;
     addPrintPageNumbers();
     document.body.classList.add("print-mode");
-    setTimeout(() => window.print(), 50);
+    window.setTimeout(() => window.print(), 50);
   }
+
   if (pdfBtn) pdfBtn.addEventListener("click", exportPDF);
 
   window.addEventListener("afterprint", () => {
     removePrintPageNumbers();
     document.body.classList.remove("print-mode");
-    slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+    slides.forEach((slideEl, index) => {
+      slideEl.classList.toggle("active", index === currentSlide);
+    });
   });
-
-  // ---------- TTS control events ----------
-  if (ttsPlay) ttsPlay.addEventListener("click", playTTS);
-  if (ttsPause) ttsPause.addEventListener("click", pauseTTS);
-  if (ttsStop) ttsStop.addEventListener("click", stopTTS);
-  if (ttsPrev) ttsPrev.addEventListener("click", prevTTS);
-  if (ttsNext) ttsNext.addEventListener("click", nextTTS);
-
-  if (ttsMode) ttsMode.addEventListener("change", () => stopTTS());
 
   window.addEventListener("resize", fitToScreen);
 
-  // ---------- Init ----------
   fitToScreen();
-  slides.forEach((s, i) => s.classList.toggle("active", i === 0));
-  showSlide(0);
+  slides.forEach((slideEl, index) => slideEl.classList.toggle("active", index === 0));
+  syncPauseState();
+
+  if (initialSlide != null) {
+    goToSlide(initialSlide, { preserveHighlights: true });
+  } else {
+    showSlide(0, { force: true, preserveHighlights: true });
+  }
+
+  const controller = {
+    topicId: runtime.topicId,
+    topicMeta: runtime.topicMeta,
+    descriptor,
+    slides: runtime.slides,
+    getCurrentSlideId: currentSlideId,
+    getCurrentSlideIndex: () => currentSlide,
+    getSlideIds: () => runtime.slides.map((slide) => slide.slideId),
+    goToSlide,
+    nextSlide,
+    prevSlide,
+    pause,
+    resume,
+    highlightElement,
+    clearHighlights,
+    showOverlay,
+    clearOverlay,
+    setDebugOverlay,
+    refreshDebugOverlay: refreshDebug,
+    waitForSettledState,
+    exportLayoutManifest,
+  };
+
+  window.deckController = controller;
+  window.__deckController = controller;
+
+  return controller;
 }

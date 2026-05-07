@@ -1,0 +1,10 @@
+qwen-tts
+soundfile
+numpy>=1.26,<3
+scipy>=1.11
+pyyaml
+huggingface_hub
+transformers
+accelerate
+safetensors
+tqdm

@@ -1,4 +1,22 @@
 {
+  "type": "module",
+  "scripts": {
+    "serve": "python3 serve_deck.py",
+    "export:layout": "node scripts/export_layout.mjs",
+    "validate": "node scripts/validate_catalog.mjs",
+    "smoke:export": "node scripts/smoke_export.mjs",
+    "build:lecture": "node scripts/build_lecture.mjs",
+    "prepare:generation": "node scripts/prepare_generation.mjs",
+    "refresh:motion": "node scripts/refresh_motion.mjs",
+    "queue:hy-motion": "node scripts/queue_hy_motion_comfyui.mjs",
+    "sync:hy-motion": "node scripts/sync_hy_motion_outputs.mjs",
+    "render:slide-video": "node scripts/render_slide_video.mjs",
+    "build:slide-video-controls": "node scripts/build_slide_video_controls.mjs",
+    "test:slide-video-controls": "node scripts/test_slide_video_controls.mjs",
+    "test:topic-script-plan": "node scripts/test_topic_script_plan.mjs",
+    "check:topic-generation": "node scripts/check_topic_generation_quality.mjs",
+    "check:generation": "node scripts/check_generation_ready.mjs"
+  },
   "dependencies": {
     "katex": "^0.16.38"
   }
