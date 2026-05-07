@@ -63,6 +63,15 @@ async function ensureManualOutputDirs(descriptor) {
   return outputDirs;
 }
 
+async function ensureCanonicalAudioDirs(descriptor) {
+  const outputDirs = buildManualOutputsDir(descriptor);
+  await Promise.all([
+    mkdir(outputDirs.audio, { recursive: true }),
+    mkdir(outputDirs.alignment, { recursive: true }),
+  ]);
+  return outputDirs;
+}
+
 async function ensureLayoutArtifacts({
   descriptor,
   artifactDir,
@@ -133,6 +142,145 @@ function shouldBuildTopicScriptPlan(options = {}) {
   );
 }
 
+export async function buildLectureScriptArtifacts({
+  descriptor,
+  outputRoot = defaultLectureOutputRoot(),
+  viewport = "1920x1080",
+  debugScreenshots = false,
+  analysisTimeoutMs,
+  analysisAssetTimeoutMs,
+  exportRuntime = null,
+  options = {},
+}) {
+  const artifactDir = buildTopicArtifactDir(outputRoot, descriptor);
+  await mkdir(artifactDir, { recursive: true });
+
+  const { slidesData, topicMeta } = await loadTopicModule(descriptor);
+  const topicRuntime = buildTopicRuntime({
+    topicMeta,
+    slidesData,
+    topicFallback: descriptor.topic,
+  });
+  const authoring = await loadLectureAuthoring({
+    descriptor,
+    runtime: topicRuntime,
+    slidesData,
+    options,
+  });
+
+  const layout = await ensureLayoutArtifacts({
+    descriptor,
+    artifactDir,
+    viewport,
+    debugScreenshots,
+    analysisTimeoutMs,
+    analysisAssetTimeoutMs,
+    exportRuntime,
+  });
+
+  const topicScriptPlanResult = shouldBuildTopicScriptPlan(options)
+    ? await getTopicScriptPlanWithCache({
+      descriptor,
+      runtime: topicRuntime,
+      slidesData,
+      authoring,
+      layoutManifest: layout.manifest,
+      options,
+    })
+    : null;
+
+  let topicPlanPath = "";
+  if (topicScriptPlanResult?.plan) {
+    topicPlanPath = path.join(artifactDir, "script.topic_plan.json");
+    await writeFile(topicPlanPath, `${JSON.stringify(topicScriptPlanResult.plan, null, 2)}\n`, "utf8");
+  }
+
+  const scriptManifest = await generateScriptManifest({
+    descriptor,
+    runtime: topicRuntime,
+    slidesData,
+    layoutManifest: layout.manifest,
+    authoring,
+    topicScriptPlan: topicScriptPlanResult?.plan || null,
+    options,
+  });
+  const scriptManifestPath = path.join(artifactDir, "script.manifest.json");
+  await writeFile(scriptManifestPath, `${JSON.stringify(scriptManifest, null, 2)}\n`, "utf8");
+
+  return {
+    descriptor,
+    topic_id: topicRuntime.topicId,
+    output_dir: relativeProjectPath(artifactDir),
+    layout_source: layout.source,
+    layout_manifest: relativeProjectPath(layout.manifestPath),
+    script_manifest: relativeProjectPath(scriptManifestPath),
+    topic_plan: topicPlanPath ? relativeProjectPath(topicPlanPath) : "",
+    authoring_files: authoring.fileSummary,
+    authoring_warnings: authoring.warnings,
+    screenshots_dir: relativeProjectPath(layout.screenshotsDir),
+    slide_count: scriptManifest.slides.length,
+    provider_counts: scriptManifest.slides.reduce((counts, slide) => {
+      const provider = slide.provider_used || "unknown";
+      counts[provider] = (counts[provider] || 0) + 1;
+      return counts;
+    }, {}),
+  };
+}
+
+export async function buildLectureAudioArtifacts({
+  descriptor,
+  outputRoot = defaultLectureOutputRoot(),
+  providerId = "ffmpeg_flite",
+  options = {},
+}) {
+  const artifactDir = buildTopicArtifactDir(outputRoot, descriptor);
+  const scriptManifestPath = path.join(artifactDir, "script.manifest.json");
+  if (!await fileExists(scriptManifestPath)) {
+    throw new Error(`Missing required script manifest: ${relativeProjectPath(scriptManifestPath)}. Run build:prof-scripts first.`);
+  }
+
+  const scriptManifest = await readJson(scriptManifestPath);
+  const { slidesData, topicMeta } = await loadTopicModule(descriptor);
+  const topicRuntime = buildTopicRuntime({
+    topicMeta,
+    slidesData,
+    topicFallback: descriptor.topic,
+  });
+  const authoring = await loadLectureAuthoring({
+    descriptor,
+    runtime: topicRuntime,
+    slidesData,
+    options,
+  });
+  const manualOutputDirs = await ensureCanonicalAudioDirs(descriptor);
+
+  const alignmentManifest = await synthesizeTopicAudio({
+    scriptManifest,
+    audioDir: manualOutputDirs.audio,
+    providerId,
+    options,
+    authoring,
+  });
+  const alignmentPath = buildManualAlignmentPath(descriptor);
+  await writeFile(alignmentPath, `${JSON.stringify(alignmentManifest, null, 2)}\n`, "utf8");
+
+  return {
+    descriptor,
+    topic_id: scriptManifest.topic_id,
+    script_manifest: relativeProjectPath(scriptManifestPath),
+    audio_dir: relativeContractPath(manualOutputDirs.audio),
+    tts_alignment: relativeContractPath(alignmentPath),
+    provider: alignmentManifest.provider,
+    slide_count: alignmentManifest.slides.length,
+    total_duration: Math.round(
+      (alignmentManifest.slides || []).reduce(
+        (sum, slide) => sum + Number(slide.duration || 0),
+        0,
+      ) * 100,
+    ) / 100,
+  };
+}
+
 export async function buildLectureArtifacts({
   descriptor,
   outputRoot = defaultLectureOutputRoot(),
@@ -198,7 +346,7 @@ export async function buildLectureArtifacts({
   const scriptManifestPath = path.join(artifactDir, "script.manifest.json");
   await writeFile(scriptManifestPath, `${JSON.stringify(scriptManifest, null, 2)}\n`, "utf8");
 
-  const audioDir = path.join(artifactDir, "audio");
+  const audioDir = manualOutputDirs.audio;
   const alignmentManifest = await synthesizeTopicAudio({
     scriptManifest,
     audioDir,
@@ -206,7 +354,7 @@ export async function buildLectureArtifacts({
     options,
     authoring,
   });
-  const alignmentPath = path.join(artifactDir, "tts_alignment.json");
+  const alignmentPath = buildManualAlignmentPath(descriptor);
   await writeFile(alignmentPath, `${JSON.stringify(alignmentManifest, null, 2)}\n`, "utf8");
 
   const subtitles = await writeSubtitles({

@@ -339,12 +339,12 @@ Phase 5 keeps the frozen Phase 4.5 contracts and upgrades script writing from de
 - optional shared `shared/reference_assets.json`
 - script providers: `deterministic`, `llm_local`, `script_override`, and `auto`
 - `qwen3_tts` as the higher-quality local-first provider with `ffmpeg_flite` fallback
-- avatar actions in `timeline.json`
+- avatar actions in motion manifests and slide-video jobs
 - placeholder avatar playback plus exported future render jobs
 
-The core artifact flow is:
+The clean staged artifact flow is:
 
-`slides.js + layout.manifest.json -> script.manifest.json -> audio/*.wav + tts_alignment.json -> timeline.json + subtitles/*.vtt`
+`slides.js + layout.manifest.json -> script.topic_plan.json + script.manifest.json -> generated/outputs/audio/*.wav + generated/outputs/alignment/tts_alignment.json -> motion.manifest.json + motion/*.motion.json -> slide-video controls`
 
 The safest default provider is still local `ffmpeg` + `flite`. Qwen is supported through a Python runner and falls back cleanly when its packages or reference assets are not present.
 
@@ -362,7 +362,7 @@ For script generation, the recommended default is now:
 5. authored `slides.js` narration / notes
 6. deterministic visible-content fallback
 
-Build one narrated topic:
+Build one topic with the legacy all-in-one command:
 
 ```bash
 node scripts/build_lecture.mjs \
@@ -382,6 +382,43 @@ npm run build:lecture -- \
   --topic 02_robot_safety
 ```
 
+For production, prefer the clean staged commands so regenerating scripts does not also recreate audio, subtitles, review exports, and verbose reports:
+
+```bash
+npm run build:prof-scripts -- \
+  --school AC \
+  --course ROB9205_Industrial_Robots_W2026 \
+  --session S01 \
+  --topic 01_course_intro_and_expectations \
+  --scriptProvider llm_local \
+  --scriptModel mistral-nemo:latest \
+  --scriptEndpoint http://10.0.0.16:11434 \
+  --scriptPromptVersion script_writer_v2 \
+  --allowScriptFallback 0 \
+  --scriptTimeoutMs 240000 \
+  --topicPlanTimeoutMs 360000
+
+npm run build:audio -- \
+  --school AC \
+  --course ROB9205_Industrial_Robots_W2026 \
+  --session S01 \
+  --topic 01_course_intro_and_expectations \
+  --provider ffmpeg_flite
+
+npm run refresh:motion -- \
+  --school AC \
+  --course ROB9205_Industrial_Robots_W2026 \
+  --session S01 \
+  --topic 01_course_intro_and_expectations
+
+npm run build:slide-video-controls -- \
+  --school AC \
+  --course ROB9205_Industrial_Robots_W2026 \
+  --session S01 \
+  --topic 01_course_intro_and_expectations \
+  --overwrite
+```
+
 Important options:
 
 - `--provider ffmpeg_flite`
@@ -393,7 +430,7 @@ Important options:
 - `--scriptProvider script_override`
 - `--scriptModel llama3.1:8b`
 - `--scriptEndpoint http://127.0.0.1:11434`
-- `--scriptPromptVersion script_writer_v1`
+- `--scriptPromptVersion script_writer_v2`
 - `--scriptTemperature 0.2`
 - `--scriptMaxRetries 2`
 - `--allowScriptFallback 1`
@@ -460,18 +497,20 @@ The current provider adapter uses the official local Python package and `Qwen3TT
 Outputs for each topic are written to:
 
 - `generated/lectures/<school>/<course>/<session>/<topic>/layout.manifest.json`
+- `generated/lectures/<school>/<course>/<session>/<topic>/script.topic_plan.json`
 - `generated/lectures/<school>/<course>/<session>/<topic>/script.manifest.json`
-- `generated/lectures/<school>/<course>/<session>/<topic>/audio/*.wav`
-- `generated/lectures/<school>/<course>/<session>/<topic>/tts_alignment.json`
-- `generated/lectures/<school>/<course>/<session>/<topic>/timeline.json`
-- `generated/lectures/<school>/<course>/<session>/<topic>/subtitles/*.vtt`
-- `generated/lectures/<school>/<course>/<session>/<topic>/review/script_preview.md`
-- `generated/lectures/<school>/<course>/<session>/<topic>/review/index.html`
-- `generated/jobs/tts/<school>/<course>/<session>/<topic>/*.json`
+- `generated/outputs/audio/<school>/<course>/<session>/<topic>/*.wav`
+- `generated/outputs/alignment/<school>/<course>/<session>/<topic>/tts_alignment.json`
+- `generated/lectures/<school>/<course>/<session>/<topic>/motion.manifest.json`
+- `generated/lectures/<school>/<course>/<session>/<topic>/motion/*.motion.json`
 - `generated/jobs/avatar/<school>/<course>/<session>/<topic>/*.json`
+- `generated/jobs/slide_video/<school>/<course>/<session>/<topic>/*.json`
+- `generated/controls/slide_video/<school>/<course>/<session>/<topic>/*.motion_requests.json`
+- `generated/controls/slide_video/<school>/<course>/<session>/<topic>/*.avatar_plan.json`
 - `generated/status/<school>/<course>/<session>/<topic>/topic_status.json`
-- `generated/status/<school>/<course>/<session>/<topic>/tts/*.job_status.json`
 - `generated/status/<school>/<course>/<session>/<topic>/avatar/*.job_status.json`
+
+Topic-local audio folders, subtitles, review HTML, timeline files, and verbose root reports are optional/debug artifacts now. Use `--write-report` on the staged commands, or `--write-subtitles`, `--write-timeline`, and `--write-review` on `refresh:motion` when you need those diagnostics.
 
 `script.manifest.json` now records per-slide provenance such as:
 
@@ -521,7 +560,7 @@ npm run refresh:motion -- \
   --motionSampleRateFps 6
 ```
 
-This updates subtitles, `timeline.json`, avatar jobs, motion manifests, slide-video jobs, and review output using manual alignment when available.
+By default this updates motion manifests, avatar jobs, and slide-video jobs using canonical alignment from `generated/outputs/alignment` when available. Add `--write-subtitles`, `--write-timeline`, or `--write-review` only when those diagnostics are needed.
 
 For HY-Motion text-to-motion generation from the slide-video jobs, use the ComfyUI batch queue:
 
