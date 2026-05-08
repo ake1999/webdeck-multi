@@ -422,6 +422,16 @@ function maybeJsonFragment(text) {
   return null;
 }
 
+function severeTopicPlanRepairWarnings(warnings) {
+  return normalizeStringArray(warnings, 50).filter((warning) => (
+    /not an object/i.test(warning)
+    || /unknown slide_id/i.test(warning)
+    || /duplicate topic plan entry/i.test(warning)
+    || /missing topic plan slide entries/i.test(warning)
+    || /deterministic scaffold/i.test(warning)
+  ));
+}
+
 async function postJson(url, payload, timeoutMs) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -582,6 +592,10 @@ export async function getTopicScriptPlanWithCache({
       model,
       provider: "llm_local_topic_plan",
     });
+    const severeRepairs = severeTopicPlanRepairWarnings(repairedPlan.generation_warnings);
+    if (!allowFallback && severeRepairs.length) {
+      throw new Error(`LLM topic plan required structural repair: ${severeRepairs.join(" ")}`);
+    }
     const validated = validateTopicScriptPlan(repairedPlan, slideIds);
     if (!validated.valid) throw new Error(validated.errors.join(" "));
     const plan = {
