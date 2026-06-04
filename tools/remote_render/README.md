@@ -65,7 +65,9 @@ tools/remote_render/push_render_inputs.sh --dry-run
 This pushes:
 
 ```text
+generated/jobs/tts/
 generated/jobs/slide_video/
+generated/jobs/avatar_video/
 generated/lectures/ layout/script/motion/screenshot files only
 generated/outputs/audio/
 generated/outputs/alignment/

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" role="img" aria-labelledby="title desc">
+  <title id="title">Colcon helper commands for bashrc</title>
+  <desc id="desc">Colcon cd and argcomplete helper block for bashrc.</desc>
+  <rect width="1000" height="640" fill="#ffffff"/>
+  <style>
+    .title{font:700 30px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .note{font:500 18px system-ui,Segoe UI,Arial;fill:#475569}
+    .screen{fill:#0f172a;stroke:#334155;stroke-width:3;rx:18}
+    .code{font:600 20px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#e2e8f0}
+    .comment{fill:#93c5fd}
+  </style>
+  <text class="title" x="44" y="54">Colcon helpers for `.bashrc`</text>
+  <text class="note" x="44" y="86">Use the same helper style as the course setup machine.</text>
+  <rect class="screen" x="44" y="110" width="912" height="456"/>
+  <text class="code" x="70" y="154">if [ -f /usr/share/colcon_cd/function/colcon_cd.sh ]; then</text>
+  <text class="code" x="106" y="190">source /usr/share/colcon_cd/function/colcon_cd.sh</text>
+  <text class="code" x="106" y="226">export _colcon_cd_root=/opt/ros/humble/</text>
+  <text class="code" x="70" y="262">fi</text>
+  <text class="code comment" x="70" y="334"># Autocomplete</text>
+  <text class="code" x="70" y="370">if [ -f /usr/share/colcon_argcomplete/hook/ \</text>
+  <text class="code" x="106" y="406">colcon-argcomplete.bash ]; then</text>
+  <text class="code" x="106" y="442">source /usr/share/colcon_argcomplete/hook/ \</text>
+  <text class="code" x="142" y="478">colcon-argcomplete.bash</text>
+  <text class="code" x="70" y="514">fi</text>
+  <text class="note" x="44" y="606">This makes package jumps and tab completion easier in new terminals.</text>
+</svg>

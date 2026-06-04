@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">Linux paths used in the robotics course</title>
+  <desc id="desc">A tree diagram showing root, home, user, ros2 workspace, source folder, and the ROS Humble install path.</desc>
+  <rect width="900" height="560" fill="#fff"/>
+  <style>
+    .box{fill:#fff;stroke:#8a1538;stroke-width:3;rx:18}
+    .muted{fill:#f8fafc;stroke:#cbd5e1;stroke-width:3;rx:18}
+    .line{stroke:#64748b;stroke-width:4;fill:none;stroke-linecap:round}
+    .title{font:700 34px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .label{font:700 24px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#0f172a}
+    .note{font:500 18px system-ui,Segoe UI,Arial;fill:#475569}
+  </style>
+  <text class="title" x="48" y="62">Linux Paths You Must Know</text>
+  <path class="line" d="M450 166v40M255 206h420M255 206v38M675 206v38M255 284v48M675 284v48M255 410v44"/>
+  <rect class="box" x="330" y="88" width="240" height="78"/>
+  <text class="label" x="450" y="136" text-anchor="middle">/</text>
+  <rect class="muted" x="110" y="206" width="290" height="78"/>
+  <text class="label" x="255" y="254" text-anchor="middle">/home</text>
+  <rect class="muted" x="530" y="206" width="290" height="78"/>
+  <text class="label" x="675" y="254" text-anchor="middle">/opt</text>
+  <rect class="muted" x="110" y="332" width="290" height="78"/>
+  <text class="label" x="255" y="380" text-anchor="middle">/home/&lt;user&gt;</text>
+  <rect class="box" x="500" y="332" width="350" height="78"/>
+  <text class="label" x="675" y="380" text-anchor="middle">/opt/ros/humble</text>
+  <rect class="box" x="75" y="454" width="360" height="74"/>
+  <text class="label" x="255" y="499" text-anchor="middle">~/ros2_ws/src</text>
+  <text class="note" x="255" y="430" text-anchor="middle">your files and packages</text>
+  <text class="note" x="675" y="430" text-anchor="middle">base ROS install</text>
+</svg>

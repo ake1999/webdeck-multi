@@ -1,0 +1,2296 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_ros2_graph_packages_nodes_debugging",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Open by connecting to Session 2: the computer is ready, so now students need to understand the ROS system that is running on it.",
+    "progression": "Review sourcing and workspaces, define packages, executables, and nodes, build the ROS graph mental model, compare topics, services, actions, and parameters, then practice by creating, running, inspecting, recording, and debugging a tiny ROS system.",
+    "destination": "Students should finish able to inspect a ROS 2 system in order: environment, workspace, package, executable, node, interface, topic/service/action, graph, bag, and error message.",
+    "tone": "clear, diagnostic, hands-on, professor-like",
+    "methods": [
+      "continuity from previous session",
+      "mental model",
+      "definition with examples",
+      "guided exercise",
+      "debugging ladder",
+      "recap and forward bridge"
+    ]
+  },
+  "audience_level": "undergraduate robotics lab students who have just prepared ROS 2 Humble and now need a practical mental model for packages, nodes, graph inspection, and debugging",
+  "topic_goal": "Teach students to see ROS 2 as a graph of running programs and communication interfaces, then use that mental model to build and debug a small system.",
+  "topic_takeaways": [
+    "Students should know that a package organizes code, while a node is a running process.",
+    "Students should distinguish topics, services, actions, parameters, and bags by when they are used.",
+    "Students should know how to inspect a ROS graph with CLI tools and rqt_graph before guessing.",
+    "Students should leave with a debugging order they can reuse when manipulator labs become larger."
+  ],
+  "style_notes": [
+    "Keep reminding students that command memorization is less important than knowing what question each command answers.",
+    "During the in-class exercise, sound like a live instructor: pause before expected results, explain why each file matters, and connect mistakes to the debugging ladder.",
+    "Treat rqt_graph and ros2 bag as observation tools, not decorations.",
+    "Close by handing forward to robot description, frames, TF, and RViz visualization."
+  ],
+  "transition_style": "Move from setup recall to graph concepts, then from concepts to a small runnable system, and finally from that system to a repeatable debugging order.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.94,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Session 3 - ROS 2 Graph, Packages, Nodes, and Debugging"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Open by saying that Session 2 made the machine ready. Session 3 makes the ROS system understandable.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Help students understand ros2 graph packages nodes debugging in a way they can explain, apply, and build on later.",
+      "transition_to_next": "Carry this idea forward into Why This Session Matters so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Frame Session 3 - ROS 2 Graph, Packages, Nodes, and Debugging as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Session 3 - ROS 2 Graph, Packages, Nodes, and Debugging connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Session 3 - ROS 2 Graph, Packages, Nodes, and Debugging sets up the lesson and why the topic matters.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Why This Session Matters"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Tell students that the point is not memorizing every command. The point is knowing where to look first.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ROS 2 is the wiring between robot state, visualization, simulation, and planning.",
+        "Manipulator systems are multi-node systems; no single file controls everything.",
+        "Debugging starts with observation: what is running, what is publishing, and what is missing?"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into What You Should Be Able To Do Today so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Why This Session Matters first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Why This Session Matters connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Why This Session Matters clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "What You Should Be Able To Do Today"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "This slide tells students the practical target. It also gives you the lecture map.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Read the ROS graph with ros2 commands and rqt_graph.",
+        "Create a Python package and know where node code belongs.",
+        "Build and source your workspace without guessing."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Why This Session Matters into What You Should Be Able To Do Today so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into ROS 2 In A Manipulator Workflow so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use What You Should Be Able To Do Today to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep What You Should Be Able To Do Today connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how What You Should Be Able To Do Today sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "ROS 2 In A Manipulator Workflow"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Keep this as a preview. The focus today is the graph and the tools, not MoveIt configuration.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Robot model describes links, joints, and frames.",
+        "ROS graph connects state publishers, controllers, visualization, and planners.",
+        "RViz2 shows robot state, TF, markers, and trajectories."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Quick Setup Check so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for ROS 2 In A Manipulator Workflow first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep ROS 2 In A Manipulator Workflow connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture ROS 2 In A Manipulator Workflow clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Quick Setup Check"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Use this as the first live check. If many students fail here, pause and fix setup habits before moving on.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Expected ROS distro: humble.",
+        "Expected workspace habit: build from ~/ros2_ws, then source the overlay.",
+        "If a command fails: check .bashrc, source order, and current folder first."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Quick Setup Check to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Quick Setup Check is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Quick Setup Check in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Quick Setup Check connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Quick Setup Check accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Why Sourcing Matters"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This slide answers why source is not optional. New terminals do not automatically know ROS paths unless .bashrc sets them.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Sourcing teaches the terminal where ROS is installed.",
+        "Without sourcing, commands such as ros2 may not exist in that terminal.",
+        "For this course, the base source file is /opt/ros/humble/setup.bash."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "The next slide should compress the lesson into a quick memory or self-check.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Why Sourcing Matters first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Why Sourcing Matters connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Why Sourcing Matters clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Workspace Recap"
+      },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Use the underlay/overlay vocabulary, but translate it immediately: base ROS, then your own packages.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Underlay: /opt/ros/humble gives the base ROS installation.",
+        "Overlay: ~/ros2_ws/install gives your local class packages.",
+        "Source order matters: base first, workspace second.",
+        "Students should be able to explain the core idea behind ros2 graph packages nodes debugging."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Workspace Recap to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Underlay First, Overlay Second so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Workspace Recap to compress the lesson into memorable statements, not to reread the slide.",
+      "story_hint": "Keep Workspace Recap connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should leave Workspace Recap with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Underlay First, Overlay Second"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This reinforces that the environment is layered. A fresh terminal is a simple reset when students source things in a confusing order.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Underlay first: source /opt/ros/humble/setup.bash gives the base ROS packages.",
+        "Overlay second: source ~/ros2_ws/install/setup.bash adds your local packages.",
+        "Overlay can override underlay when package names overlap, so keep names organized."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into The ROS Development Loop so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Creating a workspace"
+      ],
+      "explanation_style": "Build a picture for Underlay First, Overlay Second first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Underlay First, Overlay Second connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Underlay First, Overlay Second clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "The ROS Development Loop"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Emphasize that build and source are separate steps. Many errors come from skipping source after a build.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Edit files inside ~/ros2_ws/src/ .",
+        "Build from ~/ros2_ws using colcon build --symlink-install.",
+        "Source ~/ros2_ws/install/setup.bash so the terminal sees new output."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into What Does colcon build Actually Do? so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for The ROS Development Loop first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The ROS Development Loop connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture The ROS Development Loop clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "What Does colcon build Actually Do?"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "This answers the student's natural question: why do we build if Python is not compiled like C++?",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "Find packages: it looks inside src/ for packages and dependencies.",
+        "Prepare output: it creates or updates build/, install/, and log/.",
+        "Install entry points: it makes Python executables available through ros2 run.",
+        "Generate environment files: it creates install/setup.bash for your overlay."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep What Does colcon build Actually Do? efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on What Does colcon build Actually Do? and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Build Habits That Reduce Confusion"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "This is not deep build theory. It gives students practical commands they can use immediately.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "--symlink-install is helpful for Python-heavy beginner work.",
+        "--packages-select rebuilds one package when you know what changed.",
+        "--executor sequential can help weaker laptops build one package at a time.",
+        "If the terminal gets weird, open a new one and source again."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Build Habits That Reduce Confusion efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Build Habits That Reduce Confusion and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Package vs Executable vs Node"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "This is one of the most important distinctions for beginners. Repeat it using one concrete package example.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Package = code, metadata, dependencies, launch files, and config files.",
+        "Executable = a runnable entry point installed from the package.",
+        "Node = the executable while it is running inside ROS.",
+        "State the contrast clearly and finish with the practical decision rule."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Build Habits That Reduce Confusion into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Contrast the alternatives on Package vs Executable vs Node explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Keep Package vs Executable vs Node connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Package vs Executable vs Node and know which side fits which situation.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Python Package Structure"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Tell students that many package errors are simply files placed in the wrong folder.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Package root has package.xml, setup.py, resource/, and the inner Python module folder.",
+        "package.xml lists package metadata and dependencies.",
+        "setup.py tells Python what to install and what executables to expose."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Create A Class Package so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Python Package Structure first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Python Package Structure connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Python Package Structure clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Create A Class Package"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Keep the package name manipulator-flavored but the code simple. This is a ROS basics exercise, not arm control yet.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ament_python means this is a Python ROS package.",
+        "rclpy is the Python client library for ROS 2.",
+        "std_msgs gives simple message types such as String.",
+        "ROS 2 package tutorial"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Create A Class Package efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Create A Class Package and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "What Is A Node?"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Say clearly: package is on disk, executable is something you run, node is the running process.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Node = running program that performs one clear job.",
+        "Examples: state publisher, controller, planner, camera driver, talker, listener.",
+        "A node can publish, subscribe, offer services, call services, or run actions."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into How Nodes Communicate so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Build a picture for What Is A Node? first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep What Is A Node? connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture What Is A Node? clearly before the formal details continue.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "How Nodes Communicate"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use the rule of thumb: stream -> topic, ask -> service, long task -> action.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Topics are data streams: publish and subscribe.",
+        "Services are quick request-response calls.",
+        "Actions are long-running goals with feedback, result, and cancel."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into The ros2 CLI Is A Map, Not A Memory Test so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Build a picture for How Nodes Communicate first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep How Nodes Communicate connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture How Nodes Communicate clearly before the formal details continue.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "The ros2 CLI Is A Map, Not A Memory Test"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This slide helps students see the command line as organized families instead of random commands.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Start with the object you want to inspect: package, node, topic, service, action, interface, parameter, or bag.",
+        "Then choose the verb: list, info, echo, show, call, send_goal, record, play.",
+        "Use --help when you forget the exact pattern."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Interfaces: The Data Contract so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may watch the map update without understanding which signals are driving the update."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "map",
+        "laser scan",
+        "costmap",
+        "planner path"
+      ],
+      "explanation_style": "Build a picture for The ros2 CLI Is A Map, Not A Memory Test first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The ros2 CLI Is A Map, Not A Memory Test connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture The ros2 CLI Is A Map, Not A Memory Test clearly before the formal details continue.",
+      "scene_hint": "Use a map, scan, and robot pose overlay so students can connect localization or planning state to what they see on screen."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Interfaces: The Data Contract"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "This is where students learn not to guess YAML payloads or message fields.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Message (.msg): one data structure for a topic.",
+        "Service (.srv): request fields, then response fields.",
+        "Action (.action): goal fields, feedback fields, and result fields."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Interfaces: The Data Contract to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Interfaces: The Data Contract is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Interfaces: The Data Contract in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Interfaces: The Data Contract connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Interfaces: The Data Contract accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Topics: Streams Of Data"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "The key idea is decoupling: publishers and subscribers do not need to know each other directly.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Topic = named channel such as /chatter, /joint_states, or /tf.",
+        "Publisher sends messages to the topic.",
+        "Subscriber receives messages from the topic."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Topics Can Fan Out so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Build a picture for Topics: Streams Of Data first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Topics: Streams Of Data connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Topics: Streams Of Data clearly before the formal details continue.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "Topics Can Fan Out"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is a gentle warning for later: if two nodes publish the same command topic, the robot may seem unpredictable.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "One topic can connect many nodes at the same time.",
+        "Multiple subscribers can listen to the same robot state stream.",
+        "Multiple publishers are possible, but they can confuse debugging if you did not expect them."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Topic CLI Commands so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Build a picture for Topics Can Fan Out first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Topics Can Fan Out connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Topics Can Fan Out clearly before the formal details continue.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "Topic CLI Commands"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Mention that topic names are live; if no node is running, some topics will not exist.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "list shows what topics currently exist.",
+        "info shows publisher/subscriber counts and the message type.",
+        "echo prints messages live."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Topic CLI Commands to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Topic CLI Commands is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Define Topic CLI Commands in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Topic CLI Commands connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Topic CLI Commands accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "Manipulator Topics You Will See Later"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "This connects topics to robot arms without teaching TF or MoveIt deeply yet.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "/joint_states carries measured or simulated joint positions and velocities.",
+        "/tf carries changing frame transforms.",
+        "/tf_static carries fixed frame transforms."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Manipulator Topics You Will See Later to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Manipulator Topics You Will See Later is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Define Manipulator Topics You Will See Later in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Manipulator Topics You Will See Later connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Manipulator Topics You Will See Later accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "rqt_graph: See The ROS Graph"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain circles and arrows using the screenshot. This is the fastest way to reduce guessing.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Graph view shows nodes and topic connections visually.",
+        "Use it early when a system does not behave as expected.",
+        "Answer the first question: is the publisher or subscriber even running?"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Why rqt_graph May Look Different so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Understanding topics"
+      ],
+      "explanation_style": "Build a picture for rqt_graph: See The ROS Graph first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep rqt_graph: See The ROS Graph connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture rqt_graph: See The ROS Graph clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "Why rqt_graph May Look Different"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is useful in class because students often think their graph is wrong when it is just filtered or changing.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Hidden items can be filtered out to keep the graph readable.",
+        "CLI tools can appear as nodes when they publish, echo, or inspect data.",
+        "A changing graph is normal because the graph shows what is alive right now."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into The Graph Grows As You Run Tools so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Understanding topics"
+      ],
+      "explanation_style": "Build a picture for Why rqt_graph May Look Different first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Why rqt_graph May Look Different connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Why rqt_graph May Look Different clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "The Graph Grows As You Run Tools"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use this to explain why running a debugging command can itself change the graph.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "When you run a publisher, the graph shows a new node and topic connection.",
+        "When you run ros2 topic echo, the echo command can become another subscriber node.",
+        "This is good news: the tools are part of the observable ROS system."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Classroom Note: Strange Cross-Talk so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Understanding topics"
+      ],
+      "explanation_style": "Build a picture for The Graph Grows As You Run Tools first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep The Graph Grows As You Run Tools connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture The Graph Grows As You Run Tools clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 25,
+        "source_title": "Classroom Note: Strange Cross-Talk"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Make this optional. It is a troubleshooting tool, not a default forever setting.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ROS 2 can discover other ROS systems on the same network.",
+        "In a classroom, another laptop may accidentally use the same topic names.",
+        "If I ask for isolation, use export ROS_LOCALHOST_ONLY=1 in that terminal."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Services: Quick Request And Response so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Classroom Note: Strange Cross-Talk first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Classroom Note: Strange Cross-Talk connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Classroom Note: Strange Cross-Talk clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 26,
+        "source_title": "Services: Quick Request And Response"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use the mental model of asking a yes/no or compute-this-now question.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Service = ask once, get one response.",
+        "Client sends a request.",
+        "Server returns a response."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Service CLI Commands so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Understanding services"
+      ],
+      "explanation_style": "Build a picture for Services: Quick Request And Response first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Services: Quick Request And Response connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Services: Quick Request And Response clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 27,
+        "source_title": "Service CLI Commands"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Students may not have /clear unless turtlesim runs. Say commands depend on the nodes currently running.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "list shows available service names.",
+        "type reveals the service interface.",
+        "interface show shows request and response fields."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Service CLI Commands to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Service CLI Commands is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Service CLI Commands in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Service CLI Commands connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Service CLI Commands accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 28,
+        "source_title": "Actions: Long Tasks With Feedback"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is the communication pattern students will recognize later in planning and execution workflows.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Action = goal, feedback, result, and cancel.",
+        "Client sends a goal to an action server.",
+        "Server reports progress while working."
+      ],
+      "must_say": [
+        "Closed-loop control can correct itself because it measures what actually happened."
+      ],
+      "emphasis_words": [
+        "feedback",
+        "disturbance",
+        "correction"
+      ],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Action CLI Commands so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [
+        "Students often describe feedback correctly in words but still miss what disturbances do to open-loop behavior."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Understanding actions"
+      ],
+      "explanation_style": "Build a picture for Actions: Long Tasks With Feedback first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Actions: Long Tasks With Feedback connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Actions: Long Tasks With Feedback clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 29,
+        "source_title": "Action CLI Commands"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Do not worry if /fibonacci is not running. This is the command pattern.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "list shows available action names.",
+        "info shows type and client/server counts.",
+        "send_goal sends a long-running request."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Action CLI Commands to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Action CLI Commands is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Action CLI Commands in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Action CLI Commands connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Action CLI Commands accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 30,
+        "source_title": "Why Actions Matter For Robot Arms"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Keep this conceptual. No MoveIt install or project details here.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Planning takes time: a planner may search, fail, retry, or return a trajectory.",
+        "Execution takes time: the robot follows a trajectory over several seconds.",
+        "Feedback matters: the system can report progress while the task is running."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Why Actions Matter For Robot Arms to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Why Actions Matter For Robot Arms is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Why Actions Matter For Robot Arms in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Why Actions Matter For Robot Arms connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Why Actions Matter For Robot Arms accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 31,
+        "source_title": "Where This Is Going: Planned Motion"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is the motivational manipulator slide. Keep it short and connect it back to ROS graph skills.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "The same graph ideas appear in MoveIt: nodes, topics, parameters, services, and actions.",
+        "A planned path is data that can be visualized, inspected, and later executed.",
+        "RViz2 is the window where we will inspect robot state and trajectories."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Parameters: Settings Inside Nodes so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "MoveIt Documentation - MoveIt Quickstart in RViz"
+      ],
+      "explanation_style": "Build a picture for Where This Is Going: Planned Motion first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Where This Is Going: Planned Motion connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Where This Is Going: Planned Motion clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 32,
+        "source_title": "Parameters: Settings Inside Nodes"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "This slide prepares them for launch files, YAML, Gazebo time, and MoveIt configs.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Parameter = named value stored inside a node.",
+        "Good for settings such as use_sim_time, frame names, gains, speeds, and file paths.",
+        "Not for sensor streams; use topics for data that changes continuously."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Parameters: Settings Inside Nodes to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Parameters: Settings Inside Nodes is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Define Parameters: Settings Inside Nodes in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Parameters: Settings Inside Nodes connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Parameters: Settings Inside Nodes accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 33,
+        "source_title": "Parameter CLI Commands"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Explain that /node_name is a placeholder. They must replace it with a real node name.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "use_sim_time is important when a system uses simulated time.",
+        "dump can save current parameters into a YAML-style snapshot.",
+        "Runtime changes may fail if the node does not allow that parameter change."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Parameter CLI Commands to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Parameter CLI Commands is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Parameter CLI Commands in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Parameter CLI Commands connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Parameter CLI Commands accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 34,
+        "source_title": "Launch Files: A Preview"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Do not teach full launch syntax today. The point is why launch files exist.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Launch file = repeatable startup recipe.",
+        "Starts multiple nodes with one command.",
+        "Sets parameters and remaps names so nodes connect correctly.",
+        "Keeps demos reproducible because everyone starts the same system."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Keep Launch Files: A Preview efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Launch Files: A Preview and what to verify before moving on.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 35,
+        "source_title": "ROS Bag: The Flight Recorder"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is extremely useful in labs. It turns a one-time failure into data students can inspect.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "rosbag records topic messages into a file on disk.",
+        "Replay lets you debug later without rerunning the robot or simulator.",
+        "Good for evidence: save what the system actually published."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Basic ros2 bag Commands so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for ROS Bag: The Flight Recorder first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep ROS Bag: The Flight Recorder connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture ROS Bag: The Flight Recorder clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 36,
+        "source_title": "Basic ros2 bag Commands"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Mention that recording too many high-rate topics can create large files quickly.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "record saves selected topics.",
+        "-o chooses the output bag folder name.",
+        "info summarizes what was recorded."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Basic ros2 bag Commands to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Basic ros2 bag Commands is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Basic ros2 bag Commands in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Basic ros2 bag Commands connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Basic ros2 bag Commands accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 37,
+        "source_title": "How rosbag Helps Manipulator Debugging"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "This is a practical slide. It teaches why rosbag is worth learning early.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Joint state problems: record /joint_states to inspect what joints actually published.",
+        "Frame problems: record /tf and /tf_static to replay the transform stream.",
+        "Timing problems: compare message frequency and timestamps."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use How rosbag Helps Manipulator Debugging to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once How rosbag Helps Manipulator Debugging is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define How rosbag Helps Manipulator Debugging in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep How rosbag Helps Manipulator Debugging connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain How rosbag Helps Manipulator Debugging accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 38,
+        "source_title": "In-Class Exercise: Build A Tiny ROS System"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "This exercise is intentionally small. It gives students a mental template for later robot nodes.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "Step 1: create the manipulator_basics package.",
+        "Step 2: add talker.py and listener.py in the inner Python folder.",
+        "Step 3: edit setup.py so ros2 run can find both nodes.",
+        "Step 4: build, source, run, inspect, and record."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep In-Class Exercise: Build A Tiny ROS System efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on In-Class Exercise: Build A Tiny ROS System and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 39,
+        "source_title": "Step 1: Create The Package"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "This slide gives the exact first steps. The alias src comes from Session 2.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "src uses your Session 2 alias to jump to ~/ros2_ws/src.",
+        "Dependencies are recorded so ROS knows this package uses rclpy and std_msgs."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 1: Create The Package efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 1: Create The Package and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 40,
+        "source_title": "Step 1 Check: Expected Files"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use this to check that students are looking at the correct folder before creating node files.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Package root: ~/ros2_ws/src/manipulator_basics.",
+        "Metadata files: package.xml, setup.py, and setup.cfg.",
+        "Discovery marker: resource/manipulator_basics."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Step 2: Create The Node Files so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Step 1 Check: Expected Files first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Step 1 Check: Expected Files connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Step 1 Check: Expected Files clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 41,
+        "source_title": "Step 2: Create The Node Files"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "This is the exact file placement that beginners often miss.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "Inner folder rule: the path repeats the package name once.",
+        "Correct code path: manipulator_basics/manipulator_basics/talker.py.",
+        "Save in nano with Ctrl+O, press Enter, then exit with Ctrl+X.",
+        "Do not put node files directly beside setup.py."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 2: Create The Node Files efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 2: Create The Node Files and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 42,
+        "source_title": "talker.py Part A: Imports And Node Setup"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "This first chunk defines the node class and its node name. The publisher and timer come on the next slide.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use talker.py Part A: Imports And Node Setup to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once talker.py Part A: Imports And Node Setup is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch graph",
+        "node graph",
+        "topic arrows"
+      ],
+      "explanation_style": "Define talker.py Part A: Imports And Node Setup in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep talker.py Part A: Imports And Node Setup connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain talker.py Part A: Imports And Node Setup accurately and use it in the next step of the lesson.",
+      "scene_hint": "Use a lightweight node-and-topic diagram only long enough to show the system relationships behind the command sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 43,
+        "source_title": "talker.py Part B: Publisher And Timer"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Point to the topic name and message type. Those must match the listener later.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use talker.py Part B: Publisher And Timer to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once talker.py Part B: Publisher And Timer is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define talker.py Part B: Publisher And Timer in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep talker.py Part B: Publisher And Timer connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain talker.py Part B: Publisher And Timer accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 44,
+        "source_title": "talker.py Part C: Main Function"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "This slide can carry the explanation that the previous code chunks are one file.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "rclpy.init() starts the ROS 2 Python client library.",
+        "spin(node) keeps the node running and processing callbacks.",
+        "shutdown() cleans up when the node stops."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use talker.py Part C: Main Function to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once talker.py Part C: Main Function is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define talker.py Part C: Main Function in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep talker.py Part C: Main Function connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain talker.py Part C: Main Function accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 45,
+        "source_title": "listener.py Part A: Subscriber Setup"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "The listener uses the same message type and topic name as the talker.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use listener.py Part A: Subscriber Setup to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once listener.py Part A: Subscriber Setup is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define listener.py Part A: Subscriber Setup in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep listener.py Part A: Subscriber Setup connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain listener.py Part A: Subscriber Setup accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 46,
+        "source_title": "listener.py Part B: Callback And Main"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Tie it back to the pub/sub diagram. The topic connects the two nodes.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use listener.py Part B: Callback And Main to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once listener.py Part B: Callback And Main is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define listener.py Part B: Callback And Main in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep listener.py Part B: Callback And Main connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain listener.py Part B: Callback And Main accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 47,
+        "source_title": "Talker / Listener Takeaways"
+      },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "This is the readable summary after the code slides. It keeps the code slides from becoming too crowded.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Same topic name and message type are required for communication.",
+        "Publisher creates and sends messages.",
+        "Subscriber callback receives message objects.",
+        "Students should be able to explain the core idea behind ros2 graph packages nodes debugging."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Talker / Listener Takeaways to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Step 3: Edit setup.py Entry Points so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Talker / Listener Takeaways to compress the lesson into memorable statements, not to reread the slide.",
+      "story_hint": "Keep Talker / Listener Takeaways connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should leave Talker / Listener Takeaways with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 48,
+        "source_title": "Step 3: Edit setup.py Entry Points"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Keep this slide sparse so students can copy the block without fighting clutter.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 3: Edit setup.py Entry Points efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 3: Edit setup.py Entry Points and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 49,
+        "source_title": "What The Entry Points Mean"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "This is one of the common beginner errors. Keep it very explicit.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Left side is the executable name used by ros2 run.",
+        "Right side is module.file:function.",
+        "talker points to manipulator_basics/talker.py and its main() function."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What The Entry Points Mean to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once What The Entry Points Mean is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define What The Entry Points Mean in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep What The Entry Points Mean connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain What The Entry Points Mean accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 50,
+        "source_title": "Before Building, Check The Files"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Use this as a pause point before building. It saves time during the live exercise.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "Talker file exists: ~/ros2_ws/src/manipulator_basics/manipulator_basics/talker.py.",
+        "Listener file exists: ~/ros2_ws/src/manipulator_basics/manipulator_basics/listener.py.",
+        "setup.py has both entry points: talker and listener.",
+        "package.xml has dependencies: rclpy and std_msgs."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Before Building, Check The Files efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Before Building, Check The Files and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 51,
+        "source_title": "Step 4: Build And Source"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "If students get package not found, check source. If executable not found, check setup.py entry points and rebuild.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "Build from ~/ros2_ws, not from src/ and not from the package folder.",
+        "Source after the build so the terminal can find the new executables.",
+        "Check executables before running; you should see talker and listener."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 4: Build And Source efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 4: Build And Source and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 52,
+        "source_title": "Step 5: Run Two Nodes"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "The si in each terminal is deliberate. Every terminal needs the workspace overlay.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "Terminal A:",
+        "Terminal B:",
+        "Expected result: the listener prints messages from the talker."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 5: Run Two Nodes efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 5: Run Two Nodes and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 53,
+        "source_title": "Step 6: Inspect Your Running Nodes"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "This is where the lecture turns into a debugging habit.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "Do not only trust terminal printouts; inspect the graph.",
+        "Node info shows publishers and subscriptions.",
+        "Topic info confirms the message type and connection counts."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 6: Inspect Your Running Nodes efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 6: Inspect Your Running Nodes and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 54,
+        "source_title": "Step 7: Record Your Topic With rosbag"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "This makes rosbag concrete without requiring a robot model yet.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "none",
+      "object_policy": "none",
+      "must_cover": [
+        "Record while the talker is running.",
+        "Stop recording with Ctrl+C.",
+        "Play back after stopping the live talker to see recorded data reappear.",
+        "Inspect with ros2 topic echo while playing the bag."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may memorize ROS 2 terms without seeing the actual data-flow relationship between them."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Step 7: Record Your Topic With rosbag efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Step 7: Record Your Topic With rosbag and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 55,
+        "source_title": "A Debugging Order That Works"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is the habit you want them to leave with. It prevents random guessing.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Environment first: is ROS sourced and the right distro active?",
+        "Workspace second: did you build and source the overlay?",
+        "Graph third: are the expected nodes and topics visible?"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Common Errors And What They Mean so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for A Debugging Order That Works first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep A Debugging Order That Works connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture A Debugging Order That Works clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 56,
+        "source_title": "Common Errors And What They Mean"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Ask students to map each error to the debugging ladder.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ros2: command not found -> base ROS was not sourced.",
+        "Package not found -> wrong workspace, not built, or overlay not sourced.",
+        "Executable not found -> entry point missing or package not rebuilt."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Common Errors And What They Mean to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Common Errors And What They Mean is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Common Errors And What They Mean in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Common Errors And What They Mean connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Common Errors And What They Mean accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 57,
+        "source_title": "ROS CLI Cheat Sheet"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "This slide is meant for students to screenshot or revisit.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Packages: ros2 pkg list, ros2 pkg executables",
+        "Nodes: ros2 node list, ros2 node info /node_name",
+        "Topics: ros2 topic list, ros2 topic info , ros2 topic echo"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use ROS CLI Cheat Sheet to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once ROS CLI Cheat Sheet is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define ROS CLI Cheat Sheet in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep ROS CLI Cheat Sheet connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain ROS CLI Cheat Sheet accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 58,
+        "source_title": "What To Remember"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Close by saying the next session will use this foundation for robot description, frames, TF, and RViz visualization.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "A robot application is a graph of nodes, topics, services, actions, and parameters.",
+        "A package is not a node; packages organize code, nodes run code.",
+        "Topics stream data; services answer quick requests; actions run long goals.",
+        "The debugging ladder from today will be reused when robot description, TF, RViz, and MoveIt make the graph larger."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use What To Remember to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Carry this idea forward into Bridge To The Next Session so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use What To Remember as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep What To Remember connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should leave What To Remember with the main takeaways of the topic compressed into usable memory."
+    },
+    {
+      "slide_ref": {
+        "index": 59,
+        "source_title": "Bridge To The Next Session"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is not a project slide. It simply connects the ROS graph foundation to the next technical topic.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Next topic: robot description, URDF/Xacro, TF, and RViz2.",
+        "Why today's work matters: robot models publish topics and transforms through the same graph.",
+        "What to keep practicing: ros2 node, ros2 topic, ros2 interface, rqt_graph, and ros2 bag."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Close by saying that the next session builds on this graph view with robot description, frames, TF, and RViz visualization.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS Media and Visual Assets"
+      ],
+      "explanation_style": "Build a picture for Bridge To The Next Session first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Bridge To The Next Session connected to the lab sequence: the ROS graph is the foundation under robot descriptions, transforms, RViz, and eventually MoveIt.",
+      "delivery_goal": "Students should leave with closure for this session and a clear reason to care about robot description and TF next.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">ROS 2 command line map</title>
+  <desc id="desc">A central ros2 command connected to common subcommands for packages, nodes, topics, services, actions, interfaces, parameters, and bags.</desc>
+  <rect width="1200" height="720" fill="#f8fafc"/>
+  <text x="600" y="70" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="800" fill="#0f172a">Think of the CLI as one command family</text>
+
+  <g>
+    <circle cx="600" cy="360" r="92" fill="#0f172a"/>
+    <text x="600" y="374" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="46" font-weight="800" fill="#ffffff">ros2</text>
+  </g>
+
+  <g stroke="#94a3b8" stroke-width="4" stroke-linecap="round">
+    <line x1="526" y1="304" x2="315" y2="155"/>
+    <line x1="600" y1="268" x2="600" y2="135"/>
+    <line x1="674" y1="304" x2="885" y2="155"/>
+    <line x1="508" y1="360" x2="250" y2="360"/>
+    <line x1="692" y1="360" x2="950" y2="360"/>
+    <line x1="526" y1="416" x2="315" y2="565"/>
+    <line x1="600" y1="452" x2="600" y2="590"/>
+    <line x1="674" y1="416" x2="885" y2="565"/>
+  </g>
+
+  <g font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">
+    <rect x="145" y="110" width="300" height="90" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="295" y="145" text-anchor="middle" fill="#0f172a">Packages</text>
+    <text x="295" y="178" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="20" font-weight="500" fill="#334155">pkg create/list</text>
+
+    <rect x="450" y="90" width="300" height="90" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="600" y="125" text-anchor="middle" fill="#0f172a">Nodes</text>
+    <text x="600" y="158" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="20" font-weight="500" fill="#334155">node list/info</text>
+
+    <rect x="755" y="110" width="300" height="90" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="905" y="145" text-anchor="middle" fill="#0f172a">Topics</text>
+    <text x="905" y="178" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="20" font-weight="500" fill="#334155">topic list/echo/info</text>
+
+    <rect x="100" y="315" width="300" height="90" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="250" y="350" text-anchor="middle" fill="#0f172a">Services</text>
+    <text x="250" y="383" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="20" font-weight="500" fill="#334155">service list/call</text>
+
+    <rect x="800" y="315" width="300" height="90" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="950" y="350" text-anchor="middle" fill="#0f172a">Actions</text>
+    <text x="950" y="383" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="20" font-weight="500" fill="#334155">action list/send_goal</text>
+
+    <rect x="145" y="520" width="300" height="90" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="295" y="555" text-anchor="middle" fill="#0f172a">Interfaces</text>
+    <text x="295" y="588" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="20" font-weight="500" fill="#334155">interface show</text>
+
+    <rect x="450" y="545" width="300" height="90" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="600" y="580" text-anchor="middle" fill="#0f172a">Parameters</text>
+    <text x="600" y="613" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="20" font-weight="500" fill="#334155">param list/get/set</text>
+
+    <rect x="755" y="520" width="300" height="90" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+    <text x="905" y="555" text-anchor="middle" fill="#0f172a">Bags</text>
+    <text x="905" y="588" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="20" font-weight="500" fill="#334155">bag record/info/play</text>
+  </g>
+</svg>

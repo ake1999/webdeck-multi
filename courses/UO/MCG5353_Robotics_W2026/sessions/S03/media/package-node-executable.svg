@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" role="img" aria-labelledby="title desc">
+  <title id="title">Package executable node relationship</title>
+  <desc id="desc">A package folder installs an executable, ros2 run starts it, and it becomes a running node.</desc>
+  <rect width="1000" height="640" fill="#fff"/>
+  <style>
+    .title{font:700 34px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .box{fill:#fff;stroke:#8a1538;stroke-width:3;rx:22}
+    .soft{fill:#f8fafc;stroke:#cbd5e1;stroke-width:3;rx:22}
+    .arrow{stroke:#8a1538;stroke-width:5;fill:none;stroke-linecap:round;marker-end:url(#arrow)}
+    .label{font:700 25px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .code{font:700 20px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#334155}
+    .note{font:500 17px system-ui,Segoe UI,Arial;fill:#475569}
+  </style>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#8a1538"/></marker></defs>
+  <text class="title" x="44" y="58">Package vs Executable vs Node</text>
+  <rect class="soft" x="62" y="150" width="250" height="230"/>
+  <text class="label" x="187" y="200" text-anchor="middle">Package</text>
+  <text class="code" x="187" y="244" text-anchor="middle">manipulator_basics/</text>
+  <text class="note" x="187" y="282" text-anchor="middle">source code</text>
+  <text class="note" x="187" y="314" text-anchor="middle">package.xml</text>
+  <text class="note" x="187" y="346" text-anchor="middle">setup.py</text>
+  <rect class="box" x="382" y="185" width="236" height="160"/>
+  <text class="label" x="500" y="232" text-anchor="middle">Executable</text>
+  <text class="code" x="500" y="279" text-anchor="middle">talker</text>
+  <text class="note" x="500" y="313" text-anchor="middle">created by build/install</text>
+  <rect class="soft" x="688" y="150" width="250" height="230"/>
+  <text class="label" x="813" y="200" text-anchor="middle">Node</text>
+  <text class="code" x="813" y="244" text-anchor="middle">/talker</text>
+  <text class="note" x="813" y="282" text-anchor="middle">running process</text>
+  <text class="note" x="813" y="314" text-anchor="middle">publishes/subscribes</text>
+  <path class="arrow" d="M312 265H370"/>
+  <path class="arrow" d="M618 265H676"/>
+  <rect class="box" x="212" y="454" width="576" height="86"/>
+  <text class="code" x="500" y="506" text-anchor="middle">ros2 run manipulator_basics talker</text>
+</svg>

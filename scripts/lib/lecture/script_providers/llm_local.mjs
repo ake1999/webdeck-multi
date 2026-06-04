@@ -446,11 +446,18 @@ export function validateScriptContinuitySegments(segments, requestContext, promp
   const position = requestContext?.slide?.position || "";
   const firstText = String(segments?.[0]?.text || "").trim();
   const allText = asArray(segments).map((segment) => segment.text).join(" ");
-  const restartPattern = /\b(hello everyone|welcome everyone|last session|today|continuing from our (previous|last) discussion|building on our previous discussion|let'?s dive right in)\b/i;
+  const titleText = String(requestContext?.slide?.raw?.title || requestContext?.slide?.title || "").trim().toLowerCase();
+  const titleAllowsToday = /\btoday\b/.test(titleText);
+  const restartPattern = /\b(hello everyone|welcome everyone|last session|continuing from our (previous|last) discussion|building on our previous discussion|let'?s dive right in)\b/i;
+  const todayRestartPattern = /\btoday,?\s+(we('|’)re|we are|we('|’)ll|we will|i('|’)m|i am|the goal is|our goal is|we need to|we focus|we are focusing|we want to)\b/i;
+  const hasTodayRestart = (value) => todayRestartPattern.test(value) || (!titleAllowsToday && /\btoday\b/i.test(value));
   if (position !== "first" && (/^(hello|welcome)\b/i.test(firstText) || restartPattern.test(firstText))) {
     errors.push("Middle and final slides must not restart the lecture with hello/welcome/today/previous-discussion language; bridge from prior context.");
   }
-  if (position !== "first" && restartPattern.test(allText)) {
+  if (position !== "first" && hasTodayRestart(firstText)) {
+    errors.push("Middle and final slides must not restart the lecture with hello/welcome/today/previous-discussion language; bridge from prior context.");
+  }
+  if (position !== "first" && (restartPattern.test(allText) || hasTodayRestart(allText))) {
     errors.push("Middle and final slides must not contain hello/welcome/today/previous-discussion restart language.");
   }
   if (/\b(the next key term|once .* is clear|this slide covers)\b/i.test(allText)) {

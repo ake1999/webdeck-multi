@@ -968,7 +968,7 @@ export function validateSlideVideoControls({ motionRequests, avatarPlan }) {
     }
   }
 
-  const forbiddenPattern = /(shoulder|elbow|wrist|finger|hip|foot).*rotation|joint|curve/i;
+  const forbiddenPattern = /((shoulder|elbow|wrist|finger|hip|foot)[A-Za-z0-9_ -]*rotation|joint[A-Za-z0-9_ -]*(angle|rotation|curve)|animation[A-Za-z0-9_ -]*curve|keyframe[A-Za-z0-9_ -]*curve)/i;
   const serialized = JSON.stringify({ motionRequests, avatarPlan });
   if (forbiddenPattern.test(serialized)) errors.push("Control artifacts include forbidden exact joint/curve language.");
   for (const request of requests) {

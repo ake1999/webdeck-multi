@@ -76,6 +76,34 @@ const COURSE_PROFILES = {
       methods: ["mental model", "guided build", "debugging checkpoints", "recap"],
     },
   },
+  "UO/MCG5353_Robotics_W2026": {
+    audience_level: "undergraduate mechanical engineering students learning robotics fundamentals, modeling, control, sensing, and robot-system reasoning",
+    style_notes: [
+      "Keep the tone conceptually clear and engineering-focused.",
+      "Connect equations and definitions to robot behavior students can visualize or test.",
+      "Move from physical intuition to formal representation before asking students to calculate.",
+    ],
+    transition_style: "Move from the robot behavior students can picture to the model, equation, or design decision that explains it.",
+    scene_policy_default: "minimal",
+    object_policy_default: "suggested",
+    topic_defaults: {
+      voice_style: "clear_teacher",
+      tone: "clear_teacher",
+      energy: 0.58,
+      pace: 0.94,
+      attention_mode: "slide_focus",
+      scene_policy: "minimal",
+      avatar_anchor: "right_bottom",
+      autoplay: false,
+    },
+    teaching_arc: {
+      entry_point: "Start from an observable robot behavior, task, or engineering question.",
+      progression: "Build intuition first, then introduce the mathematical or computational representation needed to reason precisely.",
+      destination: "End with a reusable robotics principle students can apply in analysis, design, or implementation.",
+      tone: "clear, rigorous, supportive",
+      methods: ["physical intuition", "define then formalize", "worked reasoning", "recap"],
+    },
+  },
 };
 
 const TOPIC_PROFILES = {
@@ -830,7 +858,11 @@ const EXEMPLAR_SLIDE_OVERRIDES = {
 };
 
 export function buildTopicPedagogyProfile(descriptor) {
-  const courseProfile = COURSE_PROFILES[descriptor.school] || COURSE_PROFILES.AC;
+  const courseProfile =
+    COURSE_PROFILES[`${descriptor.school}/${descriptor.course}`] ||
+    COURSE_PROFILES[descriptor.course] ||
+    COURSE_PROFILES[descriptor.school] ||
+    COURSE_PROFILES.AC;
   const topicProfile = TOPIC_PROFILES[descriptor.topic] || {};
   const topicLabel = humanizeTopicId(descriptor.topic);
   return {

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">Terminal as robotics control surface</title>
+  <desc id="desc">A terminal window with robotics commands connected to install, build, launch, and debug tasks.</desc>
+  <rect width="900" height="560" fill="#fff"/>
+  <style>
+    .screen{fill:#0f172a;stroke:#1e293b;stroke-width:4;rx:24}
+    .tab{fill:#334155}
+    .task{fill:#fff;stroke:#8a1538;stroke-width:3;rx:18}
+    .line{stroke:#8a1538;stroke-width:4;fill:none;stroke-linecap:round}
+    .title{font:700 34px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .term{font:700 22px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#e2e8f0}
+    .prompt{fill:#22c55e}
+    .label{font:700 23px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .note{font:500 17px system-ui,Segoe UI,Arial;fill:#475569}
+  </style>
+  <text class="title" x="52" y="62">Ubuntu Terminal: Robotics Control Surface</text>
+  <rect class="screen" x="80" y="118" width="430" height="300"/>
+  <circle class="tab" cx="120" cy="154" r="11"/>
+  <circle class="tab" cx="153" cy="154" r="11"/>
+  <circle class="tab" cx="186" cy="154" r="11"/>
+  <text class="term" x="112" y="212"><tspan class="prompt">$</tspan> sudo apt install ...</text>
+  <text class="term" x="112" y="262"><tspan class="prompt">$</tspan> colcon build</text>
+  <text class="term" x="112" y="312"><tspan class="prompt">$</tspan> ros2 launch ...</text>
+  <text class="term" x="112" y="362"><tspan class="prompt">$</tspan> ros2 topic list</text>
+  <rect class="task" x="610" y="112" width="220" height="70"/>
+  <text class="label" x="720" y="153" text-anchor="middle">install</text>
+  <rect class="task" x="610" y="222" width="220" height="70"/>
+  <text class="label" x="720" y="263" text-anchor="middle">build</text>
+  <rect class="task" x="610" y="332" width="220" height="70"/>
+  <text class="label" x="720" y="373" text-anchor="middle">launch</text>
+  <rect class="task" x="610" y="442" width="220" height="70"/>
+  <text class="label" x="720" y="483" text-anchor="middle">debug</text>
+  <path class="line" d="M510 206C565 168 570 148 610 148"/>
+  <path class="line" d="M510 260H610"/>
+  <path class="line" d="M510 314C566 330 570 366 610 366"/>
+  <path class="line" d="M406 418C500 488 548 478 610 478"/>
+</svg>

@@ -107,6 +107,14 @@
         title: "Autonomous Mobile Robots (Lab)",
         desc: "Mobile robotics lab with TurtleBot3 simulation and ROS 2.",
       },
+      {
+        school: "UO",
+        code: "MCG5353",
+        term: "W2026",
+        fullId: "MCG5353_Robotics_W2026",
+        title: "Robotics",
+        desc: "University of Ottawa robotics course deck scaffold.",
+      },
     ];
 
     const bySchool = allCourses.filter(c => c.school === school);
@@ -120,7 +128,7 @@
       subtitleEl.textContent = "School of Advanced Technology (OTFT / SAT).";
     } else if (school === "UO") {
       titleEl.textContent = "University of Ottawa — Choose a course";
-      subtitleEl.textContent = "MCG 5138 Autonomous Mobile Robots (lab sequence).";
+      subtitleEl.textContent = "MCG 5138 Autonomous Mobile Robots and MCG 5353 Robotics.";
     } else {
       titleEl.textContent = "Choose a course";
       subtitleEl.textContent = "";

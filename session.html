@@ -59,7 +59,11 @@
 
   <script type="module">
     import { initDeck } from "./shared/deck.js";
-    import { buildDefaultTimelinePath, createLecturePlayer } from "./shared/lecture_player.js";
+    import {
+      buildDefaultAvatarVideoJobPath,
+      buildDefaultTimelinePath,
+      createLecturePlayer,
+    } from "./shared/lecture_player.js";
     import { bootSession } from "./shared/session_loader.js";
 
     const controller = await bootSession({ initDeck });
@@ -100,22 +104,42 @@
         });
 
         const lectureParam = params.get("lecture");
-        const timelinePath = lectureParam === "1"
-          ? buildDefaultTimelinePath(descriptor)
+        const primaryPath = lectureParam === "1"
+          ? buildDefaultAvatarVideoJobPath(descriptor)
           : lectureParam;
 
+        let lectureLoaded = false;
         try {
-          await lecturePlayer.loadFromUrl(timelinePath.startsWith("http")
-            ? timelinePath
-            : `/${timelinePath.replace(/^\/+/, "")}`);
-          document.body.dataset.lectureReady = "true";
-          const shouldAutoplay = params.get("autoplay") === "1"
-            || (!params.has("autoplay") && lecturePlayer.getTimeline()?.autoplay_default);
-          if (shouldAutoplay) {
-            await lecturePlayer.play();
+          await lecturePlayer.loadFromUrl(primaryPath.startsWith("http")
+            ? primaryPath
+            : `/${primaryPath.replace(/^\/+/, "")}`);
+          lectureLoaded = true;
+        } catch (primaryError) {
+          if (lectureParam === "1") {
+            try {
+              const fallbackPath = buildDefaultTimelinePath(descriptor);
+              console.warn("Avatar-video job was not available; trying legacy lecture timeline.", primaryError);
+              await lecturePlayer.loadFromUrl(`/${fallbackPath.replace(/^\/+/, "")}`);
+              lectureLoaded = true;
+            } catch (fallbackError) {
+              console.error("Failed to load teacher media:", fallbackError);
+            }
+          } else {
+            console.error("Failed to load teacher media:", primaryError);
           }
-        } catch (error) {
-          console.error("Failed to load lecture timeline:", error);
+        }
+
+        if (lectureLoaded) {
+          try {
+            document.body.dataset.lectureReady = "true";
+            const shouldAutoplay = params.get("autoplay") === "1"
+              || (!params.has("autoplay") && lecturePlayer.getTimeline()?.autoplay_default);
+            if (shouldAutoplay) {
+              await lecturePlayer.play();
+            }
+          } catch (error) {
+            console.error("Failed to start lecture playback:", error);
+          }
         }
       }
     }

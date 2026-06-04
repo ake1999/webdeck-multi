@@ -14,6 +14,7 @@
     "queue:hy-motion": "node scripts/queue_hy_motion_comfyui.mjs",
     "sync:hy-motion": "node scripts/sync_hy_motion_outputs.mjs",
     "render:slide-video": "node scripts/render_slide_video.mjs",
+    "build:avatar-video-jobs": "node scripts/build_avatar_video_jobs.mjs",
     "build:slide-video-controls": "node scripts/build_slide_video_controls.mjs",
     "test:slide-video-controls": "node scripts/test_slide_video_controls.mjs",
     "test:topic-script-plan": "node scripts/test_topic_script_plan.mjs",

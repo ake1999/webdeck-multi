@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" role="img" aria-labelledby="title desc">
+  <title id="title">ROS 2 Humble apt source setup commands</title>
+  <desc id="desc">Official ROS 2 Humble apt source setup command sequence, wrapped for slide readability.</desc>
+  <rect width="1000" height="640" fill="#ffffff"/>
+  <style>
+    .title{font:700 30px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .note{font:500 18px system-ui,Segoe UI,Arial;fill:#475569}
+    .screen{fill:#0f172a;stroke:#334155;stroke-width:3;rx:18}
+    .code{font:600 18px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#e2e8f0}
+    .prompt{fill:#22c55e}
+  </style>
+  <text class="title" x="44" y="54">ROS 2 apt source setup</text>
+  <text class="note" x="44" y="86">From the ROS 2 Humble Ubuntu install documentation; long lines are wrapped for the slide.</text>
+  <rect class="screen" x="44" y="110" width="912" height="478"/>
+  <text class="code" x="70" y="152"><tspan class="prompt">$</tspan> sudo apt update &amp;&amp; sudo apt install curl -y</text>
+  <text class="code" x="70" y="196"><tspan class="prompt">$</tspan> export ROS_APT_SOURCE_VERSION=$(curl -s \</text>
+  <text class="code" x="106" y="226">https://api.github.com/repos/ros-infrastructure/ \</text>
+  <text class="code" x="106" y="256">ros-apt-source/releases/latest \</text>
+  <text class="code" x="106" y="286">| grep -F "tag_name" | awk -F'"' '{print $4}')</text>
+  <text class="code" x="70" y="342"><tspan class="prompt">$</tspan> curl -L -o /tmp/ros2-apt-source.deb \</text>
+  <text class="code" x="106" y="372">"https://github.com/ros-infrastructure/ros-apt-source/ \</text>
+  <text class="code" x="106" y="402">releases/download/${ROS_APT_SOURCE_VERSION}/ \</text>
+  <text class="code" x="106" y="432">ros2-apt-source_${ROS_APT_SOURCE_VERSION}. \</text>
+  <text class="code" x="106" y="462">$(. /etc/os-release &amp;&amp; echo \</text>
+  <text class="code" x="106" y="492">${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"</text>
+  <text class="code" x="70" y="548"><tspan class="prompt">$</tspan> sudo dpkg -i /tmp/ros2-apt-source.deb</text>
+  <text class="note" x="44" y="620">Copy from the official docs or course guide when installing.</text>
+</svg>

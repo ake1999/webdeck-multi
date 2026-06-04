@@ -12,7 +12,9 @@ usage() {
 Usage: tools/remote_render/push_render_inputs.sh [--config path] [--transport auto|mount|ssh] [--renderMount path] [--dry-run]
 
 Copies only the renderer inputs needed on the render machine:
+  - generated/jobs/tts/
   - generated/jobs/slide_video/
+  - generated/jobs/avatar_video/
   - selected generated/lectures/ files
   - generated/outputs/audio/
   - generated/outputs/alignment/
@@ -139,16 +141,34 @@ if [[ "$TRANSPORT" == "mount" ]]; then
   echo "Pushing render inputs from $MAIN_REPO to mounted render repo $MOUNT_PATH"
   if [[ "$DRY_RUN" -eq 0 ]]; then
     mkdir -p \
+      "$MOUNT_PATH/generated/jobs/tts" \
       "$MOUNT_PATH/generated/jobs/slide_video" \
+      "$MOUNT_PATH/generated/jobs/avatar_video" \
       "$MOUNT_PATH/generated/lectures" \
       "$MOUNT_PATH/generated/outputs/audio" \
       "$MOUNT_PATH/generated/outputs/alignment" \
       "$MOUNT_PATH/generated/controls/slide_video"
   fi
 
+  if [[ -d generated/jobs/tts ]]; then
+    rsync -avz --mkpath "${DRY_ARGS[@]}" \
+      generated/jobs/tts/ \
+      "$MOUNT_PATH/generated/jobs/tts/"
+  else
+    echo "Warning: generated/jobs/tts/ does not exist locally; skipping TTS jobs sync." >&2
+  fi
+
   rsync -avz --mkpath "${DRY_ARGS[@]}" \
     generated/jobs/slide_video/ \
     "$MOUNT_PATH/generated/jobs/slide_video/"
+
+  if [[ -d generated/jobs/avatar_video ]]; then
+    rsync -avz --mkpath "${DRY_ARGS[@]}" \
+      generated/jobs/avatar_video/ \
+      "$MOUNT_PATH/generated/jobs/avatar_video/"
+  else
+    echo "Warning: generated/jobs/avatar_video/ does not exist locally; skipping avatar-video jobs sync." >&2
+  fi
 
   rsync -avz --mkpath "${DRY_ARGS[@]}" \
     --include='*/' \
@@ -189,9 +209,25 @@ fi
 
 echo "Pushing render inputs from $MAIN_REPO to ${RENDER_USER}@${RENDER_HOST}:${RENDER_REPO}"
 
+if [[ -d generated/jobs/tts ]]; then
+  rsync -avz --mkpath "${DRY_ARGS[@]}" -e "$RSYNC_RSH" \
+    generated/jobs/tts/ \
+    "${REMOTE}/generated/jobs/tts/"
+else
+  echo "Warning: generated/jobs/tts/ does not exist; skipping TTS jobs sync." >&2
+fi
+
 rsync -avz --mkpath "${DRY_ARGS[@]}" -e "$RSYNC_RSH" \
   generated/jobs/slide_video/ \
   "${REMOTE}/generated/jobs/slide_video/"
+
+if [[ -d generated/jobs/avatar_video ]]; then
+  rsync -avz --mkpath "${DRY_ARGS[@]}" -e "$RSYNC_RSH" \
+    generated/jobs/avatar_video/ \
+    "${REMOTE}/generated/jobs/avatar_video/"
+else
+  echo "Warning: generated/jobs/avatar_video/ does not exist; skipping avatar-video jobs sync." >&2
+fi
 
 rsync -avz --mkpath "${DRY_ARGS[@]}" -e "$RSYNC_RSH" \
   --include='*/' \

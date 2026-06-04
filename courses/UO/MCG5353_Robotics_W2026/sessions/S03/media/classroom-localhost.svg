@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">ROS localhost classroom mode</title>
+  <desc id="desc">Two laptops on a classroom network with cross-machine ROS discovery blocked when ROS_LOCALHOST_ONLY is set.</desc>
+  <rect width="1200" height="720" fill="#f8fafc"/>
+  <text x="600" y="75" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#0f172a">Classroom networks can make ROS systems see each other</text>
+
+  <g transform="translate(120 180)">
+    <rect x="0" y="80" width="320" height="205" rx="18" fill="#111827"/>
+    <rect x="24" y="105" width="272" height="150" rx="10" fill="#dbeafe"/>
+    <rect x="85" y="285" width="150" height="24" rx="8" fill="#475569"/>
+    <rect x="50" y="310" width="220" height="26" rx="10" fill="#64748b"/>
+    <circle cx="160" cy="180" r="45" fill="#0f172a"/>
+    <text x="160" y="190" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="26" font-weight="800" fill="#ffffff">A</text>
+    <text x="160" y="375" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#0f172a">Student A</text>
+  </g>
+
+  <g transform="translate(760 180)">
+    <rect x="0" y="80" width="320" height="205" rx="18" fill="#111827"/>
+    <rect x="24" y="105" width="272" height="150" rx="10" fill="#fee2e2"/>
+    <rect x="85" y="285" width="150" height="24" rx="8" fill="#475569"/>
+    <rect x="50" y="310" width="220" height="26" rx="10" fill="#64748b"/>
+    <circle cx="160" cy="180" r="45" fill="#0f172a"/>
+    <text x="160" y="190" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="26" font-weight="800" fill="#ffffff">B</text>
+    <text x="160" y="375" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#0f172a">Student B</text>
+  </g>
+
+  <path d="M455 335 C525 280 675 280 745 335" fill="none" stroke="#ef4444" stroke-width="8" stroke-dasharray="18 14" stroke-linecap="round"/>
+  <path d="M590 285 L610 385" stroke="#ef4444" stroke-width="12" stroke-linecap="round"/>
+  <path d="M610 285 L590 385" stroke="#ef4444" stroke-width="12" stroke-linecap="round"/>
+
+  <rect x="255" y="555" width="690" height="86" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+  <text x="600" y="590" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#0f172a">Temporary isolation when asked</text>
+  <text x="600" y="623" text-anchor="middle" font-family="Ubuntu Mono, Consolas, monospace" font-size="24" fill="#334155">export ROS_LOCALHOST_ONLY=1</text>
+  <text x="600" y="672" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" fill="#475569">Use only when you do not need ROS to talk to another machine.</text>
+</svg>

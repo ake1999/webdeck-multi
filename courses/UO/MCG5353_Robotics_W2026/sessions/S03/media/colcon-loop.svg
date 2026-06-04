@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">Colcon edit build source run loop</title>
+  <desc id="desc">Circular workflow diagram showing edit, build, source, run, and debug.</desc>
+  <rect width="900" height="560" fill="#fff"/>
+  <style>
+    .box{fill:#fff;stroke:#8a1538;stroke-width:3;rx:18}
+    .soft{fill:#f8fafc;stroke:#cbd5e1;stroke-width:3;rx:18}
+    .arrow{stroke:#8a1538;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow)}
+    .title{font:700 34px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .label{font:700 25px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#0f172a}
+    .note{font:500 18px system-ui,Segoe UI,Arial;fill:#475569}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#8a1538"/>
+    </marker>
+  </defs>
+  <text class="title" x="52" y="62">The Robotics Build Loop</text>
+  <rect class="box" x="86" y="128" width="230" height="92"/>
+  <text class="label" x="201" y="166" text-anchor="middle">edit</text>
+  <text class="note" x="201" y="197" text-anchor="middle">inside src/</text>
+  <rect class="soft" x="585" y="128" width="230" height="92"/>
+  <text class="label" x="700" y="166" text-anchor="middle">cb</text>
+  <text class="note" x="700" y="197" text-anchor="middle">colcon build</text>
+  <rect class="soft" x="585" y="340" width="230" height="92"/>
+  <text class="label" x="700" y="378" text-anchor="middle">si</text>
+  <text class="note" x="700" y="409" text-anchor="middle">source overlay</text>
+  <rect class="box" x="86" y="340" width="230" height="92"/>
+  <text class="label" x="201" y="378" text-anchor="middle">run / inspect</text>
+  <text class="note" x="201" y="409" text-anchor="middle">ros2, rqt, RViz</text>
+  <path class="arrow" d="M316 174H570"/>
+  <path class="arrow" d="M700 220v105"/>
+  <path class="arrow" d="M585 386H331"/>
+  <path class="arrow" d="M201 340V235"/>
+  <text class="note" x="450" y="497" text-anchor="middle">When something changes: build, source, then run again.</text>
+</svg>

@@ -17,6 +17,18 @@ const SCHOOL_CONFIG = {
   },
 };
 
+const COURSE_CONFIG = {
+  ROB9205_Industrial_Robots_W2026: {
+    defaultHud: "ROB9205 — INDUSTRIAL ROBOTS",
+  },
+  MCG5138_Autonomous_Mobile_Robots_W2026: {
+    defaultHud: "MCG 5138 — AUTONOMOUS MOBILE ROBOTS",
+  },
+  MCG5353_Robotics_W2026: {
+    defaultHud: "MCG 5353 — ROBOTICS",
+  },
+};
+
 export async function bootSession({ initDeck }) {
   const params = new URLSearchParams(window.location.search);
 
@@ -98,18 +110,23 @@ export async function bootSession({ initDeck }) {
 
     // 4) Decide theme based on school
     const schoolCfg = SCHOOL_CONFIG[school] || SCHOOL_CONFIG.AC;
+    const courseCfg = COURSE_CONFIG[course] || {};
+    const runtimeCfg = {
+      ...schoolCfg,
+      ...courseCfg,
+    };
 
     const hudDefault =
-      (topicMeta && topicMeta.hudDefault) || schoolCfg.defaultHud;
+      (topicMeta && topicMeta.hudDefault) || runtimeCfg.defaultHud;
 
-    const hudPrefix = (topicMeta && topicMeta.hudPrefix) || schoolCfg.hudPrefix;
+    const hudPrefix = (topicMeta && topicMeta.hudPrefix) || runtimeCfg.hudPrefix;
 
-    const email = (topicMeta && topicMeta.email) || schoolCfg.email;
+    const email = (topicMeta && topicMeta.email) || runtimeCfg.email;
 
     const logoSrc =
       topicMeta && topicMeta.logoSrc != null
         ? topicMeta.logoSrc
-        : schoolCfg.logoSrc;
+        : runtimeCfg.logoSrc;
 
     // Update HUD label with topic title if available
     if (hudLabel) {

@@ -23,6 +23,13 @@ function createOverlayLayer(className, id) {
   return layer;
 }
 
+function normalizeFocusWord(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
+}
+
 export function initDeck(config) {
   const {
     slidesData = [],
@@ -139,6 +146,15 @@ export function initDeck(config) {
     const vh = window.innerHeight;
     currentScale = Math.min(vw / deckWidth, vh / deckHeight) * fitPadding;
     deckScale.style.setProperty("--deck-scale", String(currentScale));
+    window.dispatchEvent(
+      new CustomEvent("webdeck:deck-resize", {
+        detail: {
+          width: deckWidth,
+          height: deckHeight,
+          scale: currentScale,
+        },
+      }),
+    );
   }
 
   function resetMCQ(slideEl) {
@@ -178,6 +194,223 @@ export function initDeck(config) {
     return runtime.slides[currentSlide]?.slideId || "";
   }
 
+  function currentSlideElement() {
+    return slides[currentSlide] || null;
+  }
+
+  function getLogicalSize() {
+    return {
+      width: deckWidth,
+      height: deckHeight,
+      scale: currentScale,
+    };
+  }
+
+  function elementBoxForTarget(slideId, elementId) {
+    const target = targetElementFor(slideId, elementId);
+    if (!target) return null;
+    return elementBoxFromRect(target.getBoundingClientRect(), target, elementId);
+  }
+
+  function targetElementFor(slideId, elementId) {
+    const slideIndex = findSlideIndex(slideId || currentSlideId());
+    const scope = slideIndex >= 0 ? slides[slideIndex] : slides[currentSlide];
+    if (!scope || !elementId) return null;
+
+    const escaped = escapeSelectorValue(elementId);
+    return scope.querySelector(`[data-element-id="${escaped}"]`)
+      || scope.querySelector(`[data-element-type="${escaped}"]`);
+  }
+
+  function elementBoxFromRect(rect, target, elementId, extra = {}) {
+    const deckRect = deck.getBoundingClientRect();
+    const scale = currentScale || 1;
+
+    return {
+      left: (rect.left - deckRect.left) / scale,
+      top: (rect.top - deckRect.top) / scale,
+      width: rect.width / scale,
+      height: rect.height / scale,
+      right: (rect.right - deckRect.left) / scale,
+      bottom: (rect.bottom - deckRect.top) / scale,
+      elementId: target.dataset.elementId || elementId,
+      elementType: target.dataset.elementType || "",
+      label: target.dataset.elementLabel || "",
+      ...extra,
+    };
+  }
+
+  function textNodesForElement(target) {
+    const nodes = [];
+    const walker = document.createTreeWalker(
+      target,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node) {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          const parent = node.parentElement;
+          if (parent && ["SCRIPT", "STYLE"].includes(parent.tagName)) return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        },
+      },
+    );
+
+    while (walker.nextNode()) {
+      nodes.push(walker.currentNode);
+    }
+    return nodes;
+  }
+
+  function textIndexForNodes(nodes) {
+    let cursor = 0;
+    return nodes.map((node) => {
+      const start = cursor;
+      const text = node.nodeValue || "";
+      cursor += text.length;
+      return {
+        node,
+        text,
+        start,
+        end: cursor,
+      };
+    });
+  }
+
+  function rangeForOffsets(indexedNodes, startOffset, endOffset) {
+    if (!indexedNodes.length) return null;
+    const start = Math.max(0, startOffset);
+    const end = Math.max(start, endOffset);
+    const startNode = indexedNodes.find((entry) => start >= entry.start && start <= entry.end)
+      || indexedNodes[0];
+    const endNode = [...indexedNodes].reverse().find((entry) => end >= entry.start && end <= entry.end)
+      || indexedNodes[indexedNodes.length - 1];
+    if (!startNode || !endNode) return null;
+
+    const range = document.createRange();
+    range.setStart(startNode.node, Math.max(0, Math.min(start - startNode.start, startNode.text.length)));
+    range.setEnd(endNode.node, Math.max(0, Math.min(end - endNode.start, endNode.text.length)));
+    return range;
+  }
+
+  function rectsForRange(range, target, elementId, extra = {}) {
+    const rects = Array.from(range.getClientRects())
+      .filter((rect) => rect.width > 1 && rect.height > 1);
+    if (!rects.length) return [];
+    return rects.map((rect) => elementBoxFromRect(rect, target, elementId, extra));
+  }
+
+  function tokenRangesForIndexedText(indexedNodes) {
+    const fullText = indexedNodes.map((entry) => entry.text).join("");
+    const ranges = [];
+    const pattern = /[\p{L}\p{N}]+(?:['’.-][\p{L}\p{N}]+)*/gu;
+    let match = pattern.exec(fullText);
+    while (match) {
+      ranges.push({
+        text: match[0],
+        normalized: normalizeFocusWord(match[0]),
+        start: match.index,
+        end: match.index + match[0].length,
+      });
+      match = pattern.exec(fullText);
+    }
+    return ranges.filter((range) => range.normalized);
+  }
+
+  function wordTokenForFocus(tokens, words, wordIndex) {
+    const sourceWords = Array.isArray(words) ? words : [];
+    const word = sourceWords[wordIndex]?.word || sourceWords[wordIndex]?.text || "";
+    const normalized = normalizeFocusWord(word);
+    if (!normalized) return null;
+
+    const occurrence = sourceWords
+      .slice(0, wordIndex + 1)
+      .filter((entry) => normalizeFocusWord(entry?.word || entry?.text || "") === normalized)
+      .length;
+    let seen = 0;
+    for (const token of tokens) {
+      if (token.normalized !== normalized) continue;
+      seen += 1;
+      if (seen === occurrence) return token;
+    }
+
+    return tokens.find((token) => token.normalized === normalized) || null;
+  }
+
+  function lineForProgress(lineBoxes, progress) {
+    if (!lineBoxes.length) return null;
+    const ordered = [...lineBoxes].sort((left, right) => {
+      if (Math.abs(left.top - right.top) > 3) return left.top - right.top;
+      return left.left - right.left;
+    });
+    const index = Math.max(0, Math.min(
+      ordered.length - 1,
+      Math.floor(Math.max(0, Math.min(Number(progress || 0), 0.999)) * ordered.length),
+    ));
+    return ordered[index];
+  }
+
+  function groupedLineBoxes(boxes) {
+    const sorted = [...boxes].sort((left, right) => {
+      if (Math.abs(left.top - right.top) > 3) return left.top - right.top;
+      return left.left - right.left;
+    });
+    const lines = [];
+    for (const box of sorted) {
+      const line = lines.find((item) => Math.abs(item.top - box.top) <= 4);
+      if (!line) {
+        lines.push({ ...box });
+        continue;
+      }
+      const left = Math.min(line.left, box.left);
+      const top = Math.min(line.top, box.top);
+      const right = Math.max(line.right, box.right);
+      const bottom = Math.max(line.bottom, box.bottom);
+      line.left = left;
+      line.top = top;
+      line.right = right;
+      line.bottom = bottom;
+      line.width = right - left;
+      line.height = bottom - top;
+    }
+    return lines;
+  }
+
+  function textFocusBoxForTarget(slideId, elementId, options = {}) {
+    const target = targetElementFor(slideId, elementId);
+    if (!target) return null;
+
+    const nodes = textNodesForElement(target);
+    const indexedNodes = textIndexForNodes(nodes);
+    if (!indexedNodes.length) return null;
+
+    const fullRange = rangeForOffsets(indexedNodes, 0, indexedNodes.at(-1).end);
+    const lineBoxes = fullRange
+      ? groupedLineBoxes(rectsForRange(fullRange, target, elementId, { focusMode: "line" }))
+      : [];
+
+    const wordIndex = Number(options.wordIndex);
+    if (Number.isInteger(wordIndex) && wordIndex >= 0) {
+      const token = wordTokenForFocus(
+        tokenRangesForIndexedText(indexedNodes),
+        options.words,
+        wordIndex,
+      );
+      if (token) {
+        const wordRange = rangeForOffsets(indexedNodes, token.start, token.end);
+        const wordBoxes = wordRange
+          ? rectsForRange(wordRange, target, elementId, { focusMode: "word" })
+          : [];
+        if (wordBoxes.length) {
+          return wordBoxes[0];
+        }
+      }
+    }
+
+    const lineBox = lineForProgress(lineBoxes, options.progress);
+    if (lineBox) return lineBox;
+    return elementBoxForTarget(slideId, elementId);
+  }
+
   function refreshDebug() {
     if (!debugEnabled) {
       clearDebugOverlay(debugLayer);
@@ -210,6 +443,14 @@ export function initDeck(config) {
     updateHud();
     updateTopButtons();
     refreshDebug();
+    window.dispatchEvent(
+      new CustomEvent("webdeck:slide-change", {
+        detail: {
+          slideId: currentSlideId(),
+          slideIndex: currentSlide,
+        },
+      }),
+    );
 
     return true;
   }
@@ -461,6 +702,10 @@ export function initDeck(config) {
     slides: runtime.slides,
     getCurrentSlideId: currentSlideId,
     getCurrentSlideIndex: () => currentSlide,
+    getCurrentSlideElement: currentSlideElement,
+    getLogicalSize,
+    getElementBox: elementBoxForTarget,
+    getElementTextFocusBox: textFocusBoxForTarget,
     getSlideIds: () => runtime.slides.map((slide) => slide.slideId),
     goToSlide,
     nextSlide,

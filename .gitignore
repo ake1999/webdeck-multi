@@ -4,6 +4,9 @@ __pycache__/
 .codex
 .codex/
 .cache/
+build/
+install/
+log/
 
 # Local machine-specific render/remote config
 tools/remote_render/render_machine.config.json

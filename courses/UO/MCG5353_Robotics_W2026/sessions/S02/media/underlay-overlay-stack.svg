@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">ROS underlay and overlay stack</title>
+  <desc id="desc">Layered diagram showing Ubuntu at bottom, ROS Humble underlay, and ros2_ws overlay.</desc>
+  <rect width="900" height="560" fill="#fff"/>
+  <style>
+    .base{fill:#f1f5f9;stroke:#64748b;stroke-width:3;rx:20}
+    .underlay{fill:#eff6ff;stroke:#2563eb;stroke-width:3;rx:20}
+    .overlay{fill:#fff1f2;stroke:#8a1538;stroke-width:4;rx:20}
+    .arrow{stroke:#8a1538;stroke-width:5;fill:none;stroke-linecap:round;marker-end:url(#arrow)}
+    .title{font:700 34px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .label{font:700 27px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#0f172a}
+    .note{font:500 19px system-ui,Segoe UI,Arial;fill:#475569}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#8a1538"/>
+    </marker>
+  </defs>
+  <text class="title" x="52" y="62">Underlay And Overlay</text>
+  <rect class="base" x="150" y="382" width="600" height="92"/>
+  <text class="label" x="450" y="424" text-anchor="middle">Ubuntu 22.04</text>
+  <text class="note" x="450" y="456" text-anchor="middle">operating system</text>
+  <rect class="underlay" x="190" y="266" width="520" height="92"/>
+  <text class="label" x="450" y="308" text-anchor="middle">/opt/ros/humble</text>
+  <text class="note" x="450" y="340" text-anchor="middle">source this first</text>
+  <rect class="overlay" x="230" y="150" width="440" height="92"/>
+  <text class="label" x="450" y="192" text-anchor="middle">~/ros2_ws/install</text>
+  <text class="note" x="450" y="224" text-anchor="middle">source this second</text>
+  <path class="arrow" d="M735 412C820 348 820 230 682 188"/>
+  <text class="note" x="745" y="292" text-anchor="middle">new terminal</text>
+  <text class="note" x="745" y="318" text-anchor="middle">loads bottom to top</text>
+</svg>

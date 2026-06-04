@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" role="img" aria-labelledby="title desc">
+  <title id="title">Python ROS package structure</title>
+  <desc id="desc">Folder diagram for ament python ROS package structure.</desc>
+  <rect width="1000" height="640" fill="#fff"/>
+  <style>
+    .title{font:700 34px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .folder{fill:#fff7ed;stroke:#f97316;stroke-width:3;rx:18}
+    .file{fill:#fff;stroke:#8a1538;stroke-width:3;rx:18}
+    .label{font:700 22px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#0f172a}
+    .note{font:500 16px system-ui,Segoe UI,Arial;fill:#475569}
+  </style>
+  <text class="title" x="44" y="58">Python ROS 2 Package Structure</text>
+  <rect class="folder" x="70" y="120" width="310" height="76"/>
+  <text class="label" x="225" y="166" text-anchor="middle">manipulator_basics/</text>
+  <rect class="file" x="130" y="236" width="260" height="64"/>
+  <text class="label" x="260" y="275" text-anchor="middle">package.xml</text>
+  <text class="note" x="500" y="275">metadata + dependencies</text>
+  <rect class="file" x="130" y="324" width="260" height="64"/>
+  <text class="label" x="260" y="363" text-anchor="middle">setup.py</text>
+  <text class="note" x="500" y="363">entry points for `ros2 run`</text>
+  <rect class="folder" x="130" y="412" width="260" height="64"/>
+  <text class="label" x="260" y="451" text-anchor="middle">resource/</text>
+  <text class="note" x="500" y="451">ament package index marker</text>
+  <rect class="folder" x="130" y="500" width="260" height="64"/>
+  <text class="label" x="260" y="539" text-anchor="middle">manipulator_basics/</text>
+  <text class="note" x="500" y="524">inner Python module</text>
+  <text class="note" x="500" y="552">put `talker.py` and `listener.py` here</text>
+</svg>

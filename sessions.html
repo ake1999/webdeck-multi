@@ -126,6 +126,7 @@
       "ROB9205_Industrial_Robots_W2026": {
         school: "AC",
         displayName: "ROB9205 — Industrial Robots (W2026)",
+        subtitle: "Algonquin College • School of Advanced Technology",
         color: "#86efac",
         sessions: [
           {
@@ -242,6 +243,7 @@
       "MCG5138_Autonomous_Mobile_Robots_W2026": {
         school: "UO",
         displayName: "MCG 5138 — Autonomous Mobile Robots (W2026)",
+        subtitle: "University of Ottawa • MCG 5138 Autonomous Mobile Robots",
         color: "#f97373",
         sessions: [
           {
@@ -353,6 +355,48 @@
             ]
           },
         ]
+      },
+
+      "MCG5353_Robotics_W2026": {
+        school: "UO",
+        displayName: "MCG 5353 — Robotics (W2026)",
+        subtitle: "University of Ottawa • MCG 5353 Robotics",
+        color: "#f97373",
+        sessions: [
+          {
+            id: "S01",
+            label: "Session 01 — Manipulator lab intro & install plan",
+            desc: "Course framing, Ubuntu setup, ROS 2 tools, MoveIt, IK, and planning.",
+            topics: [
+              {
+                id: "01_course_overview",
+                label: "Topic 01 — Robotics lab intro & install plan"
+              },
+            ]
+          },
+          {
+            id: "S02",
+            label: "Session 02 — Ubuntu terminal + ROS 2 setup",
+            desc: "Ubuntu terminal habits, ROS 2 Humble setup, .bashrc aliases, colcon, workspace discipline, and verification.",
+            topics: [
+              {
+                id: "01_ubuntu_terminal_ros2_setup",
+                label: "Topic 01 — Ubuntu terminal + ROS 2 setup"
+              },
+            ]
+          },
+          {
+            id: "S03",
+            label: "Session 03 — ROS 2 graph + packages + debugging",
+            desc: "ROS 2 graph, packages, nodes, topics, services, actions, parameters, rosbag, and manipulator debugging workflow.",
+            topics: [
+              {
+                id: "01_ros2_graph_packages_nodes_debugging",
+                label: "Topic 01 — ROS 2 graph + packages + debugging"
+              },
+            ]
+          },
+        ]
       }
     };
 
@@ -373,9 +417,10 @@
     } else {
       titleEl.textContent = cfg.displayName;
       subtitleEl.textContent =
-        school === "AC"
+        cfg.subtitle ||
+        (school === "AC"
           ? "Algonquin College • School of Advanced Technology"
-          : "University of Ottawa • MCG 5138 Autonomous Mobile Robots";
+          : "University of Ottawa");
 
       sessionsEl.innerHTML = "";
 

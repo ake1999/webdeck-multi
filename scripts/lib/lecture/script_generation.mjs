@@ -733,6 +733,9 @@ export async function generateScriptManifest({
   let lastSpokenExcerpt = "";
 
   for (const [index, slide] of runtime.slides.entries()) {
+    if (options.logScriptProgress !== false) {
+      console.error(`Writing script slide ${index + 1}/${runtime.slides.length}: ${slide.slideId}`);
+    }
     const rawSlide = slidesData[index] || {};
     const planSlide = authoring?.slidePlansById?.[slide.slideId] || null;
     const overrideSlide = authoring?.scriptOverridesById?.[slide.slideId] || null;

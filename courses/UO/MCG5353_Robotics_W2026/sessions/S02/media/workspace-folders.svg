@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">ROS 2 workspace folder structure</title>
+  <desc id="desc">Diagram showing ros2_ws with src, build, install, and log folders.</desc>
+  <rect width="900" height="560" fill="#fff"/>
+  <style>
+    .folder{fill:#fff7ed;stroke:#f97316;stroke-width:3;rx:18}
+    .root{fill:#fff;stroke:#8a1538;stroke-width:4;rx:22}
+    .line{stroke:#64748b;stroke-width:4;fill:none;stroke-linecap:round}
+    .title{font:700 34px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .label{font:700 25px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#0f172a}
+    .note{font:500 18px system-ui,Segoe UI,Arial;fill:#475569}
+  </style>
+  <text class="title" x="52" y="62">One Workspace: `~/ros2_ws`</text>
+  <rect class="root" x="300" y="104" width="300" height="82"/>
+  <text class="label" x="450" y="154" text-anchor="middle">~/ros2_ws</text>
+  <path class="line" d="M450 186v64M160 250h580M160 250v58M353 250v58M547 250v58M740 250v58"/>
+  <rect class="folder" x="60" y="308" width="200" height="86"/>
+  <text class="label" x="160" y="346" text-anchor="middle">src/</text>
+  <text class="note" x="160" y="374" text-anchor="middle">your packages</text>
+  <rect class="folder" x="253" y="308" width="200" height="86"/>
+  <text class="label" x="353" y="346" text-anchor="middle">build/</text>
+  <text class="note" x="353" y="374" text-anchor="middle">temporary files</text>
+  <rect class="folder" x="447" y="308" width="200" height="86"/>
+  <text class="label" x="547" y="346" text-anchor="middle">install/</text>
+  <text class="note" x="547" y="374" text-anchor="middle">overlay setup</text>
+  <rect class="folder" x="640" y="308" width="200" height="86"/>
+  <text class="label" x="740" y="346" text-anchor="middle">log/</text>
+  <text class="note" x="740" y="374" text-anchor="middle">build history</text>
+  <rect class="root" x="166" y="452" width="568" height="66"/>
+  <text class="label" x="450" y="494" text-anchor="middle">build from the workspace root</text>
+</svg>

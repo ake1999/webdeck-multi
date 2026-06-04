@@ -71,6 +71,8 @@ function makeOptions(args) {
     scriptMaxRetries: Number(args.scriptMaxRetries ?? 2),
     scriptTimeoutMs: Number(args.scriptTimeoutMs || 60000),
     topicPlanTimeoutMs: Number(args.topicPlanTimeoutMs || args.scriptTimeoutMs || 180000),
+    topicPlanMode: args.topicPlanMode || "",
+    topicPlanMaxRetries: Number(args.topicPlanMaxRetries ?? args.scriptMaxRetries ?? 2),
     allowScriptFallback: args.allowScriptFallback ?? true,
     forceScriptComparison: args.forceScriptComparison || "",
     scriptOverride: args.scriptOverride || "",

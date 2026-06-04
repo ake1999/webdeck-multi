@@ -1,0 +1,1148 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_ubuntu_terminal_ros2_setup",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Begin by connecting back to Session 1: students prepared Ubuntu because today we turn the laptop into a reliable ROS 2 lab machine.",
+    "progression": "Move from terminal habits and Linux paths into ROS 2 Humble installation, environment sourcing, one course workspace, underlay and overlay, verification, and previews of rqt, RViz2, and Gazebo.",
+    "destination": "Students should finish with a working setup and a simple rule for future labs: source the right environment, know where you are, build cleanly, source the overlay, and verify with ROS tools.",
+    "tone": "practical, patient, lab-coach, confidence-building",
+    "methods": [
+      "continuity from previous session",
+      "guided setup",
+      "terminal habits",
+      "verification checkpoints",
+      "common error diagnosis",
+      "handoff to ROS graph debugging"
+    ]
+  },
+  "audience_level": "undergraduate robotics lab students setting up Ubuntu 22.04 and ROS 2 Humble for the first time, with mixed terminal experience",
+  "topic_goal": "Turn the installation from Session 1 into a reliable ROS 2 working environment and teach the terminal habits students will need for every manipulator lab.",
+  "topic_takeaways": [
+    "Students should be able to navigate the terminal without feeling lost.",
+    "Students should understand why sourcing ROS and sourcing the workspace overlay changes what commands and packages are visible.",
+    "Students should have one course workspace and know the build-source-run rhythm.",
+    "Students should be ready for Session 3, where these setup habits become ROS graph and debugging habits."
+  ],
+  "style_notes": [
+    "Speak like a professor guiding students through setup, not like a command manual.",
+    "For command-heavy slides, explain the purpose and verification signal rather than reciting every command.",
+    "Repeat the idea that students should debug in order: environment first, workspace second, package third.",
+    "Close by making Session 3 feel natural: now that the machine is ready, we can understand what ROS is running."
+  ],
+  "transition_style": "Connect each setup habit to the next practical consequence, then close each section with what students should verify before moving on.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.94,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Session 2 - Ubuntu Terminal + ROS 2 Setup"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Open by saying that today is the bridge between installation and the manipulator workflow. The goal is not theory first; the goal is a reliable machine and reliable habits.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Help students understand ubuntu terminal ros2 setup in a way they can explain, apply, and build on later.",
+      "transition_to_next": "Carry this idea forward into Manipulators In Simulation so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame Session 2 - Ubuntu Terminal + ROS 2 Setup as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Session 2 - Ubuntu Terminal + ROS 2 Setup connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Session 2 - Ubuntu Terminal + ROS 2 Setup sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Manipulators In Simulation"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Keep this short. Students only need the course direction: manipulator systems, simulation-first workflow, and ROS tools that build toward MoveIt later.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "This course uses robot manipulators.",
+        "We work in simulation first.",
+        "The stack is Ubuntu 22.04 -> ROS 2 Humble -> RViz2 / rqt -> Gazebo -> MoveIt."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Today's Goal so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "MoveIt Documentation - MoveIt Quickstart in RViz"
+      ],
+      "explanation_style": "Build a picture for Manipulators In Simulation first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Manipulators In Simulation connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Manipulators In Simulation clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "Today's Goal"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "This is the contract for the session. It gives students the practical finish line before the next manipulator topics.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Use basic Ubuntu terminal commands without fear.",
+        "Install and source ROS 2 Humble correctly.",
+        "Create one clean course workspace."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Manipulators In Simulation into Today's Goal so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Ubuntu Terminal: Why It Matters so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Today's Goal to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Today's Goal connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how Today's Goal sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Ubuntu Terminal: Why It Matters"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Robotics students do not need to become Linux administrators today. They do need to become comfortable enough that the terminal stops being a blocker.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "The terminal is the main robotics control surface.",
+        "You install packages from it.",
+        "You build workspaces from it."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Linux Paths You Must Know so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Ubuntu Terminal: Why It Matters first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Ubuntu Terminal: Why It Matters connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Ubuntu Terminal: Why It Matters clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Linux Paths You Must Know"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Make sure students can say what each path means. This one slide prevents many later workspace mistakes.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "/ = root of the whole filesystem",
+        "/home/ = your personal files",
+        "~ = shortcut for your home folder"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Terminal Habits That Save Time so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Linux Paths You Must Know first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Linux Paths You Must Know connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Linux Paths You Must Know clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Terminal Habits That Save Time"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Have students practice Tab completion and history in class. These habits reduce typing errors immediately.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Tab completes commands, folders, and many package names.",
+        "Up and Down move through command history.",
+        "Ctrl+C stops a running command or ROS node.",
+        "Ctrl+L clears the terminal screen."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Terminal Habits That Save Time efficient and procedural, highlighting only the information students need to act or debug correctly.",
+      "story_hint": "Frame the slide as a lab workflow students will run themselves, including what they should verify before moving on.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Terminal Habits That Save Time and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Navigation Commands"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "The biggest beginner terminal mistake is running a command from the wrong folder. Use pwd often.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "pwd -> print the current folder",
+        "ls -> list files and folders",
+        "ls -la -> list hidden files too"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Navigation Commands to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Navigation Commands is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Navigation Commands in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Navigation Commands connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Navigation Commands accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Files And Folders"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Say explicitly that rm does not use a friendly recycle bin in the way students may expect. They should check paths first.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "mkdir lab1 -> create a folder",
+        "touch notes.txt -> create an empty file",
+        "cp notes.txt backup.txt -> copy a file"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Files And Folders to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Files And Folders is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Files And Folders in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Files And Folders connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Files And Folders accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Viewing And Editing Text Files"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Nano is enough for today. Mention Ctrl+O to save and Ctrl+X to exit if you demo it.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "cat file.txt -> print the whole file",
+        "less file.txt -> scroll through a file; press q to quit",
+        "head file.txt -> show the first lines"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Viewing And Editing Text Files to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Viewing And Editing Text Files is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Viewing And Editing Text Files in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Viewing And Editing Text Files connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Viewing And Editing Text Files accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "APT Package Management"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Keep the language precise. update does not update the installed software; it updates package information.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "update refreshes the package list.",
+        "upgrade updates installed packages.",
+        "install downloads a prebuilt package and puts it in system locations."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use APT Package Management to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once APT Package Management is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define APT Package Management in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep APT Package Management connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain APT Package Management accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "ROS 2 Version Baseline"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Students will see newer tutorials online. Tell them newer is not automatically correct for a shared course stack.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Use Ubuntu 22.04 LTS for this course.",
+        "Use ROS 2 Humble for this course.",
+        "Do not switch to Ubuntu 24.04 / Jazzy for this class."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into System Prep Before ROS so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS Media and Visual Assets"
+      ],
+      "explanation_style": "Build a picture for ROS 2 Version Baseline first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep ROS 2 Version Baseline connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture ROS 2 Version Baseline clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "System Prep Before ROS"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This follows the ROS Humble install guidance. A fresh Ubuntu 22.04 system should be upgraded before ROS install work.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Restart if Ubuntu asks you to restart.",
+        "A clean base system avoids package conflicts later."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into ROS 2 Install From The Docs (1/2) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Canonical Ubuntu assets"
+      ],
+      "explanation_style": "Build a picture for System Prep Before ROS first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep System Prep Before ROS connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture System Prep Before ROS clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "ROS 2 Install From The Docs (1/2)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is the first part of the official Humble Ubuntu install flow: UTF-8 locale and Universe repository. Students should use the docs link if they need to copy the commands.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ROS 2 Humble Ubuntu install docs"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into ROS 2 Install From The Docs (2/2) so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Canonical Ubuntu assets"
+      ],
+      "explanation_style": "Build a picture for ROS 2 Install From The Docs (1/2) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep ROS 2 Install From The Docs (1/2) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture ROS 2 Install From The Docs (1/2) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "ROS 2 Install From The Docs (2/2)"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "The long curl command is the official ros2-apt-source install command, wrapped for slide width. The package choice is the official recommended desktop install for this course.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ros-humble-desktop includes ROS, RViz, demos, and tutorials.",
+        "ros-dev-tools gives us tools for building ROS packages.",
+        "ROS 2 Humble Ubuntu install docs"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Source ROS In Current Terminal so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Ubuntu install"
+      ],
+      "explanation_style": "Build a picture for ROS 2 Install From The Docs (2/2) first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep ROS 2 Install From The Docs (2/2) connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture ROS 2 Install From The Docs (2/2) clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Source ROS In Current Terminal"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is the current-terminal version. The next slides add the same base source line to .bashrc so new terminals behave correctly.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "which ros2 should point to a ROS executable.",
+        "printenv ROS_DISTRO should print humble.",
+        "If ros2 is missing, your shell environment is not ready."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into What .bashrc Does so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Understanding nodes"
+      ],
+      "explanation_style": "Build a picture for Source ROS In Current Terminal first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Source ROS In Current Terminal connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Source ROS In Current Terminal clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "What .bashrc Does"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain that .bashrc is powerful but should stay boring. We add only predictable lines.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Every new interactive terminal reads ~/.bashrc.",
+        "We use it to source ROS 2 Humble automatically.",
+        "We also add small aliases to reduce repeated typing."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into .bashrc Part 1: ROS + Basic Helpers so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for What .bashrc Does first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep What .bashrc Does connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture What .bashrc Does clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": ".bashrc Part 1: ROS + Basic Helpers"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "This is adapted from the mobile robotics course style but with no TurtleBot-specific lines.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "eb edits .bashrc.",
+        "sb reloads .bashrc.",
+        "Keep this block minimal and readable."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use .bashrc Part 1: ROS + Basic Helpers to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once .bashrc Part 1: ROS + Basic Helpers is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define .bashrc Part 1: ROS + Basic Helpers in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep .bashrc Part 1: ROS + Basic Helpers connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain .bashrc Part 1: ROS + Basic Helpers accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Create One Course Workspace"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "One clean workspace prevents most early path confusion. Do not let students scatter packages across home.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "colcon build reads packages in src/ and creates build/, install/, and log/.",
+        "Source the overlay so your terminal can find what you just built."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into What colcon build Creates so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Create One Course Workspace first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Create One Course Workspace connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Create One Course Workspace clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "What colcon build Creates"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Students should understand that build, install, and log are generated by colcon. They should not place source code directly in those folders.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "src/ -> source code for packages you write or clone",
+        "build/ -> temporary compile and generation files",
+        "install/ -> finished package output for this workspace"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into .bashrc Part 2: Workspace Aliases so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for What colcon build Creates first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep What colcon build Creates connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture What colcon build Creates clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": ".bashrc Part 2: Workspace Aliases"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "The separation is intentional. Students should learn that building and sourcing are different steps.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ws jumps to the workspace root.",
+        "src jumps to the package folder.",
+        "cb builds; si sources. Keep these separate at first."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use .bashrc Part 2: Workspace Aliases to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once .bashrc Part 2: Workspace Aliases is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define .bashrc Part 2: Workspace Aliases in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep .bashrc Part 2: Workspace Aliases connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain .bashrc Part 2: Workspace Aliases accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "Colcon Autocomplete + colcon_cd"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This matches the documented colcon_cd setup and the user's terminal block. Keep it as the familiar course helper block.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Add the helper block on the right to .bashrc.",
+        "colcon_cd jumps directly to a package folder.",
+        "Tab completion helps complete colcon commands and options."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Underlay And Overlay so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - colcon tutorial"
+      ],
+      "explanation_style": "Build a picture for Colcon Autocomplete + colcon_cd first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Colcon Autocomplete + colcon_cd connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Colcon Autocomplete + colcon_cd clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "Underlay And Overlay"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use one sentence: the underlay is the base ROS installation, and the overlay is what you just built in your workspace.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "/opt/ros/humble is the underlay.",
+        "~/ros2_ws/install is your overlay.",
+        "Source the base first."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Verify ROS: Talker / Listener so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Course diagram"
+      ],
+      "explanation_style": "Build a picture for Underlay And Overlay first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Underlay And Overlay connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Underlay And Overlay clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "Verify ROS: Talker / Listener"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Run this live if time allows. If it fails, check source lines before blaming the install.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Terminal A:",
+        "Terminal B:",
+        "If the listener prints the talker's messages, your base ROS 2 setup works."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Verify ROS: Talker / Listener to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Verify ROS: Talker / Listener is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Verify ROS: Talker / Listener in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Verify ROS: Talker / Listener connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Verify ROS: Talker / Listener accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "Useful ROS CLI Commands"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "The goal is diagnostic reflexes. When a system does not work, first ask what nodes and topics actually exist.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ros2 pkg list -> list installed packages",
+        "ros2 node list -> list running nodes",
+        "ros2 topic list -> list active topics"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into rqt_graph Preview so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Understanding topics"
+      ],
+      "explanation_style": "Build a picture for Useful ROS CLI Commands first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Useful ROS CLI Commands connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Useful ROS CLI Commands clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "rqt_graph Preview"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Connect this to future manipulator systems. When many nodes run together, the graph is the fastest first inspection tool.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "rqt_graph draws nodes and topics visually.",
+        "Use it to see who publishes and who subscribes.",
+        "Open it early instead of guessing."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into RViz2 Preview so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS 2 Documentation - Understanding topics"
+      ],
+      "explanation_style": "Build a picture for rqt_graph Preview first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep rqt_graph Preview connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture rqt_graph Preview clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 25,
+        "source_title": "RViz2 Preview"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This distinction matters. Gazebo simulates physics and worlds; RViz visualizes ROS data.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "RViz2 is visualization, not simulation.",
+        "Use it to inspect robot state, frames, markers, and trajectories.",
+        "Later, we will use RViz2 with robot arms and MoveIt."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into Gazebo For Later Simulation so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "TurtleBot",
+        "RViz panel",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Build a picture for RViz2 Preview first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Tell it like a debugging moment where the robot is not showing up correctly and students need the right mental model to fix it.",
+      "delivery_goal": "Students should be able to picture RViz2 Preview clearly before the formal details continue.",
+      "scene_hint": "Show the robot model, TF, and RViz displays as a simple pipeline so students can connect each layer to the visual outcome."
+    },
+    {
+      "slide_ref": {
+        "index": 26,
+        "source_title": "Gazebo For Later Simulation"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Keep this as a preview only. The point today is not Gazebo skills; it is keeping the version path consistent.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Gazebo will be our simulation environment later.",
+        "For Humble, use the tested course path:",
+        "Humble's default Gazebo pairing through this path is Fortress."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause the formal explanation and build a picture students can carry into the next technical slide.",
+      "transition_to_next": "Carry this idea forward into What Not To Do Today so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Gazebo media"
+      ],
+      "explanation_style": "Build a picture for Gazebo For Later Simulation first, then connect that picture back to the formal meaning students must remember.",
+      "story_hint": "Keep Gazebo For Later Simulation connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to picture Gazebo For Later Simulation clearly before the formal details continue.",
+      "scene_hint": "Use the visual or interactive asset on this slide as the main anchor, then return attention to the slide summary before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 27,
+        "source_title": "What Not To Do Today"
+      },
+      "slide_role": "setup",
+      "importance": "medium",
+      "narration_seed": "This slide is protective. MoveIt is important, but the base stack must be stable first.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Do not install random newer tutorial stacks.",
+        "Do not switch to Ubuntu 24.04 / Jazzy for this course.",
+        "Do not force a full MoveIt source build today."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Gazebo For Later Simulation into What Not To Do Today so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Common Setup Errors so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use What Not To Do Today to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep What Not To Do Today connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should understand how What Not To Do Today sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 28,
+        "source_title": "Common Setup Errors"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "The debugging order is: check source, check workspace, check package, then investigate deeper.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ros2: command not found -> ROS base was not sourced.",
+        "package not found -> package missing, wrong terminal, or overlay not sourced.",
+        "Built successfully but old behavior remains -> source the overlay again."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Common Setup Errors to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Common Setup Errors is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Common Setup Errors in plain technical language, then attach one practical robotics consequence or example.",
+      "story_hint": "Keep Common Setup Errors connected to the lab workflow students will use later in ROS 2 and mobile robotics.",
+      "delivery_goal": "Students should be able to explain Common Setup Errors accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 29,
+        "source_title": "End Checklist"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Close by treating this as a readiness check for Session 3. Students should leave knowing the machine is ready and that next time we use these tools to inspect the ROS graph.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Ubuntu is updated.",
+        "ROS 2 Humble is installed.",
+        "source /opt/ros/humble/setup.bash works.",
+        "The course workspace builds, sources, and can run the talker/listener test."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use End Checklist to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Close by saying that Session 3 will use this exact setup to understand packages, nodes, topics, rqt_graph, and debugging.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use End Checklist as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep End Checklist connected to the next lab: a clean setup lets the class spend time understanding ROS instead of fixing missing environment variables.",
+      "delivery_goal": "Students should leave with a reliable setup checklist and a clear expectation for Session 3."
+    }
+  ]
+}

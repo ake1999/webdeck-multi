@@ -215,6 +215,53 @@ function buildTopicPlanJsonSchema(slideIds) {
   };
 }
 
+function buildTopicOverviewJsonSchema() {
+  return {
+    type: "object",
+    additionalProperties: false,
+    required: ["opening_intent", "closing_intent", "lesson_arc"],
+    properties: {
+      opening_intent: { type: "string", minLength: 1 },
+      closing_intent: { type: "string", minLength: 1 },
+      lesson_arc: {
+        type: "array",
+        minItems: 1,
+        maxItems: 10,
+        items: { type: "string" },
+      },
+    },
+  };
+}
+
+function buildSingleSlidePlanJsonSchema() {
+  return {
+    type: "object",
+    additionalProperties: false,
+    required: [
+      "speaking_goal",
+      "bridge_in",
+      "bridge_out",
+      "key_terms_introduced",
+      "likely_callbacks",
+      "student_memory",
+    ],
+    properties: {
+      speaking_goal: { type: "string", minLength: 1 },
+      bridge_in: { type: "string", minLength: 1 },
+      bridge_out: { type: "string", minLength: 1 },
+      key_terms_introduced: {
+        type: "array",
+        items: { type: "string" },
+      },
+      likely_callbacks: {
+        type: "array",
+        items: { type: "string" },
+      },
+      student_memory: { type: "string", minLength: 1 },
+    },
+  };
+}
+
 function cleanString(value) {
   return String(value || "").replace(/\s+/g, " ").trim();
 }
@@ -432,6 +479,20 @@ function severeTopicPlanRepairWarnings(warnings) {
   ));
 }
 
+function semanticTopicPlanWarnings(plan) {
+  const warnings = [];
+  const opening = cleanString(plan?.opening_intent);
+  const closing = cleanString(plan?.closing_intent);
+  const badPresentationPhrases = /create (a )?presentation|creating (a )?presentation|presentation creation|given slides data|generate slides/i;
+  if (badPresentationPhrases.test(opening)) {
+    warnings.push("opening_intent describes presentation creation instead of teaching students.");
+  }
+  if (badPresentationPhrases.test(closing)) {
+    warnings.push("closing_intent describes presentation creation instead of a student takeaway.");
+  }
+  return warnings;
+}
+
 async function postJson(url, payload, timeoutMs) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -450,6 +511,45 @@ async function postJson(url, payload, timeoutMs) {
   }
 }
 
+async function callOllamaJson({ endpoint, model, temperature, systemPrompt, userPrompt, schema, timeoutMs }) {
+  const response = await postJson(endpoint.endsWith("/api/chat") ? endpoint : `${endpoint}/api/chat`, {
+    model,
+    stream: false,
+    format: schema,
+    options: { temperature },
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+  }, timeoutMs);
+  const content = extractContentString(response?.message?.content || response?.response || "");
+  return maybeJsonFragment(content);
+}
+
+async function callOpenAiCompatibleJson({ endpoint, model, temperature, systemPrompt, userPrompt, timeoutMs }) {
+  const url = endpoint.endsWith("/chat/completions")
+    ? endpoint
+    : endpoint.includes("/v1")
+      ? `${endpoint}/chat/completions`
+      : `${endpoint}/v1/chat/completions`;
+  const response = await postJson(url, {
+    model,
+    temperature,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+  }, timeoutMs);
+  const content = extractContentString(response?.choices?.[0]?.message?.content || response?.output_text || "");
+  return maybeJsonFragment(content);
+}
+
+async function callJsonByEndpoint({ endpointKind, endpoint, model, temperature, systemPrompt, userPrompt, schema, timeoutMs }) {
+  return endpointKind === "ollama"
+    ? callOllamaJson({ endpoint, model, temperature, systemPrompt, userPrompt, schema, timeoutMs })
+    : callOpenAiCompatibleJson({ endpoint, model, temperature, systemPrompt, userPrompt, timeoutMs });
+}
+
 async function callOllama({ endpoint, model, temperature, promptBundle, context, timeoutMs, slideIds }) {
   const response = await postJson(endpoint.endsWith("/api/chat") ? endpoint : `${endpoint}/api/chat`, {
     model,
@@ -465,6 +565,11 @@ async function callOllama({ endpoint, model, temperature, promptBundle, context,
           "",
           "Example JSON:",
           promptBundle.exampleText,
+          "",
+          "Required slide_id order:",
+          JSON.stringify(slideIds),
+          "",
+          "The slides array must contain exactly these slide_id values once each, in this exact order.",
           "",
           "Topic context JSON:",
           JSON.stringify(context, null, 2),
@@ -494,6 +599,11 @@ async function callOpenAiCompatible({ endpoint, model, temperature, promptBundle
           "Example JSON:",
           promptBundle.exampleText,
           "",
+          "Required slide_id order:",
+          JSON.stringify(asArray(context?.slides).map((slide) => slide.slide_id)),
+          "",
+          "The slides array must contain exactly these slide_id values once each, in this exact order.",
+          "",
           "Topic context JSON:",
           JSON.stringify(context, null, 2),
         ].join("\n"),
@@ -501,6 +611,206 @@ async function callOpenAiCompatible({ endpoint, model, temperature, promptBundle
     ],
   }, timeoutMs);
   return extractContentString(response?.choices?.[0]?.message?.content || response?.output_text || "");
+}
+
+function compactSlidesForOverview(context) {
+  return asArray(context?.slides).map((slide) => ({
+    index: slide.index,
+    position: slide.position,
+    slide_id: slide.slide_id,
+    slide_type: slide.slide_type,
+    title: slide.raw?.title || slide.slide_id,
+    lead: slide.raw?.lead || "",
+    visible_text: asArray(slide.raw?.visible_text).slice(0, 5),
+    slide_role: slide.slide_plan?.slide_role || "",
+    delivery_goal: slide.slide_plan?.delivery_goal || "",
+  }));
+}
+
+function compactSlideForPlanning(slide) {
+  return {
+    index: slide.index,
+    position: slide.position,
+    slide_id: slide.slide_id,
+    slide_type: slide.slide_type,
+    raw: slide.raw,
+    slide_plan: slide.slide_plan,
+    layout: {
+      bbox: slide.layout?.bbox || [],
+      elements: asArray(slide.layout?.elements).slice(0, 18),
+    },
+  };
+}
+
+function normalizeTopicOverviewPayload(payload, context, { promptVersion = "", model = "", provider = "" } = {}) {
+  const deterministic = deterministicTopicScriptPlan(context);
+  return {
+    schema_version: "phase7-topic-script-plan-v1",
+    opening_intent: cleanString(payload?.opening_intent) || deterministic.opening_intent,
+    closing_intent: cleanString(payload?.closing_intent) || deterministic.closing_intent,
+    lesson_arc: normalizeStringArray(payload?.lesson_arc, 10).length
+      ? normalizeStringArray(payload.lesson_arc, 10)
+      : deterministic.lesson_arc,
+    ...(promptVersion ? { prompt_version: promptVersion } : {}),
+    ...(model ? { model_used: model } : {}),
+    ...(provider ? { provider_used: provider } : {}),
+  };
+}
+
+function normalizeSingleSlidePlanPayload(payload, contextSlide) {
+  return {
+    slide_id: contextSlide.slide_id,
+    speaking_goal: cleanString(payload?.speaking_goal),
+    bridge_in: cleanString(payload?.bridge_in),
+    bridge_out: cleanString(payload?.bridge_out),
+    key_terms_introduced: normalizeStringArray(payload?.key_terms_introduced, 8),
+    likely_callbacks: normalizeStringArray(payload?.likely_callbacks, 8),
+    student_memory: cleanString(payload?.student_memory),
+  };
+}
+
+function validateSingleSlidePlanPayload(plan) {
+  const errors = [];
+  for (const key of ["speaking_goal", "bridge_in", "bridge_out", "student_memory"]) {
+    if (!cleanString(plan[key])) errors.push(`${key} must be a non-empty string`);
+  }
+  return errors;
+}
+
+async function buildPerSlideTopicPlanWithLlm({
+  context,
+  promptBundle,
+  endpointKind,
+  endpoint,
+  model,
+  temperature,
+  timeoutMs,
+  maxRetries,
+  reason,
+}) {
+  console.error(`Topic plan one-shot response needed repair; using per-slide LLM planner. Reason: ${reason}`);
+  const systemPrompt = [
+    "You are planning spoken instruction for a technical course.",
+    "Return JSON only.",
+    "The deck already exists. Do not discuss creating slides or creating a presentation.",
+    "Write like a professor planning what students should understand.",
+  ].join(" ");
+
+  const overviewPayload = await callJsonByEndpoint({
+    endpointKind,
+    endpoint,
+    model,
+    temperature,
+    schema: buildTopicOverviewJsonSchema(),
+    timeoutMs,
+    systemPrompt,
+    userPrompt: [
+      "Create only the topic-level speaking overview for this class topic.",
+      "Do not include per-slide plans in this response.",
+      "opening_intent should be how the professor opens the topic for students.",
+      "closing_intent should be the takeaway, reminder, or handoff at the end.",
+      "",
+      "Topic context JSON:",
+      JSON.stringify({
+        topic: context.topic,
+        topic_pedagogy: context.topic_pedagogy,
+        slides: compactSlidesForOverview(context),
+      }, null, 2),
+    ].join("\n"),
+  });
+  if (!isObject(overviewPayload)) {
+    throw new Error("Per-slide planner could not get a valid topic overview JSON response.");
+  }
+  const overview = normalizeTopicOverviewPayload(overviewPayload, context, {
+    promptVersion: promptBundle.version,
+    model,
+    provider: "llm_local_topic_plan_per_slide",
+  });
+  const overviewWarnings = semanticTopicPlanWarnings(overview);
+  if (overviewWarnings.length) {
+    throw new Error(`Per-slide planner produced invalid topic overview: ${overviewWarnings.join(" ")}`);
+  }
+
+  const slides = [];
+  const priorMemory = [];
+  const allSlides = asArray(context?.slides);
+  for (let index = 0; index < allSlides.length; index += 1) {
+    const currentSlide = allSlides[index];
+    console.error(`Planning slide ${index + 1}/${allSlides.length}: ${currentSlide.slide_id}`);
+    const previousSlide = allSlides[index - 1] || null;
+    const nextSlide = allSlides[index + 1] || null;
+    let accepted = null;
+    let lastErrors = [];
+
+    for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+      const payload = await callJsonByEndpoint({
+        endpointKind,
+        endpoint,
+        model,
+        temperature,
+        schema: buildSingleSlidePlanJsonSchema(),
+        timeoutMs,
+        systemPrompt,
+        userPrompt: [
+          "Create the speaking plan for exactly one slide.",
+          "Do not output slide_id; the caller already owns slide order.",
+          "Do not copy the same text into multiple fields.",
+          "Do not describe creating a presentation.",
+          "Use bridge_in and bridge_out as intent, not final narration.",
+          "",
+          "Topic overview JSON:",
+          JSON.stringify({
+            opening_intent: overview.opening_intent,
+            closing_intent: overview.closing_intent,
+            lesson_arc: overview.lesson_arc,
+          }, null, 2),
+          "",
+          "Planning context JSON:",
+          JSON.stringify({
+            previous_slide: previousSlide ? compactSlideForPlanning(previousSlide) : null,
+            current_slide: compactSlideForPlanning(currentSlide),
+            next_slide: nextSlide ? compactSlideForPlanning(nextSlide) : null,
+            prior_student_memory: priorMemory.slice(-6),
+          }, null, 2),
+          lastErrors.length ? `\nPrevious attempt errors: ${lastErrors.join("; ")}` : "",
+        ].join("\n"),
+      });
+
+      if (!isObject(payload)) {
+        lastErrors = ["Response was not a JSON object"];
+        continue;
+      }
+
+      const normalized = normalizeSingleSlidePlanPayload(payload, currentSlide);
+      lastErrors = validateSingleSlidePlanPayload(normalized);
+      if (!lastErrors.length) {
+        accepted = normalized;
+        break;
+      }
+    }
+
+    if (!accepted) {
+      throw new Error(`Per-slide planner failed for ${currentSlide.slide_id}: ${lastErrors.join("; ")}`);
+    }
+
+    slides.push(accepted);
+    priorMemory.push({
+      slide_id: accepted.slide_id,
+      student_memory: accepted.student_memory,
+    });
+  }
+
+  return {
+    ...overview,
+    slides,
+    generation_warnings: normalizeStringArray([
+      `Recovered topic plan with per-slide LLM planner after one-shot issue: ${reason}`,
+    ], 20),
+    prompt_version: promptBundle.version,
+    model_used: model,
+    provider_used: "llm_local_topic_plan_per_slide",
+    endpoint_kind: endpointKind,
+  };
 }
 
 function cacheDirForSelector(selector) {
@@ -517,7 +827,7 @@ function cacheDirForSelector(selector) {
   );
 }
 
-export function topicPlanCacheIdentity({ descriptor, model, promptVersion, context }) {
+export function topicPlanCacheIdentity({ descriptor, model, promptVersion, context, topicPlanMode = "" }) {
   return {
     schema_version: TOPIC_SCRIPT_PLAN_CACHE_SCHEMA_VERSION,
     selector: {
@@ -528,6 +838,7 @@ export function topicPlanCacheIdentity({ descriptor, model, promptVersion, conte
     },
     model: model || "",
     prompt_version: promptVersion || "",
+    topic_plan_mode: topicPlanMode || "",
     context_hash: hashObject(context),
   };
 }
@@ -544,7 +855,9 @@ export async function getTopicScriptPlanWithCache({
   const promptVersion = String(options.topicPlanPromptVersion || TOPIC_SCRIPT_PLAN_PROMPT_VERSION).trim() || TOPIC_SCRIPT_PLAN_PROMPT_VERSION;
   const context = buildTopicPlanContext({ descriptor, runtime, slidesData, authoring, layoutManifest });
   const slideIds = context.slides.map((slide) => slide.slide_id);
-  const identity = topicPlanCacheIdentity({ descriptor, model, promptVersion, context });
+  const allowFallback = normalizeBoolean(options.allowScriptFallback, true);
+  const topicPlanMode = String(options.topicPlanMode || (allowFallback ? "one_shot" : "per_slide")).trim().toLowerCase();
+  const identity = topicPlanCacheIdentity({ descriptor, model, promptVersion, context, topicPlanMode });
   const cacheKey = hashObject(identity);
   const cachePath = path.join(cacheDirForSelector(identity.selector), `${cacheKey}.json`);
   const cached = await readJsonIfExists(cachePath);
@@ -558,7 +871,6 @@ export async function getTopicScriptPlanWithCache({
     };
   }
 
-  const allowFallback = normalizeBoolean(options.allowScriptFallback, true);
   if (!model) {
     if (!allowFallback) throw new Error("Topic script plan requires --scriptModel when script fallback is disabled.");
     const plan = deterministicTopicScriptPlan(context);
@@ -581,6 +893,42 @@ export async function getTopicScriptPlanWithCache({
   const timeoutMs = Number(options.topicPlanTimeoutMs || options.scriptTimeoutMs || 180000);
   const temperature = Number(options.topicPlanTemperature ?? options.scriptTemperature ?? 0.15);
 
+  if (topicPlanMode === "per_slide") {
+    const plan = await buildPerSlideTopicPlanWithLlm({
+      context,
+      promptBundle,
+      endpointKind,
+      endpoint,
+      model,
+      temperature,
+      timeoutMs,
+      maxRetries: Number(options.topicPlanMaxRetries ?? options.scriptMaxRetries ?? 2),
+      reason: "no-fallback direct per-slide planning mode",
+    });
+    const validated = validateTopicScriptPlan(plan, slideIds);
+    if (!validated.valid) throw new Error(`topic_script_plan failed: ${validated.errors.join(" ")}`);
+    const result = {
+      provider_used: plan.provider_used,
+      model_used: model,
+      prompt_version: promptBundle.version,
+      endpoint_kind: endpointKind,
+      plan,
+      generation_warnings: plan.generation_warnings,
+    };
+    await writeJson(cachePath, {
+      schema_version: TOPIC_SCRIPT_PLAN_CACHE_SCHEMA_VERSION,
+      cache_key: cacheKey,
+      identity,
+      result,
+    });
+    return {
+      ...result,
+      cache_used: false,
+      cache_key: cacheKey,
+      cache_path: cachePath,
+    };
+  }
+
   try {
     const rawText = endpointKind === "ollama"
       ? await callOllama({ endpoint, model, temperature, promptBundle, context, timeoutMs, slideIds })
@@ -592,9 +940,50 @@ export async function getTopicScriptPlanWithCache({
       model,
       provider: "llm_local_topic_plan",
     });
-    const severeRepairs = severeTopicPlanRepairWarnings(repairedPlan.generation_warnings);
-    if (!allowFallback && severeRepairs.length) {
-      throw new Error(`LLM topic plan required structural repair: ${severeRepairs.join(" ")}`);
+    const severeRepairs = [
+      ...severeTopicPlanRepairWarnings(repairedPlan.generation_warnings),
+      ...semanticTopicPlanWarnings(repairedPlan),
+    ];
+    if (severeRepairs.length) {
+      repairedPlan.generation_warnings = normalizeStringArray([
+        ...asArray(repairedPlan.generation_warnings),
+        ...semanticTopicPlanWarnings(repairedPlan),
+      ], 20);
+      if (!allowFallback) {
+        const plan = await buildPerSlideTopicPlanWithLlm({
+          context,
+          promptBundle,
+          endpointKind,
+          endpoint,
+          model,
+          temperature,
+          timeoutMs,
+          maxRetries: Number(options.topicPlanMaxRetries ?? options.scriptMaxRetries ?? 2),
+          reason: severeRepairs.join(" "),
+        });
+        const validated = validateTopicScriptPlan(plan, slideIds);
+        if (!validated.valid) throw new Error(validated.errors.join(" "));
+        const result = {
+          provider_used: plan.provider_used,
+          model_used: model,
+          prompt_version: promptBundle.version,
+          endpoint_kind: endpointKind,
+          plan,
+          generation_warnings: plan.generation_warnings,
+        };
+        await writeJson(cachePath, {
+          schema_version: TOPIC_SCRIPT_PLAN_CACHE_SCHEMA_VERSION,
+          cache_key: cacheKey,
+          identity,
+          result,
+        });
+        return {
+          ...result,
+          cache_used: false,
+          cache_key: cacheKey,
+          cache_path: cachePath,
+        };
+      }
     }
     const validated = validateTopicScriptPlan(repairedPlan, slideIds);
     if (!validated.valid) throw new Error(validated.errors.join(" "));

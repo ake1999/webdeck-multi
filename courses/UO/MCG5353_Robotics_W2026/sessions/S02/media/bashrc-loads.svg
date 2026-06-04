@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">Bashrc environment loading flow</title>
+  <desc id="desc">Diagram showing a new terminal reading .bashrc, sourcing ROS, and enabling aliases.</desc>
+  <rect width="900" height="560" fill="#fff"/>
+  <style>
+    .box{fill:#fff;stroke:#8a1538;stroke-width:3;rx:20}
+    .soft{fill:#f8fafc;stroke:#cbd5e1;stroke-width:3;rx:20}
+    .arrow{stroke:#8a1538;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow)}
+    .title{font:700 34px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .label{font:700 26px system-ui,Segoe UI,Arial;fill:#0f172a}
+    .code{font:700 22px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#334155}
+    .note{font:500 18px system-ui,Segoe UI,Arial;fill:#475569}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#8a1538"/>
+    </marker>
+  </defs>
+  <text class="title" x="52" y="62">What `.bashrc` Does</text>
+  <rect class="soft" x="60" y="120" width="230" height="120"/>
+  <text class="label" x="175" y="171" text-anchor="middle">New Terminal</text>
+  <text class="note" x="175" y="204" text-anchor="middle">every shell starts here</text>
+  <rect class="box" x="335" y="120" width="230" height="120"/>
+  <text class="code" x="450" y="171" text-anchor="middle">~/.bashrc</text>
+  <text class="note" x="450" y="204" text-anchor="middle">your startup file</text>
+  <rect class="soft" x="610" y="92" width="230" height="92"/>
+  <text class="code" x="725" y="130" text-anchor="middle">source ROS</text>
+  <text class="note" x="725" y="160" text-anchor="middle">ros2 becomes visible</text>
+  <rect class="soft" x="610" y="214" width="230" height="92"/>
+  <text class="code" x="725" y="252" text-anchor="middle">aliases</text>
+  <text class="note" x="725" y="282" text-anchor="middle">ws, src, cb, si</text>
+  <path class="arrow" d="M290 180H330"/>
+  <path class="arrow" d="M565 160H604"/>
+  <path class="arrow" d="M565 200C585 222 588 246 604 260"/>
+  <rect class="box" x="165" y="360" width="570" height="112"/>
+  <text class="code" x="450" y="408" text-anchor="middle">source ~/.bashrc</text>
+  <text class="note" x="450" y="442" text-anchor="middle">reload changes without closing the terminal</text>
+</svg>
