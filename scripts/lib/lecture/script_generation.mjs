@@ -7,6 +7,7 @@ import {
   plainTextForSpeech,
   plainTextSummary,
   summarizeMediaLabel,
+  ttsTextForSpeech,
 } from "./utils.mjs";
 import {
   extractExplicitLecturePlanNarrationSource,
@@ -279,6 +280,7 @@ function finalizeSegments(segments, slide, layoutContext, slideDefaults, planSli
     .map((segment, index) => {
       const text = cleanNarrationSeed(segment.text);
       if (!text) return null;
+      const spokenText = ttsTextForSpeech(text);
       const targetElement = layoutContext.availableIds.has(segment.target_element)
         ? segment.target_element
         : "slide";
@@ -308,6 +310,7 @@ function finalizeSegments(segments, slide, layoutContext, slideDefaults, planSli
       return {
         segment_id: `seg_${String(index + 1).padStart(2, "0")}`,
         text: ensureSentence(text),
+        ...(spokenText && spokenText !== ensureSentence(text) ? { tts_text: spokenText } : {}),
         target_element: targetElement,
         attention_mode: segment.attention_mode || slideDefaults.attention_mode || defaultAttentionMode(targetType),
         voice: mergeSegmentVoice(segment, slideDefaults),
@@ -709,6 +712,7 @@ function finalizeComparisonVariant({
     segments: finalized.map((segment) => ({
       segment_id: segment.segment_id,
       text: segment.text,
+      ...(segment.tts_text ? { tts_text: segment.tts_text } : {}),
       target_element: segment.target_element,
       tone: segment.voice?.tone || "",
       energy: Number(segment.voice?.energy || 0),

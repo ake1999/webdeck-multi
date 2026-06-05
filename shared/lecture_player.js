@@ -99,11 +99,33 @@ function formatTime(seconds) {
   return `${minutes}:${String(wholeSeconds).padStart(2, "0")}`;
 }
 
-function createButton({ className = "", text = "", title = "", pressed = null } = {}) {
+const ICONS = {
+  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>',
+  pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"></path></svg>',
+  restart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7V4H5v7h7V9H8.9A6 6 0 1 1 7.8 16.8l-1.5 1.3A8 8 0 1 0 7 7z"></path></svg>',
+  prev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM19 6v12L9 12z"></path></svg>',
+  next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM5 18V6l10 6z"></path></svg>',
+  captions: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm1 4v2h6V9zm8 0v2h6V9zM5 13v2h4v-2zm6 0v2h8v-2z"></path></svg>',
+  audio: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zm12.5 3a4.5 4.5 0 0 0-2.2-3.9v7.8a4.5 4.5 0 0 0 2.2-3.9zm-2.2-8v2.1a7 7 0 0 1 0 11.8V20a9 9 0 0 0 0-16z"></path></svg>',
+  avatar: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0v1H5z"></path></svg>',
+  auto: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h2v14H5zm4 14V5l10 7z"></path></svg>',
+};
+
+function createButton({ className = "", text = "", icon = "", title = "", pressed = null } = {}) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = `lecture-player-btn ${className}`.trim();
-  button.textContent = text;
+  if (icon) {
+    button.innerHTML = icon;
+    if (text) {
+      const label = document.createElement("span");
+      label.className = "lecture-player-btn-label";
+      label.textContent = text;
+      button.appendChild(label);
+    }
+  } else {
+    button.textContent = text;
+  }
   if (title) {
     button.title = title;
     button.setAttribute("aria-label", title);
@@ -119,34 +141,46 @@ function createUi() {
   document.body.classList.add("lecture-mode");
 
   const panel = document.createElement("div");
-  panel.className = "lecture-player-panel lecture-player-panel--visible";
+  panel.className = "lecture-player-panel";
 
-  const prevBtn = createButton({ text: "‹", title: "Previous slide" });
-  const playBtn = createButton({ text: "Play", title: "Play lecture" });
-  const pauseBtn = createButton({ text: "Pause", title: "Pause lecture" });
-  const restartBtn = createButton({ text: "Restart", title: "Restart lecture" });
-  const nextBtn = createButton({ text: "›", title: "Next slide" });
+  const globalProgress = document.createElement("input");
+  globalProgress.type = "range";
+  globalProgress.className = "lecture-player-progress lecture-player-progress--global";
+  globalProgress.min = "0";
+  globalProgress.max = "0";
+  globalProgress.step = "0.05";
+  globalProgress.value = "0";
+  globalProgress.title = "Full lecture progress";
+
+  const controlsRow = document.createElement("div");
+  controlsRow.className = "lecture-player-controls-row";
+
+  const prevBtn = createButton({ icon: ICONS.prev, title: "Previous slide (Up or P)" });
+  const playBtn = createButton({ icon: ICONS.play, title: "Play (Space or K)" });
+  const pauseBtn = createButton({ icon: ICONS.pause, title: "Pause (Space or K)" });
+  const restartBtn = createButton({ icon: ICONS.restart, title: "Restart lecture (R)" });
+  const nextBtn = createButton({ icon: ICONS.next, title: "Next slide (Down or N)" });
 
   const progress = document.createElement("input");
   progress.type = "range";
-  progress.className = "lecture-player-progress";
+  progress.className = "lecture-player-progress lecture-player-progress--slide";
   progress.min = "0";
   progress.max = "0";
   progress.step = "0.05";
   progress.value = "0";
-  progress.title = "Lecture progress";
+  progress.title = "Current slide progress";
 
   const time = document.createElement("div");
   time.className = "lecture-player-time";
-  time.textContent = "0:00 / 0:00";
+  time.textContent = "0:00 / 0:00 • 0:00 / 0:00";
 
   const subtitlesBtn = createButton({
-    text: "CC",
+    icon: ICONS.captions,
     title: "Toggle subtitles",
     pressed: true,
   });
   const audioBtn = createButton({
-    text: "Audio",
+    icon: ICONS.audio,
     title: "Toggle audio",
     pressed: true,
   });
@@ -161,21 +195,21 @@ function createUi() {
   volume.title = "Volume";
 
   const avatarBtn = createButton({
-    text: "Avatar",
+    icon: ICONS.avatar,
     title: "Toggle avatar video",
     pressed: true,
   });
   const autoAdvanceBtn = createButton({
-    text: "Auto",
+    icon: ICONS.auto,
     title: "Toggle automatic slide advance",
     pressed: true,
   });
 
   const status = document.createElement("div");
   status.className = "lecture-player-status";
-  status.textContent = "Teacher not loaded";
+  status.textContent = "Ready";
 
-  panel.append(
+  controlsRow.append(
     prevBtn,
     playBtn,
     pauseBtn,
@@ -190,10 +224,15 @@ function createUi() {
     autoAdvanceBtn,
     status,
   );
+  panel.append(globalProgress, controlsRow);
 
   const caption = document.createElement("div");
   caption.className = "lecture-caption-bar";
   caption.textContent = "";
+
+  const pageNumber = document.createElement("div");
+  pageNumber.className = "lecture-page-number";
+  pageNumber.textContent = "1 / 1";
 
   const avatarLayer = document.createElement("div");
   avatarLayer.className = "lecture-avatar-layer";
@@ -210,10 +249,11 @@ function createUi() {
   focusLayer.appendChild(focusTarget);
 
   const deck = document.getElementById("deck");
-  deck?.append(focusLayer, avatarLayer, caption, panel);
+  deck?.append(focusLayer, avatarLayer, caption, pageNumber, panel);
 
   return {
     panel,
+    globalProgress,
     prevBtn,
     playBtn,
     pauseBtn,
@@ -228,6 +268,7 @@ function createUi() {
     autoAdvanceBtn,
     status,
     caption,
+    pageNumber,
     avatarLayer,
     avatarSlot,
     focusLayer,
@@ -528,6 +569,7 @@ export function createLecturePlayer({
   let advanceTimer = 0;
   let completionTimer = 0;
   let controlsHideTimer = 0;
+  let controlsPointerInZone = false;
   let playing = false;
   let avatarToken = 0;
   let playbackRate = 1;
@@ -537,6 +579,7 @@ export function createLecturePlayer({
   let autoAdvanceEnabled = true;
   let audioEnabled = true;
   let progressDragging = false;
+  let globalProgressDragging = false;
   let activeFocus = null;
   let activeAvatarVideo = null;
   let avatarSequenceDone = true;
@@ -584,6 +627,11 @@ export function createLecturePlayer({
   function setCaption(text) {
     ui.caption.textContent = text || "";
     ui.caption.classList.toggle("visible", Boolean(text) && subtitlesEnabled);
+  }
+
+  function updatePageNumber() {
+    const count = asArray(activeTimelineManifest?.slides).length || 1;
+    ui.pageNumber.textContent = `${Math.min(currentSlideIndex + 1, count)} / ${count}`;
   }
 
   function clearFocus() {
@@ -641,10 +689,13 @@ export function createLecturePlayer({
     }
 
     activeFocus = { slideId, elementId, context };
+    const logicalSize = deckController.getLogicalSize?.() || { width: 1280, height: 720 };
     const left = Math.max(0, box.left - (textLike ? 2 : 0));
-    const top = Math.max(0, textLike ? box.top + box.height - 5 : box.top);
+    const top = Math.max(0, textLike
+      ? Math.min(Number(logicalSize.height || 720) - 7, box.top + box.height + 4)
+      : box.top);
     const width = Math.max(textLike ? 16 : 20, box.width + (textLike ? 4 : 0));
-    const height = textLike ? 6 : Math.max(20, box.height);
+    const height = textLike ? 5 : Math.max(20, box.height);
 
     ui.focusTarget.className = `lecture-focus-target ${textLike ? "lecture-focus-target--underline" : "lecture-focus-target--halo"}`;
     ui.focusTarget.dataset.focusMode = box.focusMode || (textLike ? "line" : "box");
@@ -672,19 +723,58 @@ export function createLecturePlayer({
   function updateProgressUi() {
     const total = getTotalDuration();
     const current = currentGlobalTime();
-    ui.progress.max = String(Math.max(0, total));
-    if (!progressDragging) ui.progress.value = String(Math.max(0, Math.min(current, total)));
-    ui.time.textContent = `${formatTime(current)} / ${formatTime(total)}`;
+    const slide = currentSlide();
+    const local = slideLocalTime();
+    const slideDuration = Number(slide?.duration || audio.duration || 0);
+
+    ui.globalProgress.max = String(Math.max(0, total));
+    if (!globalProgressDragging) {
+      ui.globalProgress.value = String(Math.max(0, Math.min(current, total)));
+    }
+
+    ui.progress.max = String(Math.max(0, slideDuration));
+    if (!progressDragging) {
+      ui.progress.value = String(Math.max(0, Math.min(local, slideDuration)));
+    }
+
+    ui.time.textContent = `${formatTime(local)} / ${formatTime(slideDuration)} • ${formatTime(current)} / ${formatTime(total)}`;
+    updatePageNumber();
+  }
+
+  function controlsShouldShow() {
+    return controlsPointerInZone || ui.panel.matches(":hover") || ui.panel.contains(document.activeElement);
+  }
+
+  function applyControlsVisibility(visible) {
+    ui.panel.classList.toggle("lecture-player-panel--visible", Boolean(visible));
+    document.body.classList.toggle("lecture-controls-visible", Boolean(visible));
+    if (!visible) {
+      ui.panel.classList.remove("lecture-player-panel--pinned");
+    }
+  }
+
+  function syncControlsVisibility() {
+    applyControlsVisibility(controlsShouldShow());
+  }
+
+  function scheduleControlsHide(delayMs = 0) {
+    if (controlsHideTimer) window.clearTimeout(controlsHideTimer);
+    controlsHideTimer = window.setTimeout(() => {
+      syncControlsVisibility();
+    }, delayMs);
   }
 
   function revealControls({ pin = false } = {}) {
-    ui.panel.classList.add("lecture-player-panel--visible");
-    ui.panel.classList.toggle("lecture-player-panel--pinned", Boolean(pin));
-    if (controlsHideTimer) window.clearTimeout(controlsHideTimer);
-    controlsHideTimer = window.setTimeout(() => {
-      if (!playing || ui.panel.matches(":hover") || ui.panel.classList.contains("lecture-player-panel--pinned")) return;
-      ui.panel.classList.remove("lecture-player-panel--visible");
-    }, 2400);
+    const shouldShow = controlsShouldShow();
+    applyControlsVisibility(shouldShow);
+    const canPin = Boolean(pin) && shouldShow && (ui.panel.matches(":hover") || ui.panel.contains(document.activeElement));
+    ui.panel.classList.toggle("lecture-player-panel--pinned", canPin);
+  }
+
+  function hideControlsSoon(delayMs = 0) {
+    if (ui.panel.matches(":hover") || ui.panel.contains(document.activeElement)) return;
+    controlsPointerInZone = false;
+    scheduleControlsHide(delayMs);
   }
 
   function setAudioEnabled(enabled) {
@@ -735,11 +825,21 @@ export function createLecturePlayer({
     const avatarScale = Number(placement.scale || activeTimelineManifest?.render?.overlay?.reference_scale || 0.42);
     const referenceAvatarWidth = Number(placement.width || renderWidth * avatarScale);
     const referenceAvatarHeight = Number(placement.height || renderHeight * avatarScale);
-    const marginPx = Number(placement.margin_px ?? activeTimelineManifest?.render?.overlay?.margin_px ?? 24);
-    const referenceX = Number.isFinite(Number(placement.x))
+    const anchor = placement.anchor || activeTimelineManifest?.render?.overlay?.anchor || "bottom_right";
+    const marginPx = Number(
+      placement.edge_margin_px
+      ?? activeTimelineManifest?.render?.overlay?.edge_margin_px
+      ?? 0,
+    );
+    const useAbsolutePlacement = placement.absolute === true || placement.position_mode === "absolute";
+    const referenceX = !useAbsolutePlacement && ["bottom_right", "right", "top_right"].includes(anchor)
+      ? Number(referenceWidth) - referenceAvatarWidth - marginPx
+      : Number.isFinite(Number(placement.x))
       ? Number(placement.x)
       : Number(referenceWidth) - referenceAvatarWidth - marginPx;
-    const referenceY = Number.isFinite(Number(placement.y))
+    const referenceY = !useAbsolutePlacement && ["bottom_right", "bottom", "bottom_left"].includes(anchor)
+      ? Number(referenceHeight) - referenceAvatarHeight - marginPx
+      : Number.isFinite(Number(placement.y))
       ? Number(placement.y)
       : Number(referenceHeight) - referenceAvatarHeight - marginPx;
 
@@ -748,7 +848,7 @@ export function createLecturePlayer({
       top: referenceY * scaleY,
       width: referenceAvatarWidth * scaleX,
       height: referenceAvatarHeight * scaleY,
-      anchor: placement.anchor || "bottom_right",
+      anchor,
     };
   }
 
@@ -1504,14 +1604,14 @@ export function createLecturePlayer({
       playing = true;
       await audio.play();
       currentAvatarVideo()?.play().catch(() => {});
-      setStatus(`Playing ${slide.slide_id}`);
+      setStatus("Playing");
       revealControls();
       syncPlaybackLoop();
     } else {
       audio.pause();
       currentAvatarVideo()?.pause();
       playing = false;
-      setStatus(audioMeta ? `Loaded ${slide.slide_id}` : `Missing audio for ${slide.slide_id}`);
+      setStatus(audioMeta ? "Loaded" : "Missing audio");
       revealControls({ pin: !audioMeta });
     }
 
@@ -1615,7 +1715,7 @@ export function createLecturePlayer({
       await audio.play();
       currentAvatarVideo()?.play().catch(() => {});
       playing = true;
-      setStatus(`Playing ${currentSlide().slide_id}`);
+      setStatus("Playing");
       revealControls();
       stopSyncLoop();
       syncPlaybackLoop();
@@ -1636,7 +1736,7 @@ export function createLecturePlayer({
     currentAvatarVideo()?.pause();
     playing = false;
     stopSyncLoop();
-    setStatus(`Paused ${currentSlide()?.slide_id || ""}`.trim());
+    setStatus("Paused");
     revealControls({ pin: true });
     updateProgressUi();
     return true;
@@ -1666,7 +1766,7 @@ export function createLecturePlayer({
     clearAvatar();
     deckController.resume();
     setCaption("");
-    setStatus("Teacher stopped");
+    setStatus("Stopped");
     revealControls({ pin: true });
     updateProgressUi();
     return true;
@@ -1677,6 +1777,58 @@ export function createLecturePlayer({
     const shouldResume = playing;
     await loadAtAbsoluteTime(seconds, shouldResume);
     return true;
+  }
+
+  function slideSeekLimit(slide = currentSlide()) {
+    return Number(audio.duration || slide?.speech?.audio_duration_sec || slide?.duration || 0);
+  }
+
+  function seekCurrentSlideMedia(localSeconds) {
+    const slide = currentSlide();
+    if (!activeTimelineManifest || !slide || !audio.src) return false;
+
+    const limit = slideSeekLimit(slide);
+    const target = Math.max(0, Math.min(Number(localSeconds || 0), limit));
+    const wasPlaying = playing;
+
+    clearCompletionTimers();
+    audio.currentTime = target;
+
+    const avatarVideo = currentAvatarVideo();
+    if (avatarVideo && Number.isFinite(avatarVideo.duration) && avatarVideo.duration > 0) {
+      avatarVideo.currentTime = Math.max(0, Math.min(target, avatarVideo.duration - 0.02));
+    }
+
+    const audioDuration = Number(audio.duration || slide.speech?.audio_duration_sec || slide.duration || 0);
+    audioDoneForSlide = audioDuration > 0 && target >= audioDuration - 0.05;
+    questionPauseDone = slideQuestionPauseSeconds(slide) <= 0;
+    currentCueIndex = -1;
+    syncCueAtTime(true);
+    updateProgressUi();
+
+    if (wasPlaying) {
+      audio.play().catch(() => {});
+      avatarVideo?.play().catch(() => {});
+      stopSyncLoop();
+      syncPlaybackLoop();
+    }
+    return true;
+  }
+
+  async function seekSlide(localSeconds) {
+    if (!activeTimelineManifest) return false;
+    if (seekCurrentSlideMedia(localSeconds)) return true;
+    const shouldResume = playing;
+    await loadSlide(currentSlideIndex, Number(localSeconds || 0), shouldResume);
+    return true;
+  }
+
+  async function seekSlideBy(deltaSeconds) {
+    const slide = currentSlide();
+    if (!slide) return false;
+    const limit = slideSeekLimit(slide);
+    const target = Math.max(0, Math.min(slideLocalTime() + Number(deltaSeconds || 0), limit));
+    return await seekSlide(target);
   }
 
   async function seekBy(deltaSeconds) {
@@ -1834,29 +1986,170 @@ export function createLecturePlayer({
     revealControls({ pin: true });
   });
   ui.progress.addEventListener("input", () => {
-    ui.time.textContent = `${formatTime(Number(ui.progress.value || 0))} / ${formatTime(getTotalDuration())}`;
+    const slideDuration = Number(currentSlide()?.duration || 0);
+    ui.time.textContent = `${formatTime(Number(ui.progress.value || 0))} / ${formatTime(slideDuration)} • ${formatTime(currentGlobalTime())} / ${formatTime(getTotalDuration())}`;
   });
   ui.progress.addEventListener("change", () => {
     progressDragging = false;
-    seek(Number(ui.progress.value || 0)).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
+    seekSlide(Number(ui.progress.value || 0)).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
     revealControls({ pin: !playing });
   });
   ui.progress.addEventListener("pointerup", () => {
     progressDragging = false;
   });
 
+  ui.globalProgress.addEventListener("pointerdown", () => {
+    globalProgressDragging = true;
+    revealControls({ pin: true });
+  });
+  ui.globalProgress.addEventListener("input", () => {
+    ui.time.textContent = `${formatTime(slideLocalTime())} / ${formatTime(Number(currentSlide()?.duration || 0))} • ${formatTime(Number(ui.globalProgress.value || 0))} / ${formatTime(getTotalDuration())}`;
+  });
+  ui.globalProgress.addEventListener("change", () => {
+    globalProgressDragging = false;
+    seek(Number(ui.globalProgress.value || 0)).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
+    revealControls({ pin: !playing });
+  });
+  ui.globalProgress.addEventListener("pointerup", () => {
+    globalProgressDragging = false;
+  });
+
+  function isEditableTarget(target) {
+    if (!(target instanceof HTMLElement)) return false;
+    const tagName = target.tagName;
+    return target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(tagName);
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (!document.body.classList.contains("lecture-mode")) return;
+    if (isEditableTarget(event.target)) return;
+
+    const key = event.key.toLowerCase();
+    const handled = [
+      " ",
+      "k",
+      "j",
+      "l",
+      "arrowleft",
+      "arrowright",
+      "arrowup",
+      "arrowdown",
+      "p",
+      "n",
+      "r",
+      "m",
+      "c",
+      "v",
+      "a",
+      "escape",
+      "home",
+      "end",
+    ].includes(key);
+    if (!handled) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (key === " " || key === "k") {
+      if (playing) {
+        pause();
+      } else {
+        play().catch((error) => {
+          setStatus(`Play blocked: ${error?.message || error}`);
+          revealControls({ pin: true });
+        });
+      }
+      return;
+    }
+
+    if (key === "escape") {
+      pause();
+      revealControls({ pin: true });
+      return;
+    }
+
+    if (key === "r" || key === "home") {
+      restart().catch((error) => setStatus(`Restart failed: ${error?.message || error}`));
+      return;
+    }
+
+    if (key === "end") {
+      stop();
+      return;
+    }
+
+    if (key === "m") {
+      setAudioEnabled(!audioEnabled);
+      revealControls({ pin: !playing });
+      return;
+    }
+
+    if (key === "c") {
+      setSubtitlesEnabled(!subtitlesEnabled);
+      revealControls({ pin: !playing });
+      return;
+    }
+
+    if (key === "v") {
+      setAvatarEnabled(!avatarEnabled);
+      revealControls({ pin: !playing });
+      return;
+    }
+
+    if (key === "a") {
+      setAutoAdvance(!autoAdvanceEnabled);
+      revealControls({ pin: !playing });
+      return;
+    }
+
+    if (key === "p" || key === "arrowup") {
+      goToRelativeSlide(-1).catch((error) => setStatus(`Previous failed: ${error?.message || error}`));
+      return;
+    }
+
+    if (key === "n" || key === "arrowdown") {
+      goToRelativeSlide(1).catch((error) => setStatus(`Next failed: ${error?.message || error}`));
+      return;
+    }
+
+    if (key === "j" || key === "arrowleft") {
+      seekSlideBy(-5).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
+      revealControls();
+      return;
+    }
+
+    if (key === "l" || key === "arrowright") {
+      seekSlideBy(5).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
+      revealControls();
+    }
+  }, true);
+
   const deckElement = document.getElementById("deck");
   deckElement?.addEventListener("mousemove", (event) => {
     const rect = deckElement.getBoundingClientRect();
-    const nearBottom = event.clientY > rect.bottom - Math.min(160, rect.height * 0.24);
-    if (nearBottom || !playing) revealControls({ pin: !playing });
-    else revealControls();
+    const nearBottom = event.clientY > rect.bottom - Math.min(110, rect.height * 0.16);
+    controlsPointerInZone = nearBottom;
+    if (nearBottom) {
+      revealControls();
+    } else {
+      hideControlsSoon();
+    }
   });
-  ui.panel.addEventListener("mouseenter", () => revealControls({ pin: true }));
+  deckElement?.addEventListener("mouseleave", () => {
+    controlsPointerInZone = false;
+    hideControlsSoon();
+  });
+  ui.panel.addEventListener("mouseenter", () => {
+    controlsPointerInZone = true;
+    revealControls({ pin: true });
+  });
   ui.panel.addEventListener("mouseleave", () => {
+    controlsPointerInZone = false;
     ui.panel.classList.remove("lecture-player-panel--pinned");
-    revealControls();
+    hideControlsSoon();
   });
+  ui.panel.addEventListener("focusin", () => revealControls({ pin: true }));
+  ui.panel.addEventListener("focusout", () => window.setTimeout(() => syncControlsVisibility(), 0));
 
   window.addEventListener("webdeck:deck-resize", () => {
     const slide = currentSlide();
@@ -1877,6 +2170,8 @@ export function createLecturePlayer({
     resume,
     stop,
     seek,
+    seekSlide,
+    seekSlideBy,
     seekBy,
     setPlaybackRate,
     getPlaybackRate,

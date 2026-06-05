@@ -43,6 +43,11 @@ Rules:
 - Do not invent fields outside the schema.
 - Do not repeat the same sentence wording across segments.
 - Do not leave unfinished ellipsis fragments such as "including..."; every segment must be a complete spoken sentence.
+- Write speech as a professor would actually say it, not as a literal symbol reader.
+  Prefer natural spoken math such as "limit", "sine of x over x", "equals", "less than or equal to", and "theta", instead of raw forms like lim, sin(x)/x, =, <=, or θ.
+  For Linux paths and commands, keep them understandable without reading every slash when that sounds awkward; for example, say "/opt/ros/humble/setup.bash" as "opt Ross humble setup dot bash".
+  For package and file names, turn underscores into natural word breaks unless the underscore itself is being taught.
+  Spell acronyms or technical names when pronunciation is ambiguous, for example "U R D F", "T F", and "R Viz".
 
 Output shape:
 - top-level object with:

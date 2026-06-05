@@ -15,3 +15,6 @@ tools/slide_video_renderer/config.json
 # OS/editor scratch
 .DS_Store
 *.swp
+# Local avatar video renderer config/assets/outputs
+tools/avatar_video_renderer/config.json
+tools/avatar_video_renderer/assets/

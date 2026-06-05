@@ -29,7 +29,7 @@ function parseArgs(argv) {
     character: "instructor_05",
     avatarScale: 0.42,
     slideResolution: "1920x1080",
-    overlayMarginPx: 24,
+    overlayMarginPx: 0,
     questionPauseSec: 4.0,
     renderModeBatch: "silent_transparent_first",
     dryRun: false,
@@ -53,7 +53,7 @@ function parseArgs(argv) {
 
   args.fps = Number(args.fps || 24);
   args.avatarScale = Number(args.avatarScale || 0.42);
-  args.overlayMarginPx = Number(args.overlayMarginPx || 24);
+  args.overlayMarginPx = Number(args.overlayMarginPx ?? 0);
   args.questionPauseSec = Number(args.questionPauseSec ?? 4.0);
   args.resolution = parseResolution(args.resolution, [896, 1200]);
   args.slideResolution = parseResolution(args.slideResolution, [1920, 1080]);
@@ -127,7 +127,15 @@ function slideKeywords(slideScript) {
 
 function isQuestionSlide(slideScript) {
   const text = slideKeywords(slideScript);
-  return slideScript?.slide_type === "mcq" || /\b(question|quiz|check your understanding|answer|respond|pause|think|choose|select)\b/.test(text);
+  const slideType = String(slideScript?.slide_type || "").toLowerCase();
+  const slideRole = String(slideScript?.lecture_plan?.slide_role || "").toLowerCase();
+  const slideId = String(slideScript?.slide_id || "").toLowerCase();
+  return (
+    ["mcq", "question", "quiz", "poll"].includes(slideType)
+    || /\b(mcq|quiz|question|knowledge_check|quick_check|check_your_understanding|exit_ticket|poll)\b/.test(slideId)
+    || /\b(quiz|knowledge check|quick check|check your understanding|multiple choice|which of the following|choose the correct answer|select the correct answer|pause and think|take a moment to answer|answer this|what would you do)\b/.test(text)
+    || /\b(question|quiz|poll|check)\b/.test(slideRole)
+  );
 }
 
 function contentCenterX(layoutSlide) {
@@ -384,6 +392,7 @@ function buildPlacement({ args }) {
     reference_resolution: args.slideResolution,
     scale_policy: "scale_with_slide",
     margin_px: args.overlayMarginPx,
+    edge_margin_px: args.overlayMarginPx,
   };
 }
 
@@ -410,6 +419,7 @@ function renderDefaults({ args, motionBank }) {
       reference_slide_resolution: args.slideResolution,
       reference_scale: round(args.avatarScale, 4),
       margin_px: args.overlayMarginPx,
+      edge_margin_px: args.overlayMarginPx,
     },
     outputs: {
       mp4_with_audio: true,

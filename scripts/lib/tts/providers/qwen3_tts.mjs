@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { buildAlignmentSegments, concatSegments, probeDuration } from "../audio_utils.mjs";
 import { ffmpegFliteProvider } from "./ffmpeg_flite.mjs";
 import { projectRoot } from "../../export_runtime.mjs";
+import { ttsTextForSpeech } from "../../lecture/utils.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const RUNNER_PATH = path.join(__dirname, "qwen3_tts_runner.py");
@@ -82,7 +83,8 @@ function buildConfig({ slide, options = {}, authoring }) {
     python_bin: options.qwenPythonBin || "python3",
     segments: (Array.isArray(slide.segments) ? slide.segments : []).map((segment) => ({
       segment_id: segment.segment_id,
-      text: segment.text,
+      text: segment.tts_text || ttsTextForSpeech(segment.text),
+      display_text: segment.text,
       voice: segment.voice || {},
       language: segment.voice?.language || options.qwenLanguage || "English",
     })),

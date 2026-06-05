@@ -94,6 +94,248 @@ Then open:
 http://127.0.0.1:8000/
 ```
 
+## Version 3 Quick Workflow
+
+Version 3 is the current teacher-video workflow. It keeps course source files in Git and treats `generated/` as rebuildable output.
+
+Recommended order for one topic:
+
+1. Build professor scripts with the topic-aware LLM writer.
+2. Build audio from the approved script.
+3. Refresh motion timing from the generated audio/alignment.
+4. Build avatar-video jobs for the web overlay renderer.
+5. Render avatar clips on the stronger machine.
+6. Review in teacher mode in the browser.
+
+### Stronger Machine LLM Setup
+
+On the stronger machine, make sure Ollama is serving Mistral Nemo:
+
+```bash
+ollama list
+```
+
+The expected model is:
+
+```text
+mistral-nemo:latest
+```
+
+From this project machine, verify the LAN endpoint:
+
+```bash
+curl http://10.0.0.16:11434/api/tags
+```
+
+Use `--allowScriptFallback 0` for production/pilot script builds when you want missing or invalid LLM output to fail instead of silently falling back to deterministic text.
+
+### Build Professor Script Text
+
+Pilot example:
+
+```bash
+npm run build:prof-scripts -- \
+  --school UO \
+  --course MCG5353_Robotics_W2026 \
+  --session S01 \
+  --topic 01_course_overview \
+  --scriptProvider llm_local \
+  --scriptModel mistral-nemo:latest \
+  --scriptEndpoint http://10.0.0.16:11434 \
+  --scriptPromptVersion script_writer_v2 \
+  --allowScriptFallback 0 \
+  --scriptTimeoutMs 240000 \
+  --topicPlanTimeoutMs 360000 \
+  --scriptMaxRetries 4
+```
+
+Outputs:
+
+- `generated/lectures/<school>/<course>/<session>/<topic>/script.topic_plan.json`
+- `generated/lectures/<school>/<course>/<session>/<topic>/script.manifest.json`
+
+`script_writer_v2` is topic-aware. It sees the topic plan, slide order, previous accepted slide summary, last spoken excerpt, next slide intent, and first/middle/final slide position. It should sound like one professor teaching a continuous class, not isolated captions.
+
+### TTS Text Normalization
+
+The script manifest keeps normal professor text in `segments[].text` for subtitles and review. When needed, it also writes `segments[].tts_text` for audio-only pronunciation. TTS providers prefer `tts_text`, and older scripts are normalized at audio time.
+
+Examples:
+
+```text
+lim x->0 sin(x)/x = 1
+-> limit as x approaches 0 of sine of x over x equals 1
+
+/opt/ros/humble/setup.bash
+-> opt Ross humble setup dot bash
+
+ros2 run tf2_ros static_transform_publisher --help
+-> Ross two run T F two Ross static transform publisher help flag
+
+panda_moveit_config demo.launch.py
+-> panda moveit config demo dot launch dot py
+```
+
+The goal is human professor speech, not literal symbol reading. If a slash, dash, or underscore is the concept being taught, write that explicitly in the script.
+
+### Build Audio
+
+Local deterministic audio:
+
+```bash
+npm run build:audio -- \
+  --school UO \
+  --course MCG5353_Robotics_W2026 \
+  --session S01 \
+  --topic 01_course_overview \
+  --provider ffmpeg_flite
+```
+
+Higher-quality cloned audio can use `qwen3_tts` when the Python environment, model, and reference voice are available:
+
+```bash
+npm run build:audio -- \
+  --school UO \
+  --course MCG5353_Robotics_W2026 \
+  --session S01 \
+  --topic 01_course_overview \
+  --provider qwen3_tts \
+  --allowProviderFallback 0
+```
+
+Outputs:
+
+- `generated/outputs/audio/<school>/<course>/<session>/<topic>/<slide_id>.wav`
+- `generated/outputs/alignment/<school>/<course>/<session>/<topic>/tts_alignment.json`
+
+### Motion And Avatar Job Prep
+
+After audio exists:
+
+```bash
+npm run refresh:motion -- \
+  --school UO \
+  --course MCG5353_Robotics_W2026 \
+  --session S01 \
+  --topic 01_course_overview
+
+npm run build:avatar-video-jobs -- \
+  --school UO \
+  --course MCG5353_Robotics_W2026 \
+  --session S01 \
+  --topic 01_course_overview
+```
+
+Avatar jobs are written to:
+
+```text
+generated/jobs/avatar_video/<school>/<course>/<session>/<topic>.json
+generated/jobs/avatar_video/batches/*.json
+```
+
+The web player expects rendered transparent clips at:
+
+```text
+generated/outputs/avatar_video/<school>/<course>/<session>/<topic>/<slide_id>/transparent.webm
+generated/outputs/avatar_video/<school>/<course>/<session>/<topic>/<slide_id>/001.transparent.webm
+generated/outputs/avatar_video/<school>/<course>/<session>/<topic>/<slide_id>/002.transparent.webm
+```
+
+The single `transparent.webm` path is the default. Ordered clips are optional and play sequentially.
+
+### Avatar Video Renderer
+
+The thin renderer adapter lives in:
+
+```text
+tools/avatar_video_renderer/
+```
+
+The renderer consumes portable jobs from `generated/jobs/avatar_video/` and writes only to:
+
+```text
+generated/outputs/avatar_video/
+generated/status/avatar_video/
+```
+
+Run a batch on the render machine:
+
+```bash
+python3 tools/avatar_video_renderer/render_batch.py \
+  --job generated/jobs/avatar_video/batches/UO_MCG5353_Robotics_W2026_all-sessions_all-topics.json \
+  --config tools/avatar_video_renderer/config.json
+```
+
+Render or re-export one slide:
+
+```bash
+python3 tools/avatar_video_renderer/render_avatar_video_job.py \
+  --job generated/jobs/avatar_video/UO/MCG5353_Robotics_W2026/S01/01_course_overview.json \
+  --config tools/avatar_video_renderer/config.json \
+  --render-slide-id installer_language_keyboard
+
+python3 tools/avatar_video_renderer/render_avatar_video_job.py \
+  --job generated/jobs/avatar_video/UO/MCG5353_Robotics_W2026/S01/01_course_overview.json \
+  --config tools/avatar_video_renderer/config.json \
+  --alpha-only-slide-id installer_language_keyboard
+```
+
+Use `--alpha-only-slide-id` when the real render already exists and only transparency needs to be re-exported. Production alpha should create:
+
+- `transparent.webm`
+- `silent_transparent.webm`
+- `alpha_preview_checkerboard.mp4`
+- `debug_with_background.mp4`
+- `mp4_with_audio.mp4`
+- `render_status.json`
+
+Important config defaults:
+
+```json
+{
+  "rendering": {
+    "avatar_scale": 1.0,
+    "avatar_y_offset_px": 0,
+    "pad_audio_to_slide_duration": false
+  },
+  "transparency": {
+    "alpha_method": "connected_background"
+  }
+}
+```
+
+Do not render the slide into the avatar video. The avatar video should be transparent and composited over the web slide by the browser.
+
+### Teacher Playback
+
+Start the server:
+
+```bash
+npm run serve
+```
+
+Open teacher mode:
+
+```text
+http://127.0.0.1:8000/session.html?school=UO&course=MCG5353_Robotics_W2026&session=S01&topic=01_course_overview&lecture=1
+```
+
+Keyboard controls:
+
+- `Space` or `K`: play / pause
+- `Left`: back 5 seconds within the current slide
+- `Right`: forward 5 seconds within the current slide
+- `Up`: previous slide
+- `Down`: next slide
+- `M`: mute audio
+- `C`: subtitles
+- `V`: avatar overlay
+- `A`: auto-advance
+- `R`: restart lecture
+- `End`: stop
+
+The controller appears only when the mouse is in the bottom controller zone. Subtitles and the page number move down when the controller is hidden.
+
 ## Export Layout Metadata
 
 Generate a layout manifest and screenshots for one topic:

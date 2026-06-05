@@ -1,0 +1,24 @@
+{
+  "project_root": ".",
+  "motion_bank_file": "tools/avatar_video/motion_bank.v1.json",
+  "outputs_root": "generated/outputs/avatar_video",
+  "status_root": "generated/status/avatar_video",
+  "local_assets": {
+    "renderer_motion_bank_root": "/home/monjazeb/Projects/webdeck/instructor/motion_bank/normalized",
+    "comfyui_root": "/home/monjazeb/Projects/webdeck/tools/ComfyUI",
+    "wav2lip_root": "/home/monjazeb/Projects/webdeck/tools/Wav2Lip",
+    "conda_env": "webdeck_comfyui"
+  },
+  "rendering": {
+    "pad_audio_to_slide_duration": false,
+    "avatar_scale": 1.0,
+    "avatar_y_offset_px": 0,
+    "background_color": "0xf7f7f7"
+  },
+  "transparency": {
+    "required": true,
+    "reference_alpha": "tools/avatar_video_renderer/assets/character/instructor_05_transparent.png",
+    "placeholder_color": "0x00000000",
+    "checkerboard_preview": true
+  }
+}

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">Simplified Panda frame tree</title>
+  <desc id="desc">A simplified tree of Panda frames from world to panda_link0 through panda_link8 and the gripper links.</desc>
+  <rect width="1200" height="720" fill="#f8fafc"/>
+  <text x="600" y="65" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#0f172a">Panda frames form a parent-to-child tree</text>
+  <g font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800">
+    <g fill="#ffffff" stroke="#334155" stroke-width="3">
+      <rect x="90" y="330" width="105" height="56" rx="12"/>
+      <rect x="245" y="330" width="135" height="56" rx="12"/>
+      <rect x="430" y="120" width="130" height="48" rx="12"/>
+      <rect x="430" y="190" width="130" height="48" rx="12"/>
+      <rect x="430" y="260" width="130" height="48" rx="12"/>
+      <rect x="430" y="330" width="130" height="48" rx="12"/>
+      <rect x="430" y="400" width="130" height="48" rx="12"/>
+      <rect x="430" y="470" width="130" height="48" rx="12"/>
+      <rect x="430" y="540" width="130" height="48" rx="12"/>
+      <rect x="650" y="330" width="130" height="48" rx="12"/>
+      <rect x="850" y="260" width="130" height="48" rx="12"/>
+      <rect x="850" y="400" width="130" height="48" rx="12"/>
+      <rect x="1025" y="260" width="145" height="48" rx="12"/>
+      <rect x="1025" y="400" width="145" height="48" rx="12"/>
+    </g>
+    <g fill="#0f172a">
+      <text x="142" y="365" text-anchor="middle">world</text>
+      <text x="312" y="365" text-anchor="middle">panda_link0</text>
+      <text x="495" y="151" text-anchor="middle">panda_link1</text>
+      <text x="495" y="221" text-anchor="middle">panda_link2</text>
+      <text x="495" y="291" text-anchor="middle">panda_link3</text>
+      <text x="495" y="361" text-anchor="middle">panda_link4</text>
+      <text x="495" y="431" text-anchor="middle">panda_link5</text>
+      <text x="495" y="501" text-anchor="middle">panda_link6</text>
+      <text x="495" y="571" text-anchor="middle">panda_link7</text>
+      <text x="715" y="361" text-anchor="middle">panda_link8</text>
+      <text x="915" y="291" text-anchor="middle">panda_hand</text>
+      <text x="915" y="431" text-anchor="middle">tool / ee</text>
+      <text x="1097" y="291" text-anchor="middle">left finger</text>
+      <text x="1097" y="431" text-anchor="middle">right finger</text>
+    </g>
+  </g>
+  <g stroke="#64748b" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M195 358h50"/>
+    <path d="M380 358h45"/>
+    <path d="M495 168v22"/>
+    <path d="M495 238v22"/>
+    <path d="M495 308v22"/>
+    <path d="M495 378v22"/>
+    <path d="M495 448v22"/>
+    <path d="M495 518v22"/>
+    <path d="M560 564c55 0 70-140 90-165"/>
+    <path d="M780 354c55 0 65-74 70-82"/>
+    <path d="M780 370c55 0 65 55 70 62"/>
+    <path d="M980 284h45"/>
+    <path d="M980 424h45"/>
+  </g>
+  <rect x="280" y="625" width="640" height="58" rx="16" fill="#e0f2fe" stroke="#38bdf8" stroke-width="3"/>
+  <text x="600" y="661" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#0c4a6e">RViz Fixed Frame usually starts at panda_link0 for Panda demos</text>
+</svg>

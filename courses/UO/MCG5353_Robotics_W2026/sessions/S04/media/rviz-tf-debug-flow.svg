@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">RViz and TF debugging flow</title>
+  <desc id="desc">A vertical debugging checklist: source environment, package exists, launch nodes, robot description, joint states, TF, RViz fixed frame.</desc>
+  <rect width="1200" height="720" fill="#f8fafc"/>
+  <text x="600" y="62" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#0f172a">If Panda is missing in RViz, debug in this order</text>
+  <g font-family="Inter, Arial, sans-serif" font-size="23" font-weight="800">
+    <g transform="translate(285 115)">
+      <rect width="630" height="62" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+      <text x="315" y="40" text-anchor="middle" fill="#0f172a">1. Terminal sourced? `printenv ROS_DISTRO`</text>
+    </g>
+    <g transform="translate(285 195)">
+      <rect width="630" height="62" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+      <text x="315" y="40" text-anchor="middle" fill="#0f172a">2. Package visible? `ros2 pkg prefix --share ...`</text>
+    </g>
+    <g transform="translate(285 275)">
+      <rect width="630" height="62" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+      <text x="315" y="40" text-anchor="middle" fill="#0f172a">3. Nodes alive? `ros2 node list`</text>
+    </g>
+    <g transform="translate(285 355)">
+      <rect width="630" height="62" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+      <text x="315" y="40" text-anchor="middle" fill="#0f172a">4. Model loaded? `ros2 param get /robot_state_publisher robot_description`</text>
+    </g>
+    <g transform="translate(285 435)">
+      <rect width="630" height="62" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+      <text x="315" y="40" text-anchor="middle" fill="#0f172a">5. Joint data? `ros2 topic echo /joint_states`</text>
+    </g>
+    <g transform="translate(285 515)">
+      <rect width="630" height="62" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+      <text x="315" y="40" text-anchor="middle" fill="#0f172a">6. TF exists? `ros2 topic echo /tf` + `view_frames`</text>
+    </g>
+    <g transform="translate(285 595)">
+      <rect width="630" height="62" rx="18" fill="#e0f2fe" stroke="#38bdf8" stroke-width="4"/>
+      <text x="315" y="40" text-anchor="middle" fill="#0c4a6e">7. RViz Fixed Frame = `panda_link0`</text>
+    </g>
+  </g>
+  <g stroke="#94a3b8" stroke-width="4" stroke-linecap="round">
+    <line x1="600" y1="177" x2="600" y2="195"/>
+    <line x1="600" y1="257" x2="600" y2="275"/>
+    <line x1="600" y1="337" x2="600" y2="355"/>
+    <line x1="600" y1="417" x2="600" y2="435"/>
+    <line x1="600" y1="497" x2="600" y2="515"/>
+    <line x1="600" y1="577" x2="600" y2="595"/>
+  </g>
+</svg>

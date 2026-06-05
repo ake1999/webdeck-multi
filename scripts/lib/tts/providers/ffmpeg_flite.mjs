@@ -1,7 +1,7 @@
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { clamp } from "../../lecture/utils.mjs";
+import { clamp, ttsTextForSpeech } from "../../lecture/utils.mjs";
 import {
   buildAlignmentSegments,
   concatSegments,
@@ -128,7 +128,7 @@ export const ffmpegFliteProvider = {
         const segment = segments[index];
         const segmentPath = path.join(tempDir, `segment-${String(index + 1).padStart(2, "0")}.wav`);
         await synthesizeTextToFile(
-          segment.text,
+          segment.tts_text || ttsTextForSpeech(segment.text),
           segmentPath,
           resolveVoiceName(segment, options),
           Number(segment.voice?.pace) || Number(options.defaultPace) || 1,

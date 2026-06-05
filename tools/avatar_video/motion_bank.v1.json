@@ -16,229 +16,509 @@
   "motions": {
     "explaining": {
       "duration_sec": 7.708,
-      "allowed_placements": ["beginning", "middle"],
+      "allowed_placements": [
+        "beginning",
+        "middle"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["general explanation", "concept setup", "medium-length slide"],
-      "avoid_when": ["final goodbye", "typing or computer demo endpoint"],
+      "use_when": [
+        "general explanation",
+        "concept setup",
+        "medium-length slide"
+      ],
+      "avoid_when": [
+        "final goodbye",
+        "typing or computer demo endpoint"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 7,
+        "crop_y": [
+          157,
+          1264
+        ]
       }
     },
     "idle_at_desk": {
-      "duration_sec": 8.0,
-      "allowed_placements": ["beginning", "middle", "end"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "beginning",
+        "middle",
+        "end"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["quiet transition", "low-emphasis narration", "filler before another action"],
+      "use_when": [
+        "quiet transition",
+        "low-emphasis narration",
+        "filler before another action"
+      ],
       "constraints": {
         "settle_before": false,
         "settle_after": true,
         "can_trim": true,
         "can_loop": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "idle_at_desk_2": {
-      "duration_sec": 8.0,
-      "allowed_placements": ["beginning", "middle", "end"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "beginning",
+        "middle",
+        "end"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["alternate quiet transition", "avoid repeated idle_at_desk"],
+      "use_when": [
+        "alternate quiet transition",
+        "avoid repeated idle_at_desk"
+      ],
       "constraints": {
         "settle_before": false,
         "settle_after": true,
         "can_trim": true,
         "can_loop": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1264
+        ]
       }
     },
     "idle_thinking_at_desk": {
-      "duration_sec": 7.875,
-      "allowed_placements": ["beginning", "middle", "end"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "beginning",
+        "middle",
+        "end"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["thoughtful explanation", "question setup", "students should pause and think"],
+      "use_when": [
+        "thoughtful explanation",
+        "question setup",
+        "students should pause and think"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true,
         "can_loop": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "key_point": {
-      "duration_sec": 7.792,
-      "allowed_placements": ["middle"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "middle"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["important rule", "grading consequence", "remember this", "safety or caution"],
+      "use_when": [
+        "important rule",
+        "grading consequence",
+        "remember this",
+        "safety or caution"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "nodding_desk": {
-      "duration_sec": 8.0,
-      "allowed_placements": ["middle", "end"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "middle",
+        "end"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["confirmation", "recap", "agreement with expected answer"],
+      "use_when": [
+        "confirmation",
+        "recap",
+        "agreement with expected answer"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "point_left": {
-      "duration_sec": 7.875,
-      "allowed_placements": ["middle"],
+      "duration_sec": 7.708,
+      "allowed_placements": [
+        "middle"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["avatar is bottom-right and content target is left or center-left"],
+      "use_when": [
+        "avatar is bottom-right and content target is left or center-left"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 7,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "point_left_emphasis": {
-      "duration_sec": 7.875,
-      "allowed_placements": ["middle"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "middle"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["avatar is bottom-right and the left-side target is important"],
+      "use_when": [
+        "avatar is bottom-right and the left-side target is important"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true,
         "max_per_slide": 1
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "point_right": {
-      "duration_sec": 7.875,
-      "allowed_placements": ["middle"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "middle"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["target is on the right side of the avatar frame", "rare right-side emphasis"],
-      "avoid_when": ["slide overlay is already bottom-right and could cover the target"],
+      "use_when": [
+        "target is on the right side of the avatar frame",
+        "rare right-side emphasis"
+      ],
+      "avoid_when": [
+        "slide overlay is already bottom-right and could cover the target"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "point_slide_right": {
-      "duration_sec": 7.875,
-      "allowed_placements": ["middle"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "middle"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["content target is slide-right and not covered by the avatar overlay"],
+      "use_when": [
+        "content target is slide-right and not covered by the avatar overlay"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "presenting_concept": {
-      "duration_sec": 7.917,
-      "allowed_placements": ["beginning", "middle"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "beginning",
+        "middle"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["new concept", "definition", "high-level framing"],
+      "use_when": [
+        "new concept",
+        "definition",
+        "high-level framing"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1264
+        ]
       }
     },
     "wait_audience_response": {
-      "duration_sec": 8.0,
-      "allowed_placements": ["middle", "end"],
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "middle",
+        "end"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["question slide", "quiz prompt", "pause for students"],
+      "use_when": [
+        "question slide",
+        "quiz prompt",
+        "pause for students"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": true,
         "can_trim": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1259
+        ]
       }
     },
     "welcome_audience": {
-      "duration_sec": 8.0,
-      "allowed_placements": ["beginning"],
+      "duration_sec": 7.292,
+      "allowed_placements": [
+        "beginning"
+      ],
       "returns_to_neutral": true,
-      "use_when": ["first slide", "topic opening", "welcome"],
+      "use_when": [
+        "first slide",
+        "topic opening",
+        "welcome"
+      ],
       "constraints": {
         "settle_before": false,
         "settle_after": true,
         "can_trim": true,
         "max_per_topic": 1
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 17,
+        "crop_y": [
+          157,
+          1264
+        ]
       }
     },
     "see_you_next": {
-      "duration_sec": 8.0,
-      "allowed_placements": ["end"],
-      "allowed_slide_positions": ["final"],
+      "duration_sec": 7.875,
+      "allowed_placements": [
+        "end"
+      ],
+      "allowed_slide_positions": [
+        "final"
+      ],
       "returns_to_neutral": false,
-      "use_when": ["final slide", "goodbye", "forward handoff"],
+      "use_when": [
+        "final slide",
+        "goodbye",
+        "forward handoff"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": false,
         "can_trim": false,
         "end_only": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 3,
+        "crop_y": [
+          157,
+          1264
+        ]
       }
     },
     "show_computer_screen": {
-      "duration_sec": 8.0,
-      "allowed_placements": ["end"],
+      "duration_sec": 7.875,
+      "allowed_placements": [
+        "end"
+      ],
       "returns_to_neutral": false,
-      "use_when": ["terminal", "code", "screen demo", "software setup"],
+      "use_when": [
+        "terminal",
+        "code",
+        "screen demo",
+        "software setup"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": false,
         "can_trim": false,
         "end_only": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 3,
+        "crop_y": [
+          155,
+          1259
+        ]
       }
     },
     "type_laptop": {
       "duration_sec": 3.0,
-      "allowed_placements": ["end"],
+      "allowed_placements": [
+        "end"
+      ],
       "returns_to_neutral": false,
-      "use_when": ["short terminal or command-line ending"],
+      "use_when": [
+        "short terminal or command-line ending"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": false,
         "can_trim": false,
         "end_only": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 3,
+        "crop_y": [
+          155,
+          1259
+        ]
       }
     },
     "type_laptop_long": {
       "duration_sec": 7.875,
-      "allowed_placements": ["end"],
+      "allowed_placements": [
+        "end"
+      ],
       "returns_to_neutral": false,
-      "use_when": ["longer command-line or code ending"],
+      "use_when": [
+        "longer command-line or code ending"
+      ],
       "constraints": {
         "settle_before": true,
         "settle_after": false,
         "can_trim": false,
         "end_only": true
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 3,
+        "crop_y": [
+          155,
+          1259
+        ]
       }
     }
   },
   "events": {
     "blink": {
       "fields": {
-        "eye": ["both", "left", "right"],
-        "strength": ["normal", "full"]
+        "eye": [
+          "both",
+          "left",
+          "right"
+        ],
+        "strength": [
+          "normal",
+          "full"
+        ]
       }
     },
     "gaze": {
       "fields": {
-        "target": ["slide_left", "slide_right", "camera", "down", "up"],
-        "intensity_range": [0.0, 1.0]
+        "target": [
+          "slide_left",
+          "slide_right",
+          "camera",
+          "down",
+          "up"
+        ],
+        "intensity_range": [
+          0.0,
+          1.0
+        ]
       }
     },
     "head_pose": {
       "fields": {
-        "yaw_range": [-3.5, 3.5],
-        "pitch_range": [-2.5, 3.5],
-        "roll_range": [-0.8, 0.8],
-        "easing": ["ease_in_out"]
+        "yaw_range": [
+          -3.5,
+          3.5
+        ],
+        "pitch_range": [
+          -2.5,
+          3.5
+        ],
+        "roll_range": [
+          -0.8,
+          0.8
+        ],
+        "easing": [
+          "ease_in_out"
+        ]
       }
     },
     "emotion": {
       "fields": {
-        "name": ["subtle_happy", "engaged", "surprised_light", "thoughtful"],
-        "intensity_range": [0.0, 1.0]
+        "name": [
+          "subtle_happy",
+          "engaged",
+          "surprised_light",
+          "thoughtful"
+        ],
+        "intensity_range": [
+          0.0,
+          1.0
+        ]
       }
     }
   }

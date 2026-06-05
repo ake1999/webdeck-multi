@@ -26,6 +26,156 @@ export function plainTextForSpeech(value) {
     .trim();
 }
 
+const SPOKEN_REPLACEMENTS = [
+  [/\bROS\s*2\b/gi, "Ross two"],
+  [/\bros2(?=\b|_)/gi, "Ross two"],
+  [/(?<![A-Za-z0-9])ros(?=$|[^A-Za-z0-9]|_)/gi, "Ross"],
+  [/tf2(?=_|\b)/gi, "T F two"],
+  [/\bRViz\b/g, "R Viz"],
+  [/\bURDF\b/g, "U R D F"],
+  [/\bXacro\b/g, "X macro"],
+  [/\bTF2\b/g, "T F two"],
+  [/\bTF\b/g, "T F"],
+  [/\bCLI\b/g, "C L I"],
+  [/\bAPI\b/g, "A P I"],
+  [/\bGUI\b/g, "G U I"],
+  [/\bPDF\b/g, "P D F"],
+  [/\bYAML\b/g, "YAML"],
+  [/\bXML\b/g, "X M L"],
+  [/\bJSON\b/g, "J SON"],
+  [/\bCSV\b/g, "C S V"],
+  [/\bUSB\b/g, "U S B"],
+  [/\bTCP\b/g, "T C P"],
+  [/\bUDP\b/g, "U D P"],
+  [/\bIP\b/g, "I P"],
+  [/\bQoS\b/g, "quality of service"],
+  [/\bsrc\b/g, "source"],
+  [/\blim\b/gi, "limit"],
+  [/\bsqrt\b/gi, "square root"],
+  [/\bsin\b/gi, "sine"],
+  [/\bcos\b/gi, "cosine"],
+  [/\btan\b/gi, "tangent"],
+  [/∞/g, " infinity "],
+  [/∑/g, " sum "],
+  [/Σ/g, " sigma "],
+  [/∫/g, " integral "],
+  [/∂/g, " partial derivative "],
+  [/∇/g, " gradient "],
+  [/Δ/g, " delta "],
+  [/δ/g, " delta "],
+  [/θ/g, " theta "],
+  [/λ/g, " lambda "],
+  [/μ/g, " mu "],
+  [/π/g, " pi "],
+  [/ω/g, " omega "],
+  [/α/g, " alpha "],
+  [/β/g, " beta "],
+  [/γ/g, " gamma "],
+];
+
+function spellAcronyms(value) {
+  return String(value || "").replace(/\b[A-Z]{2,}\b/g, (match) => match.split("").join(" "));
+}
+
+function verbalizePathPart(value) {
+  const normalized = String(value || "")
+    .replace(/^~$/, "home")
+    .replace(/^\.$/, "current folder")
+    .replace(/^\.\.$/, "parent folder")
+    .replace(/\./g, " dot ")
+    .replace(/_/g, " ")
+    .replace(/-/g, " ")
+    .replace(/\bws\b/gi, "workspace")
+    .replace(/\s+/g, " ")
+    .trim();
+  return normalized;
+}
+
+function verbalizeTechnicalPaths(value) {
+  return String(value || "").replace(
+    /(^|[\s("'`])((?:~?\/|\.{1,2}\/|[A-Za-z0-9_.-]+\/)[^\s,;:!?]+)/g,
+    (match, prefix, token) => {
+      const cleaned = String(token).replace(/\.$/, "");
+      const parts = cleaned
+        .split(/[\\/]+/g)
+        .map(verbalizePathPart)
+        .filter(Boolean);
+      if (!parts.length) return match;
+      return `${prefix}${parts.join(" ")}`;
+    },
+  );
+}
+
+function verbalizeCommonMath(value) {
+  return String(value || "")
+    .replace(
+      /\blimit\s+([A-Za-z])\s*(?:->|→)\s*([^\s]+)\s+(sine|cosine|tangent)\s*\(\s*([^)]+?)\s*\)\s*\/\s*([A-Za-z0-9_]+)/gi,
+      (_, variable, target, fn, numerator, denominator) => (
+        `limit as ${variable} approaches ${target} of ${fn.toLowerCase()} of ${numerator.trim()} over ${denominator}`
+      ),
+    )
+    .replace(
+      /\b(sine|cosine|tangent)\s*\(\s*([^)]+?)\s*\)\s*\/\s*([A-Za-z0-9_]+)/gi,
+      (_, fn, numerator, denominator) => `${fn.toLowerCase()} of ${numerator.trim()} over ${denominator}`,
+    )
+    .replace(/([A-Za-z0-9_]+)\s*\/\s*([A-Za-z0-9_]+)/g, "$1 over $2");
+}
+
+function verbalizeSymbols(value) {
+  return String(value || "")
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/≤/g, " less than or equal to ")
+    .replace(/≥/g, " greater than or equal to ")
+    .replace(/≠/g, " not equal to ")
+    .replace(/≈/g, " approximately equal to ")
+    .replace(/==/g, " equals equals ")
+    .replace(/!=/g, " not equal to ")
+    .replace(/<=/g, " less than or equal to ")
+    .replace(/>=/g, " greater than or equal to ")
+    .replace(/->|→/g, " to ")
+    .replace(/=>|⇒/g, " implies ")
+    .replace(/::/g, " double colon ")
+    .replace(/(^|\s)--([A-Za-z][\w-]*)/g, "$1$2 flag ")
+    .replace(/(^|\s)-([A-Za-z][\w-]*)/g, "$1$2 flag ")
+    .replace(/\s-\s/g, " minus ")
+    .replace(/\//g, " over ")
+    .replace(/\\/g, " backslash ")
+    .replace(/_/g, " ")
+    .replace(/~/g, " home ")
+    .replace(/\|/g, " pipe ")
+    .replace(/#/g, " hash ")
+    .replace(/\$/g, " dollar ")
+    .replace(/@/g, " at ")
+    .replace(/%/g, " percent ")
+    .replace(/\+/g, " plus ")
+    .replace(/\*/g, " times ")
+    .replace(/\^/g, " to the power of ")
+    .replace(/=/g, " equals ")
+    .replace(/</g, " less than ")
+    .replace(/>/g, " greater than ")
+    .replace(/\[/g, " left bracket ")
+    .replace(/\]/g, " right bracket ")
+    .replace(/\{/g, " left brace ")
+    .replace(/\}/g, " right brace ")
+    .replace(/\(/g, " ")
+    .replace(/\)/g, " ")
+    .replace(/(?<=[A-Za-z0-9_])\.(?=[A-Za-z_])/g, " dot ");
+}
+
+export function ttsTextForSpeech(value) {
+  let text = plainTextForSpeech(value);
+  for (const [pattern, replacement] of SPOKEN_REPLACEMENTS) {
+    text = text.replace(pattern, replacement);
+  }
+  return ensureSentence(
+    spellAcronyms(verbalizeSymbols(verbalizeCommonMath(verbalizeTechnicalPaths(text))))
+      .replace(/\s+/g, " ")
+      .replace(/\s+([,.!?;:])/g, "$1")
+      .trim(),
+  );
+}
+
 export function extractCodeBlocks(value) {
   const blocks = [];
   const regex = /```(?:[\w+-]+)?\n?([\s\S]*?)```/g;
