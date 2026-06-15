@@ -1,0 +1,425 @@
+{
+  "lecture_meta": {
+    "title": "Instantaneous Rate of Change",
+    "topic": "Limits and Derivatives",
+    "category": "general_mathematics",
+    "student_level": "First-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate instantaneous rates of change using the limit definition",
+      "Interpret the derivative as the instantaneous rate of change",
+      "Apply the concept to velocity, marginal cost, and reaction rates",
+      "Distinguish between average and instantaneous rates",
+      "Recognize when a function does not have an instantaneous rate of change"
+    ],
+    "prerequisite_reminder": "You should already understand the slope of a secant line and the concept of a limit."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Speedometer vs. Average Speed",
+      "left": {
+        "content_type": "concept",
+        "content": "Your speedometer reads **instantaneous speed** – the rate of change of distance *right now*.\n\nAverage speed = $\\frac{\\text{total distance}}{\\text{total time}}$ covers an interval."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show a car dashboard with a speedometer needle at 60 mph. Below, a graph of distance vs. time with two points joined by a dashed secant line. Label the secant slope as 'average speed'. Highlight a point on the curve with a tangent line, label 'instantaneous speed'.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show tangent line"
+        ]
+      },
+      "on_screen_text": "Speedometer = instantaneous rate. Average speed = secant slope over an interval.",
+      "teacher_narration": "Take a moment to think about your car's speedometer. It tells you your speed at this precise instant, not your average over the last hour. That reading is an instantaneous rate of change. In contrast, if you compute displacement divided by time elapsed, you get an average rate. Today we'll see how the two are connected through limits, and why the speedometer is actually giving you a derivative.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Average Rate of Change",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{Average ROC} = \\frac{\\Delta y}{\\Delta x} = \\frac{f(x_2)-f(x_1)}{x_2-x_1}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot a curve y = f(x). Mark two points (x1, f(x1)) and (x2, f(x2)). Draw the secant line between them. Label Δx and Δy. Show the slope formula.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: change parameter a",
+          "Radio: left / right / midpoint endpoints"
+        ]
+      },
+      "on_screen_text": "Average rate = slope of secant line = change in y over change in x.",
+      "teacher_narration": "The average rate of change of a function over an interval is simply the slope of the line connecting the two endpoints. This is exactly the difference quotient you've seen before: the change in the function divided by the change in the input. It tells you how much the output changes per unit input on average between x1 and x2.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Instantaneous Rate of Change",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{Instantaneous ROC at } x=a = \\lim_{h \\to 0} \\frac{f(a+h)-f(a)}{h}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Same curve as previous slide, but now the second point is (a+h, f(a+h)). Show h decreasing towards zero. The secant line approaches the tangent line at x=a. Label the tangent line in red.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band"
+        ]
+      },
+      "on_screen_text": "Limit of secant slopes as interval shrinks to zero = slope of tangent line.",
+      "teacher_narration": "Now we ask: what is the rate of change exactly at a single point? We can't compute a slope with just one point, so we take a limit. We let the second point get arbitrarily close to the first, and the slopes of the secant lines approach the slope of the tangent line. That limit is the instantaneous rate of change.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Secant → Tangent Animation",
+      "left": {
+        "content_type": "text",
+        "content": "Drag the slider to see how secant lines approach the tangent as $h \\to 0$."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "Plot f(x)=x^2 from x=0 to x=4. Mark point a=2. Show secant line through (a, f(a)) and (a+h, f(a+h)). Show h value. As h decreases from 2 to 0.1, secant line rotates towards tangent line. Tangent line shown as dashed red when h is small enough (<0.5). Include slider for h, toggle to show/hide tangent. Use matplotlib widgets.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, CheckButtons\n\n# Function\ndef f(x):\n    return x**2\n\n# Plot setup\nfig, ax = plt.subplots(figsize=(6,4))\nplt.subplots_adjust(bottom=0.25)\nx_vals = np.linspace(0, 4, 500)\nax.plot(x_vals, f(x_vals), 'b-', lw=2, label='f(x)=x^2')\nax.set_xlabel('x')\nax.set_ylabel('f(x)')\nax.set_title('Secant → Tangent')\nax.grid(True, alpha=0.3)\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(0, color='gray', lw=0.5)\nax.set_ylim(0, 16)\n\n# Initial parameters\na = 2.0\nh0 = 2.0\n\n# Points and lines\nline_sec, = ax.plot([], [], 'g-', lw=2, label='Secant')\nline_tan, = ax.plot([], [], 'r--', lw=2, label='Tangent')\npoint_a, = ax.plot([a], [f(a)], 'ko', markersize=8)\npoint_ah, = ax.plot([], [], 'ko', markersize=8)\nax.legend(loc='upper left')\n\n# Update function\ndef update(h):\n    x2 = a + h\n    y2 = f(x2)\n    # secant line\n    sec_x = np.array([a, x2])\n    sec_y = np.array([f(a), y2])\n    line_sec.set_data(sec_x, sec_y)\n    point_ah.set_data([x2], [y2])\n    # tangent line (derivative at a = 2a)\n    slope = 2*a\n    tan_x = np.linspace(a-1, a+1, 100)\n    tan_y = slope*(tan_x - a) + f(a)\n    # Only show tangent when h < 0.5\n    if h < 0.5:\n        line_tan.set_data(tan_x, tan_y)\n        line_tan.set_visible(True)\n    else:\n        line_tan.set_visible(False)\n    fig.canvas.draw_idle()\n\n# Slider\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'h', 0.1, 2.0, valinit=h0, valstep=0.1)\nslider.on_changed(update)\n\n# Checkbox for tangent\nax_check = plt.axes([0.02, 0.5, 0.12, 0.1])\ncheck = CheckButtons(ax_check, ['Show Tangent'], [True])\ndef toggle(label):\n    line_tan.set_visible(not line_tan.get_visible())\n    fig.canvas.draw_idle()\ncheck.on_clicked(toggle)\n\n# Initial draw\nupdate(h0)\nplt.show()",
+        "interactive_controls": [
+          "Slider for h from 0.1 to 2.0",
+          "Checkbox: show/hide tangent line"
+        ]
+      },
+      "on_screen_text": "Use slider to decrease h. Watch secant line approach tangent.",
+      "teacher_narration": "Here you can see the geometry in action. As you slide h towards zero, the green secant line rotates and eventually aligns with the red dashed tangent line. This is the core visual of the derivative. Notice how the tangent line touches the curve at only one point.",
+      "student_prompt": "What do you think happens to the secant slope as h approaches 0?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Alternative Limit Form",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{Instantaneous ROC} = \\lim_{x_2 \\to x_1} \\frac{f(x_2)-f(x_1)}{x_2-x_1}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Same graph as slide 3, but label x1 and x2. Show the two-point form with arrow from x2 to x1.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show tangent line"
+        ]
+      },
+      "on_screen_text": "Equivalent: let the second point approach the first directly.",
+      "teacher_narration": "Sometimes it's more convenient to let the second point approach the first directly instead of using h. Both forms are exactly the same. In the h-form we set x2 = a+h; in the two-point form we let x2 approach x1. Use whichever is easier for the calculation. This alternative form is especially useful when the function is given in a way that makes substitution with h messy. For example, if you have a rational function, the two-point form might simplify the algebra. The key idea remains: we are taking the limit of secant slopes as the interval shrinks to zero.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Theorem: Instantaneous ROC = Derivative",
+      "left": {
+        "content_type": "text",
+        "content": "**Theorem:** If $f$ is differentiable at $x=a$, then the instantaneous rate of change at $x=a$ equals $f'(a)$.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Start: $\\frac{f(a+h)-f(a)}{h}$ | Secant slope over $[a, a+h]$ |\n| 2 | Take limit as $h\\to 0$ | Shrink interval to a single point |\n| 3 | Limit exists $\\iff$ $f$ differentiable | Definition of differentiability |\n| 4 | This limit is $f'(a)$ | Formal definition of derivative |\n| 5 | Therefore, instantaneous ROC $= f'(a)$ | QED |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Instantaneous rate of change = derivative = slope of tangent line.",
+      "teacher_narration": "This theorem ties everything together. The instantaneous rate of change, the slope of the tangent line, and the derivative are three names for the same limit. If a function is differentiable at a point, that limit exists and we call it f'(a). This is why finding derivatives is so powerful – it gives us an instantaneous rate. The notation f'(a) is read as 'f prime of a'. It represents the slope of the tangent line at that exact point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 1: Warm-Up",
+      "left": {
+        "content_type": "steps",
+        "content": "Find the instantaneous rate of change of $f(x)=3x^2$ at $x=2$.\n\n1. Write limit: $\\lim_{h\\to 0}\\frac{3(2+h)^2-3(2)^2}{h}$\n2. Expand: $\\frac{3(4+4h+h^2)-12}{h}$\n3. Simplify: $\\frac{12+12h+3h^2-12}{h}=\\frac{12h+3h^2}{h}$\n4. Cancel $h$: $12+3h$\n5. Take limit: $\\lim_{h\\to0}(12+3h)=12$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot f(x)=3x^2 from x=0 to x=3. Mark point at (2,12). Draw tangent line with slope 12. Show coordinates.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Answer: Instantaneous rate = 12 (units per unit x).",
+      "teacher_narration": "Let's work through our first example. We start with the limit definition. Notice how the constant 3 factors out. After expanding and simplifying, the h cancels, leaving 12+3h. As h approaches 0, the rate is 12. The tangent line at x=2 has slope 12. This is a straightforward application. The key step is canceling the h, which is allowed because h is not zero in the limit process. This cancellation is what makes the limit computable.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Velocity Problem",
+      "left": {
+        "content_type": "text",
+        "content": "A particle moves along a line with $s(t)=t^3-6t^2+9t$ (meters, t in seconds). Find the instantaneous velocity at $t=1$ second."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show a number line with particle position labeled. Graph of s(t) from t=0 to t=4. Mark point t=1.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause the video now. Compute v(1) using the limit definition.",
+      "teacher_narration": "Here's a typical exam problem. Position is given by a cubic, and we need the instantaneous rate of change of position – that's velocity. Try to compute it using the h-formula before I show the solution. Give it a shot, then resume the video to check your answer. Remember that velocity is the derivative of the position function s(t) with respect to time t.",
+      "student_prompt": "Compute the instantaneous velocity at t=1.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Velocity Solution",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | $v(1)=\\lim_{h\\to 0}\\frac{s(1+h)-s(1)}{h}$ | Definition of velocity |\n| 2 | $s(1+h)=(1+h)^3-6(1+h)^2+9(1+h)$ | Substitute |\n| 3 | Expand: $1+3h+3h^2+h^3 -6(1+2h+h^2)+9+9h$ | Carefully expand |\n| 4 | Simplify: $(1-6+9)+(3h-12h+9h)+(3h^2-6h^2)+h^3$ | Group terms |\n| 5 | $=4+0h-3h^2+h^3$ | Linear term cancels |\n| 6 | $s(1)=4$, numerator: $-3h^2+h^3$ | |\n| 7 | Limit: $\\lim_{h\\to0}\\frac{-3h^2+h^3}{h}=\\lim_{h\\to0}(-3h+h^2)=0$ | Cancel $h$ |\n\n**Answer:** $v(1)=0$ m/s (particle momentarily at rest)."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Result: instantaneous velocity = 0 m/s at t=1.",
+      "teacher_narration": "After careful expansion, the h terms cancel, leaving only higher powers. The limit evaluates to zero. The particle is at rest at t=1 second – a common point where velocity changes sign. If you got zero, great. If not, check your algebra. Notice that the linear term in h canceled out, which is why the velocity is zero. This often happens at turning points of the position function.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Average vs Instantaneous",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** For $P(t)=1000\\cdot 2^t$, compute average over $[3,4]$: $\\frac{P(4)-P(3)}{1}=8000$ and claim it's the instantaneous rate at $t=3$.\n\n**Why it's wrong:** The function is exponential, not linear. The average over $[3,4]$ is 8000, but the true instantaneous rate is only about 5545. Using an interval of length 1 introduces error."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot P(t)=1000*2^t from t=2 to t=5. Mark points at t=3 and t=4, draw secant line with slope 8000. Draw tangent line at t=3 with slope ~5545. Show both slopes labeled.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Average rate ≠ instantaneous rate, especially for nonlinear functions.",
+      "teacher_narration": "This is one of the most common mistakes students make. Just because you pick a small interval doesn't mean the average rate equals the instantaneous rate. Here, the function is convex and growing faster as time increases, so the average over [3,4] overestimates the rate at t=3. Never substitute a finite interval for a limit. The correct instantaneous rate is found by taking the limit as the interval shrinks to zero.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 3: Exponential Growth (Tricky)",
+      "left": {
+        "content_type": "steps",
+        "content": "Find instantaneous growth rate of $P(t)=1000\\cdot 2^t$ at $t=3$.\n\n1. $\\lim_{h\\to0}\\frac{1000\\cdot2^{3+h}-1000\\cdot2^3}{h}$\n2. $=1000\\cdot2^3\\cdot\\lim_{h\\to0}\\frac{2^h-1}{h}$\n3. Known limit (from prerequisite): $\\lim_{h\\to0}\\frac{2^h-1}{h}=\\ln2$\n4. So $8000\\ln2 \\approx 5545$ bacteria/hour."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Graph of exponential function with tangent line at t=3. Label slope 5545. On the same graph, show the secant from t=3 to t=4 with slope 8000 for comparison.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Answer: ≈ 5545 bacteria per hour (not 8000!).",
+      "teacher_narration": "Now we compute the correct instantaneous rate. Notice we factor out 1000*2^3. Then we need the limit of (2^h-1)/h, which is a standard result equal to the natural log of 2. The result, about 5545, is significantly less than the average 8000. This demonstrates the difference between average and instantaneous rates for exponential functions. The natural logarithm ln(2) appears because the derivative of an exponential function a^t is a^t * ln(a).",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Does This Function Have an Instantaneous Rate?",
+      "left": {
+        "content_type": "text",
+        "content": "Consider $f(x)=|x-2|$. At $x=2$, does the instantaneous rate of change exist?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot f(x)=|x-2| from x=0 to x=4. Highlight the sharp corner at x=2. Draw left-hand and right-hand slopes with dashed lines.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause and try: compute the left and right limits of the difference quotient.",
+      "teacher_narration": "Here's a function that has a sharp corner at x=2. The instantaneous rate of change requires the limit of the difference quotient to exist. At a corner, the left and right limits of the slope are different, so the two-sided limit does not exist. Try computing the limit from the left and from the right to see why. Pause the video and try it. This is a classic example of a continuous function that is not differentiable at a point.",
+      "student_prompt": "Determine if the derivative exists at x=2 for f(x)=|x-2|.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4: Edge Case – Absolute Value",
+      "left": {
+        "content_type": "steps",
+        "content": "Check left and right limits:\n- Right: $\\lim_{h\\to 0^+}\\frac{|2+h-2|-0}{h} = \\lim_{h\\to0^+}\\frac{|h|}{h}=1$\n- Left: $\\lim_{h\\to 0^-}\\frac{|2+h-2|}{h} = \\lim_{h\\to0^-}\\frac{-h}{h}=-1$\n- Two-sided limit does not exist.\n\n**Conclusion:** No instantaneous rate of change at the corner."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Same graph, but now show the two one-sided limits numerically: left slope -1, right slope +1. Animate arrows approaching from left and right.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Left: -1, Right: +1. Limits differ → derivative does not exist.",
+      "teacher_narration": "As you saw, the right-hand limit gives +1, while the left-hand gives -1. Since these are different, the two-sided limit does not exist. Therefore the instantaneous rate of change at this sharp corner is not defined. This is why differentiability requires the function to be smooth, without corners or cusps. The absolute value function is continuous at x=2, but it is not differentiable there because the slope changes abruptly.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 5: Application – Marginal Cost",
+      "left": {
+        "content_type": "steps",
+        "content": "Cost function $C(x)=500+20x+0.1x^2$ (dollars, x units). Find marginal cost at $x=50$.\n\n1. $C'(50)=\\lim_{h\\to0}\\frac{C(50+h)-C(50)}{h}$\n2. $C(50+h)=500+20(50+h)+0.1(50+h)^2$\n3. Expand: $=1750+30h+0.1h^2$\n4. $C(50)=1750$, numerator: $30h+0.1h^2$\n5. Limit: $\\lim_{h\\to0}(30+0.1h)=30$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot cost function from x=0 to x=100. Draw tangent line at x=50 with slope 30. Label as marginal cost. Show that adding one unit increases cost by about $30.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Marginal cost at 50 units = $30 per unit.",
+      "teacher_narration": "In economics, marginal cost tells you how much total cost rises when you produce one more unit. Here the derivative is 30 dollars per unit. This information helps businesses decide whether to increase production. Notice the linear part gives constant 20, and the quadratic adds 10 at x=50 due to the 0.1*2x term. The marginal cost is the derivative of the cost function, which gives the instantaneous rate of change of cost with respect to the number of units produced.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Recap: Key Formulas",
+      "left": {
+        "content_type": "text",
+        "content": "**Average ROC:** $\\frac{f(b)-f(a)}{b-a}$\n\n**Instantaneous ROC:** $\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h} = f'(a)$\n\n**Alternative:** $\\lim_{x\\to a}\\frac{f(x)-f(a)}{x-a}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show three formula cards side by side with labels. Use arrows to show equivalence.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Three equivalent forms. Remember: instantaneous = derivative = tangent slope.",
+      "teacher_narration": "Let's quickly recap the essential formulas. The average rate of change uses a finite interval. The instantaneous rate is the limit as that interval shrinks to zero. This limit is exactly the derivative. Whether you use h or the two-point form, the result is the same. Keep these in mind for the next lecture. The derivative f'(a) is the slope of the tangent line at x=a, and it represents the instantaneous rate of change of the function at that point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary and Learning Objectives",
+      "left": {
+        "content_type": "text",
+        "content": "✔ Calculated instantaneous rates using the limit definition.\n✔ Interpreted derivatives as instantaneous rates of change.\n✔ Applied to velocity, marginal cost, and exponential growth.\n✔ Distinguished average vs. instantaneous rates.\n✔ Recognized that corners cause the derivative to not exist.\n\n**Key takeaway:** The instantaneous rate of change is the limit of average rates – it's the derivative."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "You now understand instantaneous rate of change and its applications.",
+      "teacher_narration": "We've covered a lot today. You should now be able to compute instantaneous rates using limits, interpret them as derivatives, and apply them in physics, economics, and biology. Remember the key distinction: average is over an interval, instantaneous is at a point. Keep practicing with the exercises. The concept of instantaneous rate of change is fundamental to calculus and appears in many real-world contexts, from physics to finance.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 17,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Why Must the Limit Exist?",
+      "left": {
+        "content_type": "text",
+        "content": "For a function to have an instantaneous rate of change at $x=a$, it must be **smooth** – the left and right limits of the difference quotient must agree. If they don't (like $|x-2|$), the function is not differentiable there.\n\n**Extension:** Try $f(x)=x\\sin(1/x)$ for $x\\neq0$, $f(0)=0$. Does the derivative exist at $0$? (Hint: use squeeze theorem.)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot f(x)=x sin(1/x) near 0. Show oscillations that die out. Label x=0. Show that secant slopes oscillate but do not approach a single value, so derivative does not exist.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Smoothness needed: left and right limits must match. Not all continuous functions have derivatives.",
+      "teacher_narration": "For the curious, here's a deeper question: not every continuous function has a derivative. The absolute value function is continuous but not differentiable at the corner. In contrast, consider f(x)=x sin(1/x) at 0. The difference quotient is sin(1/h), which oscillates between -1 and 1 and does not approach any limit. So the derivative does not exist at 0, even though the function is continuous. Try proving it yourself.",
+      "student_prompt": "Try to show that the derivative of f(x)=x sin(1/x) at 0 does not exist because the difference quotient oscillates.",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 generated/
+graphify-out/
 node_modules/
 __pycache__/
 .codex

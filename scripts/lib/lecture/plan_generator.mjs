@@ -62,6 +62,7 @@ function normalizeKey(value) {
 
 function mediaKinds(rawSlide) {
   const kinds = [];
+  if (rawSlide?.media?.kind) kinds.push(String(rawSlide.media.kind).toLowerCase());
   for (const column of [rawSlide?.left, rawSlide?.right]) {
     const kind = column?.media?.kind;
     if (kind) kinds.push(String(kind).toLowerCase());
@@ -70,22 +71,27 @@ function mediaKinds(rawSlide) {
 }
 
 function hasMediaDemo(rawSlide) {
-  return mediaKinds(rawSlide).some((kind) => ["image", "video", "iframe", "widget", "gallery"].includes(kind));
+  return mediaKinds(rawSlide).some((kind) => ["image", "video", "iframe", "widget", "calculus_widget", "gallery"].includes(kind));
 }
 
 function hasInteractiveMedia(rawSlide) {
-  return mediaKinds(rawSlide).some((kind) => ["iframe", "widget", "video"].includes(kind));
+  return mediaKinds(rawSlide).some((kind) => ["iframe", "widget", "calculus_widget", "video"].includes(kind));
 }
 
 function hasVisualMedia(rawSlide) {
-  return mediaKinds(rawSlide).some((kind) => ["image", "gallery", "video", "iframe", "widget"].includes(kind));
+  return mediaKinds(rawSlide).some((kind) => ["image", "gallery", "video", "iframe", "widget", "calculus_widget"].includes(kind));
 }
 
 function mediaLabel(rawSlide) {
+  if (rawSlide?.media) {
+    const media = rawSlide.media;
+    const label = plainTextForSpeech(media.caption || media.title || media.source || media.alt || media.widget || media.src || "");
+    if (label) return label;
+  }
   for (const column of [rawSlide?.left, rawSlide?.right]) {
     const media = column?.media;
     if (!media) continue;
-    const label = plainTextForSpeech(media.caption || media.source || media.alt || media.src || "");
+    const label = plainTextForSpeech(media.caption || media.title || media.sourceSpec || media.source || media.alt || media.widget || media.src || "");
     if (label) return label;
   }
   return "";
@@ -99,6 +105,22 @@ function collectBulletTexts(rawSlide) {
   for (const column of [rawSlide?.left, rawSlide?.right]) {
     for (const bullet of asArray(column?.bullets)) {
       items.push(plainTextForSpeech(typeof bullet === "string" ? bullet : bullet?.text));
+    }
+  }
+  return items.filter(Boolean);
+}
+
+function blockTexts(blocks) {
+  const items = [];
+  for (const block of asArray(blocks)) {
+    items.push(plainTextForSpeech(block.title || ""));
+    items.push(plainTextForSpeech(block.text || block.content || block.formula || block.prompt || ""));
+    for (const item of asArray(block.items)) items.push(plainTextForSpeech(item.text || item.say || ""));
+    for (const step of asArray(block.steps)) items.push(plainTextForSpeech(step.text || step.say || ""));
+    for (const pair of asArray(block.pairs)) items.push(plainTextForSpeech(`${pair.label || ""} ${pair.text || ""}`));
+    if (block.reveal?.text) items.push(plainTextForSpeech(block.reveal.text));
+    for (const row of asArray(block.rows)) {
+      if (Array.isArray(row)) items.push(plainTextForSpeech(row.join(" ")));
     }
   }
   return items.filter(Boolean);
@@ -121,13 +143,36 @@ function collectContentTexts(rawSlide) {
   return uniqueStrings(
     collectBulletTexts(rawSlide),
     collectParagraphTexts(rawSlide),
+    blockTexts(rawSlide?.blocks),
+    blockTexts(rawSlide?.left?.blocks),
+    blockTexts(rawSlide?.right?.blocks),
     rawSlide?.question ? [plainTextForSpeech(rawSlide.question)] : [],
     rawSlide?.explain ? [plainTextForSpeech(rawSlide.explain)] : [],
   );
 }
 
 function courseFamily(descriptor) {
+  if (descriptor.school === "AU" || /^ARIAN_Calculus_/i.test(String(descriptor.course || ""))) return "calculus";
   return descriptor.school === "AC" ? "industrial_robotics" : "mobile_robotics";
+}
+
+function avatarProfileForDescriptor(descriptor) {
+  return courseFamily(descriptor) === "calculus"
+    ? "shared/arian.avatar.profile.json"
+    : "shared/avatar.profile.json";
+}
+
+function referenceAssetsForDescriptor(descriptor) {
+  return courseFamily(descriptor) === "calculus"
+    ? "shared/arian.reference_assets.json"
+    : "shared/reference_assets.json";
+}
+
+function isFirstVideoInCourse(descriptor) {
+  return descriptor.school === "AU"
+    && descriptor.course === "ARIAN_Calculus_1"
+    && descriptor.session === "S01"
+    && descriptor.topic === "review_of_functions_and_graphs";
 }
 
 function keySignals(rawSlide, slide, descriptor) {
@@ -135,6 +180,11 @@ function keySignals(rawSlide, slide, descriptor) {
   const key = normalizeKey(`${title} ${rawSlide?.hud || ""} ${rawSlide?.subtitle || ""}`);
   const topicKey = normalizeKey(descriptor.topic);
   return { title, key, topicKey };
+}
+
+function isLearningObjectiveSlide(rawSlide, slide) {
+  const key = normalizeKey(`${rawTitle(rawSlide, slide)} ${rawSlide?.lead || ""}`);
+  return /learning objectives?|objectives?|what you will learn|by the end/.test(key);
 }
 
 function inferSlideRole({ rawSlide, slide, descriptor, index, total }) {
@@ -299,6 +349,58 @@ function sceneRuleForMobile(key) {
   return null;
 }
 
+function sceneRuleForCalculus(key) {
+  if (/riemann|area|integral|washer|shell|volume|surface|arc length/.test(key)) {
+    return {
+      scene_policy: "hybrid",
+      object_policy: "suggested",
+      scene_hint: "Use a graph with shaded area or sliced regions so students can see the accumulation before naming the formula.",
+      prop_suggestions: ["function graph", "shaded area", "slicing controls"],
+    };
+  }
+  if (/limit|continuity|approach|squeeze|asymptote/.test(key)) {
+    return {
+      scene_policy: "hybrid",
+      object_policy: "suggested",
+      scene_hint: "Use a graph with moving x-values, one-sided approach markers, and a visible target value.",
+      prop_suggestions: ["function graph", "approach markers", "parameter slider"],
+    };
+  }
+  if (/derivative|rate|slope|tangent|linear approximation|newton/.test(key)) {
+    return {
+      scene_policy: "hybrid",
+      object_policy: "suggested",
+      scene_hint: "Use a curve with a movable tangent/secant line so students can watch slope become a derivative.",
+      prop_suggestions: ["curve", "tangent line", "secant line", "slope marker"],
+    };
+  }
+  if (/series|sequence|taylor|maclaurin|power series/.test(key)) {
+    return {
+      scene_policy: "hybrid",
+      object_policy: "suggested",
+      scene_hint: "Use partial sums or approximation curves so students can see convergence as something that changes step by step.",
+      prop_suggestions: ["partial sums", "approximation curve", "term slider"],
+    };
+  }
+  if (/vector|gradient|curl|divergence|line integral|surface integral|stokes|green/.test(key)) {
+    return {
+      scene_policy: "hybrid",
+      object_policy: "suggested",
+      scene_hint: "Use a coordinate grid or vector field so the geometry stays visible while the notation is introduced.",
+      prop_suggestions: ["vector field", "coordinate grid", "path marker"],
+    };
+  }
+  if (/function|graph|transform|trigonometry|polar|parametric/.test(key)) {
+    return {
+      scene_policy: "hybrid",
+      object_policy: "suggested",
+      scene_hint: "Use a graph with parameters students can imagine sliding, then connect the visual change to the formula.",
+      prop_suggestions: ["function graph", "parameter sliders", "highlighted point"],
+    };
+  }
+  return null;
+}
+
 function inferSceneObjectPlan({ descriptor, role, rawSlide, slide, topicProfile }) {
   const { key } = keySignals(rawSlide, slide, descriptor);
   if (role === "caution") {
@@ -318,9 +420,12 @@ function inferSceneObjectPlan({ descriptor, role, rawSlide, slide, topicProfile 
     };
   }
 
-  const matched = courseFamily(descriptor) === "industrial_robotics"
+  const family = courseFamily(descriptor);
+  const matched = family === "industrial_robotics"
     ? sceneRuleForIndustrial(key)
-    : sceneRuleForMobile(key);
+    : family === "calculus"
+      ? sceneRuleForCalculus(key)
+      : sceneRuleForMobile(key);
 
   if (matched) return matched;
 
@@ -409,6 +514,7 @@ function inferLikelyStudentConfusion({ descriptor, role, rawSlide, slide }) {
 
 function inferExplanationStyle({ role, rawSlide, slide, descriptor }) {
   const { title } = keySignals(rawSlide, slide, descriptor);
+  const family = courseFamily(descriptor);
   if (role === "intro") {
     return `Frame ${title} as the question or capability the rest of the topic is going to answer.`;
   }
@@ -416,6 +522,9 @@ function inferExplanationStyle({ role, rawSlide, slide, descriptor }) {
     return `Use ${title} to orient students, preview the route, and tell them what to listen for next.`;
   }
   if (role === "definition") {
+    if (family === "calculus") {
+      return `Define ${title} in plain mathematical language, then connect the formula to a graph, example, or student prediction.`;
+    }
     return `Define ${title} in plain technical language, then attach one practical robotics consequence or example.`;
   }
   if (role === "intuition") {
@@ -437,14 +546,21 @@ function inferExplanationStyle({ role, rawSlide, slide, descriptor }) {
     return `Use ${title} as a final self-check so students leave knowing what they should now be able to explain or do.`;
   }
   if (role === "caution") {
+    if (family === "calculus") {
+      return `Explain ${title} as a common mathematical trap: name the mistake, show why it happens, and give the safer reasoning habit.`;
+    }
     return `Explain ${title} like an operating warning: state the risk, the consequence, and the safe rule.`;
+  }
+  if (family === "calculus") {
+    return `Keep ${title} focused on the visual pattern, the formula, and the reasoning step students can reuse.`;
   }
   return `Keep ${title} efficient and procedural, highlighting only the information students need to act or debug correctly.`;
 }
 
 function inferStoryHint({ descriptor, role, rawSlide, slide }) {
   const { key, title } = keySignals(rawSlide, slide, descriptor);
-  if (courseFamily(descriptor) === "industrial_robotics") {
+  const family = courseFamily(descriptor);
+  if (family === "industrial_robotics") {
     if (role === "comparison" || /manipulator|workspace|payload|sensor/.test(key)) {
       return "Tell it like a real robot-cell decision where the team must justify a choice with specifications and task constraints.";
     }
@@ -455,6 +571,16 @@ function inferStoryHint({ descriptor, role, rawSlide, slide }) {
       return "Use a believable lab or shop-floor mistake rather than abstract warning language.";
     }
     return `Keep ${title} connected to what an industrial robotics student would actually need in lab or robot selection.`;
+  }
+
+  if (family === "calculus") {
+    if (role === "practice") {
+      return "Tell it like a student prediction moment: pause, make the reasoning visible, then reveal the answer.";
+    }
+    if (/graph|function|limit|derivative|integral|series|vector/.test(key)) {
+      return "Tell it through the object students can see first: a graph, curve, area, slope, sequence, or vector field.";
+    }
+    return `Keep ${title} connected to a mathematical question students can answer with a graph, formula, or short calculation.`;
   }
 
   if (/tf|frame|transform|urdf|xacro|rviz/.test(key)) {
@@ -503,14 +629,27 @@ function baselineNarrationSeed({ descriptor, rawSlide, slide, role, topicProfile
   const title = rawTitle(rawSlide, slide);
   const notesSeed = trimNarrationSeed(rawSlide?.notes?.narration_seed || rawSlide?.narration_seed || rawSlide?.teacher_notes || rawSlide?.notes);
   if (notesSeed) return notesSeed;
+  const family = courseFamily(descriptor);
 
   if (role === "intro") {
+    if (family === "calculus") {
+      const identityBeat = isFirstVideoInCourse(descriptor)
+        ? "introduce the instructor once as Arian from Arian University"
+        : "use a brief welcome-back line without reintroducing the full channel identity";
+      return `Open ${title} with a short mathematical hook, ${identityBeat}, and place this topic inside the Calculus course before moving to objectives.`;
+    }
     return `Open ${title} by framing the big question of the topic, why it matters in ${descriptor.school === "AC" ? "robotics practice" : "the ROS 2 lab workflow"}, and what students should be able to do by the end.`;
   }
   if (role === "setup") {
+    if (family === "calculus" && isLearningObjectiveSlide(rawSlide, slide)) {
+      return `Use ${title} to point first to the course roadmap or progress visual, name the current session and nearby session or topic context, then explain what this topic covers through the learning objectives.`;
+    }
     return `Use ${title} to preview the route of the lesson, explain how this section fits the overall teaching arc, and tell students what to listen for next.`;
   }
   if (role === "definition") {
+    if (family === "calculus") {
+      return `Define ${title} in plain language, connect it to the notation, and show how the idea appears on a graph or in a small example.`;
+    }
     return `Define ${title} in plain language, then connect the term to one practical robotics consequence so students do not memorize it in isolation.`;
   }
   if (role === "intuition") {
@@ -532,6 +671,9 @@ function baselineNarrationSeed({ descriptor, rawSlide, slide, role, topicProfile
     return `Use ${title} as a final self-check so students can tell whether they now understand the core ideas of the topic.`;
   }
   if (role === "caution") {
+    if (family === "calculus") {
+      return `Treat ${title} as a common reasoning trap: explain the tempting mistake, why it fails, and the safer mathematical habit students should use.`;
+    }
     return `Treat ${title} as a practical caution: explain the risk, what students often underestimate, and the safe operating rule they should remember.`;
   }
   return `${explanationStyle} Keep the pacing efficient and procedural rather than reading the slide word for word.`;
@@ -544,6 +686,11 @@ function limitItems(items, count = 4) {
 function baselineMustCover({ role, rawSlide, topicProfile }) {
   const content = collectContentTexts(rawSlide);
   const items = [];
+  if (role === "setup" && isLearningObjectiveSlide(rawSlide, {})) {
+    items.push("Point to the course roadmap/progress visual before reading or summarizing the learning objectives.");
+    items.push("Use session-level course framing; do not say topic X of Y in spoken roadmap narration.");
+    items.push("Name where this topic sits in the course and what this topic covers.");
+  }
   items.push(...content.slice(0, role === "reference" ? 4 : 3));
 
   if (role === "comparison") {
@@ -567,6 +714,11 @@ function baselineMustCover({ role, rawSlide, topicProfile }) {
 
 function baselineMustSay({ descriptor, rawSlide, slide, role }) {
   const { key } = keySignals(rawSlide, slide, descriptor);
+  if (courseFamily(descriptor) === "calculus" && role === "intro") {
+    return isFirstVideoInCourse(descriptor)
+      ? ["Hi, I'm Arian, and welcome to Arian University."]
+      : ["Welcome back to Arian University."];
+  }
   if (/reach.*workspace|workspace.*reach/.test(key)) {
     return ["Reach is one maximum distance. Workspace is the full usable region."];
   }
@@ -782,8 +934,8 @@ export function generateBaselineLecturePlan({
   return {
     schema_version: LECTURE_PLAN_SCHEMA_VERSION,
     topic_id: runtime.topicId,
-    avatar_profile: "shared/avatar.profile.json",
-    reference_assets: "shared/reference_assets.json",
+    avatar_profile: avatarProfileForDescriptor(descriptor),
+    reference_assets: referenceAssetsForDescriptor(descriptor),
     teaching_arc: pedagogy.teaching_arc,
     audience_level: pedagogy.audience_level,
     topic_goal: pedagogy.topic_goal,

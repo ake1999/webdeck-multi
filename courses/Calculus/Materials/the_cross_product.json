@@ -1,0 +1,382 @@
+{
+  "lecture_meta": {
+    "title": "The Cross Product",
+    "topic": "Cross product of vectors in R³",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate the cross product of two vectors in R³ using the determinant formula",
+      "Interpret the cross product geometrically as a vector orthogonal to both inputs",
+      "Apply the cross product to compute area and test for parallel vectors",
+      "Analyze the algebraic properties, including anti-commutativity"
+    ],
+    "prerequisite_reminder": "You already know the dot product — a scalar that measures alignment. The cross product yields a vector that measures perpendicularity and area."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Scalar to Vector: The Cross Product",
+      "left": {
+        "content_type": "concept",
+        "content": "Dot product gives a scalar: **how much align**. Cross product gives a **vector**: how much push perpendicular.\n\n**Torque example:** $\\mathbf{\\tau} = \\mathbf{r} \\times \\mathbf{F}$ — pointing along the rotation axis."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Door torque diagram",
+        "visual_spec": "3D coordinate system with a rectangle (door) in xz-plane, hinge along z-axis. Arrow r from hinge to hand position (on door edge), arrow F perpendicular to door (in y-direction). Show torque vector τ = r × F pointing up (positive x) with red thick arrow. Label axes x,y,z. Use mplot3d. Show formula τ = r×F on top.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: change force magnitude from 1 to 10",
+          "Toggle: show/hide torque vector label"
+        ]
+      },
+      "on_screen_text": "Torque $\\mathbf{\\tau} = \\mathbf{r} \\times \\mathbf{F}$ gives a vector along the rotation axis.",
+      "teacher_narration": "You already know the dot product gives a scalar that tells you how much two vectors align. Now meet its partner: the cross product. Instead of a number, you get a vector. Think of pushing a door open. The force perpendicular to the door creates a torque, and that torque points along the hinge axis. The cross product is exactly that operation: given a position vector and a force, it gives you the torque vector. This is your first real-world glimpse of why we need a vector output.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Geometric Meaning: Area and Orthogonality",
+      "left": {
+        "content_type": "concept",
+        "content": "Magnitude: $\\|\\mathbf{a} \\times \\mathbf{b}\\| = \\|\\mathbf{a}\\| \\, \\|\\mathbf{b}\\| \\, \\sin\\theta$\n= area of parallelogram spanned by $\\mathbf{a}$ and $\\mathbf{b}$.\n\nDirection: $\\mathbf{a} \\times \\mathbf{b}$ is perpendicular to both $\\mathbf{a}$ and $\\mathbf{b}$ (right-hand rule)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Parallelogram area and orthogonal vector",
+        "visual_spec": "3D plot showing two vectors a (blue) and b (red) from origin, parallelogram shaded green, and cross product c (thick green arrow) orthogonal to both. Show area label with numeric value. Use mplot3d, vectors as quiver, parallelogram as polygon fill with alpha=0.3. Add axis labels. Include angle θ arc between a and b.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: change angle θ between a and b from 0 to 180 degrees",
+          "Toggle: show/hide area value"
+        ]
+      },
+      "on_screen_text": "$\\|\\mathbf{a} \\times \\mathbf{b}\\| = \\|\\mathbf{a}\\|\\|\\mathbf{b}\\|\\sin\\theta$  → area of parallelogram.",
+      "teacher_narration": "The cross product encodes two geometric facts at once. Its magnitude is the area of the parallelogram formed by the two vectors. That's the sine multiplied by the lengths. If they are parallel, sin0 is zero, so the area is zero. And its direction is perpendicular to both inputs, given by the right-hand rule. This orthogonality is why the cross product is so useful: it gives us a way to construct a vector that is guaranteed to be perpendicular to two known vectors.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Algebraic Definition",
+      "left": {
+        "content_type": "formula_block",
+        "content": "For $\\mathbf{a}=\\langle a_1,a_2,a_3\\rangle$, $\\mathbf{b}=\\langle b_1,b_2,b_3\\rangle$:\n\n$$\\mathbf{a} \\times \\mathbf{b} = \\langle a_2b_3-a_3b_2,\\; a_3b_1-a_1b_3,\\; a_1b_2-a_2b_1 \\rangle$$\n\nPattern: $x$-component uses $y,z$; $y$-component uses $z,x$ (with a minus); $z$-component uses $x,y$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Pattern diagram",
+        "visual_spec": "Three boxes each showing cross-multiplication pattern. Box 1: label 'x-comp', show a2↔b3 (subtract a3↔b2). Box 2: 'y-comp' with minus sign, show a1↔b3 minus a3↔b1. Box 3: 'z-comp', a1↔b2 minus a2↔b1. Use arrows to indicate which coordinates participate. Color code: x: blue, y: red, z: green.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reveal next step in pattern explanation",
+          "Toggle: show/hide color-coded arrows"
+        ]
+      },
+      "on_screen_text": "$\\mathbf{a}\\times\\mathbf{b} = \\langle a_2b_3-a_3b_2,\\; a_3b_1-a_1b_3,\\; a_1b_2-a_2b_1 \\rangle$",
+      "teacher_narration": "Here's the component formula. It might look messy at first, but there is a pattern. The first component uses the second and third coordinates cross-multiplied, the second component uses the third and first — but with a minus sign — and the third component uses the first and second. I'll show you a much better way to remember this in a moment using a determinant. But first, let's practice with a simple example.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm-Up Example: Direct Computation",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Compute $\\mathbf{a}\\times\\mathbf{b}$ with $\\mathbf{a}=\\langle 1,2,3\\rangle$, $\\mathbf{b}=\\langle 4,5,6\\rangle$.\n\n| Step | Formula | Calculation |\n|------|---------|-------------|\n| $x$ | $a_2b_3-a_3b_2$ | $2\\cdot6-3\\cdot5 =12-15=-3$ |\n| $y$ | $-(a_1b_3-a_3b_1)$ | $-(1\\cdot6-3\\cdot4)=-(6-12)=6$ |\n| $z$ | $a_1b_2-a_2b_1$ | $1\\cdot5-2\\cdot4=5-8=-3$ |\n\n**Answer:** $\\langle -3,6,-3\\rangle$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\mathbf{a}=\\langle1,2,3\\rangle$, $\\mathbf{b}=\\langle4,5,6\\rangle$ → Answer: $\\langle -3,6,-3\\rangle$",
+      "teacher_narration": "Let's work through our first example step by step. For the x-component, we multiply a2 and b3, then subtract a3 times b2. That gives negative three. The y-component has that important minus sign in front. We compute a1 times b3 minus a3 times b1, which is six minus twelve, a negative six, then the outer minus gives positive six. Finally, the z-component is a1 times b2 minus a2 times b1, five minus eight, negative three. So our cross product is negative three, six, negative three. Notice that the y-component turned out positive, because we applied the minus sign correctly.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Determinant Method – Easier Computation",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Symbolic determinant:\n\n$$\\mathbf{a}\\times\\mathbf{b}= \\begin{vmatrix}\\mathbf{i}&\\mathbf{j}&\\mathbf{k}\\\\ a_1&a_2&a_3\\\\ b_1&b_2&b_3 \\end{vmatrix}$$\n\nExpand: $\\mathbf{i}(a_2b_3-a_3b_2)-\\mathbf{j}(a_1b_3-a_3b_1)+\\mathbf{k}(a_1b_2-a_2b_1)$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Determinant expansion animation",
+        "visual_spec": "Show 3x3 determinant with unit vectors in top row, a in second, b in third. Animate cofactor expansion: highlight row1 col1, cross out row1 and col1, show 2x2 determinant for i component; then highlight row1 col2 with minus, cross out row1 col2, show 2x2 for j; then row1 col3 with plus for k. Use colored highlights and text labels. Use matplotlib with text boxes.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: step through cofactor expansion one component at a time",
+          "Toggle: show/hide the 2x2 determinant for each component"
+        ]
+      },
+      "on_screen_text": "Write $\\mathbf{a}\\times\\mathbf{b}$ as a determinant with $\\mathbf{i},\\mathbf{j},\\mathbf{k}$ in the top row.",
+      "teacher_narration": "Here's the trick that makes computation much easier: set up a three-by-three determinant with the unit vectors i, j, k in the top row, the components of vector a in the second row, and vector b in the third row. Then expand along the first row just like a regular determinant. The i component comes from the two-by-two determinant in the lower right, the j component has a minus sign and uses the other two columns, and the k component has a plus. This method is less error-prone than memorizing the formula.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example: Using the Determinant",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find a vector perpendicular to both** $\\mathbf{p}=\\langle 2,-1,3\\rangle$ and $\\mathbf{q}=\\langle 0,4,-2\\rangle$.\n\nSet up: $\\begin{vmatrix}\\mathbf{i}&\\mathbf{j}&\\mathbf{k}\\\\2&-1&3\\\\0&4&-2\\end{vmatrix}$\n\n- $\\mathbf{i}$: $(-1)(-2)-(3)(4)=2-12=-10$\n- $\\mathbf{j}$: $-[(2)(-2)-(3)(0)]=-[-4-0]=4$\n- $\\mathbf{k}$: $(2)(4)-(-1)(0)=8$\n\n**Answer:** $\\mathbf{n}=\\langle -10,4,8\\rangle$\n\nCheck: $\\mathbf{p}\\cdot\\mathbf{n}=-20-4+24=0$ ✓  $\\mathbf{q}\\cdot\\mathbf{n}=0+16-16=0$ ✓"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\mathbf{p}\\times\\mathbf{q} = \\langle -10,4,8\\rangle$ → orthogonal to both $\\mathbf{p}$ and $\\mathbf{q}$.",
+      "teacher_narration": "Now let's find a vector that is perpendicular to two given vectors. We set up the determinant with p in the second row and q in the third row. The i component gives negative ten, the j component gives positive four, and the k component gives eight. We can quickly verify orthogonality by dotting the result with each original vector. Both dot products come out zero, confirming we have a valid perpendicular vector. This method is how you'll compute cross products in practice.",
+      "student_prompt": "Pause: Before I compute, take a guess: what sign will the j-component have?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: The J-Component Sign Trap",
+      "left": {
+        "content_type": "concept",
+        "content": "**Wrong approach:** Forgetting the minus on the $\\mathbf{j}$-component.\n\n**Example:** $\\mathbf{a}=\\langle 1,0,0\\rangle$, $\\mathbf{b}=\\langle 0,1,0\\rangle$\n\n- Wrong: $\\mathbf{i}(0-0)-\\mathbf{j}(1\\cdot0-0\\cdot0)+\\mathbf{k}(1\\cdot1-0\\cdot0)$  → $\\langle 0,0,1\\rangle$ *accidentally correct here*\n- But for $\\mathbf{a}=\\langle 1,2,3\\rangle$, $\\mathbf{b}=\\langle 0,1,0\\rangle$: wrong would give $\\mathbf{j}=-(2\\cdot0-3\\cdot0)=0$ (correct because j=0), but test with another: $\\mathbf{a}=\\langle 1,2,3\\rangle$, $\\mathbf{b}=\\langle 1,1,1\\rangle$ → correct $\\mathbf{j}=-(1\\cdot1-3\\cdot1)=2$; wrong $\\mathbf{j}=+(1\\cdot1-3\\cdot1)=-2$ → opposite sign!\n\n**Root cause:** The cofactor expansion alternates $+,-,+$ along the top row."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Comparison of correct vs wrong j-component",
+        "visual_spec": "Show two determinant expansions side by side. Left: correct with minus sign on j, result vector c. Right: wrong with plus sign on j, result vector d. Use 3D plot to show the two result vectors are opposite in y-direction. Highlight the minus sign in red on the correct version. Use mplot3d, two subplots or overlapped with different colors (green correct, red wrong) and labels.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "**Common mistake:** Forgetting the minus before the $\\mathbf{j}$-component swaps the sign of that component.",
+      "teacher_narration": "The most common error in computing cross products is forgetting the minus sign on the j-component. The cofactor expansion goes plus, minus, plus along the first row. If you accidentally use a plus for the j-component, your entire y-component will have the opposite sign. Let me show you: compute a cross b for these two vectors using both methods. The correct result has a positive twelve; the wrong one gives negative twelve. That's a huge difference, especially when you use the result to find perpendicular directions. Always remember: i plus, j minus, k plus.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Adjust Vectors and See Cross Product",
+      "left": {
+        "content_type": "concept",
+        "content": "Use the sliders to change the components of $\\mathbf{a}$ and $\\mathbf{b}$. Watch how the cross product (green) changes in both magnitude and direction. Notice: when $\\mathbf{a}$ and $\\mathbf{b}$ are parallel, the cross product becomes zero."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive cross product visualizer",
+        "visual_spec": "3D plot with origin, vectors a (blue), b (red), and cross product c (green). Sliders for a_x, a_y, a_z, b_x, b_y, b_z each from -5 to 5. Also show magnitude of c and dot products a·c and b·c as numeric labels. Update on slider change. Use mpl_toolkits.mplot3d and matplotlib.widgets.Slider. Axes limits fixed at [-6,6].",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d', position=[0.1,0.2,0.7,0.7])\nplt.subplots_adjust(bottom=0.25)\n\na = np.array([1,2,3])\nb = np.array([4,5,6])\n\n# Create sliders for each component\nax_slider_a_x = plt.axes([0.2, 0.15, 0.6, 0.03])\nax_slider_a_y = plt.axes([0.2, 0.11, 0.6, 0.03])\nax_slider_a_z = plt.axes([0.2, 0.07, 0.6, 0.03])\nax_slider_b_x = plt.axes([0.2, 0.03, 0.6, 0.03])\nax_slider_b_y = plt.axes([0.2, -0.01, 0.6, 0.03])\nax_slider_b_z = plt.axes([0.2, -0.05, 0.6, 0.03])\n\nslider_a_x = Slider(ax_slider_a_x, 'a_x', -5, 5, valinit=a[0])\nslider_a_y = Slider(ax_slider_a_y, 'a_y', -5, 5, valinit=a[1])\nslider_a_z = Slider(ax_slider_a_z, 'a_z', -5, 5, valinit=a[2])\nslider_b_x = Slider(ax_slider_b_x, 'b_x', -5, 5, valinit=b[0])\nslider_b_y = Slider(ax_slider_b_y, 'b_y', -5, 5, valinit=b[1])\nslider_b_z = Slider(ax_slider_b_z, 'b_z', -5, 5, valinit=b[2])\n\ndef update(val):\n    a[0] = slider_a_x.val\n    a[1] = slider_a_y.val\n    a[2] = slider_a_z.val\n    b[0] = slider_b_x.val\n    b[1] = slider_b_y.val\n    b[2] = slider_b_z.val\n    ax.clear()\n    c = np.cross(a,b)\n    ax.quiver(0,0,0,a[0],a[1],a[2],color='blue',linewidth=2,label='a')\n    ax.quiver(0,0,0,b[0],b[1],b[2],color='red',linewidth=2,label='b')\n    ax.quiver(0,0,0,c[0],c[1],c[2],color='green',linewidth=3,label='a×b')\n    pts = np.array([[0,0,0],a,a+b,b])\n    ax.plot_trisurf(pts[:,0],pts[:,1],pts[:,2],alpha=0.2,color='gray')\n    ax.set_xlim(-6,6);ax.set_ylim(-6,6);ax.set_zlim(-6,6)\n    ax.set_xlabel('X');ax.set_ylabel('Y');ax.set_zlabel('Z')\n    ax.legend()\n    ax.set_title(f'||a×b|| = {np.linalg.norm(c):.2f}')\n    ax.text2D(0.02,0.98,f'a·c={np.dot(a,c):.2f}\\nb·c={np.dot(b,c):.2f}',transform=ax.transAxes,verticalalignment='top')\n    fig.canvas.draw_idle()\n\nslider_a_x.on_changed(update)\nslider_a_y.on_changed(update)\nslider_a_z.on_changed(update)\nslider_b_x.on_changed(update)\nslider_b_y.on_changed(update)\nslider_b_z.on_changed(update)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for a_x from -5 to 5",
+          "Slider for a_y from -5 to 5",
+          "Slider for a_z from -5 to 5",
+          "Slider for b_x from -5 to 5",
+          "Slider for b_y from -5 to 5",
+          "Slider for b_z from -5 to 5"
+        ]
+      },
+      "on_screen_text": "Move the sliders to change $\\mathbf{a}$ and $\\mathbf{b}$. Watch $\\mathbf{a}\\times\\mathbf{b}$ update in real time.",
+      "teacher_narration": "Now let's play. These sliders let you change the components of vectors a and b. Watch how the green cross product vector responds. Notice how its magnitude equals the area of the gray parallelogram. When you make the two vectors parallel, the parallelogram collapses to a line and the cross product becomes zero. Also keep an eye on the dot products in the corner — they stay exactly zero, proving the cross product is always perpendicular to both inputs. This is your chance to build intuition.",
+      "student_prompt": "Try making a and b parallel. What do you observe?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Right-Hand Rule & Anti-Commutativity",
+      "left": {
+        "content_type": "concept",
+        "content": "**Right-hand rule:** Curl fingers from $\\mathbf{a}$ to $\\mathbf{b}$, thumb points along $\\mathbf{a}\\times\\mathbf{b}$.\n\n**Anti-commutativity:** $\\mathbf{a}\\times\\mathbf{b} = -(\\mathbf{b}\\times\\mathbf{a})$\n\nSwapping the inputs reverses direction."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Right-hand rule diagram with two vectors and thumb",
+        "visual_spec": "3D plot showing a and b from origin, with a curved arrow from a to b indicating curl direction, and a thick thumb arrow for cross product. On the bottom, show a smaller version with a and b swapped, resulting in opposite cross product. Use distinct colors: original a blue, b red, cross product green; swapped a' red, b' blue, cross product' orange. Add text labels.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\mathbf{a}\\times\\mathbf{b} = -(\\mathbf{b}\\times\\mathbf{a})$",
+      "teacher_narration": "Direction matters. The right-hand rule tells you which way the cross product points. Curl the fingers of your right hand from vector a to vector b, and your thumb points in the direction of a cross b. If you swap the order, your thumb flips to the opposite direction. That's anti-commutativity: a cross b equals negative b cross a. This is completely different from the dot product where order doesn't matter. Remember this property, because it shows up often in physics applications.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Tricky Example: The Sign Trap in Reverse",
+      "left": {
+        "content_type": "steps",
+        "content": "**Compute $\\mathbf{b}\\times\\mathbf{a}$** for $\\mathbf{a}=\\langle1,0,-2\\rangle$, $\\mathbf{b}=\\langle3,-1,4\\rangle$.\n\nFirst compute $\\mathbf{a}\\times\\mathbf{b}$: $\\langle -2,-10,-1\\rangle$\n\nNow $\\mathbf{b}\\times\\mathbf{a}$:\n- $\\mathbf{i}$: $(-1)(-2)-(4)(1)=2-4=-2$\n- $\\mathbf{j}$: $-[(3)(-2)-(4)(1)]=-[-6-4]=10$\n- $\\mathbf{k}$: $(3)(0)-(-1)(1)=1$\n\nResult: $\\langle -2,10,1\\rangle = -\\langle2,-10,-1\\rangle = -(\\mathbf{a}\\times\\mathbf{b})$ ✓"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\mathbf{b}\\times\\mathbf{a} = -(\\mathbf{a}\\times\\mathbf{b})$",
+      "teacher_narration": "Let's test anti-commutativity. We already computed a cross b for these vectors a moment ago. Now compute b cross a by swapping the rows in our determinant. Notice the i component came out the same, but the j and k components changed sign. The final result is exactly the negative of a cross b. If you ever get a cross product and suspect you reversed the order, just flip the sign. This is a great check for your computations.",
+      "student_prompt": "Before computing, predict: will $\\mathbf{b}\\times\\mathbf{a}$ point in the opposite direction to $\\mathbf{a}\\times\\mathbf{b}$?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof: Orthogonality",
+      "left": {
+        "content_type": "concept",
+        "content": "**Theorem:** $\\mathbf{a}\\times\\mathbf{b}$ is orthogonal to both $\\mathbf{a}$ and $\\mathbf{b}$.\n\n**Proof:** Let $\\mathbf{c}=\\mathbf{a}\\times\\mathbf{b}$.\nCompute $\\mathbf{a}\\cdot\\mathbf{c} = a_1(a_2b_3-a_3b_2) + a_2(a_3b_1-a_1b_3) + a_3(a_1b_2-a_2b_1)$.\nGroup terms: $a_1a_2b_3 - a_1a_3b_2 + a_2a_3b_1 - a_1a_2b_3 + a_1a_3b_2 - a_2a_3b_1 = 0$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Symbolic cancellation animation",
+        "visual_spec": "Show the expanded dot product terms with color-coded pairs that cancel. Each pair (e.g., a1a2b3 and -a1a2b3) flashes and then fades to zero. Use animated text with matplotlib or description for coding agent: 'Six terms arranged in a circle, each term has a matching opposite term that cancels.'",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof by algebra: every term cancels with its opposite.",
+      "teacher_narration": "For those who enjoy proofs, let's show why the cross product is always orthogonal. Write c equals a cross b, then take the dot product with a. Expand everything out — there are six terms. They pair up and cancel to zero. For example, a1a2b3 appears with a plus and a minus. The same happens for all pairs. The dot product is zero, so c is orthogonal to a. The same argument works for b. This is clean and satisfying algebra.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Edge Case: Parallel Vectors",
+      "left": {
+        "content_type": "steps",
+        "content": "**Compute $\\mathbf{a}\\times\\mathbf{b}$** with $\\mathbf{a}=\\langle2,-4,6\\rangle$, $\\mathbf{b}=\\langle-1,2,-3\\rangle$.\n\nCheck parallelism: $\\frac{2}{-1}=\\frac{-4}{2}=\\frac{6}{-3}=-2$ → $\\mathbf{a} = -2\\mathbf{b}$.\n\nCross product:\n- $\\mathbf{i}$: $(-4)(-3)-(6)(2) = 12-12=0$\n- $\\mathbf{j}$: $-[(2)(-3)-(6)(-1)] = -[(-6+6)]=0$\n- $\\mathbf{k}$: $(2)(2)-(-4)(-1) = 4-4=0$\n\nResult: $\\langle0,0,0\\rangle$ — the zero vector."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Parallel vectors → cross product = zero vector.",
+      "teacher_narration": "Here's an edge case that often surprises students. If the two vectors are parallel — meaning one is a scalar multiple of the other — the cross product is the zero vector. Let's verify with these vectors: a is exactly negative two times b. Every component of the cross product becomes zero because the sine of the angle is zero. This makes perfect geometric sense: if the vectors are parallel, the parallelogram has no area, so the cross product magnitude is zero, and the direction is undefined.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Area of a Triangle",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find area of triangle** with vertices $P(1,0,2), Q(3,-1,4), R(0,2,1)$.\n\n1. Vectors from $P$:\n   - $\\overrightarrow{PQ} = \\langle2,-1,2\\rangle$\n   - $\\overrightarrow{PR} = \\langle-1,2,-1\\rangle$\n\n2. Cross product:\n   - $\\mathbf{i}$: $(-1)(-1)-(2)(2)=1-4=-3$\n   - $\\mathbf{j}$: $-[(2)(-1)-(2)(-1)]=-[-2+2]=0$\n   - $\\mathbf{k}$: $(2)(2)-(-1)(-1)=4-1=3$\n\nResult: $\\langle -3,0,3\\rangle$\n\n3. Parallelogram area: $\\|\\langle -3,0,3\\rangle\\| = \\sqrt{9+0+9}=3\\sqrt{2}$\n\n4. Triangle area = half of that = $\\frac{3\\sqrt{2}}{2}$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Area of triangle = $\\frac{1}{2}\\|\\overrightarrow{PQ} \\times \\overrightarrow{PR}\\|$",
+      "teacher_narration": "Here's a key application: finding the area of a triangle in 3D. Pick one vertex, then form two edge vectors to the other two vertices. The cross product magnitude gives the area of the parallelogram spanned by these two vectors. Since a triangle is exactly half of that parallelogram, we take half. For this triangle, the cross product is negative three, zero, three. Its length is three root two. Half of that is three root two over two. This technique is essential for surface integrals and graphics.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Algebraic Properties Summary",
+      "left": {
+        "content_type": "concept",
+        "content": "**Key properties:**\n\n- Anti-commutativity: $\\mathbf{a}\\times\\mathbf{b} = -(\\mathbf{b}\\times\\mathbf{a})$\n- Distributivity: $\\mathbf{a}\\times(\\mathbf{b}+\\mathbf{c}) = \\mathbf{a}\\times\\mathbf{b}+\\mathbf{a}\\times\\mathbf{c}$\n- Scalar multiplication: $(k\\mathbf{a})\\times\\mathbf{b}=k(\\mathbf{a}\\times\\mathbf{b})$\n- Parallel test: $\\mathbf{a}\\times\\mathbf{b}=0$ iff $\\mathbf{a}\\parallel\\mathbf{b}$ (including zero vector)\n- Self: $\\mathbf{a}\\times\\mathbf{a}=\\mathbf{0}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Property icons or diagram",
+        "visual_spec": "Show each property as a labeled box with a small diagram. Anti-commutativity: two arrows swapping with opposite colors. Distributivity: three vectors sum. Scalar: stretched vector. Parallel: two collinear vectors with zero cross. Self: vector crossing itself with zero. Use matplotlib with text annotations.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary of cross product algebra: anti-commutative, distributive, scalar multiplication, parallel test.",
+      "teacher_narration": "Let's collect the algebraic properties you need to remember. The cross product is anti-commutative, so order matters. It distributes over addition, so you can expand like normal. Scalars can be pulled out. The cross product is zero exactly when the vectors are parallel, which includes the case when one is zero. And of course, any vector crossed with itself is zero. These properties will make computations much faster in the future.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "What You've Learned",
+      "left": {
+        "content_type": "concept",
+        "content": "**Learning objectives achieved:**\n\n✅ Calculate cross product via determinant formula\n✅ Interpret geometrically: magnitude = area, direction = orthogonal\n✅ Apply to find perpendicular vectors and triangle area\n✅ Use properties: anti-commutativity, parallel test\n\n**Key formulas:**\n$$\\mathbf{a}\\times\\mathbf{b} = \\begin{vmatrix}\\mathbf{i}&\\mathbf{j}&\\mathbf{k}\\\\a_1&a_2&a_3\\\\b_1&b_2&b_3\\end{vmatrix}$$\n$$\\|\\mathbf{a}\\times\\mathbf{b}\\| = \\|\\mathbf{a}\\|\\|\\mathbf{b}\\|\\sin\\theta$$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Cross product: vector perpendicular to two vectors, magnitude = area of parallelogram.",
+      "teacher_narration": "We've covered a lot today. You can now compute the cross product using the determinant method. You understand that its magnitude gives the area of the parallelogram, and its direction follows the right-hand rule. You've applied it to find perpendicular vectors and the area of a triangle. And you know the key algebraic properties, especially anti-commutativity. The cross product is a fundamental tool for 3D geometry, physics, and multivariable calculus. Great work today.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

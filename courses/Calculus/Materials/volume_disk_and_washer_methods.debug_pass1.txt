@@ -1,0 +1,167 @@
+```json
+{
+  "lecture_meta": {
+    "title": "Volume by Disk and Washer Methods",
+    "topic": "Volume of solids of revolution",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate volumes of solids of revolution using the disk method for rotation about horizontal or vertical axes",
+      "Apply the washer method to find volumes when the region has a hole (inner radius)",
+      "Set up integrals for volume by identifying outer and inner radii from a given region",
+      "Analyze which method (disk vs. washer, dx vs. dy) is most efficient for a given problem"
+    ],
+    "prerequisite_reminder": "The volume of any solid with known cross-sectional area is V = ∫ A(x) dx."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Bagels to Pancakes: Slicing for Volume",
+      "left": {
+        "content_type": "text",
+        "content": "Imagine slicing a bagel into thin rings (washers) or stacking pancakes (disks). Each method slices a solid perpendicular to the axis of rotation and sums the slice volumes."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side diagrams: left shows a bagel with a slice removed revealing a ring shape; right shows a stack of circular pancakes with height dx. Labels: 'Washer cross-section (ring)' and 'Disk cross-section (circle)'. Use warm colors.",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Slicing a bagel (washers) vs. stacking pancakes (disks).",
+      "teacher_narration": "Think about a bagel. If you cut it perpendicular to its hole, each slice looks like a ring. That's a washer. Now imagine stacking circular pancakes of varying sizes to make a fancy cake. Each pancake is a thin disk. These two mental images are the heart of today's method: slicing a solid of revolution into thin cross-sections, finding the area of each slice, and adding them up with an integral.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Fundamental Slicing Principle",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$V = \\int_a^b A(x)\\,dx$$ where $A(x)$ is the area of the cross-section perpendicular to the $x$-axis."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of a loaf of bread sliced into thin vertical slices. Each slice shape is different. A dashed line shows a representative slice at x with area A(x). Axis label: x-axis horizontal.",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Slice the solid → sum slice volumes: $V = \\int A(x)dx$",
+      "teacher_narration": "Remember this golden rule: the volume of any solid that can be sliced into cross-sections with known area is the integral of those areas. Both disk and washer methods are just special cases. The trick is to figure out what A(x) or A(y) is for your solid.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Disk Method – Stacking Circles",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Rotation about the x-axis:\n$$V = \\pi \\int_a^b [R(x)]^2 dx$$ where $R(x)$ is the radius from the axis to the outer curve."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D plot of a solid of revolution (e.g., cone) with a few thin disk slices highlighted. Each disk has radius R(x). Color: blue disks with alpha. Axis labels.",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Disk: $V = \\pi\\int [R(x)]^2 dx$",
+      "teacher_narration": "When the solid has no hole, each cross-section is a solid circle. The radius is the distance from the rotation axis to the outer edge of the solid. In this course, we'll stick to rotation about the x-axis or y-axis, but the idea works for any horizontal or vertical line.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Washer Method – Ring Cross-Sections",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Rotation about the x-axis:\n$$V = \\pi \\int_a^b \\left([R_o(x)]^2 - [R_i(x)]^2 \\right) dx$$ where $R_o$ is outer radius, $R_i$ is inner radius."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Close-up diagram of a washer (ring) with labeled outer radius R_o and inner radius R_i. Shaded area shows the material. Color: outer circle blue, inner circle red, washer area green.",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Washer: $V = \\pi\\int (R_o^2 - R_i^2) dx$",
+      "teacher_narration": "If your region has a hole—like the space around a bagel's center—each cross-section is a ring. The area is the outer circle minus the inner circle. A common mistake is to write $(R_o - R_i)^2$, but that's wrong. We'll see why in a moment.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Disks to Build a Cone",
+      "left": {
+        "content_type": "steps",
+        "content": "Problem: Rotate $y=2x$, $x=0$ to $3$ about $x$-axis.\n1. $R(x)=2x$\n2. $V = \\pi\\int_0^3 (2x)^2 dx$\n3. $= \\pi\\int_0^3 4x^2 dx$\n4. $= 4\\pi [x^3/3]_0^3 = 36\\pi$\nCheck: cone volume = $\\frac13\\pi r^2 h = \\frac13\\pi (6)^2 (3) = 36\\pi$."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive disk approximation of cone",
+        "visual_spec": "Plot the region (line y=2x from 0 to 3) and the solid of revolution as a surface. Show n disks stacked, with slider for n (1 to 50). Display approximated volume vs exact 36π. Color disks with different shades. Title: 'Cone volume: Approx = ... Exact = 36π'",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider\n\ndef cone_solid(n):\n    fig = plt.figure(figsize=(8,6))\n    ax = fig.add_subplot(111, projection='3d')\n    # exact surface\n    x = np.linspace(0,3, 100)\n    theta = np.linspace(0, 2*np.pi, 100)\n    X, T = np.meshgrid(x, theta)\n    R = 2*X\n    Y = R * np.cos(T)\n    Z = R * np.sin(T)\n    ax.plot_surface(X, Y, Z, alpha=0.3, color='gray')\n    # disks\n    dx = 3/n\n    approx = 0\n    for i in range(n):\n        xi = (i+0.5)*dx\n        r = 2*xi\n        theta_i = np.linspace(0, 2*np.pi, 50)\n        y = r * np.cos(theta_i)\n        z = r * np.sin(theta_i)\n        x_disk = np.full_like(theta_i, xi)\n        ax.plot_surface(x_disk[np.newaxis,:], y[np.newaxis,:], z[np.newaxis,:], alpha=0.6, color='blue')\n        approx += np.pi * r**2 * dx\n    # limits and labels\n    ax.set_xlim(0,3)\n    ax.set_ylim(-6,6)\n    ax.set_zlim(-6,6)\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n    ax.set_zlabel('z')\n    plt.suptitle(f'n={n}, Approx V = {approx:.2f}, Exact = {36*np.pi:.2f}', fontsize=12)\n    return fig\n\nfig = cone_solid(10)\nplt.subplots_adjust(bottom=0.2)\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'n', 1, 50, valinit=10, valstep=1)\ndef update(val):\n    n = int(slider.val)\n    plt.clf()\n    cone_solid(n)\n    plt.draw()\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": ["Slider for number of disks (n from 1 to 50)"]
+      },
+      "on_screen_text": "Cone: $y=2x$ rotated about x-axis. Volume = $36\\pi$.",
+      "teacher_narration": "Let's start with a simple cone. Rotating y equals 2x from x=0 to 3 gives a cone with radius 6 and height 3. Using the disk method, we integrate pi times (2x)^2 dx from 0 to 3. That gives 36 pi. Check with the cone formula—same answer. Now watch the animation as we increase the number of disks: the sum gets closer to the exact value. This is the Riemann sum idea in action.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Washer Cross-Section",
+      "left": {
+        "content_type": "steps",
+        "content": "Rotate region between $y=x$, $y=x^2$, $0\\le x\\le1$ about x-axis.\n- Outer radius $R_o=x$, Inner $R_i=x^2$\n- $V = \\pi\\int_0^1 (x^2 - x^4) dx = \\frac{2\\pi}{15}$"
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive washer cross-section and stack",
+        "visual_spec": "Plot the solid of revolution (outer surface in blue, inner surface in red). Show a single washer cross-section at a chosen x (slider from 0 to 1). Color the washer in green. Display computed outer radius, inner radius, and area of washer. Also display total volume (integral) as a number. Add a toggle to show/hide approximate volume using n washers (Riemann sum).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, Button\n\ndef washer_plot(x_val):\n    fig = plt.figure(figsize=(8,6))\n    ax = fig.add_subplot(111, projection='3d')\n    # outer surface (y=x)\n    x = np.linspace(0,1,50)\n    theta = np.linspace(0, 2*np.pi, 50)\n    X, T = np.meshgrid(x, theta)\n    R_outer = X\n    Y_outer = R_outer * np.cos(T)\n    Z_outer = R_outer * np.sin(T)\n    ax.plot_surface(X, Y_outer, Z_outer, alpha=0.3, color='blue')\n    # inner surface (y=x^2)\n    R_inner = X**2\n    Y_inner = R_inner * np.cos(T)\n    Z_inner = R_inner * np.sin(T)\n    ax.plot_surface(X, Y_inner, Z_inner, alpha=0.3, color='red')\n    # single washer at x_val\n    r_o = x_val\n    r_i = x_val**2\n    # outer and inner circles as lines\n    theta_w = np.linspace(0, 2*np.pi, 100)\n    x_w = np.full_like(theta_w, x_val)\n    y_o = r_o * np.cos(theta_w)\n    z_o = r_o * np.sin(theta_w)\n    y_i = r_i * np.cos(theta_w)\n    z_i = r_i * np.sin(theta_w)\n    # plot circles\n    ax.plot(x_w, y_o, z_o, color='darkblue', linewidth=2)\n    ax.plot(x_w, y_i, z_i, color='darkred', linewidth=2)\n    # fill between as a polygon (simplified: plot a thin surface between them)\n    # Use a for loop to connect points\n    for i in range(99):\n        ax.plot([x_w[i], x_w[i+1]], [y_o[i], y_o[i+1]], [z_o[i], z_o[i+1]], color='green', alpha=0.5)\n        ax.plot([x_w[i], x_w[i+1]], [y_i[i], y_i[i+1]], [z_i[i], z_i[i+1]], color='green', alpha=0.5)\n    # labels\n    ax.set_xlim(0,1)\n    ax.set_ylim(-1,1)\n    ax.set_zlim(-1,1)\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n    ax.set_zlabel('z')\n    area = np.pi * (r_o**2 - r_i**2)\n    plt.title(f'Washer at x={x_val:.2f}, Ro={r_o:.2f}, Ri={r_i:.2f}, Area={area:.3f}')\n    return fig\n\nfig = washer_plot(0.5)\nplt.subplots_adjust(bottom=0.2)\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'x', 0, 1, valinit=0.5)\ndef update(val):\n    x_val = slider.val\n    plt.clf()\n    washer_plot(x_val)\n    plt.draw()\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": ["Slider for x position of washer cross-section (0 to 1)", "Button to toggle approximate volume display (not implemented in code for brevity)"]
+      },
+      "on_screen_text": "Move the slider to see the washer at different x.",
+      "teacher_narration": "Now we can see the washer in action. As you slide x from 0 to 1, the cross-section changes. The outer radius grows linearly, the inner radius quadratically. The area of the washer is pi times (R_o squared minus R_i squared). The total volume, summing all these washers from 0 to 1, gives 2 pi over 15.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "⚠️ Common Mistake: Squaring the Difference",
+      "left": {
+        "content_type": "text",
+        "content": "WRONG: $\\pi(R_o - R_i)^2$\nRIGHT: $\\pi(R_o^2 - R_i^2)$\nExample: $R_o=3, R_i=2$ => Wrong: $\\pi(1)^2=\\pi$, Right: $\\pi(9-4)=5\\pi$. Area is 5 times larger!"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two concentric circles: outer radius 3, inner radius 2. Shade the washer area. Display computed area: π(3^2

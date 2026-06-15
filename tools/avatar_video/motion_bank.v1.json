@@ -411,7 +411,7 @@
       }
     },
     "type_laptop": {
-      "duration_sec": 3.0,
+      "duration_sec": 3,
       "allowed_placements": [
         "end"
       ],
@@ -457,6 +457,67 @@
           1259
         ]
       }
+    },
+    "slider_explain": {
+      "duration_sec": 7.25,
+      "allowed_placements": [
+        "middle"
+      ],
+      "returns_to_neutral": true,
+      "use_when": [
+        "calculus widget explanation",
+        "slider or control bar changes while professor explains",
+        "interactive parameter demonstration",
+        "graph or formula changes driven by a control"
+      ],
+      "avoid_when": [
+        "final goodbye",
+        "question pause without a visual control change"
+      ],
+      "constraints": {
+        "settle_before": true,
+        "settle_after": true,
+        "can_trim": true,
+        "max_per_slide": 1
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 18,
+        "crop_y": [
+          157,
+          1264
+        ]
+      }
+    },
+    "slider_explain_alt": {
+      "duration_sec": 7.667,
+      "allowed_placements": [
+        "middle"
+      ],
+      "returns_to_neutral": true,
+      "use_when": [
+        "alternate slider or control bar explanation",
+        "avoid repeated slider_explain motion",
+        "second active-widget moment in the same topic"
+      ],
+      "avoid_when": [
+        "final goodbye",
+        "question pause without a visual control change"
+      ],
+      "constraints": {
+        "settle_before": true,
+        "settle_after": true,
+        "can_trim": true,
+        "max_per_slide": 1
+      },
+      "normalization": {
+        "status": "ok",
+        "trimmed_tail_frames": 8,
+        "crop_y": [
+          157,
+          1264
+        ]
+      }
     }
   },
   "events": {
@@ -483,8 +544,8 @@
           "up"
         ],
         "intensity_range": [
-          0.0,
-          1.0
+          0,
+          1
         ]
       }
     },
@@ -516,8 +577,8 @@
           "thoughtful"
         ],
         "intensity_range": [
-          0.0,
-          1.0
+          0,
+          1
         ]
       }
     }

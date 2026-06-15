@@ -40,6 +40,9 @@ export function initDeck(config) {
     hudPrefix = "",
     email = "karimza@algonquincollege.com",
     homeHref = "../index.html",
+    homeIconSrc = "",
+    homeIconDarkSrc = "",
+    footerLogoSrc = "",
     theme = "ac",
     ttsEnabled = false,
     analysisMode = false,
@@ -79,6 +82,10 @@ export function initDeck(config) {
   deck.classList.add(`theme-${theme}`);
   deck.style.setProperty("--deck-width", `${deckWidth}px`);
   deck.style.setProperty("--deck-height", `${deckHeight}px`);
+  if (footerLogoSrc) {
+    const footerUrl = String(footerLogoSrc).replace(/["\\\n\r]/g, "");
+    deck.style.setProperty("--deck-footer-image", `url("${footerUrl}")`);
+  }
 
   document.body.classList.toggle("analysis-mode", analysisMode);
 
@@ -86,11 +93,35 @@ export function initDeck(config) {
     homeBtn.href = homeHref;
     homeBtn.title = "Home";
     homeBtn.setAttribute("aria-label", "Home");
+    if (homeIconSrc) {
+      homeBtn.textContent = "";
+      homeBtn.classList.add("home-btn--image");
+
+      const lightIcon = document.createElement("img");
+      lightIcon.className = "home-btn-icon home-btn-icon--light";
+      lightIcon.src = homeIconSrc;
+      lightIcon.alt = "";
+      lightIcon.decoding = "async";
+      homeBtn.appendChild(lightIcon);
+
+      if (homeIconDarkSrc) {
+        const darkIcon = document.createElement("img");
+        darkIcon.className = "home-btn-icon home-btn-icon--dark";
+        darkIcon.src = homeIconDarkSrc;
+        darkIcon.alt = "";
+        darkIcon.decoding = "async";
+        homeBtn.appendChild(darkIcon);
+      }
+    }
   }
 
-  if (emailLink) {
+  if (emailLink && email) {
     emailLink.href = `mailto:${email}`;
     emailLink.textContent = email;
+  }
+
+  if (emailFooter) {
+    emailFooter.hidden = !email;
   }
 
   if (!ttsEnabled && ttsControls) {
@@ -131,6 +162,12 @@ export function initDeck(config) {
   function updateTopButtons() {
     if (!pdfBtn) return;
     pdfBtn.style.display = currentSlide === 0 && !analysisMode ? "inline-flex" : "none";
+  }
+
+  function updateSlideTypeState() {
+    const slideType = slides[currentSlide]?.dataset.slideType || "";
+    deck.classList.toggle("is-title-slide", slideType === "title");
+    deck.dataset.currentSlideType = slideType;
   }
 
   function syncPauseState() {
@@ -439,6 +476,7 @@ export function initDeck(config) {
     slides[currentSlide].classList.add("active");
     document.body.dataset.currentSlideId = currentSlideId();
 
+    updateSlideTypeState();
     updateCounter();
     updateHud();
     updateTopButtons();
@@ -724,6 +762,7 @@ export function initDeck(config) {
 
   window.deckController = controller;
   window.__deckController = controller;
+  document.body.dataset.deckReady = "true";
 
   return controller;
 }

@@ -1,0 +1,425 @@
+{
+  "lecture_meta": {
+    "title": "3D Coordinate Systems and Vectors",
+    "topic": "Three-dimensional coordinate systems and vector fundamentals",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Plot points in three-dimensional space using ordered triples and the right-hand rule",
+      "Calculate distances between points in ℝ³ using the distance formula",
+      "Interpret equations in x, y, z as surfaces in ℝ³",
+      "Apply vector addition and scalar multiplication geometrically and algebraically",
+      "Analyze the relationship between coordinate planes and projections of points"
+    ],
+    "prerequisite_reminder": "You can plot points (x, y) in the 2D Cartesian plane and find the distance between them using the Pythagorean theorem."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why 3D Coordinates?",
+      "left": {
+        "content_type": "text",
+        "content": "Weather forecasters track wind over the Atlantic using 3D velocity vectors. Each vector has magnitude (speed) and direction — a perfect introduction to **3D coordinates and vectors**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot a 3D coordinate system. Draw several arrows of varying lengths pointing in different directions to represent wind velocity vectors. Use blue arrows over a map-like grid (x-y plane). Label the axes x (east), y (north), z (up). Show 3D wind pattern effect.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Wind velocities over the Atlantic: magnitude and direction in 3D.",
+      "teacher_narration": "When meteorologists track wind patterns, they don't just say 'wind is strong'. They need to know the wind's speed and direction at every point in a three-dimensional volume. That's exactly what vectors are for: a compact way to describe magnitude and direction. Over the next twenty minutes, we'll build the tools to handle this — starting with the coordinate system itself.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Right‑Hand Rule",
+      "left": {
+        "content_type": "concept",
+        "content": "Use your **right hand**:\n1. Point fingers along **+x**.\n2. Curl them toward **+y**.\n3. Your thumb points to **+z**.\n\nThis defines a **right-handed coordinate system** – the standard in math and physics."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D axes with labeled x (red), y (green), z (blue) axes. Overlay a translucent right-hand silhouette with fingers pointing along x, curling toward y, thumb pointing up along z. Tick marks every 1 unit. Axes range from -3 to 3.",
+        "python_code": null,
+        "interactive_controls": [
+          "Toggle: show/hide right hand silhouette"
+        ]
+      },
+      "on_screen_text": "Right‑hand rule: fingers → x, curl → y, thumb → z.",
+      "teacher_narration": "There's no universal 'up' in space, so mathematicians agreed on a standard orientation. Hold your right hand flat with fingers pointing along the positive x-axis. Now curl your fingers towards the positive y-axis. Your thumb automatically points in the positive z direction. This is the right-hand rule. Use it every time you set up a 3D coordinate system — it guarantees consistency.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Distance in ℝ³",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$d = \\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2 + (z_2 - z_1)^2}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two points P1 = (1,2,3) and P2 = (4,5,6) in 3D space. Draw dashed lines from each point to the coordinate planes to show projections. Draw a solid line between P1 and P2. Label the differences Δx, Δy, Δz along the axes. Axes from 0 to 7. Use distinct colors for each axis.",
+        "python_code": null,
+        "interactive_controls": [
+          "Drag: move P1 and P2 to see distance update live"
+        ]
+      },
+      "on_screen_text": "Distance = √[(Δx)² + (Δy)² + (Δz)²]",
+      "teacher_narration": "The distance formula is the direct generalization from the Pythagorean theorem. In 2D we had a flat right triangle. In 3D, we apply the theorem twice: first to find the diagonal on the xy-plane, then combine that with the vertical difference. The result: square the differences in all three coordinates, sum them, and take the square root. This formula works for any two points in space, not just those near the origin.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Your Turn: Distance from Origin",
+      "left": {
+        "content_type": "text",
+        "content": "Find the distance from the origin (0,0,0) to the point (3, –2, 4).\n\n**Pause the video now and calculate.**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D axes with origin O labeled and point (3,-2,4) marked as a red dot. Connecting dashed line from O to point. Coordinates displayed. No distance value shown.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause: d from (0,0,0) to (3,–2,4) = ?",
+      "teacher_narration": "Here's a quick check. Take a moment to apply the distance formula from the origin to this point. The origin has coordinates (0,0,0). Write down your answer before moving on – I'll reveal the solution next. This is a straightforward application, but it's good practice to get comfortable with the formula before we tackle more complex problems.",
+      "student_prompt": "Calculate the distance. What did you get?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Distance from Origin – Solution",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Differences: Δx=3, Δy=–2, Δz=4\n2. Squares: 9, 4, 16\n3. Sum: 9+4+16 = 29\n4. Square root: √29\n\n**Answer: d = √29**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Same 3D plot as previous slide, but now show the distance label '√29' on the connecting line. Highlight the three squares 9, 4, 16 with different colors near the axes.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "√29 ≈ 5.385",
+      "teacher_narration": "Let's check. We subtract zero from each coordinate, giving differences 3, -2, and 4. Squaring gives 9, 4, and 16. Sum is 29. Take the square root – that's √29. So the point is about 5.385 units from the origin. If you got that, you're on the right track. Notice how the negative sign disappears when squared, which is why distance is always positive.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Midpoint in ℝ³",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{Midpoint} = \\left(\\frac{x_1 + x_2}{2},\\;\\frac{y_1 + y_2}{2},\\;\\frac{z_1 + z_2}{2}\\right)$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two points A(2,-1,5) and B(-4,3,-1) with their midpoint M = (-1,1,2) shown as a green diamond. Dashed lines connect A to M and M to B. Axes labeled. Show coordinates of all three points.",
+        "python_code": null,
+        "interactive_controls": [
+          "Drag: move A and B to see midpoint update"
+        ]
+      },
+      "on_screen_text": "Midpoint = average of corresponding coordinates.",
+      "teacher_narration": "The midpoint is exactly what you'd expect – the average of the coordinates. Take the x-coordinates, average them; same for y and z. The result is the point exactly halfway between the two endpoints. This works no matter where the points are in space. It's a simple but powerful tool for finding centers and balancing points in 3D.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Points vs. Vectors",
+      "left": {
+        "content_type": "concept",
+        "content": "A **point** has coordinates $(a,b,c)$. A **vector** has components $\\langle a,b,c\\rangle$. They look the same but behave differently:\n\n- Point: a location.\n- Vector: a displacement (direction and magnitude).\n\n**Wrong:** Treating a point like a vector when subtracting positions."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show point P(2,3,1) as a dot. Then show an arrow from origin to P labeled as vector ⟨2,3,1⟩. Then show a separate scenario: from P to Q, the vector is Q - P (arrow from P to Q). Highlight that the vector is not the same as the point. Color code: points red, vectors blue.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Point $(2,3,1)$ ≠ vector $\\langle 2,3,1\\rangle$.",
+      "teacher_narration": "A common point of confusion: writing coordinates with parentheses and vectors with angle brackets. A point is a fixed place – like saying 'room 301'. A vector is a movement – like 'go three steps east, two steps north'. When we find the vector from P to Q, we subtract P from Q, not the other way around. The result is a displacement, not a new point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Vector Magnitude",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$|\\vec{v}| = \\sqrt{a^2 + b^2 + c^2}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Vector v = ⟨2, -3, 6⟩ drawn from origin. Show its length (|v|=7) as a label on the arrow. Dashed lines show the components along each axis. Axis ranges from -3 to 7.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for component a from -5 to 5",
+          "Slider for component b from -5 to 5",
+          "Slider for component c from -5 to 5"
+        ]
+      },
+      "on_screen_text": "|⟨a,b,c⟩| = √(a²+b²+c²)",
+      "teacher_narration": "The magnitude of a vector is its length. It comes directly from the distance formula: if the vector starts at the origin, its tip is the point (a,b,c). So the magnitude is just the distance from origin to that point. For our vector ⟨2, -3, 6⟩, square 2 to get 4, square -3 to get 9, square 6 to get 36, sum to 49, square root gives 7.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Vector Addition & Scalar Multiplication",
+      "left": {
+        "content_type": "steps",
+        "content": "**Addition:** $\\vec{u}+\\vec{v} = \\langle u_1+v_1, u_2+v_2, u_3+v_3\\rangle$\n\n**Scalar multiple:** $c\\vec{v} = \\langle cv_1, cv_2, cv_3\\rangle$\n\nDrag the sliders to explore."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot with two vectors u = ⟨1,2,1⟩ (blue) and v = ⟨3,1,-1⟩ (red), both from origin. Show the sum u+v (green) from origin. Add a scalar multiple slider that multiplies v by c (c from -2 to 2). Show the scaled vector in orange. Display component values. Use mpl_toolkits.mplot3d.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for scalar c from -2 to 2",
+          "Toggle: show/hide sum vector u+v"
+        ]
+      },
+      "on_screen_text": "Add component‑wise; scale each component.",
+      "teacher_narration": "With the interactive plot you can see vector addition and scalar multiplication. Notice that adding u and v gives a new vector whose components are the sums of the original components. Scaling v by a factor c stretches or shrinks it, and if c is negative it reverses direction. Try sliding c and watch the orange vector change.",
+      "student_prompt": "What happens when c = 0? When c = 1?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Warm‑Up – Plot & Distance",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Plot the point (2, –3, 4) and find its distance from the origin.\n\n| Step | Action |\n|------|--------|\n| 1 | Start at origin. Move 2 units along +x. |\n| 2 | Move 3 units in negative y (back). |\n| 3 | Move 4 units upward (z). |\n| 4 | Distance: √(2² + (–3)² + 4²) = √(4+9+16) = √29 |\n\n**Answer:** Point (2,–3,4), distance √29."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Plot (2,–3,4). Distance = √29 ≈ 5.385",
+      "teacher_narration": "Let's do a simple warm-up. To plot (2,–3,4), start at the origin. Move 2 units in the positive x direction, then 3 units in the negative y direction – that's backwards – then 4 units up. That's our point. Its distance from origin comes from the distance formula: 2 squared is 4, negative 3 squared is 9, 4 squared is 16, sum 29, square root gives √29.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Standard – Distance Between Two Points",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find the distance between P(1, –2, 3) and Q(4, 2, –1).\n\n| Step | Calculation |\n|------|-------------|\n| 1 | Δx = 4 – 1 = 3 |\n| 2 | Δy = 2 – (–2) = 4 |\n| 3 | Δz = –1 – 3 = –4 |\n| 4 | d² = 3² + 4² + (–4)² = 9 + 16 + 16 = 41 |\n| 5 | d = √41 |\n\n**Answer:** √41 ≈ 6.403"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "d = √41",
+      "teacher_narration": "Here's a standard problem. First, find the differences: x goes from 1 to 4, so Δx=3. y goes from -2 to 2, that's 4. z goes from 3 to -1, that's -4. Square each: 9, 16, 16. Sum is 41. Square root is √41, about 6.403. Always double-check your signs when subtracting negatives. A small sign error can change the entire result.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Your Turn: Tricky Points on an Axis",
+      "left": {
+        "content_type": "text",
+        "content": "Find all points on the **z‑axis** that are 5 units from (3, –4, 2).\n\n**Hint:** Points on the z‑axis have form (0,0,z).\n\nPause and try before the solution."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D axes with a vertical line drawn along the z-axis (x=0, y=0). Show fixed point P = (3,-4,2) as a red dot. No other points shown.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause: distance from (3,–4,2) to z‑axis points = 5.",
+      "teacher_narration": "This problem has a common trap. Points on the z-axis have x=0 and y=0, so they look like (0,0,z). We want the distance from each such point to (3,-4,2) to be exactly 5. Write the distance formula, set it equal to 5, and solve for z. Try it now, then check the solution. Think about whether you expect one or two solutions.",
+      "student_prompt": "How many points satisfy this condition?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3: Tricky – Solution",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find all points on z‑axis 5 units from (3,–4,2).\n\n| Step | Work |\n|------|------|\n| 1 | Let point = (0,0,z). |\n| 2 | Distance eq: √[(3–0)² + (–4–0)² + (2–z)²] = 5 |\n| 3 | Square: 9 + 16 + (2–z)² = 25 → 25 + (2–z)² = 25 |\n| 4 | Subtract 25: (2–z)² = 0 → z = 2 |\n\n**Answer:** Only one point: (0,0,2).\n\n**Common mistake:** expecting two solutions because the equation looks quadratic."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Only one point: (0,0,2).",
+      "teacher_narration": "Let's solve. The point is (0,0,z). Plug into distance formula: square root of (9 + 16 + (2-z)²) = 5. Squaring both sides gives 25 + (2-z)² = 25. Subtract 25 gives (2-z)² = 0, so z=2. Only one solution. Why? Because (3,-4,2) is exactly 5 units from (0,0,2) – the distance in the xy-plane is 5 already, so the vertical difference must be zero.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 4: Edge Case – Zero Vector",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find the vector from P(2,–1,3) to Q(2,–1,3) and its magnitude.\n\n| Step | Work |\n|------|------|\n| 1 | Vector = ⟨2–2, –1–(–1), 3–3⟩ = ⟨0,0,0⟩ |\n| 2 | Magnitude = √(0²+0²+0²) = 0 |\n\n**Answer:** Zero vector, magnitude 0.\n\n**Key insight:** The zero vector is the only vector with zero magnitude. It has no direction."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Zero vector = ⟨0,0,0⟩, |0| = 0.",
+      "teacher_narration": "Here's an edge case. When the head and tail of a vector are the same point, the vector has zero length. All components are zero. The magnitude is zero. What about its direction? We say the zero vector has no direction – it's the only vector that doesn't point anywhere. This is an important special case you'll encounter in problems.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 5: Application – A Surface in 3D",
+      "left": {
+        "content_type": "text",
+        "content": "Describe and sketch the surface given by $z = 4 - x^2 - y^2$.\n\n- Cross‑sections parallel to xy‑plane: circles $x^2 + y^2 = 4 - z$\n- For $z < 4$: circle radius $\\sqrt{4-z}$\n- At $z=4$: just the point $(0,0,4)$\n- $z > 4$: no points\n- The surface is a **downward‑opening paraboloid**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D surface plot of z = 4 - x^2 - y^2 for x,y in [-2.5,2.5]. Use colormap or shading to show height. Include gridlines and axis labels. Highlight the vertex at (0,0,4). Optionally show a couple of horizontal cross-sections as circles.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: show cross‑section at z = c for c from -5 to 4"
+        ]
+      },
+      "on_screen_text": "z = 4 – x² – y² → paraboloid opening downward.",
+      "teacher_narration": "This is a sneak peek at multivariable functions. The equation z = 4 - x² - y² relates the three coordinates. For each (x,y), it gives a z-value. The resulting surface is like a bowl turned upside down – a paraboloid. Horizontal slices are circles that shrink as z increases, until at z=4 the circle becomes a single point at the top. This kind of thinking – fixing one variable – is crucial for understanding 3D shapes.",
+      "student_prompt": "What shape do you get if you cut the surface with a vertical plane?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proving the Distance Formula",
+      "left": {
+        "content_type": "steps",
+        "content": "**Goal:** Show $d = \\sqrt{(x_2-x_1)^2 + (y_2-y_1)^2 + (z_2-z_1)^2}$.\n\n1. Project $P_2$ onto horizontal plane through $P_1$: $Q(x_2,y_2,z_1)$.\n2. In $xy$‑plane: $P_1Q$ has length $\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$.\n3. $QP_2$ is vertical: length $|z_2-z_1|$.\n4. $\\triangle P_1 Q P_2$ has right angle at $Q$.\n5. By Pythagorean theorem: $d^2 = (P_1Q)^2 + (QP_2)^2$.\n6. Take square root."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot showing points P1, P2, and Q (the projection). Draw right triangle with right angle at Q. Label legs as Δxy and Δz, and hypotenuse as d. Use dashed lines for projection.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Apply Pythagorean theorem twice.",
+      "teacher_narration": "This optional proof ties everything together. By projecting one point onto the horizontal plane of the other, we create a right triangle. The horizontal leg uses the 2D distance formula; the vertical leg is just the difference in z. Because they're perpendicular, the Pythagorean theorem gives the full 3D distance. This is elegant and shows why the formula works. It also reinforces the geometric intuition behind the algebra.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 17,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "What You've Learned",
+      "left": {
+        "content_type": "text",
+        "content": "**Key formulas & skills:**\n\n- **Distance:** $d = \\sqrt{(\\Delta x)^2 + (\\Delta y)^2 + (\\Delta z)^2}$\n- **Midpoint:** $\\left(\\frac{x_1+x_2}{2}, \\frac{y_1+y_2}{2}, \\frac{z_1+z_2}{2}\\right)$\n- **Vector:** $\\vec{v} = \\langle a,b,c\\rangle \\;\\; |\\vec{v}| = \\sqrt{a^2+b^2+c^2}$\n- **Operations:** component-wise addition and scalar multiplication\n- **Surfaces:** equations in $x,y,z$ describe surfaces in $\\mathbb{R}^3$\n\nYou can now plot points, compute distances, and work with vectors in 3D."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Review the five learning objectives.",
+      "teacher_narration": "Let's quickly recap. You learned the right-hand rule to orient axes. You can now compute distances and midpoints in 3D using simple extensions of 2D formulas. You understand that vectors represent direction and magnitude, and you can add them or multiply by scalars. Finally, you've seen how equations like z = 4 - x² - y² create surfaces. These are the foundations for calculus of several variables.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

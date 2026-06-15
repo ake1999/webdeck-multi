@@ -1,0 +1,327 @@
+{
+  "lecture_meta": {
+    "title": "Stokes' Theorem",
+    "topic": "Line and surface integrals in 3D",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Convert line integrals around closed curves to surface integrals of curl using Stokes' Theorem",
+      "Choose the simplest surface or boundary for a given problem",
+      "Correctly apply orientation (right-hand rule) for surface and boundary",
+      "Recognize conservative fields (curl = 0) as a special case",
+      "Apply Stokes' Theorem in a physics context (Ampère's Law)"
+    ],
+    "prerequisite_reminder": "Green's Theorem relates line integrals around a plane curve to area integrals of the curl's 2D analogue."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Stokes' Theorem: Why It Matters",
+      "left": {
+        "content_type": "text",
+        "content": "Imagine measuring the spin of a tornado from its outer winds. Stokes' Theorem makes this possible: **boundary circulation equals total curl through any surface spanning it.**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D funnel surface with vector field",
+        "visual_spec": "Plot a funnel-shaped surface (e.g., z = sqrt(x^2+y^2) with top cut) and a closed boundary circle at the top. Show arrows representing a circulating vector field F = (-y, x, 0) around the boundary. Use quiver3D on the boundary and a few arrows on the surface to suggest rotation. Label boundary C and surface S. Use colors: red for C, blue for surface normals.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Boundary circulation = total spin through any spanning surface. Stokes' Theorem turns a tricky surface integral into a simpler line integral.",
+      "teacher_narration": "Think about a tornado. The spinning air far from the center is easy to measure, but the complex rotation inside the funnel is harder. Stokes' Theorem says that if you walk around the outer ring and measure the wind, that total spin equals the sum of all the little spins across the entire funnel surface. This is the core idea: boundary measurements capture interior behavior.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "From Green to Stokes",
+      "left": {
+        "content_type": "concept",
+        "content": "**Green's Theorem (2D)**\n$$\\oint_C \\mathbf{F}\\cdot d\\mathbf{r} = \\iint_D \\left(\\frac{\\partial Q}{\\partial x} - \\frac{\\partial P}{\\partial y}\\right) dA$$\n\n**Stokes' Theorem (3D)**\n$$\\iint_S \\nabla\\times\\mathbf{F}\\cdot d\\mathbf{S} = \\oint_{\\partial S} \\mathbf{F}\\cdot d\\mathbf{r}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "2D region vs 3D surface comparison",
+        "visual_spec": "Left subplot: flat disk in xy-plane with boundary circle, label region D. Right subplot: curved surface S (e.g., hemisphere) with boundary curve C. Use same color for boundaries. Add labels: '2D: Green' and '3D: Stokes'. Show a single vector field on both for continuity.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Stokes' Theorem is Green's Theorem lifted into 3D: a closed curve → a curved surface.",
+      "teacher_narration": "You already know Green's Theorem: the circulation around a 2D loop equals the double integral of the 2D curl over the enclosed area. Stokes' Theorem is exactly the same idea, but now the region can be a curved surface in 3D, and the boundary is a space curve. The 3D curl measures local rotation in all three axes. This generalization is incredibly powerful for physics and engineering.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Whirlpool",
+      "left": {
+        "content_type": "concept",
+        "content": "**The whirlpool metaphor** – Measure spin around the rim (line integral) to get total curl across the surface."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive 3D funnel with controls",
+        "visual_spec": "3D plot of a funnel surface given by z = -sqrt(x^2+y^2)+h (truncated at z=0). Boundary circle at top. Vector field F = (-y, x, 0) shown on boundary. Control: slider to change funnel height h (depth) from 1 to 5; toggle to show/hide surface normal vectors. Label: 'Circulation around rim' and 'Total curl through surface' with dynamic numeric updates.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, Button\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.25)\n\nh_init = 3\n\ndef draw_funnel(h):\n    ax.clear()\n    r = np.linspace(0, 2, 30)\n    theta = np.linspace(0, 2*np.pi, 40)\n    R, Theta = np.meshgrid(r, theta)\n    X = R * np.cos(Theta)\n    Y = R * np.sin(Theta)\n    Z = -np.sqrt(X**2 + Y**2) + h\n    # clip to z>=0\n    Z = np.maximum(Z, 0)\n    ax.plot_surface(X, Y, Z, alpha=0.5, cmap='viridis')\n    # boundary circle at top (z=0)\n    phi = np.linspace(0, 2*np.pi, 50)\n    xc = 2*np.cos(phi)\n    yc = 2*np.sin(phi)\n    zc = np.zeros_like(phi)\n    ax.plot(xc, yc, zc, 'r-', lw=2, label='Boundary C')\n    # vector field on boundary\n    u = -yc\n    v = xc\n    w = np.zeros_like(phi)\n    skip = 5\n    ax.quiver(xc[::skip], yc[::skip], zc[::skip], u[::skip], v[::skip], w[::skip], color='orange', label='F on C')\n    # normal vectors (upward) on surface\n    normals = []\n    for i in range(0, R.shape[0], 4):\n        for j in range(0, R.shape[1], 4):\n            xp = X[i,j]\n            yp = Y[i,j]\n            zp = Z[i,j]\n            if zp>0.1:\n                # approximate normal\n                nx = xp/np.sqrt(xp**2+yp**2)\n                ny = yp/np.sqrt(xp**2+yp**2)\n                nz = -1\n                norm = np.sqrt(nx**2+ny**2+nz**2)\n                ax.quiver(xp, yp, zp, nx/norm, ny/norm, nz/norm, length=0.3, color='blue', alpha=0.6)\n    ax.set_xlim(-2.5,2.5)\n    ax.set_ylim(-2.5,2.5)\n    ax.set_zlim(0, h+0.5)\n    ax.set_xlabel('X')\n    ax.set_ylabel('Y')\n    ax.set_zlabel('Z')\n    ax.set_title('Funnel surface height = %.1f' % h)\n    ax.legend()\n\ndraw_funnel(h_init)\n\nax_h = plt.axes([0.2, 0.1, 0.65, 0.03])\nslider_h = Slider(ax_h, 'Height', 1, 5, valinit=h_init)\ndef update(val):\n    draw_funnel(slider_h.val)\n    fig.canvas.draw_idle()\nslider_h.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for funnel height (depth) from 1 to 5",
+          "Button to toggle surface normal vectors (show/hide)"
+        ]
+      },
+      "on_screen_text": "Move the slider to change funnel depth. See how the boundary and surface change.",
+      "teacher_narration": "Let me show you the whirlpool metaphor in action. Here we have a funnel surface. The red circle is the rim, and the orange arrows show the flow around that rim. The blue arrows are the surface normals. As I drag the slider to make the funnel deeper, the surface area increases but the boundary stays the same. According to Stokes' Theorem, the circulation around the rim is constant for a fixed vector field – that's because the curl through any surface with that rim is the same. Try it yourself.",
+      "student_prompt": "Predict what happens to the line integral when the funnel gets deeper. Does it change? Why or why not?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Stokes' Theorem**\n$$\\oint_{\\partial S} \\mathbf{F}\\cdot d\\mathbf{r} = \\iint_S (\\nabla\\times\\mathbf{F})\\cdot d\\mathbf{S}$$\n\nWhere $\\partial S$ is the positively oriented boundary of $S$.\n\n**Alternative form:**\n$$\\oint_C \\mathbf{F}\\cdot d\\mathbf{r} = \\iint_S (\\nabla\\times\\mathbf{F})\\cdot \\mathbf{n}\\, dS$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Surface S with normal n and boundary C",
+        "visual_spec": "3D plot of a curved surface S (e.g., paraboloid) with normal vectors shown at several points. The boundary C is a closed curve with arrows indicating positive orientation. Add right-hand rule icon: thumb in direction of n, fingers curl along C. Label: 'Positive orientation: right-hand rule'. Use colors: green for surface, red for boundary, blue for normal.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Stokes' Theorem: circulation around C = flux of curl through S. Orientation must match (right-hand rule).",
+      "teacher_narration": "Here is the formal statement. For any oriented piecewise-smooth surface S with a simple closed boundary curve C, and a vector field F whose components have continuous partial derivatives, the line integral of F around C equals the surface integral of the curl of F over S. The orientation is critical: if you walk along C with your head pointing in the direction of the surface normal, the surface must be on your left. This is the right-hand rule.",
+      "student_prompt": "Without looking ahead, try to write the orientation condition in your own words.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Orientation Matters",
+      "left": {
+        "content_type": "concept",
+        "content": "**Right‑hand rule:** Thumb = normal direction, fingers curl along positive boundary.\n\n**Wrong orientation flips sign.** Always check consistency before applying Stokes."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two panels: correct and wrong orientation",
+        "visual_spec": "Side‑by‑side 3D diagrams of the same surface S (hemisphere). Left: correct – normal points upward, boundary arrows counterclockwise as seen from above. Right: wrong – normal points downward, boundary arrows clockwise. Add labels 'Correct', 'Wrong'. Show red X on wrong side. Below: icon of right-hand hand.",
+        "python_code": null,
+        "interactive_controls": [
+          "Radio button: 'Show correct' / 'Show wrong' – toggles between the two panels",
+          "Toggle: 'Show right-hand icon'"
+        ]
+      },
+      "on_screen_text": "Flip the orientation and the whole integral changes sign. Always apply right-hand rule.",
+      "teacher_narration": "Orientation isn't just a detail – it can change your answer by a minus sign. Let's look at this hemisphere. If the surface is oriented upward, the positive boundary goes counterclockwise when viewed from above. If you accidentally take the normal pointing downward, the boundary would be clockwise, and Stokes' Theorem would give the negative of the correct answer. Use the right-hand rule every time: thumb in normal direction, fingers curl along the boundary.",
+      "student_prompt": "If the surface is a disk in the xy-plane oriented upward, what is the positive orientation of its boundary?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm‑Up Example",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Evaluate $\\iint_S \\nabla\\times\\mathbf{F}\\cdot d\\mathbf{S}$ for $\\mathbf{F}=(2y\\cos z,\\, e^x\\sin z,\\, xe^y)$ and $S$: hemisphere $x^2+y^2+z^2=9,\\, z\\geq 0$, upward.\n\n**1.** Boundary $C$: circle $x^2+y^2=9,\\, z=0$.\n**2.** Orient $C$ CCW from above (right‑hand rule).\n**3.** Parametrize: $\\mathbf{r}(t) = (3\\cos t, 3\\sin t, 0)$.\n**4.** $\\mathbf{F}(\\mathbf{r}(t)) = (6\\sin t, 0, 3\\cos t\\, e^{3\\sin t})$.\n**5.** $d\\mathbf{r}=(-3\\sin t,\\,3\\cos t,\\,0)dt$.\n**6.** $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r} = \\int_0^{2\\pi} (-18\\sin^2 t) dt = -18\\pi$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Convert surface integral to line integral. Boundary is a simple circle – easy.",
+      "teacher_narration": "Let's start with a straightforward example. We have a hemisphere with the top open, and we want the flux of curl. Instead of computing the curl and the tricky surface integral, we use Stokes' Theorem. The boundary is a circle. We parametrize it, plug into F, and integrate. Notice the z‑component of F doesn't contribute because the boundary lies in the plane z=0. The final answer is -18π. The negative sign comes from the orientation – check with the right-hand rule.",
+      "student_prompt": "Pause the video and try to compute the line integral yourself before I reveal the answer.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Visualization",
+      "left": {
+        "content_type": "concept",
+        "content": "3D plot of the hemisphere and its boundary. Change radius to see how the surface and boundary scale."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "3D interactive hemisphere",
+        "visual_spec": "3D plot of a hemisphere x^2+y^2+z^2 = r^2, z>=0. Boundary circle at z=0. Controls: slider for radius r from 1 to 5; toggle to show/hide normal vectors (upward); checkbox to flip orientation (downward). Update the plot dynamically. Show numeric value of line integral (computed from a sample vector field like F=(-y,x,0)).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, CheckButtons\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.25)\n\nr_init = 3\ndownward = False\n\ndef draw_hemisphere(r, down):\n    ax.clear()\n    theta = np.linspace(0, 2*np.pi, 40)\n    phi = np.linspace(0, np.pi/2, 40)\n    T, P = np.meshgrid(theta, phi)\n    X = r * np.sin(P) * np.cos(T)\n    Y = r * np.sin(P) * np.sin(T)\n    Z = r * np.cos(P)\n    ax.plot_surface(X, Y, Z, alpha=0.5, cmap='viridis' if not down else 'plasma')\n    t = np.linspace(0, 2*np.pi, 100)\n    xc = r * np.cos(t)\n    yc = r * np.sin(t)\n    zc = np.zeros_like(t)\n    # orientation: CCW from above if not down, else CW\n    if down:\n        xc = xc[::-1]\n        yc = yc[::-1]\n    ax.plot(xc, yc, zc, 'r-', lw=2)\n    # normal\n    if not down:\n        ax.quiver(0, 0, r, 0, 0, 1, color='blue', linewidth=2, label='Normal')\n    else:\n        ax.quiver(0, 0, -r, 0, 0, -1, color='blue', linewidth=2, label='Normal')\n    # sample vector field on boundary (F = (-y,x,0) gives circulation = 2*pi*r^2? actually line integral = 2*pi*r^2)\n    # compute numeric integral\n    # For F=(-y,x,0), circulation = 2*pi*r^2\n    circ = 2*np.pi*r**2\n    if down:\n        circ = -circ\n    ax.set_xlim(-r-1, r+1)\n    ax.set_ylim(-r-1, r+1)\n    ax.set_zlim(-1, r+1)\n    ax.set_xlabel('X')\n    ax.set_ylabel('Y')\n    ax.set_zlabel('Z')\n    ax.set_title(f'Radius = {r:.1f}, Circulation = {circ:.2f}')\n    ax.legend()\n\ndraw_hemisphere(r_init, downward)\n\nax_r = plt.axes([0.2, 0.1, 0.65, 0.03])\nslider_r = Slider(ax_r, 'Radius', 1, 5, valinit=r_init)\ndef update_r(val):\n    draw_hemisphere(slider_r.val, downward)\n    fig.canvas.draw_idle()\nslider_r.on_changed(update_r)\n\nax_check = plt.axes([0.05, 0.5, 0.15, 0.1])\ncheck = CheckButtons(ax_check, ['Downward normal'], [downward])\ndef toggle(label):\n    global downward\n    downward = not downward\n    draw_hemisphere(slider_r.val, downward)\n    fig.canvas.draw_idle()\ncheck.on_clicked(toggle)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for radius from 1 to 5",
+          "Checkbox: 'Downward normal' – flips orientation and sign of circulation"
+        ]
+      },
+      "on_screen_text": "Slide the radius and toggle orientation. Watch the boundary and circulation change.",
+      "teacher_narration": "Now you can explore Stokes' Theorem interactively. Here's the hemisphere from the previous example. Use the slider to change its radius. The red circle is the boundary. When you check 'Downward normal', the orientation flips and the circulation changes sign – just as Stokes' Theorem predicts. Notice that the circulation scales with the square of the radius because the boundary length grows linearly and the vector field's magnitude also grows linearly. Play with it to build intuition.",
+      "student_prompt": "For this vector field, what happens to the circulation if the radius is doubled? Verify your prediction with the interactive plot.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Evaluate $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r}$ for $\\mathbf{F}=(x^2z^2,\\, y^2z^2,\\, xyz)$ and $C$ is boundary of paraboloid $z=x^2+y^2$ inside cylinder $x^2+y^2=4$, CCW from above.\n\n**Use Stokes:** convert to surface integral.\n1. Compute $\\nabla\\times\\mathbf{F}=\\langle xz-2y^2z,\\, 2x^2z-yz,\\, 0 \\rangle$\n2. Surface $S$: $z=x^2+y^2$, projection $D$: $x^2+y^2\\leq4$, upward normal $\\mathbf{n}\\,dS = \\langle -2x,\\, -2y,\\, 1\\rangle dA$\n3. $\\iint_S \\nabla\\times\\mathbf{F}\\cdot d\\mathbf{S} = \\iint_D \\left[ -2x(xz-2y^2z) -2y(2x^2z - yz) \\right] dA$ with $z=x^2+y^2$\n4. Polar coordinates: integral evaluates to $0$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Paraboloid boundary is a space curve – easier as a surface integral. The answer is zero.",
+      "teacher_narration": "This is a typical exam problem. The boundary curve is the intersection of the paraboloid and the cylinder – a space curve that's messy to parametrize. But the surface (the paraboloid cap) is easy. We compute the curl, then do a surface integral over the projected disk. After substituting z equals x²+y² and converting to polar coordinates, the integral vanishes. The line integral is zero. Notice that we used Stokes' Theorem to avoid a difficult line integral.",
+      "student_prompt": "Why did the integral simplify to zero? What does that tell you about the vector field?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Ignoring Orientation",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong:** Use Stokes without checking orientation. The line integral gives $+18\\pi$ but the correct answer is $-18\\pi$ (from warm‑up).\n\n**Why:** Boundary orientation must be consistent with surface normal. Always use right-hand rule.",
+        "interactive_controls": []
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side‑by‑side: correct orientation (upward normal, CCW boundary) and wrong (downward normal, CW boundary). Red X on wrong.",
+        "visual_spec": "Two 3D diagrams of the hemisphere from warm‑up. Left: upward normal (blue arrow), boundary arrows counterclockwise – answer correct. Right: downward normal (blue arrow), boundary arrows clockwise – answer positive, but it should be negative. Show the computed line integral values: -18π vs +18π. Cross out the wrong one with a red X. Add text: 'Sign error!'",
+        "python_code": null
+      },
+      "on_screen_text": "Orientation flips sign. If you ignore it, your answer can be completely wrong.",
+      "teacher_narration": "The most common mistake when applying Stokes' Theorem is getting the orientation wrong. In the warm‑up example, if you used a downward normal instead of upward, you'd get +18π instead of -18π. But the problem said 'oriented upward', so the correct answer is -18π. The point is: always check orientation before you compute. Use the right-hand rule: thumb points in the direction of the unit normal, and your fingers curl along the positive boundary.",
+      "student_prompt": "If the surface is a disk in the plane z=0 oriented downward, what is the positive orientation of its boundary?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Tricky Example: Multiple Boundary Components",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\mathbf{F}=(yz,\\, xz,\\, xy)$. C = two circles: $C_1$: $x^2+y^2=1,\\,z=0$ CCW; $C_2$: $x^2+y^2=1,\\,z=2$ CW. Evaluate $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r}$.\n\n**Use Stokes:** Surface is cylinder wall $x^2+y^2=1,\\,0\\leq z\\leq2$ (outward normal).\n1. Compute $\\nabla\\times\\mathbf{F} = \\langle 0,0,0\\rangle$ (check: conservative field).\n2. $\\iint_S \\mathbf{0}\\cdot d\\mathbf{S} = 0$.\n3. Therefore $\\oint_{C_1} + \\oint_{C_2} = 0$. Compute $C_1$ directly: parametrize, dot product = 0. So $\\oint_{C_2}=0$ as well."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Multiple boundaries? Stokes still works: sum over all boundary components with correct orientation.",
+      "teacher_narration": "What if your surface has two boundaries – like a cylinder? Stokes' Theorem still holds: the flux of curl through the surface equals the sum of the line integrals around all boundary components, each oriented consistently with the surface normal (using the right-hand rule). Here the curl is zero, so the total circulation is zero. We then check one boundary directly – it's zero, so the other must also be zero. This shows that for conservative fields, the integral around any closed curve is zero regardless of the path.",
+      "student_prompt": "If the curl is zero, what must be true about the vector field?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Edge Case: Hemisphere Opening in x-direction",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\mathbf{F}=(\\cos z,\\, x^2z,\\, xy)$. C: boundary of hemisphere $x=\\sqrt{1-y^2-z^2}$, oriented toward positive x. Evaluate $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r}$.\n\n**Use Stokes:**\n1. $\\nabla\\times\\mathbf{F} = \\langle x-x^2,\\, y+\\sin z,\\, 2xz\\rangle$\n2. Surface S: $x=\\sqrt{1-y^2-z^2}$, projection D: $y^2+z^2\\leq1$.\n3. Normal $\\mathbf{n}\\,dS = \\langle 1,\\, -y/x,\\, -z/x\\rangle dA$ (positive x direction)\n4. $\\iint_S \\nabla\\times\\mathbf{F}\\cdot d\\mathbf{S} = \\iint_D [\\dots] dA$, convert to polar in yz-plane.\n5. After integration: $= -\\pi$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Hemisphere not symmetric about z-axis? Adapt parametrization. Compute curl, then integrate.",
+      "teacher_narration": "This example tests your ability to handle a surface that isn't aligned with the usual axes. The hemisphere opens in the x-direction. We apply Stokes exactly the same way: paramatrize the surface as x equals a function of y and z, find the normal vector that points in the positive x-direction, then do the double integral. The curl is non‑trivial, but after converting to polar coordinates in the yz‑plane and simplifying using symmetry, we get -π. The key is to systematically follow the same steps regardless of orientation.",
+      "student_prompt": "Why did the term involving sin(z) vanish in the integral?",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Application: Ampère's Law",
+      "left": {
+        "content_type": "concept",
+        "content": "**Physics:** Maxwell's equation $\\nabla\\times\\mathbf{B} = \\mu_0\\mathbf{J}$. Apply Stokes:\n$$\\oint_C \\mathbf{B}\\cdot d\\mathbf{r} = \\iint_S \\mu_0\\mathbf{J}\\cdot d\\mathbf{S} = \\mu_0 I_{\\text{enc}}$$\nThis is **Ampère's Law**: magnetic circulation = enclosed current."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Straight wire with current I, circular loop C of radius r around it, magnetic field B tangent to loop.",
+        "visual_spec": "3D plot: a vertical wire (line) with upward arrow labeled 'I'. Around it, a circular loop (red) with arrows indicating B field direction (tangent, following right-hand rule). Label the loop 'C'. Show surface S (e.g., a disk) spanned by C. Add equation on screen: ∮ B·dr = μ₀ I.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Stokes' Theorem bridges Maxwell's equations to Ampère's Law. Circulation = μ₀ × enclosed current.",
+      "teacher_narration": "One of the most important applications of Stokes' Theorem is in electromagnetism. The differential form of Ampère's Law says the curl of the magnetic field is μ₀ times the current density. Take the surface integral of both sides, apply Stokes to the left side, and you recover the integral form: the circulation of B around any closed loop equals μ₀ times the total current passing through any surface spanning that loop. This is why magnetic fields circulate around currents.",
+      "student_prompt": "Using Ampère's Law, find the magnetic field at distance r from a long straight wire carrying current I.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary & Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Stokes' Theorem:**\n$$\\oint_{\\partial S} \\mathbf{F}\\cdot d\\mathbf{r} = \\iint_S \\nabla\\times\\mathbf{F}\\cdot d\\mathbf{S}$$\n\n- Converts line integral to surface integral (or vice versa).\n- Orientation: right‑hand rule (thumb = normal, fingers = boundary).\n- If $\\nabla\\times\\mathbf{F}=\\mathbf{0}$, integral vanishes for any closed curve.\n- Multiple boundaries? Sum over all components.\n- Choose the simplest surface or curve for computation."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Stokes connects local spin to global circulation. Master orientation, then use it to simplify.",
+      "teacher_narration": "Let's wrap up. Stokes' Theorem is a powerful tool: it lets you trade a line integral for a surface integral or vice versa, whichever is easier. The key to applying it correctly is orientation – always use the right-hand rule. If the curl is zero, the vector field is conservative and the integral around any closed curve is zero. When a surface has multiple boundaries, include all of them with consistent orientation. Finally, always choose the simplest surface that has the given boundary. Keep these points in mind, and you'll handle any Stokes problem.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

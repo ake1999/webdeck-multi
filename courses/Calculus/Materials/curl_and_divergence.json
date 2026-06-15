@@ -1,0 +1,393 @@
+{
+  "lecture_meta": {
+    "title": "Curl and Divergence",
+    "topic": "Vector calculus — curl and divergence",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate curl and divergence of vector fields using the del operator",
+      "Interpret curl as rotation and divergence as expansion/contraction in fluid flow",
+      "Apply identities curl(grad f)=0 and div(curl F)=0 to analyze fields",
+      "Determine whether a field can be conservative or the curl of another field",
+      "Connect curl and divergence to physical intuition about fluid motion"
+    ],
+    "prerequisite_reminder": "You need partial derivatives and vector fields: F(x,y,z)=Pi+Qj+Rk."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Curl and Divergence Matter",
+      "left": {
+        "content_type": "text",
+        "content": "Ever wondered why water swirls down a drain, or how air flows around a wing? **Curl** measures local rotation; **divergence** measures how much a field spreads or converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side flow sketches: a vortex (curl) and a source (divergence).",
+        "visual_spec": "Two simple 2D vector field sketches: left a rotating field F=(-y,x), arrows circling; right a radial field F=(x,y), arrows pointing outward. Use gray background, arrows in blue (curl) and red (divergence). Add labels 'Rotation → nonzero curl' and 'Expansion → positive divergence'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Curl: rotation. Divergence: expansion or compression.",
+      "teacher_narration": "Imagine you drop a tiny paddlewheel into a flowing river. If the wheel spins, the river has nonzero curl at that point. Now imagine a tiny inflatable balloon in the flow. If the balloon expands, the fluid is diverging outward; if it shrinks, divergence is negative. These two operations tell us the local behavior of any vector field, from fluid velocity to electromagnetic fields. Today we'll learn how to compute them and what they mean.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definition: Curl",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{curl }\\mathbf{F} = \\nabla \\times \\mathbf{F} = \\begin{vmatrix} \\mathbf{i} & \\mathbf{j} & \\mathbf{k} \\\\ \\frac{\\partial}{\\partial x} & \\frac{\\partial}{\\partial y} & \\frac{\\partial}{\\partial z} \\\\ P & Q & R \\end{vmatrix}$$ $$= \\left(\\frac{\\partial R}{\\partial y}-\\frac{\\partial Q}{\\partial z}\\right)\\mathbf{i} +\\left(\\frac{\\partial P}{\\partial z}-\\frac{\\partial R}{\\partial x}\\right)\\mathbf{j} +\\left(\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}\\right)\\mathbf{k}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Determinant expansion diagram",
+        "visual_spec": "Show 3x3 determinant with colors: first row (i, j, k) in red, second row (∂/∂x, ∂/∂y, ∂/∂z) in green, third row (P, Q, R) in blue. Arrows from each term to the corresponding partial derivative pair. Include small coordinate axes to indicate direction. Use a cool, clean design.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Curl = cross product of del with F. Result is a vector.",
+      "teacher_narration": "The curl of a vector field is a vector that points along the axis of local rotation. You compute it just like a cross product, using the del operator as a vector of partial derivatives. The determinant form helps you remember the pattern: the i-component subtracts two partials of R and Q, the j-component subtracts the other way, and the k-component uses Q and P. Notice the minus sign on the j term — that's a common trap.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definition: Divergence",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{div }\\mathbf{F} = \\nabla \\cdot \\mathbf{F} = \\frac{\\partial P}{\\partial x} + \\frac{\\partial Q}{\\partial y} + \\frac{\\partial R}{\\partial z}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Scalar output diagram",
+        "visual_spec": "Three partial derivative terms (dP/dx, dQ/dy, dR/dz) converging into a single scalar value. Show small arrows along x,y,z axes with labels. Use a '+' symbol as a junction. Color each term a different shade.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Divergence = dot product of del with F. Result is a scalar.",
+      "teacher_narration": "Divergence is much simpler: just the sum of three partial derivatives. It tells you how much the field spreads out from a point. If you have a velocity field, positive divergence means fluid is being created (a source); negative divergence means fluid is disappearing (a sink). Remember that divergence is a scalar, not a vector — you'll often see students write it with an arrow, but it's just a number at each point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Compute Curl of a Simple Field",
+      "left": {
+        "content_type": "concept",
+        "content": "Let $\\mathbf{F}(x,y,z) = xz\\,\\mathbf{i} + xyz\\,\\mathbf{j} - y^2\\,\\mathbf{k}$.\n\nFind $\\text{curl }\\mathbf{F}$ before the solution appears."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive button to reveal solution step.",
+        "visual_spec": "Text area showing the field. After clicking 'Show Solution', reveal a step-by-step table (identical to next slide's left content). Use a simple overlay animation.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: Show solution"
+        ]
+      },
+      "on_screen_text": "curl F = ?  Components: P = xz, Q = xyz, R = -y².",
+      "teacher_narration": "Take two minutes to compute the curl of this field. Identify P, Q, R, then plug into each component formula. The answer is on the next slide — try it before you look! This is a great way to build muscle memory for the determinant expansion. If you get stuck, remember the j-component has a minus sign built in. Once you have your answer, press the button to check your work.",
+      "student_prompt": "Compute the curl. Then press 'Show solution' to check.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Warm-Up Curl (Solution)",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | Identify components | $P=xz$, $Q=xyz$, $R=-y^2$ |\n| 2 | i-component: $\\frac{\\partial R}{\\partial y}-\\frac{\\partial Q}{\\partial z}$ | $(-2y)-(xy) = -y(2+x)$ |\n| 3 | j-component: $\\frac{\\partial P}{\\partial z}-\\frac{\\partial R}{\\partial x}$ | $(x)-(0) = x$ |\n| 4 | k-component: $\\frac{\\partial Q}{\\partial x}-\\frac{\\partial P}{\\partial y}$ | $(yz)-(0) = yz$ |\n\n**Result:** $\\text{curl }\\mathbf{F} = -y(2+x)\\,\\mathbf{i} + x\\,\\mathbf{j} + yz\\,\\mathbf{k}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "curl F = (-y(2+x))i + xj + yzk",
+      "teacher_narration": "Here's the full solution. We computed each component step by step. Notice the i-component came from subtracting the two partials. The j-component required careful handling of the sign because the standard formula subtracts the other way. The k-component was straightforward. Now you try a similar one on your own. This step-by-step approach will help you avoid sign errors and build confidence with the curl formula.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Key Identity: Curl of a Gradient",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{curl}(\\nabla f) = \\mathbf{0}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Illustration: gradient field + zero curl",
+        "visual_spec": "Show the scalar field f(x,y)=x^2+y^2 as a surface (bowl). Overlay its gradient as arrows pointing outward. Next to it, show the curl as zero vector at three sample points (green dots). Use 3D plot with mplot3d.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Any conservative field (gradient of a scalar) has zero curl.",
+      "teacher_narration": "This is a powerful result: the curl of any gradient field is always zero. Physically, water flowing downhill under gravity has zero curl — no rotation. Mathematically, this comes from the equality of mixed partials. Conversely, if a field has zero curl and its domain is simply connected (meaning it has no holes), then it is conservative (a gradient). But watch out: that last part requires the domain to have no holes.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof: curl(grad f)=0",
+      "left": {
+        "content_type": "steps",
+        "content": "Let $\\mathbf{F} = \\nabla f = \\frac{\\partial f}{\\partial x}\\mathbf{i}+\\frac{\\partial f}{\\partial y}\\mathbf{j}+\\frac{\\partial f}{\\partial z}\\mathbf{k}$.\n\nThen i-component of curl:\n$\\frac{\\partial}{\\partial y}\\left(\\frac{\\partial f}{\\partial z}\\right)-\\frac{\\partial}{\\partial z}\\left(\\frac{\\partial f}{\\partial y}\\right)=f_{zy}-f_{yz}=0$\n(Clairaut's theorem). Same for j and k components. Hence curl = 0."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "curl(∇f)=0 because mixed partials commute.",
+      "teacher_narration": "If you're comfortable with partial derivatives, here's why the identity holds. Each component of curl becomes a difference of two mixed partials of f. By Clairaut's theorem, as long as f has continuous second derivatives, these mixed partials are equal and subtract to zero. This is a clean, rigorous proof — and it's exactly why gradient fields are irrotational. Understanding this proof deepens your intuition for why conservative fields have no rotation.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Key Identity: Divergence of a Curl",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{div}(\\text{curl }\\mathbf{F}) = 0$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: two vector fields, one with zero divergence, one with non-zero divergence.",
+        "visual_spec": "Left: a pure curl field (like vortex) with div=0 annotation. Right: a field with non-zero divergence (radial) marked 'impossible as curl of some field'. Use arrows in different colors.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "A field that can be written as curl of another field must have zero divergence.",
+      "teacher_narration": "The second essential identity: divergence of any curl is always zero. This means if a vector field has nonzero divergence anywhere, it can never be written as the curl of another field. This is a quick way to rule out certain physical situations. For example, an electric field with a point charge source has non-zero divergence, so it cannot be the curl of any vector potential.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Impossibility of Curl Representation (Tricky)",
+      "left": {
+        "content_type": "steps",
+        "content": "Show $\\mathbf{F}=xz\\,\\mathbf{i}+xyz\\,\\mathbf{j}-y^2\\,\\mathbf{k}$ cannot be written as $\\text{curl }\\mathbf{G}$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | Compute $\\text{div }\\mathbf{F}$ | From earlier: $\\text{div }\\mathbf{F} = z(1+x)$ |\n| 2 | Note $\\text{div }\\mathbf{F} \\neq 0$ (unless $z=0$ or $x=-1$) | Not identically zero |\n| 3 | Assume $\\mathbf{F}=\\text{curl }\\mathbf{G}$ | Then $\\text{div }\\mathbf{F} = \\text{div}(\\text{curl }\\mathbf{G})=0$ |\n| 4 | Contradiction! $\\text{div }\\mathbf{F}=z(1+x)\\neq 0$ | So $\\mathbf{F}$ is **not** the curl of any field. |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "div F ≠ 0 ⇒ F cannot be curl of another vector field.",
+      "teacher_narration": "This example shows how to use the identity in a proof. Instead of trying to find a G such that curl G = F (which would lead to a system of PDEs), we simply check divergence. Because div F is not identically zero, it violates the necessary condition that divergence of any curl is zero. So the answer is immediate: no such vector field G exists.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Laplacian",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\nabla^2 f = \\text{div}(\\nabla f) = \\frac{\\partial^2 f}{\\partial x^2} + \\frac{\\partial^2 f}{\\partial y^2} + \\frac{\\partial^2 f}{\\partial z^2}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Illustration: heat distribution / bowl shape",
+        "visual_spec": "A 3D surface plot of f(x,y)=x^2+y^2 with color map showing curvature. Mark points where Laplacian is positive (upward curvature). Add a small grid on the xy-plane.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Laplacian = divergence of gradient. Measures local curvature of a scalar field.",
+      "teacher_narration": "Combining the two operations, we define the Laplacian as the divergence of the gradient. It's a scalar operator that tells you how much the value at a point differs from its average on a small surrounding sphere. In heat flow, the Laplacian describes temperature diffusion. The equation ∇²f = 0 is Laplace's equation, which governs steady-state phenomena like electrostatics. This operator is fundamental in physics and engineering, appearing in the wave equation, heat equation, and Schrödinger equation.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3: Laplacian of a Simple Function (Edge Case)",
+      "left": {
+        "content_type": "steps",
+        "content": "Find $\\nabla^2 f$ for $f(x,y,z)=x^2+y^2+z^2$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | First partials | $f_x=2x,\\, f_y=2y,\\, f_z=2z$ |\n| 2 | Second partials | $f_{xx}=2,\\, f_{yy}=2,\\, f_{zz}=2$ |\n| 3 | Sum | $\\nabla^2 f = 2+2+2 = 6$ |\n\nInterpretation: constant positive Laplacian means the function curves upward everywhere like a paraboloid."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∇²(x²+y²+z²) = 6 (constant).",
+      "teacher_narration": "This function is the simplest example of a bowl shape. Its Laplacian is constant 6. Importantly, if the function were x²+y²-z², the Laplacian would be 2+2-2=2, still positive, but the surface is a saddle. So Laplacian doesn't distinguish between bowl and saddle — it only measures average curvature. That nuance is useful for advanced applications. Understanding this helps you interpret the Laplacian as a measure of how much a function deviates from being harmonic.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "misconception",
+      "layout": "full_width",
+      "title": "Common Mistake: Sign Errors in Curl",
+      "left": {
+        "content_type": "steps",
+        "content": "**Wrong approach**: Some students compute the j-component as $\\frac{\\partial R}{\\partial x} - \\frac{\\partial P}{\\partial z}$, forgetting the minus sign in the determinant expansion.\n\n**Correct**: $\\mathbf{j}$-component is $\\frac{\\partial P}{\\partial z} - \\frac{\\partial R}{\\partial x}$.\n\nExample: If $\\mathbf{F}=z\\mathbf{i} - x\\mathbf{k}$, then:\n- Wrong: j = 0 - 1 = -1\n- Right: j = 1 - 0 = 1\n**Consequence**: The curl direction reverses."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Curl j-component: ∂P/∂z - ∂R/∂x (not the other way).",
+      "teacher_narration": "A very common error: students remember the formula for the i and k components but flip the sign in the j component. The determinant expansion gives i( ) - j( ) + k( ), so the j part has a built-in minus sign. To avoid confusion, many textbooks rewrite the j term as ∂P/∂z - ∂R/∂x. Always double-check your signs — a single sign change reverses the direction of rotation.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Predict Divergence of a Fluid Field",
+      "left": {
+        "content_type": "concept",
+        "content": "A fluid has velocity $\\mathbf{F} = (x^2 - y^2)\\mathbf{i} + 2xy\\mathbf{j} + z\\mathbf{k}$.\n\nIs the fluid **incompressible**? (div F = 0)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive button to toggle between prediction and solution.",
+        "visual_spec": "Show question. After user clicks 'Check', display: div F = 4x+1 ≠ 0, so compressible. Use a sliding reveal.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: Check answer"
+        ]
+      },
+      "on_screen_text": "Is div F = 0 everywhere?",
+      "teacher_narration": "Here's a real fluid flow problem. Incompressible flow means the divergence is zero everywhere — fluid density doesn't change. Compute the divergence of this velocity field. Remember the formula: sum of partial derivatives of each component. Take 30 seconds to try, then press 'Check answer'. This is a good test of your ability to apply the divergence formula quickly and correctly.",
+      "student_prompt": "Compute div F and decide if the fluid is incompressible.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 4: Fluid Flow Analysis (Application)",
+      "left": {
+        "content_type": "steps",
+        "content": "For $\\mathbf{F} = (x^2-y^2)\\mathbf{i} + 2xy\\mathbf{j} + z\\mathbf{k}$:\n\n| Property | Compute | Result | Conclusion |\n|----------|---------|--------|------------|\n| Divergence | $\\partial P/\\partial x = 2x$, $\\partial Q/\\partial y = 2x$, $\\partial R/\\partial z = 1$ | $\\text{div }\\mathbf{F}=4x+1$ | compressible (not incompressible) |\n| Curl (z-component) | $\\partial Q/\\partial x - \\partial P/\\partial y = 2y - (-2y)=4y$ | $\\text{curl }\\mathbf{F}=4y\\,\\mathbf{k}$ | rotational (not irrotational) |\n\nSo the fluid has both nonzero divergence and nonzero curl."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "div F = 4x+1 ≠ 0, curl F = 4y k ≠ 0.",
+      "teacher_narration": "Putting it all together: we computed both divergence and curl for this velocity field. It's neither incompressible nor irrotational. In fluid dynamics, divergence relates to density changes; curl relates to vorticity. This field has both a source/sink-like behavior along x and a rotation around the z-axis depending on y. Understanding both properties gives a complete picture of the local flow behavior.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Explore Curl & Divergence in 2D",
+      "left": {
+        "content_type": "concept",
+        "content": "Adjust the parameter $a$ in the field $\\mathbf{F} = (-y, ax)$ and observe how curl and divergence change.\n\n- Curl (z-component) = $a + 1$ (constant over domain)\n- Divergence = $0$ always"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive 2D quiver plot with slider for parameter a.",
+        "visual_spec": "Create a 2D quiver plot using matplotlib. Define mesh grid. Vary a from 0 to 2 with an integer slider. Show the vector field arrows. Display the computed curl and divergence as text on the plot. Use interactive slider widget. Colors: curl value colorbar (if varying). Ensure fixed aspect ratio. Include axis labels and grid.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: a from 0 to 2, step 0.1"
+        ]
+      },
+      "on_screen_text": "Change a to see curl vary. Divergence stays zero.",
+      "teacher_narration": "Now let's play with an interactive example. The field F = (-y, ax) is designed so that the divergence is always zero, but the curl changes with parameter a. When a = -1, curl is zero and the field has no rotation. Slide a to see how the curl magnitude increases and the flow becomes more rotational. Notice that divergence is constant zero — the field never spreads or contracts.",
+      "student_prompt": "Observe how the vector field rotates as you change a.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Formulas:**\n- $\\text{curl }\\mathbf{F} = \\nabla \\times \\mathbf{F}$ (vector)\n- $\\text{div }\\mathbf{F} = \\nabla \\cdot \\mathbf{F}$ (scalar)\n- $\\text{curl}(\\nabla f) = \\mathbf{0}$\n- $\\text{div}(\\text{curl }\\mathbf{F}) = 0$\n- $\\nabla^2 f = \\text{div}(\\nabla f)$\n\n**Interpretation:**\n- Curl → rotation (paddle wheel)\n- Divergence → expansion/contraction (inflatable sphere)\n- If curl=0 and domain simply connected → conservative field\n- If div≠0 → cannot be the curl of another field"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Curl: rotation. Divergence: expansion. Both essential for analyzing vector fields.",
+      "teacher_narration": "Today we learned that curl measures local rotation (like a paddlewheel) and divergence measures expansion (like a balloon). We saw the key identities: curl of a gradient is zero, divergence of a curl is zero. These give us powerful constraints: if a field has zero curl and is defined on a simply connected region, it's conservative. If it has nonzero divergence, it can't be the curl of another field. Use these tools to analyze any vector field.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

@@ -32,6 +32,7 @@ function parseArgs(argv) {
     overlayMarginPx: 0,
     questionPauseSec: 4.0,
     renderModeBatch: "silent_transparent_first",
+    demoOverlayFile: "",
     dryRun: false,
   };
 
@@ -67,6 +68,14 @@ async function readJson(filePath) {
   return JSON.parse(await readFile(filePath, "utf8"));
 }
 
+async function readJsonIfExists(filePath) {
+  try {
+    return JSON.parse(await readFile(filePath, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
 async function fileExists(filePath) {
   return Boolean(await stat(filePath).catch(() => null));
 }
@@ -93,6 +102,202 @@ function round(value, digits = 3) {
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
+}
+
+function demoOverlayPath(descriptor, args) {
+  if (args.demoOverlayFile) {
+    return path.isAbsolute(args.demoOverlayFile)
+      ? args.demoOverlayFile
+      : path.join(projectRoot, args.demoOverlayFile);
+  }
+  return descriptor.filePath.replace(/\.slides\.js$/, ".demo_overlays.json");
+}
+
+function demoAudioOutputPath(descriptor, slideId, demoId) {
+  return path.join(
+    projectRoot,
+    "generated",
+    "outputs",
+    "demo_audio",
+    descriptor.school,
+    descriptor.course,
+    descriptor.session,
+    descriptor.topic,
+    `${slideId}__${demoId}.wav`,
+  );
+}
+
+function demoAlignmentPath(descriptor) {
+  return path.join(
+    projectRoot,
+    "generated",
+    "outputs",
+    "demo_audio",
+    descriptor.school,
+    descriptor.course,
+    descriptor.session,
+    descriptor.topic,
+    "demo_alignment.json",
+  );
+}
+
+function demoVideoOutputPath(descriptor, slideId, demoId) {
+  return path.join(
+    projectRoot,
+    "generated",
+    "outputs",
+    "avatar_video",
+    descriptor.school,
+    descriptor.course,
+    descriptor.session,
+    descriptor.topic,
+    slideId,
+    `${demoId}.full_slide.webm`,
+  );
+}
+
+function canonicalAvatarOutputPath(descriptor, slideId, fileName = "transparent.webm") {
+  return [
+    "generated",
+    "outputs",
+    "avatar_video",
+    descriptor.school,
+    descriptor.course,
+    descriptor.session,
+    descriptor.topic,
+    slideId,
+    fileName,
+  ].join("/");
+}
+
+function normalizeDemoSegment(segment, index) {
+  const description = String(segment.description || segment.action || "").trim();
+  return {
+    segment_id: segment.segment_id || `demo_seg_${String(index + 1).padStart(2, "0")}`,
+    t0: Number(segment.t0 ?? segment.start_sec ?? 0),
+    t1: Number(segment.t1 ?? segment.end_sec ?? segment.t0 ?? segment.start_sec ?? 0),
+    description,
+    text: String(segment.text || segment.narration_text || segment.say || description).trim(),
+  };
+}
+
+function normalizeDemoOverlay(rawDemo, index, descriptor, slideId, demoAudio = null) {
+  const order = Number(rawDemo.order ?? index + 1);
+  const demoId = safeId(rawDemo.demo_id || rawDemo.id || `demo_${String(order).padStart(2, "0")}`);
+  const syntheticSlideId = `${slideId}__${demoId}`;
+  const alignedAudio = demoAudio?.get(syntheticSlideId) || null;
+  const narration = rawDemo.narration && typeof rawDemo.narration === "object" ? rawDemo.narration : {};
+  const timingNotes = asArray(rawDemo.time_steps || rawDemo.timing_notes || rawDemo.timeline)
+    .map(normalizeDemoSegment)
+    .filter((item) => item.description || item.text || item.t1 > item.t0);
+  const narrationSegments = asArray(narration.segments || rawDemo.narration_segments)
+    .map(normalizeDemoSegment)
+    .filter((item) => item.text || item.description || item.t1 > item.t0);
+  const segments = narrationSegments.length ? narrationSegments : timingNotes;
+  const text = String(
+    narration.text
+    || rawDemo.narration_text
+    || rawDemo.text
+    || segments.map((item) => item.text || item.description).filter(Boolean).join(" "),
+  ).trim();
+
+  return {
+    demo_id: demoId,
+    order,
+    title: String(rawDemo.title || "").trim(),
+    bridge_to_demo: String(rawDemo.bridge_to_demo || rawDemo.bridge || rawDemo.script_writer_hint || "").trim(),
+    source_video: String(rawDemo.source_video || rawDemo.video || rawDemo.src || "").trim(),
+    output_video: rawDemo.output_video || rawDemo.rendered_video || relativeProjectPath(demoVideoOutputPath(descriptor, slideId, demoId)),
+    duration_sec: rawDemo.duration_sec == null ? null : Number(rawDemo.duration_sec),
+    display: {
+      mode: rawDemo.display_mode || rawDemo.display?.mode || "full_slide",
+      replace_avatar: rawDemo.replace_avatar ?? rawDemo.display?.replace_avatar ?? true,
+      object_fit: rawDemo.object_fit || rawDemo.fit || rawDemo.display?.object_fit || "cover",
+    },
+    narration: {
+      text,
+      audio: rawDemo.audio || narration.audio || alignedAudio?.audio_file || relativeProjectPath(demoAudioOutputPath(descriptor, slideId, demoId)),
+      audio_duration_sec: rawDemo.audio_duration_sec == null
+        ? (alignedAudio?.duration == null ? null : Number(alignedAudio.duration))
+        : Number(rawDemo.audio_duration_sec),
+      segments,
+    },
+    timing_notes: timingNotes,
+    source: rawDemo.source || "manual_demo_overlay",
+  };
+}
+
+function normalizeDemoOverlayFile(raw, descriptor, demoAudio = null) {
+  const bySlide = new Map();
+  const slideItems = Array.isArray(raw?.slides)
+    ? raw.slides
+    : Object.entries(raw?.slides || {}).map(([slideId, value]) => ({ slide_id: slideId, ...(value || {}) }));
+
+  for (const slideItem of asArray(slideItems)) {
+    const slideId = String(slideItem.slide_id || "").trim();
+    if (!slideId) continue;
+    const demos = asArray(slideItem.demos || slideItem.clips || slideItem.overlays)
+      .map((demo, index) => normalizeDemoOverlay(demo, index, descriptor, slideId, demoAudio))
+      .filter((demo) => demo.source_video || demo.output_video || demo.narration.text || demo.timing_notes.length)
+      .sort((left, right) => left.order - right.order);
+    if (demos.length) bySlide.set(slideId, demos);
+  }
+
+  return bySlide;
+}
+
+function demoAudioMap(raw) {
+  const map = new Map();
+  for (const demo of asArray(raw?.demos)) {
+    const syntheticSlideId = demo.synthetic_slide_id || `${demo.slide_id || ""}__${demo.demo_id || ""}`;
+    if (!syntheticSlideId || !demo.audio_file) continue;
+    map.set(syntheticSlideId, {
+      audio_file: demo.audio_file,
+      duration: demo.duration,
+    });
+  }
+  return map;
+}
+
+async function loadDemoOverlays(descriptor, args) {
+  const filePath = demoOverlayPath(descriptor, args);
+  const raw = await readJsonIfExists(filePath);
+  if (!raw) return { file: "", bySlide: new Map() };
+  const demoAudio = demoAudioMap(await readJsonIfExists(demoAlignmentPath(descriptor)));
+  return {
+    file: relativeProjectPath(filePath),
+    bySlide: normalizeDemoOverlayFile(raw, descriptor, demoAudio),
+  };
+}
+
+function buildVideoSequenceForSlide(descriptor, slideId, demos) {
+  if (!demos.length) return [];
+  return [
+    {
+      order: 1,
+      src: canonicalAvatarOutputPath(descriptor, slideId),
+      display_mode: "avatar_overlay",
+      muted: true,
+      source: "derived_avatar_output",
+      skip_if_missing: true,
+    },
+    ...demos.map((demo, index) => ({
+      order: index + 2,
+      src: demo.output_video || demo.source_video,
+      source_video: demo.source_video,
+      start_policy: "after_slide_audio",
+      display_mode: demo.display.mode || "full_slide",
+      object_fit: demo.display.object_fit || "cover",
+      replace_avatar: demo.display.replace_avatar !== false,
+      muted: false,
+      audio: demo.narration.audio || "",
+      audio_duration_sec: demo.narration.audio_duration_sec,
+      duration_sec: demo.duration_sec,
+      text: demo.narration.text || "",
+      segments: demo.narration.segments || [],
+      source: demo.source || "manual_demo_overlay",
+    })),
+  ];
 }
 
 function findSlide(manifest, slideId) {
@@ -184,6 +389,14 @@ function chooseMotionId({ slideScript, layoutSlide, index, total }) {
   if (/\b(type|terminal|command|code|bash|source|workspace|package|node|ros2|screen)\b/.test(text)) {
     return /\b(long|several|commands|terminal|workspace|package)\b/.test(text) ? "type_laptop_long" : "type_laptop";
   }
+  if (
+    /\b(slider|sliders|control bar|controls|parameter|widget|interactive|drag|moving point|scripted timeline)\b/.test(text)
+    && motionBank?.motions?.slider_explain
+  ) {
+    return index % 2 === 0 && motionBank?.motions?.slider_explain_alt
+      ? "slider_explain_alt"
+      : "slider_explain";
+  }
   if (/\b(important|key|remember|must|critical|warning|deduction|grade|safety|careful)\b/.test(text)) {
     return side === "left" || side === "center" ? "point_left_emphasis" : "key_point";
   }
@@ -233,14 +446,27 @@ function motionEntry({ motionId, motion, startSec, placement, durationLimit = nu
   return entry;
 }
 
-function buildMotionPlan({ slideScript, layoutSlide, alignmentSlide, index, total, motionBank }) {
+function demoTransitionMotionId(slideScript, motionBank) {
+  const text = slideKeywords(slideScript);
+  if (/\b(screen|rviz|window|visual|click|show)\b/.test(text) && motionBank?.motions?.show_computer_screen) {
+    return "show_computer_screen";
+  }
+  if (/\b(long|terminal|command|workspace|package|launch|build)\b/.test(text) && motionBank?.motions?.type_laptop_long) {
+    return "type_laptop_long";
+  }
+  return motionBank?.motions?.type_laptop ? "type_laptop" : "show_computer_screen";
+}
+
+function buildMotionPlan({ slideScript, layoutSlide, alignmentSlide, index, total, motionBank, hasDemos = false }) {
   const duration = Number(alignmentSlide.duration || 0);
   const speechDuration = Number(alignmentSlide.speech_duration || alignmentSlide.duration || 0);
   const style = idleStyleForSlide(slideScript, index);
   if (duration <= 0) return [];
   if (duration < 5) return [idleEntry(0, "fill", style)];
 
-  const motionId = chooseMotionId({ slideScript, layoutSlide, index, total });
+  const motionId = hasDemos
+    ? demoTransitionMotionId(slideScript, motionBank)
+    : chooseMotionId({ slideScript, layoutSlide, index, total });
   const motion = motionById(motionBank, motionId);
   const clipDuration = Math.min(Number(motion.duration_sec || 0), duration);
   const plan = [];
@@ -483,6 +709,7 @@ async function loadTopicInputs({ descriptor, args }) {
 
 async function buildTopicJob({ descriptor, args, motionBank }) {
   const { artifactDir, scriptManifest, layoutManifest, alignmentManifest } = await loadTopicInputs({ descriptor, args });
+  const demoOverlays = await loadDemoOverlays(descriptor, args);
   const jobId = safeId(`${descriptor.school}_${descriptor.course}_${descriptor.session}_${descriptor.topic}`);
   const slides = [];
   const missing = [];
@@ -509,6 +736,7 @@ async function buildTopicJob({ descriptor, args, motionBank }) {
     const speechDurationSec = round(alignmentSlide.duration || 0);
     const questionPauseSec = isQuestionSlide(slideScript) ? Math.max(0, args.questionPauseSec) : 0;
     const durationSec = round(speechDurationSec + questionPauseSec);
+    const slideDemoOverlays = demoOverlays.bySlide.get(slideId) || [];
     const timingSlide = {
       ...alignmentSlide,
       speech_duration: speechDurationSec,
@@ -521,7 +749,9 @@ async function buildTopicJob({ descriptor, args, motionBank }) {
       index,
       total: scriptSlides.length,
       motionBank,
+      hasDemos: slideDemoOverlays.length > 0,
     });
+    const videoSequence = buildVideoSequenceForSlide(descriptor, slideId, slideDemoOverlays);
     slides.push({
       slide_id: slideId,
       slide_index: index,
@@ -546,8 +776,14 @@ async function buildTopicJob({ descriptor, args, motionBank }) {
           };
         }),
       },
+      ...(slideDemoOverlays.length
+        ? {
+          demo_overlays: slideDemoOverlays,
+        }
+        : {}),
       avatar: {
         placement: buildPlacement({ args }),
+        ...(videoSequence.length ? { video_sequence: videoSequence } : {}),
         motion_plan: motionPlan,
         ...(questionPauseSec > 0
           ? {
@@ -587,6 +823,14 @@ async function buildTopicJob({ descriptor, args, motionBank }) {
       session: descriptor.session,
       topic: descriptor.topic,
     },
+    ...(demoOverlays.file
+      ? {
+        demo_overlays: {
+          metadata_file: demoOverlays.file,
+          slide_count: demoOverlays.bySlide.size,
+        },
+      }
+      : {}),
     render: renderDefaults({ args, motionBank }),
     defaults: defaultAvatarSettings(),
     slides,

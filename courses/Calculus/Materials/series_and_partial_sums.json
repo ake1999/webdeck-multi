@@ -1,0 +1,330 @@
+{
+  "lecture_meta": {
+    "title": "Series and Partial Sums",
+    "topic": "Series and Partial Sums",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Define a series as the limit of its sequence of partial sums",
+      "Calculate partial sums for geometric series and determine convergence",
+      "Interpret the relationship between the sequence of terms and the sequence of partial sums",
+      "Apply the definition of convergence to determine whether a series converges or diverges",
+      "Analyze the behavior of geometric series based on the common ratio"
+    ],
+    "prerequisite_reminder": "You need to understand limits of sequences and the idea of convergence."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "How can you add infinitely many numbers?",
+      "left": {
+        "content_type": "concept",
+        "content": "Walk toward a wall: step 1 = $\\frac12$ m, step 2 = $\\frac14$ m, step 3 = $\\frac18$ m, …  \nTotal distance?  The partial sums $\\frac12, \\frac34, \\frac78, \\dots$ approach 1 m."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Animate a stick figure walking toward a wall, with each step halving the remaining distance. Show the partial sum bar growing from 0 to 1. Label S_1, S_2, S_3. Use a red dashed line at total distance = 1.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom matplotlib.animation import FuncAnimation\n\nfig, ax = plt.subplots(figsize=(8,4))\nax.set_xlim(0,1)\nax.set_ylim(0,1.2)\nax.axhline(y=1, color='r', linestyle='--', label='Wall distance = 1')\nax.set_xlabel('Distance (m)')\nax.set_title('Walking to the Wall')\n\n# Partial sums of 1/2^n\nN=6\nS = np.cumsum(0.5**np.arange(1,N+1))\n\n# bar plot\nbars = ax.bar(range(1,N+1), S[:1], width=0.6, color='blue', alpha=0.7)\n\n# animation update\ndef update(frame):\n    for i in range(len(bars)):\n        bars[i].set_height(S[frame] if i==0 else 0)  # simplistic: show only latest? better to use growing bar\n    ax.set_title(f'Step {frame+1}, Partial sum S_{frame+1} = {S[frame]:.4f}')\n    return bars\n\n# This is a placeholder; real code would use sliders or buttons.\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Walking half the remaining distance each time. Total distance traveled? Partial sums get closer to 1.",
+      "teacher_narration": "Imagine you start one meter from a wall. You take a step covering half the distance, then half the remaining, and so on. After each step, you add the new distance to the previous total. Those totals are called partial sums. They form a sequence: half, three quarters, seven eighths, and so on. They get closer and closer to one, but never exceed it. This is our first example of an infinite series. Today we'll make this precise.",
+      "student_prompt": "What do you think the total distance will be after infinitely many steps?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definition: Series as Limit of Partial Sums",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$\\displaystyle \\sum_{n=1}^{\\infty} a_n = \\lim_{N\\to\\infty} S_N$  \nwhere $S_N = \\sum_{n=1}^{N} a_n$  \n\n**Key:** The infinite sum is defined as the limit of its finite partial sums."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot the sequence of partial sums S_N for a convergent series (e.g., a_n=1/2^n) as a blue curve with dots. Show the limit as a horizontal red dashed line. Highlight the gap shrinking as N increases.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nNmax = 20\nn = np.arange(1, Nmax+1)\nS = np.cumsum(0.5**n)\n\nplt.figure(figsize=(6,4))\nplt.plot(n, S, 'bo-', markersize=5, label='$S_N$')\nplt.axhline(y=1, color='r', linestyle='--', label='Limit = 1')\nplt.xlabel('N')\nplt.ylabel('$S_N$')\nplt.title('Partial sums approach the limit')\nplt.legend()\nplt.grid(True, alpha=0.3)\nplt.show()",
+        "interactive_controls": [
+          "Slider: N from 1 to 50"
+        ]
+      },
+      "on_screen_text": "$\\sum a_n = \\lim_{N\\to\\infty} S_N$ where $S_N = \\sum_{n=1}^N a_n$.",
+      "teacher_narration": "We define an infinite series by looking at the sequence of partial sums. The Nth partial sum is just the ordinary sum of the first N terms. If that sequence has a finite limit, we say the series converges, and its sum is that limit. Otherwise, it diverges. Always remember: a series is not a sum in the usual sense – it's a limit.",
+      "student_prompt": "If $a_n = 1$, what happens to $S_N$ as N increases?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Geometric Series – The Prototype",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$\\displaystyle \\sum_{n=0}^{\\infty} a r^n = a + ar + ar^2 + \\cdots$  \n\n- $a$ is the first term (non-zero)  \n- $r$ is the common ratio"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show three different geometric series: r=0.5, r=-0.7, r=1.1, with their first few terms and partial sums. Use color to distinguish terms. Include a table of values.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig, axes = plt.subplots(1,3, figsize=(12,4))\nrs = [0.5, -0.7, 1.1]\na = 1\nfor ax, r in zip(axes, rs):\n    n = np.arange(0,6)\n    terms = a * r**n\n    ax.stem(n, terms, basefmt=' ', use_line_collection=True)\n    ax.set_title(f'r = {r}')\n    ax.set_xlabel('n')\n    ax.set_ylabel('a_n')\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": [
+          "Radio: show r = 0.5, -0.7, 1.1"
+        ]
+      },
+      "on_screen_text": "Geometric series: $\\sum_{n=0}^\\infty a r^n$. Each term multiplies previous by $r$.",
+      "teacher_narration": "The most important family of series is the geometric series. Each term is obtained by multiplying the previous one by a constant r, called the common ratio. The first term is a. For example, a=1 and r=0.5 gives the series we saw earlier. A negative r makes terms alternate sign. If r is greater than 1 in absolute value, the terms grow. The convergence depends entirely on r.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Partial Sum Formula for Geometric Series",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$S_N = a\\frac{1-r^N}{1-r}$, $r\\neq 1$  \n\nDerivation:  \n$S_N = a + ar + \\cdots + ar^{N-1}$  \n$rS_N = ar + ar^2 + \\cdots + ar^N$  \nSubtract: $(1-r)S_N = a(1-r^N)$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Algebraic steps on the right side: show the subtraction method visually with term alignment. Use color to highlight cancellation.",
+        "python_code": "import matplotlib.pyplot as plt\nfig, ax = plt.subplots(figsize=(6,4))\nax.text(0.1,0.9, r'$S_N = a + ar + ar^2 + \\cdots + ar^{N-1}$', fontsize=14, verticalalignment='top')\nax.text(0.1,0.7, r'$r S_N = ar + ar^2 + \\cdots + ar^{N-1} + ar^N$', fontsize=14, verticalalignment='top')\nax.text(0.1,0.5, r'$(1-r)S_N = a - ar^N$', fontsize=14, verticalalignment='top', color='blue')\nax.text(0.1,0.3, r'$S_N = a\\frac{1-r^N}{1-r}$', fontsize=16, verticalalignment='top', fontweight='bold')\nax.axis('off')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "$S_N = a\\frac{1-r^N}{1-r}$ for $r\\neq1$. Subtract $S_N$ and $rS_N$.",
+      "teacher_narration": "We can find a closed form for the Nth partial sum of a geometric series. Write S_N and multiply by r. Most terms appear in both sums. Subtracting cancels all middle terms, leaving a simple expression. Solving for S_N gives this formula. It's only valid when r is not 1, because then we would be dividing by zero. This formula lets us compute partial sums quickly.",
+      "student_prompt": "What happens if r = 1? Why can't we use this formula?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Confusing $\\lim a_n$ with $\\lim S_N$",
+      "left": {
+        "content_type": "concept",
+        "content": "**Wrong idea:** \"Since $\\lim_{n\\to\\infty} a_n = 0$, the series converges.\"  \n\n**Counterexample:** $1 + \\frac12 + \\frac13 + \\frac14 + \\cdots$  \n$a_n \\to 0$ but $S_N$ grows without bound (harmonic series diverges)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot a_n (marked with crosses) and S_N (line) for the harmonic series on the same graph. a_n->0 but S_N increases slowly to infinity. Use log scale for y if needed.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nN = 100\nn = np.arange(1, N+1)\nan = 1/n\nS = np.cumsum(an)\n\nfig, ax1 = plt.subplots(figsize=(6,4))\nax1.plot(n, an, 'x', color='gray', label='$a_n = 1/n$')\nax1.set_ylabel('$a_n$', color='gray')\nax2 = ax1.twinx()\nax2.plot(n, S, 'b-', label='$S_N$ (partial sum)')\nax2.set_ylabel('$S_N$', color='blue')\nax1.set_xlabel('n')\nplt.title('Harmonic series: $a_n \\\\to 0$ but $S_N \\\\to \\\\infty$')\nfig.legend()\nplt.show()",
+        "interactive_controls": [
+          "Slider: N from 1 to 500"
+        ]
+      },
+      "on_screen_text": "Harmonic series: $a_n \\to 0$ but $S_N \\to \\infty$. The limit of terms is not enough!",
+      "teacher_narration": "A common mistake is to think that if the terms go to zero, the series must converge. That's false. The harmonic series is the classic counterexample: its terms go to zero, yet the partial sums grow without bound, diverging to infinity. The limit of the terms must be zero for convergence, but it is not sufficient. You must check the limit of the partial sums.",
+      "student_prompt": "Can you think of another series where terms go to zero but the series diverges?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Explore: Partial Sums of Geometric Series",
+      "left": {
+        "content_type": "concept",
+        "content": "Adjust the common ratio $r$ and number of terms $N$. See how $S_N$ approaches (or does not approach) the limit sum $\\frac{a}{1-r}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Interactive plot: set a=1 fixed. Slider for r from -0.99 to 0.99 (step 0.01). Slider for N from 1 to 50. Show S_N as bar graph. Show limit as horizontal line. Show error band. Toggle: show/hide exact limit value.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\nfig, ax = plt.subplots(figsize=(6,4))\nplt.subplots_adjust(bottom=0.25)\n\n# initial values\na = 1\nr_init = 0.5\nN_init = 10\n\nn = np.arange(1, N_init+1)\nterms = a * r_init**(n-1)\nS = np.cumsum(terms)\n\nbar = ax.bar(n, S, width=0.7, alpha=0.6, label='Partial sums')\nlimit = a/(1-r_init)\nhline = ax.axhline(y=limit, color='r', linestyle='--', label='Limit')\nax.set_xlabel('N')\nax.set_ylabel('$S_N$')\nax.set_title('Partial sums and limit')\nax.legend()\nax.set_ylim(0, limit*1.2)\n\n# sliders\nax_r = plt.axes([0.25, 0.1, 0.65, 0.03])\nax_N = plt.axes([0.25, 0.05, 0.65, 0.03])\nslider_r = Slider(ax_r, 'r', -0.99, 0.99, valinit=r_init, valstep=0.01)\nslider_N = Slider(ax_N, 'N', 1, 50, valinit=N_init, valstep=1)\n\ndef update(val):\n    r = slider_r.val\n    N = int(slider_N.val)\n    n = np.arange(1, N+1)\n    terms = a * r**(n-1)\n    S = np.cumsum(terms)\n    ax.clear()\n    ax.bar(n, S, width=0.7, alpha=0.6)\n    if abs(r) < 1:\n        limit = a/(1-r)\n        ax.axhline(y=limit, color='r', linestyle='--', label=f'Limit = {limit:.2f}')\n    else:\n        ax.axhline(y=np.nan, color='r', linestyle='--')  # no limit\n    ax.set_xlabel('N')\n    ax.set_ylabel('$S_N$')\n    ax.set_title(f'Partial sums for r={r:.2f}')\n    ax.legend()\n    ax.set_xlim(0, N+1)\n    ax.set_ylim(0, max(S.max(), 1)*1.2 if len(S)>0 else 1)\n    fig.canvas.draw_idle()\n\nslider_r.on_changed(update)\nslider_N.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider: r from -0.99 to 0.99",
+          "Slider: N from 1 to 50",
+          "Button: Reset"
+        ]
+      },
+      "on_screen_text": "Drag sliders: change $r$ and $N$. Observe how $S_N$ approaches the limit when $|r|<1$.",
+      "teacher_narration": "Let's explore interactively. Use the sliders to change the common ratio and the number of terms. Notice that when the absolute value of r is less than one, the partial sums approach a finite limit. When r is between -1 and 1, the limit is a divided by one minus r. When r is exactly 1 or -1, or outside that range, the partial sums do not settle on a finite value. Try it and see.",
+      "student_prompt": "What happens when r is negative? Does the series still converge?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Warm-up – Direct Application",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find the sum of $\\sum_{n=0}^{\\infty} 3\\left(\\frac12\\right)^n$.\n\n| Step | Action |\n|------|--------|\n| 1 | Identify $a=3$, $r=\\frac12$ |\n| 2 | Check $|r|=\\frac12<1$ → converges |\n| 3 | Apply formula: $S = \\frac{3}{1-\\frac12} = \\frac{3}{\\frac12} = 6$ |\n\n**Answer:** 6"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example: $\\sum_{n=0}^\\infty 3(1/2)^n$. Sum = 6.",
+      "teacher_narration": "Let's start with a straightforward example. The series is already in standard geometric form with a equal to 3 and r equal to one half. Since the absolute value of r is less than one, the series converges. We plug into the formula: a over one minus r gives 3 over one minus one half, which is 6. Always remember to check the condition |r|<1 before applying the formula.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Standard – Index Shift Required",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Does $\\sum_{n=1}^{\\infty} \\frac{2^{n+1}}{3^n}$ converge? If so, find sum.\n\n| Step | Action |\n|------|--------|\n| 1 | Simplify: $\\frac{2^{n+1}}{3^n} = 2\\left(\\frac{2}{3}\\right)^n$ |\n| 2 | Note index starts at $n=1$: first term $= 2(\\frac{2}{3}) = \\frac{4}{3}$ |\n| 3 | Rewrite as standard form: $\\sum_{n=0}^\\infty \\frac{4}{3}\\left(\\frac{2}{3}\\right)^n$ |\n| 4 | $a=\\frac{4}{3}$, $r=\\frac{2}{3}$, $|r|<1$ → converges |\n| 5 | Sum $= \\frac{4/3}{1-2/3} = \\frac{4/3}{1/3} = 4$ |\n\n**Answer:** Converges to 4."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example: $\\sum_{n=1}^\\infty 2^{n+1}/3^n$ → converges to 4.",
+      "teacher_narration": "Here the series does not start at n=0, so we must adjust. After simplifying the term, we see that the first term of the series as given is not a but ar. To use our formula, we shift the index so it starts at zero. The result is a geometric series with a equal to four thirds and r equal to two thirds. The sum is four. Always be careful with the starting index.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Example 3: Tricky – Negative Common Ratio",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find sum of $\\sum_{n=2}^{\\infty} \\frac{(-3)^{n+1}}{5^{n-1}}$.\n\n| Step | Action |\n|------|--------|\n| 1 | Simplify: $\\frac{(-3)^{n+1}}{5^{n-1}} = -15 \\left(-\\frac{3}{5}\\right)^n$ |\n| 2 | First term ($n=2$): $-15\\left(-\\frac{3}{5}\\right)^2 = -\\frac{27}{5}$ |\n| 3 | Shift index: $k=n-2$, series becomes $\\sum_{k=0}^\\infty -\\frac{27}{5}\\left(-\\frac{3}{5}\\right)^k$ |\n| 4 | $a=-\\frac{27}{5}$, $r=-\\frac{3}{5}$, $|r|<1$ → converges |\n| 5 | Sum $= \\frac{-27/5}{1-(-3/5)} = \\frac{-27/5}{8/5} = -\\frac{27}{8}$ |\n\n**Answer:** Converges to $\\displaystyle -\\frac{27}{8}$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example: $\\sum_{n=2}^\\infty (-3)^{n+1}/5^{n-1}$ → converges to $-27/8$.",
+      "teacher_narration": "This example has negative signs and a shifted index. First simplify the general term to the form a r^n. The common ratio becomes negative three fifths. The absolute value is less than one, so the series converges. After rewriting with the index starting at zero, we have a equal to negative twenty-seven fifths. The sum works out to negative twenty-seven eighths. Be careful with signs when subtracting a negative ratio.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 4: Edge Case – r = –1",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Does $\\sum_{n=0}^{\\infty} 5(-1)^n$ converge?\n\n| Step | Action |\n|------|--------|\n| 1 | Terms: $5, -5, 5, -5, \\dots$ |\n| 2 | Partial sums: $S_1=5, S_2=0, S_3=5, S_4=0, \\dots$ |\n| 3 | Sequence oscillates, no limit → diverges |\n| 4 | Alternative: $|r|=1$ so by theorem, diverges |\n\n**Conclusion:** Diverges. The formula $a/(1-r)$ does NOT apply when $|r|\\ge 1$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example: $\\sum 5(-1)^n$ diverges. $|r|=1$ not allowed.",
+      "teacher_narration": "What about r equal to negative one? The terms alternate between five and negative five. The partial sums flip between five and zero, never settling on a single value. The series diverges. Even though the terms are bounded and the formula a over one minus r would give two point five, that result is meaningless because the series does not converge. Remember, the condition is strict: |r| must be strictly less than one.",
+      "student_prompt": "What if r = 1? What happens to the partial sums?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 5: Application – Bouncing Ball",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Ball dropped from 10 m; rebounds to $\\frac34$ of previous height. Find total vertical distance traveled.\n\n| Step | Action |\n|------|--------|\n| 1 | Initial drop: 10 m down |\n| 2 | Each bounce: up then down same distance |\n| 3 | Bounce heights: $10\\cdot\\frac34$, $10\\cdot(\\frac34)^2$, … |\n| 4 | Total distance: $10 + 2\\cdot10\\cdot\\frac34 + 2\\cdot10\\cdot(\\frac34)^2 + \\cdots$ |\n| 5 | After first drop, geometric series: $2\\cdot10\\cdot\\frac34$ … |\n| 6 | Sum of geometric part: $20\\cdot\\frac{3/4}{1-3/4} = 60$ |\n| 7 | Total: $10 + 60 = 70$ m |\n\n**Answer:** 70 meters."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Bouncing ball: initial 10 m, rebound 3/4. Total distance = 70 m.",
+      "teacher_narration": "Now a real-world application. A ball dropped from ten meters rebounds to three quarters of its previous height each time. The total distance includes the initial drop down, and for each bounce after, both the upward and downward path. The upward and downward distances form a geometric series starting with two times ten times three quarters. The sum of that series is sixty, so total distance is seventy meters. The ball travels a finite distance despite infinitely many bounces, because the bounce heights shrink.",
+      "student_prompt": null,
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof of Convergence Criterion",
+      "left": {
+        "content_type": "steps",
+        "content": "**Theorem:** $\\sum_{n=0}^{\\infty} ar^n$ converges iff $|r|<1$, then sum $= a/(1-r)$.\n\n**Proof:**\n1. $S_N = a\\frac{1-r^N}{1-r}$ for $r\\neq 1$.\n2. If $|r|<1$, $\\lim_{N\\to\\infty} r^N = 0$ → $\\lim S_N = a/(1-r)$.\n3. If $|r|>1$, $|r^N|\\to\\infty$ → $S_N$ diverges.\n4. If $|r|=1$, $r=1$ gives $S_N=Na$ diverges; $r=-1$ oscillates."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show three cases |r|<1, |r|>1, |r|=1 on the same plot with partial sums. Use interactive radio to select case.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\n# not full implementation, placeholder\nplt.figure()\nplt.text(0.5,0.5,'Case visualization here', ha='center')\nplt.show()",
+        "interactive_controls": [
+          "Radio: |r|<1, |r|>1, |r|=1"
+        ]
+      },
+      "on_screen_text": "Proof: $S_N = a(1-r^N)/(1-r)$, analyze $\\lim r^N$.",
+      "teacher_narration": "For those who want deeper understanding, here is the formal proof. We already have the closed form for S_N. The limit as N goes to infinity depends on r^N. If |r| is less than one, r^N goes to zero, so S_N approaches a over one minus r. If |r| is greater than one, r^N grows without bound, so the partial sums diverge. The borderline cases r equals one or minus one also diverge, though for different reasons. This completes the classification.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary & Key Takeaways",
+      "left": {
+        "content_type": "concept",
+        "content": "**Key Concepts**  \n- Series $\\sum a_n$ converges iff $\\lim_{N\\to\\infty} S_N$ exists and is finite.  \n- Geometric series $\\sum ar^n$ converges to $\\frac{a}{1-r}$ when $|r|<1$, diverges otherwise.  \n- Partial sum formula: $S_N = a\\frac{1-r^N}{1-r}$ ($r\\neq1$).\n\n**Common Pitfalls**  \n- Do not confuse $\\lim a_n$ with $\\lim S_N$ (harmonic series).  \n- Index shift carefully: $\\sum_{n=1}^\\infty ar^n = \\frac{ar}{1-r}$ if $|r|<1$.  \n- Condition $|r|<1$ is strict: $|r|\\ge1$ implies divergence."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Key takeaways: Series = limit of partial sums. Geometric series converge if |r|<1.",
+      "teacher_narration": "Let's review. A series is defined as the limit of its sequence of partial sums. For geometric series, we have a simple convergence test: the series converges if and only if the absolute value of the common ratio is less than one, and then its sum is a over one minus r. Remember the common pitfalls: don't confuse the limit of the terms with the limit of partial sums; always check the starting index; and the condition is strict. Practice with the given problems to master the material.",
+      "student_prompt": "Review problem: Find sum of $\\sum_{n=0}^\\infty 2(1/3)^n$.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

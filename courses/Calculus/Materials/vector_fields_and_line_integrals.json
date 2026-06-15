@@ -1,0 +1,364 @@
+{
+  "lecture_meta": {
+    "title": "Vector Fields and Line Integrals",
+    "topic": "Vector Fields and Line Integrals",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Compute line integrals of vector fields along parameterized curves",
+      "Interpret line integrals as work done by a force field along a path",
+      "Distinguish between scalar and vector line integrals",
+      "Analyze how orientation affects the value of a line integral",
+      "Apply the component form for efficient computation"
+    ],
+    "prerequisite_reminder": "You already know scalar line integrals: ∫_C f ds = ∫_a^b f(r(t)) |r'(t)| dt, giving mass or curtain area, and direction does not matter."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Scalar to Vector: Direction Now Matters",
+      "left": {
+        "content_type": "text",
+        "content": "**Scalar line integral** ∫_C f ds — direction irrelevant.\n\n**Vector line integral** ∫_C **F** · d**r** — **direction matters!**\n\nKey shift: we now integrate a **vector field** along a curve, summing tangential component at each step."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Shopping cart metaphor diagram",
+        "visual_spec": "A 2D diagram showing a curve C (blue arrowed path) in a vector field F (small arrows). At three points along the path, show the vector F and the tangent vector T. Label 'F·T' at each point. Show a shopping cart icon at the start. Title: 'Work = force × displacement in direction of motion'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Scalar: ∫ f ds. Vector: ∫ F·dr. Direction matters!",
+      "teacher_narration": "Welcome. We've seen scalar line integrals: mass of a wire, area of a curtain. But today we introduce something new: integrating a vector field along a curve. The key difference? Direction now matters. Think of pushing a shopping cart. If you push forward, you do positive work; push sideways, most effort wasted; push backward, negative work. The line integral of a vector field captures exactly that: at each tiny step, we take the dot product of the force with your direction of motion, then add it all up.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definition of the Vector Line Integral",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\int_C \\mathbf{F} \\cdot d\\mathbf{r} = \\int_a^b \\mathbf{F}(\\mathbf{r}(t)) \\cdot \\mathbf{r}'(t)\\,dt$$\n\n**Interpretation:** Work = sum of tangential force along the path.\n\n**Order of operations:**\n1. Parameterize curve C: **r**(t), a ≤ t ≤ b.\n2. Substitute into **F**.\n3. Dot with **r**'(t).\n4. Integrate."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Visual of a curve with tangent and field vectors",
+        "visual_spec": "2D plot of a curve C (r(t) = (cos t, sin t), t from 0 to π/2). Show the vector field F = (−y, x) as small arrows on a grid. At t=0.5, show r(0.5) as a point, r'(0.5) as tangent arrow (blue), F(r(0.5)) as red arrow, and the dot product value labelled. Use animation: slider for t highlights different points and updates arrows. Include a label: 'Work contribution = F·r′ dt'.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for parameter t from 0 to π/2"
+        ]
+      },
+      "on_screen_text": "∫_C F·dr = ∫_a^b F(r(t))·r′(t) dt. Work = sum of tangential force.",
+      "teacher_narration": "Here's the definition. To compute a vector line integral, we parameterize the curve, substitute into the field, dot with the derivative of the parameterization, and integrate. The result is the total work done by the field along the curve. Notice the dot product ensures only the component of force in the direction of motion contributes. We'll see this in action shortly.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up: Straight Line",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Compute ∫_C **F**·d**r** where **F**(x,y) = ⟨x, y⟩ and C is the line segment from (0,0) to (1,2).\n\n**Parameterize:** **r**(t) = ⟨t, 2t⟩, 0 ≤ t ≤ 1.\n\n**Substitute:** **F**(**r**(t)) = ⟨t, 2t⟩.\n\n**Dot with r′** = ⟨1,2⟩: ⟨t,2t⟩·⟨1,2⟩ = t + 4t = 5t.\n\n**Integrate:** ∫₀¹ 5t dt = [5t²/2]₀¹ = 5/2."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Path and field visual with slider",
+        "visual_spec": "2D plot of the line from (0,0) to (1,2) with vector field F=<x,y> shown as arrows on grid. Highlight the point at parameter t, and show the tangent vector and field vector at that point. Display the cumulative integral value as t increases from 0 to 1. Use a slider to control t. Show a small table: t, F·r′, integral so far.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for parameter t from 0 to 1",
+          "Button: reset animation"
+        ]
+      },
+      "on_screen_text": "F = ⟨x,y⟩, path: (0,0)→(1,2). Answer: 5/2.",
+      "teacher_narration": "Let's try a simple example. Our field is just the radial vector field ⟨x,y⟩. The path is the line from the origin to (1,2). We parameterize as r(t)=⟨t,2t⟩. After substituting and dotting, we get 5t. Integrate from 0 to 1, and we get 5/2. That's the work done by the field along this straight path. Notice the field points outward, same direction as the path, so work is positive.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Orientation Reversal",
+      "left": {
+        "content_type": "concept",
+        "content": "**Scalar:** ∫_{-C} f ds = ∫_C f ds (direction doesn't matter).\n\n**Vector:** ∫_{-C} **F**·d**r** = −∫_C **F**·d**r**.\n\n**Why:** Reversing the parameterization changes **r′**(t) to its negative, flipping the sign of the dot product."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Same curve, opposite direction, sign flip",
+        "visual_spec": "Two identical curves side by side: left one with arrow from start to end, right one from end to start. Under each, show the line integral value with opposite signs. Use a simple field F=<0,x> and a curve from (0,0) to (2,0) to visually show positive and negative work. Animate flipping the arrow.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reverse path direction",
+          "Label: display ∫ value (sign change)"
+        ]
+      },
+      "on_screen_text": "Reversing path flips sign of vector line integral. Scalar: no change.",
+      "teacher_narration": "A crucial difference from scalar integrals: if you walk the curve backward, the vector line integral changes sign. Why? Because the tangent vector r′ points in the opposite direction, so each dot product flips sign. The scalar integral only uses the magnitude of r′, so direction doesn't affect it. This orientation dependence is essential for understanding conservative fields later.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Component Form",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**2D:** If **F** = ⟨P, Q⟩, then\n\n$$\\int_C \\mathbf{F}\\cdot d\\mathbf{r} = \\int_C P\\,dx + Q\\,dy$$\n\n**3D:** If **F** = ⟨P, Q, R⟩, then\n\n$$\\int_C \\mathbf{F}\\cdot d\\mathbf{r} = \\int_C P\\,dx + Q\\,dy + R\\,dz$$\n\n**Use:** dx = x′(t) dt, dy = y′(t) dt, dz = z′(t) dt."
+      },
+      "right": {
+        "content_type": "formula_overflow",
+        "content": "Same formulas displayed with annotations showing where dx, dy, dz come from.",
+        "visual_spec": "A diagram showing a parameterized curve r(t)=(x(t),y(t),z(t)). Highlight that dx = x'(t)dt, dy = y'(t)dt, dz = z'(t)dt. Connect to integral: ∫ P dx + Q dy + R dz.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Component form: ∫ P dx + Q dy (+ R dz). Use dx=x'dt, etc.",
+      "teacher_narration": "Often we write the line integral in component form, especially in 2D. If F = ⟨P, Q⟩, then the line integral is ∫ P dx + Q dy. You can compute this by replacing dx and dy with x'(t) dt and y'(t) dt after parameterizing. This is equivalent to the vector form, but sometimes more convenient, especially when the curve is given as a function y=y(x). Just be careful: dx and dy are not independent; they come from the same parameter t.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Standard Example: Quarter-Circle",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find work by **F**(x,y)=⟨x²,−xy⟩ along **r**(t)=⟨cos t, sin t⟩, 0≤t≤π/2.\n\n1. **r′**(t)=⟨−sin t, cos t⟩.\n2. **F**(**r**(t)) = ⟨cos² t, −cos t sin t⟩.\n3. Dot: cos² t·(−sin t) + (−cos t sin t)(cos t) = −2 cos² t sin t.\n4. ∫₀^{π/2} −2 cos² t sin t dt.\n5. Substitute u=cos t, du=−sin t dt → ∫₁⁰ 2u² du = −2/3."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Quarter-circle with field arrows and animation",
+        "visual_spec": "2D plot from 0 to π/2 on unit circle. Show vector field F=<x^2, -xy> as grid of arrows. Highlight the point on the curve as t varies. Show tangent and field vectors with dot product label. Use slider for t. Display cumulative integral value in real time. Color the curve according to sign of F·r'.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for parameter t from 0 to π/2",
+          "Toggle: show F·r' along curve"
+        ]
+      },
+      "on_screen_text": "F=⟨x²,−xy⟩, quarter-circle. Answer: −2/3. Negative work: field opposes motion.",
+      "teacher_narration": "Now a standard exam problem. The field is ⟨x²,−xy⟩ and the curve is a quarter of the unit circle in the first quadrant. Following our steps: parameterize, substitute, dot, integrate. We get −2/3. The negative sign means the field does negative work—it opposes the motion along this path. Notice the substitution u=cos t simplifies the integral nicely.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Substituting After Dotting",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** Write **F** = ⟨y, z, x⟩, **r′** = ⟨−sin t, cos t, 1⟩, then dot without substituting: y·(−sin t) + z·(cos t) + x·1.\n\n**Why wrong:** Variables x,y,z are still functions of t. You must substitute first.\n\n**Correct:** Replace x=cos t, y=sin t, z=t before dotting."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side wrong and correct computation",
+        "visual_spec": "Show two panels: Left panel (wrong) shows the steps without substitution, leading to an incorrect expression. Right panel (correct) shows substitution first, then dot. Use red X on left, green check on right. Include the correct integral: ∫₀^{2π}(−sin² t + t cos t + cos t) dt = −π.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: toggle between wrong and correct steps"
+        ]
+      },
+      "on_screen_text": "Always substitute first! F(r(t)), then dot with r′.",
+      "teacher_narration": "Here's a mistake that trips up many students. Given F=⟨y,z,x⟩ and a helical path, students sometimes dot F with r′ without substituting the parameterization. They treat x, y, z as constants. That's wrong because x, y, z vary with t. You must substitute first: replace x with cos t, y with sin t, z with t. Then compute the dot product. This gives the correct integrand. The wrong approach leads to an expression that doesn't integrate to the right result.",
+      "student_prompt": "What would the wrong dot product look like before substitution?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Edge Case: Triangular Path (Non-Conservative)",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** ∫_C **F**·d**r** with **F**(x,y)=⟨−y, x⟩, closed triangular path: (0,0)→(1,0)→(1,1)→(0,0).\n\n| Segment | Param | Dot | Integral |\n|---------|-------|-----|----------|\n| C₁: (0,0)→(1,0) | r(t)=⟨t,0⟩, t∈[0,1] | ⟨0,t⟩·⟨1,0⟩=0 | 0 |\n| C₂: (1,0)→(1,1) | r(t)=⟨1,t⟩, t∈[0,1] | ⟨−t,1⟩·⟨0,1⟩=1 | 1 |\n| C₃: (1,1)→(0,0) | r(t)=⟨1−t,1−t⟩, t∈[0,1] | ⟨t−1,1−t⟩·⟨−1,−1⟩=0 | 0 |\n\n**Total:** 1. Non-zero closed integral → **F** is NOT conservative."
+      },
+      "right": {
+        "content_type": "empty",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Non-zero closed integral: F = ⟨−y,x⟩ is not conservative.",
+      "teacher_narration": "Here's a deeper example. The field is ⟨−y, x⟩, and the path is a closed triangle. We compute each segment. On the horizontal and diagonal segments, the dot product is zero because the field is perpendicular to the path. On the vertical segment, the field is horizontal and the path is vertical, so the dot product is 1. The total is 1, not zero. This tells us the field is not conservative: for a conservative field, the line integral around any closed curve would be zero.",
+      "student_prompt": "Predict: Will the closed loop integral be zero or non-zero? Why?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Work in a Force Field",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Particle moves along **r**(t)=⟨t,t²,t³⟩, 0≤t≤1, under **F**(x,y,z)=⟨yz, xz, xy⟩. Find work.\n\n1. **r′**(t)=⟨1,2t,3t²⟩.\n2. **F**(**r**(t)) = ⟨(t²)(t³), (t)(t³), (t)(t²)⟩ = ⟨t⁵, t⁴, t³⟩.\n3. Dot: t⁵·1 + t⁴·2t + t³·3t² = t⁵ + 2t⁵ + 3t⁵ = 6t⁵.\n4. ∫₀¹ 6t⁵ dt = [t⁶]₀¹ = 1.\n\n**Interpretation:** Positive work → field helps the particle along this path."
+      },
+      "right": {
+        "content_type": "empty",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Work = 1 unit. Field helps motion along cubic path.",
+      "teacher_narration": "Let's apply this to a physics problem. A particle moves along a cubic curve in 3D under a force field F = ⟨yz, xz, xy⟩. We parameterize, substitute, dot—everything compacts nicely to 6t⁵. Integrate from 0 to 1, work is 1 unit positive. This field is actually conservative (you might check later), and the work equals the difference in potential energy. But for now, we see the computation works just like the 2D case.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Field and Path Explorer",
+      "left": {
+        "content_type": "text",
+        "content": "Explore the vector field **F**(x,y)=⟨−y, x⟩ along a circular path. Adjust the radius and observe the line integral value. Check how orientation affects the result."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot with controls",
+        "visual_spec": "2D plot with vector field F=<−y,x> as arrows on grid. A circle of radius R (default 1) from angle 0 to 2π. Highligh the point at angle θ, show tangent and field vectors. Display the cumulative integral value. Controls: slider for radius R from 0.5 to 3, slider for angle θ from 0 to 2π (to move point), toggle for orientation (clockwise/counterclockwise), button to compute full integral. Color the path according to sign of F·r′.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for radius from 0.5 to 3",
+          "Slider for angle θ from 0 to 2π",
+          "Radio button: CCW / CW orientation",
+          "Button to compute full closed line integral"
+        ]
+      },
+      "on_screen_text": "Interactive: adjust radius, angle, orientation. See line integral value.",
+      "teacher_narration": "Let's explore visually. This interactive shows the field F=⟨−y,x⟩ and a circular path. Use the radius slider to change the circle size. Move the angle slider to see the point and arrows. The computed line integral updates as you go. Try toggling orientation: the sign flips. Click 'Compute' to see the full closed integral. For this field, the integral around a circle of radius R (counterclockwise) is 2πR². This is a great way to build intuition before you tackle conservative fields.",
+      "student_prompt": "Try a radius of 2 and CCW orientation. What is the full closed integral?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause and Try: Quick Check",
+      "left": {
+        "content_type": "text",
+        "content": "**Question:** Compute ∫_C **F**·d**r** where **F**(x,y)=⟨1,0⟩ and C is the curve from (0,0) to (2,0) parameterized by **r**(t)=⟨t²,0⟩, 0≤t≤√2.\n\nA) 0\nB) 2\nC) √2\nD) 4"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Simple path from (0,0) to (2,0) with constant field.",
+        "visual_spec": "2D plot showing the path (a parabola along x-axis from x=0 to x=2, but y=0, so it's just a line segment). Show the constant field F=<1,0> as arrows. Display a slider for t to show point and tangent. Let user guess answer.",
+        "python_code": null,
+        "interactive_controls": [
+          "Radio buttons for multiple choice A-D",
+          "Button to reveal answer"
+        ]
+      },
+      "on_screen_text": "F = ⟨1,0⟩, path r(t)=⟨t²,0⟩, 0≤t≤√2. Compute ∫ F·dr.",
+      "teacher_narration": "Now a quick check for you. The field is constant ⟨1,0⟩, pointing right. The path goes from (0,0) to (2,0) but parameterized as ⟨t²,0⟩. Pause the video and try to compute the integral. Is it independent of the parameterization? The answer should be the same as the warm-up: the work depends only on start and end for a constant field. I'll give you a moment to think.",
+      "student_prompt": "Compute the integral. Choose A, B, C, or D. Then unpause to see the solution.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Solution: Parameterization Independence",
+      "left": {
+        "content_type": "text",
+        "content": "**Solution:**\n1. Parameterization: **r**(t)=⟨t²,0⟩, **r′**(t)=⟨2t,0⟩.\n2. **F**(**r**(t)) = ⟨1,0⟩.\n3. Dot: ⟨1,0⟩·⟨2t,0⟩ = 2t.\n4. ∫₀^{√2} 2t dt = [t²]₀^{√2} = 2.\n\n**Answer:** B) 2.\n\n**Key point:** The integral value is independent of the parameterization speed, as long as orientation is preserved."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show the parameter t vs. x: t from 0 to √2, x=t² from 0 to 2. Animate the point moving with different speeds.",
+        "visual_spec": "2D plot of path with a moving point. Show a second plot of x vs t to illustrate parameterization. Use slider to control t. Display cumulative integral as t increases.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for parameter t from 0 to √2"
+        ]
+      },
+      "on_screen_text": "Answer: 2. Parameterization does not affect result (orientation preserved).",
+      "teacher_narration": "The integral works out to 2, same as the earlier warm-up with linear parameterization. Even though we used t² for x, the resulting work is still 2. This illustrates that the line integral is independent of how you parameterize the curve, as long as you keep the same orientation. The faster you go changes the tangent length, but the substitution and dot product compensate exactly. This is a fundamental property: the line integral depends only on the curve and the field, not the parameterization.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof Sketch: Riemann Sum Derivation",
+      "left": {
+        "content_type": "text",
+        "content": "**Derivation of ∫_C F·dr = ∫_a^b F(r(t))·r′(t) dt**\n\nPartition [a,b] into n subintervals. On each, displacement ≈ r′(t_i^*)Δt_i. Work ≈ F(r(t_i^*))·r′(t_i^*)Δt_i. Sum → integral as n→∞.\n\n**Key insight:** The integral is the limit of Riemann sums of the tangential component times speed."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animation of Riemann sum with rectangles under curve of F·r′ vs t",
+        "visual_spec": "Two panels: Left shows the curve C with partition points and tangent vectors. Right shows a plot of the dot product F·r′ as a function of t, with rectangles approximating the area under the curve. Use slider for number of partitions n. Show the approximate sum converging to the exact integral as n increases.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for number of partitions n from 2 to 50",
+          "Button: animate sequence of n values"
+        ]
+      },
+      "on_screen_text": "Riemann sum: ∑ F·r′ Δt → ∫. Area under tangent component curve.",
+      "teacher_narration": "For those wanting to see why the formula works: think of the integral as a limit of Riemann sums. Split the curve into small pieces, approximate the work on each piece as force dot displacement (tangent times change in parameter). As the pieces get smaller, the approximation becomes exact. This is the same idea as any Riemann integral, just with vector fields. The visualization shows how the sum of rectangles approaches the true integral.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "What We Learned Today",
+      "left": {
+        "content_type": "text",
+        "content": "**Key Formulas and Facts**\n\n- **Definition:** ∫_C F·dr = ∫_a^b F(r(t))·r′(t) dt\n- **Component form:** ∫ P dx + Q dy (+ R dz)\n- **Orientation:** ∫_{-C} F·dr = −∫_C F·dr\n- **Scalar vs vector:** Scalar ignores direction; vector depends on it\n- **Non-conservative:** Non-zero closed integral ⇒ field not conservative\n\n**Core Steps**\n1. Parameterize curve.\n2. Substitute into F.\n3. Dot with r′.\n4. Integrate."
+      },
+      "right": {
+        "content_type": "empty",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary: Definition, component form, orientation, scalar vs vector, non-conservative fields.",
+      "teacher_narration": "Today we've learned how to compute line integrals of vector fields. We defined the integral as the integral of the dot product of the field with the tangent vector. We saw that orientation matters, unlike scalar line integrals. We practiced with several examples: a straight line, a quarter circle, a tricky helix, a closed triangle, and a physics application. We also clarified a common mistake: always substitute the parameterization before dotting. Finally, we saw that a non-zero closed line integral indicates a non-conservative field. This sets the stage for the next topic: conservative fields and the fundamental theorem for line integrals.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

@@ -1,0 +1,2679 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_panda_urdf_tf_rviz",
+  "avatar_profile": "shared/avatar.profile.json",
+  "reference_assets": "shared/reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Begin by connecting directly to Session 3: students already know how to inspect nodes, topics, parameters, and the ROS graph; today those tools make a real Panda manipulator model visible.",
+    "progression": "Start with why Panda matters, establish the URDF/Xacro to robot_description to joint states to TF to RViz pipeline, inspect installed Panda resources, build a small launch package, configure and save RViz, then debug the running graph and TF tree.",
+    "destination": "Students should finish able to launch Panda in RViz2, explain why it appears, move joints with sliders, inspect joint states and TF, and diagnose a blank RViz scene in a disciplined order.",
+    "tone": "practical, visual, diagnostic, lab-coach, professor-like",
+    "methods": [
+      "continuity from Session 3 graph debugging",
+      "central pipeline mental model",
+      "guided package and file inspection",
+      "copy-safe launch-file construction",
+      "verification checkpoints",
+      "RViz and TF debugging ladder",
+      "forward bridge to MoveIt planning"
+    ]
+  },
+  "audience_level": "undergraduate robotics lab students who know basic ROS 2 graph inspection and now need to connect robot description, joint states, TF, and RViz2 using the Panda manipulator.",
+  "topic_goal": "Make the Panda robot model real in ROS 2: students should understand the model-to-visualization pipeline well enough to launch it, inspect it, and debug it before using MoveIt.",
+  "topic_takeaways": [
+    "Students should know that URDF/Xacro describes robot structure: links, joints, geometry, and frames.",
+    "Students should understand that robot_description is the model text consumed by robot_state_publisher and visualization tools.",
+    "Students should know that joint states plus the robot model produce TF, and TF is what lets RViz place every Panda link correctly.",
+    "Students should be able to build a small launch package that starts robot_state_publisher, Joint State Publisher GUI, and RViz2.",
+    "Students should debug Panda visualization in order: environment, package visibility, launch file, nodes, robot_description, joint states, TF, then RViz Fixed Frame and displays.",
+    "Students should see this session as the foundation for MoveIt: planning comes after the robot model and frame system are trustworthy."
+  ],
+  "style_notes": [
+    "Speak like a live lab instructor guiding students through a real setup, not like a manual reading commands aloud.",
+    "For command-heavy slides, explain the purpose, the one or two command names students should notice, and the expected verification signal; do not recite every character.",
+    "When a path or command appears, say it naturally for TTS: for example, opt Ross humble setup dot bash, robot description, joint states, T F, T F static, and Panda link zero.",
+    "Keep returning to the central pipeline: Panda model, robot_description, joint states, robot_state_publisher, TF, and RViz.",
+    "Make the live-lab pauses explicit: tell students when to check their folder, save the file, build, source, launch, or inspect a result before moving on.",
+    "Do not teach MoveIt deeply in this session. Use MoveIt only as the reason this model and frame foundation matters."
+  ],
+  "transition_style": "Use each slide as one step in a lab story: first make the purpose clear, then show the exact action or concept, then say what should be true before the next slide.",
+  "scene_policy_default": "minimal",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.58,
+    "pace": 0.94,
+    "attention_mode": "slide_focus",
+    "scene_policy": "minimal",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Session 4 - Panda Robot Description, TF, and RViz2"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome students into Session 4 by saying this is where Panda first becomes visible. Remind them that Session 3 taught graph inspection, and today those tools explain a robot model instead of a toy example.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [
+        "Today is model and frames, not motion planning yet."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Welcome students back and connect directly to Session 3: the same graph inspection habits now apply to a real robot model.",
+      "transition_to_next": "Move from the welcome into why Panda is the right robot to standardize on before MoveIt.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda robot preview",
+        "central pipeline",
+        "RViz window"
+      ],
+      "explanation_style": "Frame the whole session as building the model and frame foundation, not as motion planning yet.",
+      "story_hint": "Open like the beginning of a real lab: Session 3 gave the graph tools, and today the Panda robot becomes visible for the first time.",
+      "delivery_goal": "Students should know that today is about making Panda visible and explainable before any planning happens."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Why We Start With Panda"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain why Panda is the course robot for this stage: it is the MoveIt tutorial robot, it has seven degrees of freedom, and the same names will return later.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Panda is the official MoveIt Humble tutorial robot.",
+        "It is a 7-DOF manipulator, so it prepares students for redundancy and null-space ideas later.",
+        "The same names will return: panda_link0, panda_arm, robot_description, /joint_states, and /tf."
+      ],
+      "must_say": [
+        "Panda is not a throwaway demo robot; it is the robot we reuse for MoveIt."
+      ],
+      "emphasis_words": [
+        "Panda",
+        "robot_description",
+        "joint_states",
+        "TF",
+        "RViz"
+      ],
+      "transition_from_previous": "Connect the previous slide to the central reason this lab matters for the rest of the course.",
+      "transition_to_next": "Use this slide to prepare the next step in the pipeline rather than treating the bullets as isolated facts.",
+      "likely_student_confusion": [
+        "Students may think the goal is simply to see a robot picture, when the real goal is to understand the data path that made the picture appear."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda preview",
+        "pipeline diagram",
+        "ROS graph"
+      ],
+      "explanation_style": "Use the visual or checklist as a roadmap, then return attention to the model-to-RViz pipeline.",
+      "story_hint": "Keep the professor focused on the lab destination: Panda in RViz, with students able to explain every data step that made it appear.",
+      "delivery_goal": "Students should understand the route through the lab and why Panda, robot_description, joint states, TF, and RViz belong together."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "What Must Work By The End"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Treat this as the lab contract. Students should listen for the exact evidence that proves Panda is installed, launched, visible, movable, and inspectable.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Install/check Panda description resources and visualization tools.",
+        "Find and inspect Panda URDF/Xacro, meshes, and MoveIt config folders.",
+        "Launch robot_state_publisher, Joint State Publisher GUI, and rviz2."
+      ],
+      "must_say": [
+        "By the end, Panda should appear in RViz and the data path that made it appear should make sense."
+      ],
+      "emphasis_words": [
+        "Panda",
+        "robot_description",
+        "joint_states",
+        "TF",
+        "RViz"
+      ],
+      "transition_from_previous": "Connect the previous slide to the central reason this lab matters for the rest of the course.",
+      "transition_to_next": "Use this slide to prepare the next step in the pipeline rather than treating the bullets as isolated facts.",
+      "likely_student_confusion": [
+        "Students may think the goal is simply to see a robot picture, when the real goal is to understand the data path that made the picture appear."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda preview",
+        "pipeline diagram",
+        "ROS graph"
+      ],
+      "explanation_style": "Use the visual or checklist as a roadmap, then return attention to the model-to-RViz pipeline.",
+      "story_hint": "Keep the professor focused on the lab destination: Panda in RViz, with students able to explain every data step that made it appear.",
+      "delivery_goal": "Students should understand the route through the lab and why Panda, robot_description, joint states, TF, and RViz belong together."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "The Central Pipeline"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Make this the anchor diagram for the whole session. Say that nearly every failure today is one broken link in this model-to-RViz pipeline.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "URDF/Xacro describes the Panda links, joints, and geometry.",
+        "robot_description carries the processed robot model.",
+        "Joint State Publisher GUI publishes slider-controlled joint values as /joint_state_publisher."
+      ],
+      "must_say": [
+        "Return to this pipeline whenever Panda is blank, frozen, or missing frames."
+      ],
+      "emphasis_words": [
+        "Panda",
+        "robot_description",
+        "joint_states",
+        "TF",
+        "RViz"
+      ],
+      "transition_from_previous": "Connect the previous slide to the central reason this lab matters for the rest of the course.",
+      "transition_to_next": "Use this slide to prepare the next step in the pipeline rather than treating the bullets as isolated facts.",
+      "likely_student_confusion": [
+        "Students may think the goal is simply to see a robot picture, when the real goal is to understand the data path that made the picture appear."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda preview",
+        "pipeline diagram",
+        "ROS graph"
+      ],
+      "explanation_style": "Use the visual or checklist as a roadmap, then return attention to the model-to-RViz pipeline.",
+      "story_hint": "Keep the professor focused on the lab destination: Panda in RViz, with students able to explain every data step that made it appear.",
+      "delivery_goal": "Students should understand the route through the lab and why Panda, robot_description, joint states, TF, and RViz belong together."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Connection To Session 3"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explicitly connect back to Session 3: nodes, topics, parameters, rqt_graph, and CLI inspection now explain why Panda appears in RViz.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Nodes today: robot_state_publisher, joint_state_publisher, rviz2.",
+        "Topics today: /joint_states, /tf, /tf_static.",
+        "Parameters today: robot_description."
+      ],
+      "must_say": [
+        "These are the same Session 3 graph ideas applied to a robot model."
+      ],
+      "emphasis_words": [
+        "Panda",
+        "robot_description",
+        "joint_states",
+        "TF",
+        "RViz"
+      ],
+      "transition_from_previous": "Connect the previous slide to the central reason this lab matters for the rest of the course.",
+      "transition_to_next": "Use this slide to prepare the next step in the pipeline rather than treating the bullets as isolated facts.",
+      "likely_student_confusion": [
+        "Students may think the goal is simply to see a robot picture, when the real goal is to understand the data path that made the picture appear."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda preview",
+        "pipeline diagram",
+        "ROS graph"
+      ],
+      "explanation_style": "Use the visual or checklist as a roadmap, then return attention to the model-to-RViz pipeline.",
+      "story_hint": "Keep the professor focused on the lab destination: Panda in RViz, with students able to explain every data step that made it appear.",
+      "delivery_goal": "Students should understand the route through the lab and why Panda, robot_description, joint states, TF, and RViz belong together."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Start From A Clean Terminal"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Run this as the warm-up check. Say the goal is not speed; the goal is verifying the terminal is in a clean ROS Humble state before installing or launching anything.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Expected distro: humble.",
+        "Expected workspace: ~/ros2_ws.",
+        "If package commands fail, source /opt/ros/humble/setup.bash and your workspace overlay again."
+      ],
+      "must_say": [
+        "Before we leave this slide, let me show this launch once on the actual desktop."
+      ],
+      "emphasis_words": [
+        "package visibility",
+        "source",
+        "prefix",
+        "Panda resources"
+      ],
+      "transition_from_previous": "Move from the conceptual pipeline into the exact environment and package checks needed before the lab can work.",
+      "transition_to_next": "After the command or package check, tell students what successful output should look like before continuing.",
+      "likely_student_confusion": [
+        "Students may copy commands mechanically and miss the verification signal that tells them the package or path is actually visible."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "Panda package folder",
+        "package prefix path"
+      ],
+      "explanation_style": "Explain the purpose and expected result of the command block; avoid reading every flag and path unless it is the focus of the slide.",
+      "story_hint": "Treat this as a careful live setup checkpoint: students should verify package visibility before editing any files.",
+      "delivery_goal": "Students should know what to run, what success looks like, and what to check first if it fails."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Install Tools And Panda Resources"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Explain the install command by package purpose, not by reading each apt line. Warn that exact packages may already be installed.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [
+        "package visibility",
+        "source",
+        "prefix",
+        "Panda resources"
+      ],
+      "transition_from_previous": "Move from the conceptual pipeline into the exact environment and package checks needed before the lab can work.",
+      "transition_to_next": "After the command or package check, tell students what successful output should look like before continuing.",
+      "likely_student_confusion": [
+        "Students may copy commands mechanically and miss the verification signal that tells them the package or path is actually visible."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "Panda package folder",
+        "package prefix path"
+      ],
+      "explanation_style": "Explain the purpose and expected result of the command block; avoid reading every flag and path unless it is the focus of the slide.",
+      "story_hint": "Treat this as a careful live setup checkpoint: students should verify package visibility before editing any files.",
+      "delivery_goal": "Students should know what to run, what success looks like, and what to check first if it fails."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "What These Packages Give Us"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Connect each installed package back to the pipeline so students understand why the install command contains description, GUI, TF, and visualization tools.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Description package gives the Panda URDF model and meshes.",
+        "MoveIt config package gives Panda MoveIt configuration files for later.",
+        "Graphviz is needed when view_frames creates a PDF frame tree.",
+        "robot_state_publisher converts model + joint states into TF."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "package visibility",
+        "source",
+        "prefix",
+        "Panda resources"
+      ],
+      "transition_from_previous": "Move from the conceptual pipeline into the exact environment and package checks needed before the lab can work.",
+      "transition_to_next": "After the command or package check, tell students what successful output should look like before continuing.",
+      "likely_student_confusion": [
+        "Students may copy commands mechanically and miss the verification signal that tells them the package or path is actually visible."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "Panda package folder",
+        "package prefix path"
+      ],
+      "explanation_style": "Explain the purpose and expected result of the command block; avoid reading every flag and path unless it is the focus of the slide.",
+      "story_hint": "Treat this as a careful live setup checkpoint: students should verify package visibility before editing any files.",
+      "delivery_goal": "Students should know what to run, what success looks like, and what to check first if it fails."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Check That Panda Packages Exist"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Make this a package-visibility check. If these commands fail, students should fix install or sourcing before touching the launch file.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "If both prefix commands return paths, the packages are visible.",
+        "If a package is not found, install it or source the workspace that contains it."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "package visibility",
+        "source",
+        "prefix",
+        "Panda resources"
+      ],
+      "transition_from_previous": "Move from the conceptual pipeline into the exact environment and package checks needed before the lab can work.",
+      "transition_to_next": "After the command or package check, tell students what successful output should look like before continuing.",
+      "likely_student_confusion": [
+        "Students may copy commands mechanically and miss the verification signal that tells them the package or path is actually visible."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "Panda package folder",
+        "package prefix path"
+      ],
+      "explanation_style": "Explain the purpose and expected result of the command block; avoid reading every flag and path unless it is the focus of the slide.",
+      "story_hint": "Treat this as a careful live setup checkpoint: students should verify package visibility before editing any files.",
+      "delivery_goal": "Students should know what to run, what success looks like, and what to check first if it fails."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "What Is Inside The Panda Resources?"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Give students the folder mental model: description package for URDF and meshes, MoveIt config package for later planning resources.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "panda_description contains urdf/ and meshes/.",
+        "panda.urdf is the installed model we will launch today.",
+        "Visual meshes make the robot look like Panda in RViz."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "package visibility",
+        "source",
+        "prefix",
+        "Panda resources"
+      ],
+      "transition_from_previous": "Move from the conceptual pipeline into the exact environment and package checks needed before the lab can work.",
+      "transition_to_next": "After the command or package check, tell students what successful output should look like before continuing.",
+      "likely_student_confusion": [
+        "Students may copy commands mechanically and miss the verification signal that tells them the package or path is actually visible."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "Panda package folder",
+        "package prefix path"
+      ],
+      "explanation_style": "Explain the purpose and expected result of the command block; avoid reading every flag and path unless it is the focus of the slide.",
+      "story_hint": "Treat this as a careful live setup checkpoint: students should verify package visibility before editing any files.",
+      "delivery_goal": "Students should know what to run, what success looks like, and what to check first if it fails."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Inspect The Panda Files"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Teach package-prefix paths as a safe inspection habit. Say clearly that installed Panda files are for inspection, not editing.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Use q to exit less.",
+        "Do not edit installed resource files; inspect them only."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "package visibility",
+        "source",
+        "prefix",
+        "Panda resources"
+      ],
+      "transition_from_previous": "Move from the conceptual pipeline into the exact environment and package checks needed before the lab can work.",
+      "transition_to_next": "After the command or package check, tell students what successful output should look like before continuing.",
+      "likely_student_confusion": [
+        "Students may copy commands mechanically and miss the verification signal that tells them the package or path is actually visible."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "Panda package folder",
+        "package prefix path"
+      ],
+      "explanation_style": "Explain the purpose and expected result of the command block; avoid reading every flag and path unless it is the focus of the slide.",
+      "story_hint": "Treat this as a careful live setup checkpoint: students should verify package visibility before editing any files.",
+      "delivery_goal": "Students should know what to run, what success looks like, and what to check first if it fails."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "URDF Big Picture"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Keep URDF conceptual: it is the robot structure model, not a planning algorithm and not merely XML syntax.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "URDF is the robot structure file.",
+        "A robot model is a tree of links connected by joints.",
+        "Each joint gives a transform from parent link to child link."
+      ],
+      "must_say": [
+        "URDF describes robot structure; it is not motion planning."
+      ],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Links And Joints"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use the parent-link, joint, child-link diagram to make transforms concrete before TF is introduced formally.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Link = rigid body such as a base, arm segment, wrist, hand, or finger.",
+        "Joint = relationship between a parent link and child link.",
+        "Origin = where the joint frame is placed relative to the parent."
+      ],
+      "must_say": [
+        "A joint defines the transform relationship between a parent link and a child link."
+      ],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Panda Frame Names To Recognize"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Students do not need to memorize every Panda frame, but panda_link0, panda_hand, and panda_arm should become familiar names.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Base frame: panda_link0.",
+        "Arm links: panda_link1 through panda_link8.",
+        "Hand frame: panda_hand."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Joint Types In Robot Models"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use Panda arm joints and gripper-style sliding as the intuitive examples for joint types.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Fixed joints attach things that do not move.",
+        "Revolute joints rotate within limits; Panda arm joints use this idea.",
+        "Continuous joints rotate without limits; common in wheels."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Joint Values Make The Model Move"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Make the key connection before the GUI: joint sliders publish values, robot_state_publisher uses those values and the model, and RViz updates because TF updates.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "URDF gives structure, but not the current pose by itself.",
+        "/joint_states gives current joint values.",
+        "robot_state_publisher combines both to compute link transforms."
+      ],
+      "must_say": [
+        "URDF gives the structure, joint states give the pose, and robot_state_publisher produces TF."
+      ],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Visual, Collision, And Inertial Blocks"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Prepare students for MoveIt by explaining why visual geometry and collision geometry have different jobs.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Visual is what RViz draws.",
+        "Collision is what collision checkers and planners use.",
+        "Inertial is mass and inertia for physics simulation."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Visual Geometry Is Not Always Collision Geometry"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use this example to warn that a robot can look correct while its collision model may still matter later for planning.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Visual geometry can be detailed and pretty.",
+        "Collision geometry is often simpler for faster checking.",
+        "Do not debug planning from visuals alone."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 18,
+        "source_title": "Why Xacro Exists"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Explain Xacro as a way to keep long robot descriptions reusable. Do not turn this into advanced Xacro programming.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Xacro is URDF with variables and macros.",
+        "It reduces copy-paste in long robot descriptions.",
+        "It helps manage meshes and package paths."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 19,
+        "source_title": "From Robot Model To robot_description"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Preview the idea that the launch file will pass model text into robot_description. The exact file path matters less than the parameter role.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "URDF input: XML robot model with links, joints, visuals, collisions, and inertials.",
+        "Launch file use: store that output in the robot_description parameter.",
+        "Later MoveIt use: Xacro files can generate the same kind of URDF string dynamically."
+      ],
+      "must_say": [
+        "robot_description is the robot model text stored as a ROS parameter."
+      ],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 20,
+        "source_title": "TF2: The Robot Frame System"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Define TF as the live frame relationship system. Make /tf and /tf_static sound like data streams RViz uses, not abstract theory.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "TF answers pose questions: where is one frame relative to another?",
+        "/tf carries changing transforms.",
+        "/tf_static carries fixed transforms."
+      ],
+      "must_say": [
+        "TF answers where one frame is relative to another."
+      ],
+      "emphasis_words": [
+        "URDF",
+        "Xacro",
+        "link",
+        "joint",
+        "TF",
+        "frame"
+      ],
+      "transition_from_previous": "Use the previous setup or file-inspection step to motivate the concept rather than introducing it as abstract vocabulary.",
+      "transition_to_next": "Close the concept by naming how it will appear in the launch pipeline or RViz.",
+      "likely_student_confusion": [
+        "Students may treat URDF, Xacro, links, joints, and TF as file syntax instead of a robot-structure and frame model."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Panda frame tree",
+        "URDF link/joint diagram",
+        "TF arrows"
+      ],
+      "explanation_style": "Explain the concept visually first using Panda, then give the ROS term students must remember.",
+      "story_hint": "Build the conceptual bridge from files to robot meaning: links and joints define structure, joint values define pose, and TF makes the pose visible.",
+      "delivery_goal": "Students should be able to say what this concept does in the Panda visualization pipeline.",
+      "scene_hint": "Use the Panda diagram or frame tree to connect the term to the actual manipulator model, not to an unrelated robot example."
+    },
+    {
+      "slide_ref": {
+        "index": 21,
+        "source_title": "Nodes We Will Launch Today"
+      },
+      "slide_role": "setup",
+      "importance": "medium",
+      "narration_seed": "Turn the pipeline into the actual three tools the launch file starts today. Repeat that this is not MoveIt yet.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "robot_state_publisher reads robot_description and /joint_states, then publishes TF.",
+        "joint_state_publisher_gui executable opens sliders; the node appears as /joint_state_publisher.",
+        "rviz2 visualizes RobotModel and TF."
+      ],
+      "must_say": [
+        "These nodes make model visualization work; they are not MoveIt yet."
+      ],
+      "emphasis_words": [
+        "wrapper package",
+        "package.xml",
+        "runtime dependency",
+        "launch folder"
+      ],
+      "transition_from_previous": "Move from understanding the model pipeline into creating the class package that will launch it.",
+      "transition_to_next": "Before the next slide, remind students what file or folder should now exist.",
+      "likely_student_confusion": [
+        "Students may try to edit installed Panda resources or put runtime GUI dependencies into CMake find_package lines."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "workspace tree",
+        "package.xml",
+        "launch folder",
+        "rviz folder"
+      ],
+      "explanation_style": "Keep the instruction copy-safe and explain why the wrapper package stays simple.",
+      "story_hint": "This is where students create their own clean wrapper package, so emphasize not editing installed Panda resources.",
+      "delivery_goal": "Students should create the right package and folders without confusing runtime dependencies with CMake build dependencies."
+    },
+    {
+      "slide_ref": {
+        "index": 22,
+        "source_title": "Step 1: Create A Class Launch Package"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Start the hands-on package creation. Emphasize that our package wraps installed Panda resources instead of modifying them.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Do not add runtime tools as CMake dependencies here.",
+        "This package only installs a launch file, so the CMake side should stay simple."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "wrapper package",
+        "package.xml",
+        "runtime dependency",
+        "launch folder"
+      ],
+      "transition_from_previous": "Move from understanding the model pipeline into creating the class package that will launch it.",
+      "transition_to_next": "Before the next slide, remind students what file or folder should now exist.",
+      "likely_student_confusion": [
+        "Students may try to edit installed Panda resources or put runtime GUI dependencies into CMake find_package lines."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "workspace tree",
+        "package.xml",
+        "launch folder",
+        "rviz folder"
+      ],
+      "explanation_style": "Keep the instruction copy-safe and explain why the wrapper package stays simple.",
+      "story_hint": "This is where students create their own clean wrapper package, so emphasize not editing installed Panda resources.",
+      "delivery_goal": "Students should create the right package and folders without confusing runtime dependencies with CMake build dependencies."
+    },
+    {
+      "slide_ref": {
+        "index": 23,
+        "source_title": "Step 1 Check: Package Folder"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Pause to create the launch and rviz folders. This is a small setup step, but it keeps the package organized for reusable launch and config files.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "This package stores our launch file.",
+        "The rviz/ folder stores saved RViz layouts.",
+        "The Panda model still comes from the MoveIt resources package.",
+        "Expected files/folders: package.xml, CMakeLists.txt, launch/, and rviz/."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "wrapper package",
+        "package.xml",
+        "runtime dependency",
+        "launch folder"
+      ],
+      "transition_from_previous": "Move from understanding the model pipeline into creating the class package that will launch it.",
+      "transition_to_next": "Before the next slide, remind students what file or folder should now exist.",
+      "likely_student_confusion": [
+        "Students may try to edit installed Panda resources or put runtime GUI dependencies into CMake find_package lines."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "workspace tree",
+        "package.xml",
+        "launch folder",
+        "rviz folder"
+      ],
+      "explanation_style": "Keep the instruction copy-safe and explain why the wrapper package stays simple.",
+      "story_hint": "This is where students create their own clean wrapper package, so emphasize not editing installed Panda resources.",
+      "delivery_goal": "Students should create the right package and folders without confusing runtime dependencies with CMake build dependencies."
+    },
+    {
+      "slide_ref": {
+        "index": 24,
+        "source_title": "Step 1B: Add Runtime Dependencies"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Explain runtime dependencies carefully. These tools are needed when launching, but they should not all become CMake find_package dependencies.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Add these before :",
+        "Runtime dependency means needed when launching, not needed for CMake to compile."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "wrapper package",
+        "package.xml",
+        "runtime dependency",
+        "launch folder"
+      ],
+      "transition_from_previous": "Move from understanding the model pipeline into creating the class package that will launch it.",
+      "transition_to_next": "Before the next slide, remind students what file or folder should now exist.",
+      "likely_student_confusion": [
+        "Students may try to edit installed Panda resources or put runtime GUI dependencies into CMake find_package lines."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "workspace tree",
+        "package.xml",
+        "launch folder",
+        "rviz folder"
+      ],
+      "explanation_style": "Keep the instruction copy-safe and explain why the wrapper package stays simple.",
+      "story_hint": "This is where students create their own clean wrapper package, so emphasize not editing installed Panda resources.",
+      "delivery_goal": "Students should create the right package and folders without confusing runtime dependencies with CMake build dependencies."
+    },
+    {
+      "slide_ref": {
+        "index": 25,
+        "source_title": "Step 2: Create The Launch File"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Before code begins, make sure students are editing the correct launch file. Say the next slides are copy-safe pieces of one file.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Save in nano with Ctrl+O, Enter, then Ctrl+X.",
+        "The next slides give the full launch file in copy-safe pieces."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "wrapper package",
+        "package.xml",
+        "runtime dependency",
+        "launch folder"
+      ],
+      "transition_from_previous": "Move from understanding the model pipeline into creating the class package that will launch it.",
+      "transition_to_next": "Before the next slide, remind students what file or folder should now exist.",
+      "likely_student_confusion": [
+        "Students may try to edit installed Panda resources or put runtime GUI dependencies into CMake find_package lines."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "workspace tree",
+        "package.xml",
+        "launch folder",
+        "rviz folder"
+      ],
+      "explanation_style": "Keep the instruction copy-safe and explain why the wrapper package stays simple.",
+      "story_hint": "This is where students create their own clean wrapper package, so emphasize not editing installed Panda resources.",
+      "delivery_goal": "Students should create the right package and folders without confusing runtime dependencies with CMake build dependencies."
+    },
+    {
+      "slide_ref": {
+        "index": 26,
+        "source_title": "Launch File Part A: Imports"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "For the imports, name only the launch tools we need: LaunchDescription, substitutions, Node, and package-share lookup.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "FindPackageShare finds installed ROS package resources.",
+        "Command reads the URDF file text so it can become a ROS parameter."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "robot_description",
+        "robot_state_publisher",
+        "joint_state_publisher_gui",
+        "rviz2"
+      ],
+      "transition_from_previous": "Connect the previous file setup to the exact launch-file piece students are about to paste.",
+      "transition_to_next": "After each code piece, say where it sits in the launch file and what piece of the pipeline it enables.",
+      "likely_student_confusion": [
+        "Students may read the launch file as generic Python instead of seeing it as a startup recipe for the model pipeline."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch file",
+        "node graph",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Do not read the whole Python block. Name the important object or node and explain its job in one or two sentences.",
+      "story_hint": "Teach the launch file as a startup recipe: find the Panda model, create robot_description, start the state publisher, start sliders, and open RViz.",
+      "delivery_goal": "Students should understand the purpose of each launch-file block well enough to debug indentation, missing package paths, and missing nodes.",
+      "scene_hint": "Keep the code visible and use the professor to name the job of this block in the Panda launch pipeline."
+    },
+    {
+      "slide_ref": {
+        "index": 27,
+        "source_title": "Launch File Part B: Find Panda URDF"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Explain that FindPackageShare avoids hard-coded absolute paths and finds the installed Panda URDF package.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "This avoids hard-coded absolute paths.",
+        "If the package is not sourced or installed, this line cannot find the Panda model."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "robot_description",
+        "robot_state_publisher",
+        "joint_state_publisher_gui",
+        "rviz2"
+      ],
+      "transition_from_previous": "Connect the previous file setup to the exact launch-file piece students are about to paste.",
+      "transition_to_next": "After each code piece, say where it sits in the launch file and what piece of the pipeline it enables.",
+      "likely_student_confusion": [
+        "Students may read the launch file as generic Python instead of seeing it as a startup recipe for the model pipeline."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch file",
+        "node graph",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Do not read the whole Python block. Name the important object or node and explain its job in one or two sentences.",
+      "story_hint": "Teach the launch file as a startup recipe: find the Panda model, create robot_description, start the state publisher, start sliders, and open RViz.",
+      "delivery_goal": "Students should understand the purpose of each launch-file block well enough to debug indentation, missing package paths, and missing nodes.",
+      "scene_hint": "Keep the code visible and use the professor to name the job of this block in the Panda launch pipeline."
+    },
+    {
+      "slide_ref": {
+        "index": 28,
+        "source_title": "Launch File Part C: Create robot_description"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Explain that cat reads the Panda URDF text and stores it as robot_description, the parameter robot_state_publisher needs.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "cat reads the installed Panda URDF file.",
+        "The file text becomes the robot_description parameter.",
+        "This parameter is what robot_state_publisher needs."
+      ],
+      "must_say": [
+        "This block turns the Panda URDF text into the robot_description parameter."
+      ],
+      "emphasis_words": [
+        "robot_description",
+        "robot_state_publisher",
+        "joint_state_publisher_gui",
+        "rviz2"
+      ],
+      "transition_from_previous": "Connect the previous file setup to the exact launch-file piece students are about to paste.",
+      "transition_to_next": "After each code piece, say where it sits in the launch file and what piece of the pipeline it enables.",
+      "likely_student_confusion": [
+        "Students may read the launch file as generic Python instead of seeing it as a startup recipe for the model pipeline."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch file",
+        "node graph",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Do not read the whole Python block. Name the important object or node and explain its job in one or two sentences.",
+      "story_hint": "Teach the launch file as a startup recipe: find the Panda model, create robot_description, start the state publisher, start sliders, and open RViz.",
+      "delivery_goal": "Students should understand the purpose of each launch-file block well enough to debug indentation, missing package paths, and missing nodes.",
+      "scene_hint": "Keep the code visible and use the professor to name the job of this block in the Panda launch pipeline."
+    },
+    {
+      "slide_ref": {
+        "index": 29,
+        "source_title": "Launch File Part D: Robot State Publisher"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Make robot_state_publisher the bridge from model plus joint states to TF. This is the most important node in the launch file.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "This node publishes TF for the Panda links.",
+        "It needs both the model and joint states."
+      ],
+      "must_say": [
+        "robot_state_publisher turns robot_description plus joint states into TF."
+      ],
+      "emphasis_words": [
+        "robot_description",
+        "robot_state_publisher",
+        "joint_state_publisher_gui",
+        "rviz2"
+      ],
+      "transition_from_previous": "Connect the previous file setup to the exact launch-file piece students are about to paste.",
+      "transition_to_next": "After each code piece, say where it sits in the launch file and what piece of the pipeline it enables.",
+      "likely_student_confusion": [
+        "Students may read the launch file as generic Python instead of seeing it as a startup recipe for the model pipeline."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch file",
+        "node graph",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Do not read the whole Python block. Name the important object or node and explain its job in one or two sentences.",
+      "story_hint": "Teach the launch file as a startup recipe: find the Panda model, create robot_description, start the state publisher, start sliders, and open RViz.",
+      "delivery_goal": "Students should understand the purpose of each launch-file block well enough to debug indentation, missing package paths, and missing nodes.",
+      "scene_hint": "Keep the code visible and use the professor to name the job of this block in the Panda launch pipeline."
+    },
+    {
+      "slide_ref": {
+        "index": 30,
+        "source_title": "Launch File Part E: Joint State GUI"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Explain that the GUI gives sliders and publishes /joint_states. It is not a robot controller.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "The GUI publishes /joint_states from slider values."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "robot_description",
+        "robot_state_publisher",
+        "joint_state_publisher_gui",
+        "rviz2"
+      ],
+      "transition_from_previous": "Connect the previous file setup to the exact launch-file piece students are about to paste.",
+      "transition_to_next": "After each code piece, say where it sits in the launch file and what piece of the pipeline it enables.",
+      "likely_student_confusion": [
+        "Students may read the launch file as generic Python instead of seeing it as a startup recipe for the model pipeline."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch file",
+        "node graph",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Do not read the whole Python block. Name the important object or node and explain its job in one or two sentences.",
+      "story_hint": "Teach the launch file as a startup recipe: find the Panda model, create robot_description, start the state publisher, start sliders, and open RViz.",
+      "delivery_goal": "Students should understand the purpose of each launch-file block well enough to debug indentation, missing package paths, and missing nodes.",
+      "scene_hint": "Keep the code visible and use the professor to name the job of this block in the Panda launch pipeline."
+    },
+    {
+      "slide_ref": {
+        "index": 31,
+        "source_title": "Launch File Part F: RViz2"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Explain that RViz opens first as a viewer; students still need to choose Fixed Frame and add displays before the robot appears correctly.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "RViz opens with an empty/default config, then we add displays manually."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "robot_description",
+        "robot_state_publisher",
+        "joint_state_publisher_gui",
+        "rviz2"
+      ],
+      "transition_from_previous": "Connect the previous file setup to the exact launch-file piece students are about to paste.",
+      "transition_to_next": "After each code piece, say where it sits in the launch file and what piece of the pipeline it enables.",
+      "likely_student_confusion": [
+        "Students may read the launch file as generic Python instead of seeing it as a startup recipe for the model pipeline."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch file",
+        "node graph",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Do not read the whole Python block. Name the important object or node and explain its job in one or two sentences.",
+      "story_hint": "Teach the launch file as a startup recipe: find the Panda model, create robot_description, start the state publisher, start sliders, and open RViz.",
+      "delivery_goal": "Students should understand the purpose of each launch-file block well enough to debug indentation, missing package paths, and missing nodes.",
+      "scene_hint": "Keep the code visible and use the professor to name the job of this block in the Panda launch pipeline."
+    },
+    {
+      "slide_ref": {
+        "index": 32,
+        "source_title": "Launch File Part G: Return The Nodes"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Close the launch-file construction by saying this return statement is the startup recipe for all three nodes.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "This is the startup recipe.",
+        "One launch command will start all three nodes."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "robot_description",
+        "robot_state_publisher",
+        "joint_state_publisher_gui",
+        "rviz2"
+      ],
+      "transition_from_previous": "Connect the previous file setup to the exact launch-file piece students are about to paste.",
+      "transition_to_next": "After each code piece, say where it sits in the launch file and what piece of the pipeline it enables.",
+      "likely_student_confusion": [
+        "Students may read the launch file as generic Python instead of seeing it as a startup recipe for the model pipeline."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "launch file",
+        "node graph",
+        "pipeline arrows"
+      ],
+      "explanation_style": "Do not read the whole Python block. Name the important object or node and explain its job in one or two sentences.",
+      "story_hint": "Teach the launch file as a startup recipe: find the Panda model, create robot_description, start the state publisher, start sliders, and open RViz.",
+      "delivery_goal": "Students should understand the purpose of each launch-file block well enough to debug indentation, missing package paths, and missing nodes.",
+      "scene_hint": "Keep the code visible and use the professor to name the job of this block in the Panda launch pipeline."
+    },
+    {
+      "slide_ref": {
+        "index": 33,
+        "source_title": "Step 3: Minimal CMakeLists.txt"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Explain why this CMakeLists file stays minimal: it installs launch and RViz resources, while runtime dependencies remain in package.xml.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [],
+      "must_say": [],
+      "emphasis_words": [
+        "build",
+        "source",
+        "launch",
+        "installed resources"
+      ],
+      "transition_from_previous": "Move from file creation into the verification step that proves ROS can find the installed launch resources.",
+      "transition_to_next": "After build or launch, name the expected visible result, then hand off naturally into the recorded desktop demo.",
+      "likely_student_confusion": [
+        "Students may forget that building and sourcing are separate steps, so ros2 launch may not see the new package."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "colcon output",
+        "Joint State Publisher GUI",
+        "RViz window"
+      ],
+      "explanation_style": "Explain the check commands as proof that the package was installed into the workspace overlay.",
+      "story_hint": "This is the build-source-launch rhythm from earlier sessions, now applied to the Panda visualization package.",
+      "delivery_goal": "Students should build, source, and launch the Panda visualization package without guessing which folder or terminal state matters."
+    },
+    {
+      "slide_ref": {
+        "index": 34,
+        "source_title": "Before Building, Check Your Files"
+      },
+      "slide_role": "reference",
+      "importance": "low",
+      "narration_seed": "Use this as a live pause. Students should check files before building so mistakes are caught while they are still easy to fix.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Expected: package.xml, CMakeLists.txt, launch/display_panda.launch.py, and rviz/.",
+        "If the launch file is missing, you probably saved it in the wrong folder.",
+        "If CMakeLists was not edited, the package may build but launch may fail."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "build",
+        "source",
+        "launch",
+        "installed resources"
+      ],
+      "transition_from_previous": "Move from file creation into the verification step that proves ROS can find the installed launch resources.",
+      "transition_to_next": "After build or launch, name the expected visible result before proceeding.",
+      "likely_student_confusion": [
+        "Students may forget that building and sourcing are separate steps, so ros2 launch may not see the new package."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "colcon output",
+        "Joint State Publisher GUI",
+        "RViz window"
+      ],
+      "explanation_style": "Explain the check commands as proof that the package was installed into the workspace overlay.",
+      "story_hint": "This is the build-source-launch rhythm from earlier sessions, now applied to the Panda visualization package.",
+      "delivery_goal": "Students should build, source, and launch the Panda visualization package without guessing which folder or terminal state matters."
+    },
+    {
+      "slide_ref": {
+        "index": 35,
+        "source_title": "Step 4: Build And Source"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Reinforce build-source-run: build from the workspace root, source the overlay, then check that ROS can see the installed launch folder.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Build from the workspace root.",
+        "Source after building so ros2 launch sees the installed launch file.",
+        "Check the installed launch and RViz folders before running."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "build",
+        "source",
+        "launch",
+        "installed resources"
+      ],
+      "transition_from_previous": "Move from file creation into the verification step that proves ROS can find the installed launch resources.",
+      "transition_to_next": "After build or launch, name the expected visible result before proceeding.",
+      "likely_student_confusion": [
+        "Students may forget that building and sourcing are separate steps, so ros2 launch may not see the new package."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "colcon output",
+        "Joint State Publisher GUI",
+        "RViz window"
+      ],
+      "explanation_style": "Explain the check commands as proof that the package was installed into the workspace overlay.",
+      "story_hint": "This is the build-source-launch rhythm from earlier sessions, now applied to the Panda visualization package.",
+      "delivery_goal": "Students should build, source, and launch the Panda visualization package without guessing which folder or terminal state matters."
+    },
+    {
+      "slide_ref": {
+        "index": 36,
+        "source_title": "Step 5: Launch Panda In RViz2"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "When launching, tell students that empty RViz is normal at first. The expected success signals are the GUI window, RViz window, and robot_state_publisher output.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Expected windows: Joint State Publisher GUI and RViz2.",
+        "Expected terminal output: robot_state_publisher reports segments/joints.",
+        "If RViz opens empty, that is normal; we still need to add displays."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "build",
+        "source",
+        "launch",
+        "installed resources"
+      ],
+      "transition_from_previous": "Move from file creation into the verification step that proves ROS can find the installed launch resources.",
+      "transition_to_next": "After build or launch, name the expected visible result before proceeding.",
+      "likely_student_confusion": [
+        "Students may forget that building and sourcing are separate steps, so ros2 launch may not see the new package."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "terminal",
+        "colcon output",
+        "Joint State Publisher GUI",
+        "RViz window"
+      ],
+      "explanation_style": "Explain the check commands as proof that the package was installed into the workspace overlay.",
+      "story_hint": "This is the build-source-launch rhythm from earlier sessions, now applied to the Panda visualization package.",
+      "delivery_goal": "Students should build, source, and launch the Panda visualization package without guessing which folder or terminal state matters."
+    },
+    {
+      "slide_ref": {
+        "index": 37,
+        "source_title": "Step 6: Configure RViz2"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Teach RViz setup by purpose: Fixed Frame establishes the reference, RobotModel draws Panda, and TF shows frame relationships.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Set Fixed Frame to panda_link0.",
+        "Add RobotModel display to draw Panda.",
+        "Add TF display to see frames."
+      ],
+      "must_say": [
+        "For this Panda demo, the Fixed Frame should be panda_link0.",
+        "I will switch to RViz for a moment so you can see exactly where this setting appears."
+      ],
+      "emphasis_words": [
+        "Fixed Frame",
+        "panda_link0",
+        "RobotModel",
+        "TF display"
+      ],
+      "transition_from_previous": "Move from the launch result into the manual RViz setup needed to see Panda correctly.",
+      "transition_to_next": "After the RViz action, use the recorded desktop demo to show the fixed frame and RobotModel display before explaining why saving the config matters.",
+      "likely_student_confusion": [
+        "Students may think a blank RViz window means the robot failed, when often the Fixed Frame or displays are simply not configured yet."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "RViz Fixed Frame",
+        "RobotModel display",
+        "TF display",
+        "panda_display.rviz"
+      ],
+      "explanation_style": "Explain each RViz setting by what problem it solves, not as a menu tour.",
+      "story_hint": "Make RViz feel like an inspection instrument: Fixed Frame, RobotModel, TF display, then save the configuration so the setup is repeatable.",
+      "delivery_goal": "Students should configure RViz to show Panda and save a reusable RViz layout inside their package.",
+      "scene_hint": "Point to the RViz control or display that changes the visible Panda result without covering the command text."
+    },
+    {
+      "slide_ref": {
+        "index": 38,
+        "source_title": "Step 6B: Save The RViz Setup"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Make saving RViz config feel important: manual setup becomes reusable only after it is saved into the class package.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "In RViz2:",
+        "File -> Save Config As",
+        "Save to this exact path:",
+        "This saves the Fixed Frame, RobotModel display, TF display, and layout."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "Fixed Frame",
+        "panda_link0",
+        "RobotModel",
+        "TF display"
+      ],
+      "transition_from_previous": "Move from the launch result into the manual RViz setup needed to see Panda correctly.",
+      "transition_to_next": "After the RViz action, say what should now be visible and why saving the config matters.",
+      "likely_student_confusion": [
+        "Students may think a blank RViz window means the robot failed, when often the Fixed Frame or displays are simply not configured yet."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "RViz Fixed Frame",
+        "RobotModel display",
+        "TF display",
+        "panda_display.rviz"
+      ],
+      "explanation_style": "Explain each RViz setting by what problem it solves, not as a menu tour.",
+      "story_hint": "Make RViz feel like an inspection instrument: Fixed Frame, RobotModel, TF display, then save the configuration so the setup is repeatable.",
+      "delivery_goal": "Students should configure RViz to show Panda and save a reusable RViz layout inside their package.",
+      "scene_hint": "Point to the RViz control or display that changes the visible Panda result without covering the command text."
+    },
+    {
+      "slide_ref": {
+        "index": 39,
+        "source_title": "Step 6C: Add The RViz Config Path"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Explain that rviz_config is just the path to the saved layout, found through the class package share directory.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "This points the launch file to your saved RViz layout.",
+        "The config file must be installed through the rviz/ folder rule in CMakeLists.txt."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "Fixed Frame",
+        "panda_link0",
+        "RobotModel",
+        "TF display"
+      ],
+      "transition_from_previous": "Move from the launch result into the manual RViz setup needed to see Panda correctly.",
+      "transition_to_next": "After the RViz action, say what should now be visible and why saving the config matters.",
+      "likely_student_confusion": [
+        "Students may think a blank RViz window means the robot failed, when often the Fixed Frame or displays are simply not configured yet."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "RViz Fixed Frame",
+        "RobotModel display",
+        "TF display",
+        "panda_display.rviz"
+      ],
+      "explanation_style": "Explain each RViz setting by what problem it solves, not as a menu tour.",
+      "story_hint": "Make RViz feel like an inspection instrument: Fixed Frame, RobotModel, TF display, then save the configuration so the setup is repeatable.",
+      "delivery_goal": "Students should configure RViz to show Panda and save a reusable RViz layout inside their package.",
+      "scene_hint": "Point to the RViz control or display that changes the visible Panda result without covering the command text."
+    },
+    {
+      "slide_ref": {
+        "index": 40,
+        "source_title": "Step 6D: Use The Config In RViz2"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Explain that the -d argument tells RViz which saved config to open so students do not redo the displays every time.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "-d tells RViz2 which config file to open.",
+        "Expected result: RViz opens with RobotModel, TF, and your saved layout."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "Fixed Frame",
+        "panda_link0",
+        "RobotModel",
+        "TF display"
+      ],
+      "transition_from_previous": "Move from the launch result into the manual RViz setup needed to see Panda correctly.",
+      "transition_to_next": "After the RViz action, say what should now be visible and why saving the config matters.",
+      "likely_student_confusion": [
+        "Students may think a blank RViz window means the robot failed, when often the Fixed Frame or displays are simply not configured yet."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "RViz Fixed Frame",
+        "RobotModel display",
+        "TF display",
+        "panda_display.rviz"
+      ],
+      "explanation_style": "Explain each RViz setting by what problem it solves, not as a menu tour.",
+      "story_hint": "Make RViz feel like an inspection instrument: Fixed Frame, RobotModel, TF display, then save the configuration so the setup is repeatable.",
+      "delivery_goal": "Students should configure RViz to show Panda and save a reusable RViz layout inside their package.",
+      "scene_hint": "Point to the RViz control or display that changes the visible Panda result without covering the command text."
+    },
+    {
+      "slide_ref": {
+        "index": 41,
+        "source_title": "Step 6E: Rebuild And Launch Again"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Close the saved-config loop: rebuild, source, launch again, and expect RViz to open already configured.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "Expected result: RViz opens already showing Panda, RobotModel, and TF."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "Fixed Frame",
+        "panda_link0",
+        "RobotModel",
+        "TF display"
+      ],
+      "transition_from_previous": "Move from the launch result into the manual RViz setup needed to see Panda correctly.",
+      "transition_to_next": "After the RViz action, say what should now be visible and why saving the config matters.",
+      "likely_student_confusion": [
+        "Students may think a blank RViz window means the robot failed, when often the Fixed Frame or displays are simply not configured yet."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "RViz Fixed Frame",
+        "RobotModel display",
+        "TF display",
+        "panda_display.rviz"
+      ],
+      "explanation_style": "Explain each RViz setting by what problem it solves, not as a menu tour.",
+      "story_hint": "Make RViz feel like an inspection instrument: Fixed Frame, RobotModel, TF display, then save the configuration so the setup is repeatable.",
+      "delivery_goal": "Students should configure RViz to show Panda and save a reusable RViz layout inside their package.",
+      "scene_hint": "Point to the RViz control or display that changes the visible Panda result without covering the command text."
+    },
+    {
+      "slide_ref": {
+        "index": 42,
+        "source_title": "Step 7: Move Panda Joints"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "Use the sliders as the live proof of the pipeline: move one joint, joint_states changes, TF changes, and Panda moves in RViz.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Move one joint at a time so you can connect slider, joint, link, and frame.",
+        "Watch /joint_states change when a slider moves.",
+        "Watch TF update as robot_state_publisher recomputes link transforms.",
+        "Remember: the GUI is not a controller; it is a visualization/debugging tool."
+      ],
+      "must_say": [
+        "The Joint State Publisher GUI is a visualization and debugging tool, not a real controller."
+      ],
+      "emphasis_words": [
+        "node list",
+        "joint_states",
+        "tf",
+        "tf_static",
+        "rqt_graph"
+      ],
+      "transition_from_previous": "Move from seeing the robot in RViz into inspecting the ROS data that makes it move.",
+      "transition_to_next": "After each inspection command, connect the observed topic, node, or frame to the central pipeline.",
+      "likely_student_confusion": [
+        "Students may look at RViz only and forget to inspect the nodes, topics, and TF data underneath."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS graph",
+        "TF tree",
+        "topic echo",
+        "slider motion"
+      ],
+      "explanation_style": "Emphasize what question the command answers and what output confirms the pipeline is alive.",
+      "story_hint": "Return to Session 3 habits: now students inspect the live Panda pipeline instead of guessing why the model moves or fails.",
+      "delivery_goal": "Students should use node, topic, TF, rqt_graph, and rosbag tools to observe Panda model data deliberately.",
+      "scene_hint": "Connect the command output to the live Panda data path so students see why the inspection matters."
+    },
+    {
+      "slide_ref": {
+        "index": 43,
+        "source_title": "Inspect The Running Nodes"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Bring back Session 3 commands on the real Panda pipeline. Node info should reveal publishers, subscriptions, and parameters.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "The GUI executable appears as the /joint_state_publisher node in the ROS graph.",
+        "Node info shows publishers, subscriptions, and parameters."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "node list",
+        "joint_states",
+        "tf",
+        "tf_static",
+        "rqt_graph"
+      ],
+      "transition_from_previous": "Move from seeing the robot in RViz into inspecting the ROS data that makes it move.",
+      "transition_to_next": "After each inspection command, connect the observed topic, node, or frame to the central pipeline.",
+      "likely_student_confusion": [
+        "Students may look at RViz only and forget to inspect the nodes, topics, and TF data underneath."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS graph",
+        "TF tree",
+        "topic echo",
+        "slider motion"
+      ],
+      "explanation_style": "Emphasize what question the command answers and what output confirms the pipeline is alive.",
+      "story_hint": "Return to Session 3 habits: now students inspect the live Panda pipeline instead of guessing why the model moves or fails.",
+      "delivery_goal": "Students should use node, topic, TF, rqt_graph, and rosbag tools to observe Panda model data deliberately.",
+      "scene_hint": "Connect the command output to the live Panda data path so students see why the inspection matters."
+    },
+    {
+      "slide_ref": {
+        "index": 44,
+        "source_title": "Inspect /joint_states"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Move a slider while echoing /joint_states so students see the data they are generating.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "/joint_states contains joint names, positions, velocities, and efforts.",
+        "If this topic is missing, the GUI is not running or not publishing.",
+        "If names look unfamiliar, compare them with Panda joint names in the URDF."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "node list",
+        "joint_states",
+        "tf",
+        "tf_static",
+        "rqt_graph"
+      ],
+      "transition_from_previous": "Move from seeing the robot in RViz into inspecting the ROS data that makes it move.",
+      "transition_to_next": "After each inspection command, connect the observed topic, node, or frame to the central pipeline.",
+      "likely_student_confusion": [
+        "Students may look at RViz only and forget to inspect the nodes, topics, and TF data underneath."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS graph",
+        "TF tree",
+        "topic echo",
+        "slider motion"
+      ],
+      "explanation_style": "Emphasize what question the command answers and what output confirms the pipeline is alive.",
+      "story_hint": "Return to Session 3 habits: now students inspect the live Panda pipeline instead of guessing why the model moves or fails.",
+      "delivery_goal": "Students should use node, topic, TF, rqt_graph, and rosbag tools to observe Panda model data deliberately.",
+      "scene_hint": "Connect the command output to the live Panda data path so students see why the inspection matters."
+    },
+    {
+      "slide_ref": {
+        "index": 45,
+        "source_title": "Inspect /tf And /tf_static"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Make /tf and /tf_static concrete: changing joint transforms go on /tf, fixed relationships stay on /tf_static.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "/tf changes as movable joints change.",
+        "/tf_static stays fixed for static relationships.",
+        "RViz depends on TF to place every robot link correctly."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "node list",
+        "joint_states",
+        "tf",
+        "tf_static",
+        "rqt_graph"
+      ],
+      "transition_from_previous": "Move from seeing the robot in RViz into inspecting the ROS data that makes it move.",
+      "transition_to_next": "After each inspection command, connect the observed topic, node, or frame to the central pipeline.",
+      "likely_student_confusion": [
+        "Students may look at RViz only and forget to inspect the nodes, topics, and TF data underneath."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS graph",
+        "TF tree",
+        "topic echo",
+        "slider motion"
+      ],
+      "explanation_style": "Emphasize what question the command answers and what output confirms the pipeline is alive.",
+      "story_hint": "Return to Session 3 habits: now students inspect the live Panda pipeline instead of guessing why the model moves or fails.",
+      "delivery_goal": "Students should use node, topic, TF, rqt_graph, and rosbag tools to observe Panda model data deliberately.",
+      "scene_hint": "Connect the command output to the live Panda data path so students see why the inspection matters."
+    },
+    {
+      "slide_ref": {
+        "index": 46,
+        "source_title": "Generate A TF Tree"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Teach view_frames as a reusable TF debugging habit. A frame-tree PDF turns invisible transforms into something students can inspect.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Expected output: a file such as frames.pdf.",
+        "The PDF shows parent-child frame relationships.",
+        "If the tree is tiny or empty, check that the launch is still running."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "node list",
+        "joint_states",
+        "tf",
+        "tf_static",
+        "rqt_graph"
+      ],
+      "transition_from_previous": "Move from seeing the robot in RViz into inspecting the ROS data that makes it move.",
+      "transition_to_next": "After each inspection command, connect the observed topic, node, or frame to the central pipeline.",
+      "likely_student_confusion": [
+        "Students may look at RViz only and forget to inspect the nodes, topics, and TF data underneath."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS graph",
+        "TF tree",
+        "topic echo",
+        "slider motion"
+      ],
+      "explanation_style": "Emphasize what question the command answers and what output confirms the pipeline is alive.",
+      "story_hint": "Return to Session 3 habits: now students inspect the live Panda pipeline instead of guessing why the model moves or fails.",
+      "delivery_goal": "Students should use node, topic, TF, rqt_graph, and rosbag tools to observe Panda model data deliberately.",
+      "scene_hint": "Connect the command output to the live Panda data path so students see why the inspection matters."
+    },
+    {
+      "slide_ref": {
+        "index": 47,
+        "source_title": "How To Read A TF Tree"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use the TF tree visually. For Panda, students should expect a chain from base to wrist, hand, and fingers.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Tree direction matters: parent frame -> child frame.",
+        "For Panda, you should see a chain from the base toward wrist/hand/fingers.",
+        "Missing branch usually means missing joint state or missing model data."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "node list",
+        "joint_states",
+        "tf",
+        "tf_static",
+        "rqt_graph"
+      ],
+      "transition_from_previous": "Move from seeing the robot in RViz into inspecting the ROS data that makes it move.",
+      "transition_to_next": "After each inspection command, connect the observed topic, node, or frame to the central pipeline.",
+      "likely_student_confusion": [
+        "Students may look at RViz only and forget to inspect the nodes, topics, and TF data underneath."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS graph",
+        "TF tree",
+        "topic echo",
+        "slider motion"
+      ],
+      "explanation_style": "Emphasize what question the command answers and what output confirms the pipeline is alive.",
+      "story_hint": "Return to Session 3 habits: now students inspect the live Panda pipeline instead of guessing why the model moves or fails.",
+      "delivery_goal": "Students should use node, topic, TF, rqt_graph, and rosbag tools to observe Panda model data deliberately.",
+      "scene_hint": "Connect the command output to the live Panda data path so students see why the inspection matters."
+    },
+    {
+      "slide_ref": {
+        "index": 48,
+        "source_title": "Use rqt_graph On The Panda Pipeline"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use rqt_graph to show the Panda pipeline as a graph, not as isolated terminal commands.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Look for the data path from GUI to joint states to robot state publisher.",
+        "RViz subscribes to model/TF-related data to visualize the robot.",
+        "If the graph is confusing, hide debug nodes or refresh the graph."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "node list",
+        "joint_states",
+        "tf",
+        "tf_static",
+        "rqt_graph"
+      ],
+      "transition_from_previous": "Move from seeing the robot in RViz into inspecting the ROS data that makes it move.",
+      "transition_to_next": "After each inspection command, connect the observed topic, node, or frame to the central pipeline.",
+      "likely_student_confusion": [
+        "Students may look at RViz only and forget to inspect the nodes, topics, and TF data underneath."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS graph",
+        "TF tree",
+        "topic echo",
+        "slider motion"
+      ],
+      "explanation_style": "Emphasize what question the command answers and what output confirms the pipeline is alive.",
+      "story_hint": "Return to Session 3 habits: now students inspect the live Panda pipeline instead of guessing why the model moves or fails.",
+      "delivery_goal": "Students should use node, topic, TF, rqt_graph, and rosbag tools to observe Panda model data deliberately.",
+      "scene_hint": "Connect the command output to the live Panda data path so students see why the inspection matters."
+    },
+    {
+      "slide_ref": {
+        "index": 49,
+        "source_title": "Optional: Record The Model Data"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Keep rosbag optional. Present it as a way to capture hard-to-reproduce joint and TF behavior.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Record while moving sliders.",
+        "Use bags when a frame or joint problem is hard to reproduce.",
+        "Do not record everything; start with the topics you need."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "node list",
+        "joint_states",
+        "tf",
+        "tf_static",
+        "rqt_graph"
+      ],
+      "transition_from_previous": "Move from seeing the robot in RViz into inspecting the ROS data that makes it move.",
+      "transition_to_next": "After each inspection command, connect the observed topic, node, or frame to the central pipeline.",
+      "likely_student_confusion": [
+        "Students may look at RViz only and forget to inspect the nodes, topics, and TF data underneath."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "ROS graph",
+        "TF tree",
+        "topic echo",
+        "slider motion"
+      ],
+      "explanation_style": "Emphasize what question the command answers and what output confirms the pipeline is alive.",
+      "story_hint": "Return to Session 3 habits: now students inspect the live Panda pipeline instead of guessing why the model moves or fails.",
+      "delivery_goal": "Students should use node, topic, TF, rqt_graph, and rosbag tools to observe Panda model data deliberately.",
+      "scene_hint": "Connect the command output to the live Panda data path so students see why the inspection matters."
+    },
+    {
+      "slide_ref": {
+        "index": 50,
+        "source_title": "Debug Panda In This Order"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "This is the debugging ladder. Walk through it top to bottom and say explicitly that random guessing wastes time.",
+      "voice_style": "serious_clear",
+      "tone": "serious_clear",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Environment: ROS sourced, package visible.",
+        "Launch file: installed and found by ros2 launch.",
+        "Nodes: all three nodes are alive."
+      ],
+      "must_say": [
+        "Debug in order: environment, package, launch, nodes, model, data, TF, then RViz."
+      ],
+      "emphasis_words": [
+        "debug in order",
+        "do not guess",
+        "pipeline"
+      ],
+      "transition_from_previous": "Use the inspection tools to build a disciplined debugging ladder instead of random fixes.",
+      "transition_to_next": "Close the debugging section by connecting the same foundation to MoveIt.",
+      "likely_student_confusion": [
+        "Students may jump randomly between fixes instead of following the pipeline from source environment to RViz display."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "debug checklist",
+        "RViz blank screen",
+        "pipeline diagram"
+      ],
+      "explanation_style": "Sound firm and practical: start at environment and package visibility, then move downstream through launch, nodes, model, data, TF, and RViz.",
+      "story_hint": "Turn the whole session into a debugging order students can follow when RViz is blank or the sliders seem disconnected.",
+      "delivery_goal": "Students should leave with a reusable order for diagnosing Panda visualization failures.",
+      "scene_hint": "Use the debugging checklist as the main visual anchor and move through it top to bottom."
+    },
+    {
+      "slide_ref": {
+        "index": 51,
+        "source_title": "Common Errors Today"
+      },
+      "slide_role": "setup",
+      "importance": "medium",
+      "narration_seed": "Map each common error to the part of the pipeline it belongs to: package, launch install, CMake, model path, RViz display, joint states, or TF.",
+      "voice_style": "serious_clear",
+      "tone": "serious_clear",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "package not found -> package not installed, not built, or workspace not sourced.",
+        "launch file not found -> missing CMake install rule or overlay not sourced.",
+        "CMake find_package error -> remove runtime GUI/tool packages from CMakeLists.txt."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "debug in order",
+        "do not guess",
+        "pipeline"
+      ],
+      "transition_from_previous": "Use the inspection tools to build a disciplined debugging ladder instead of random fixes.",
+      "transition_to_next": "Close the debugging section by connecting the same foundation to MoveIt.",
+      "likely_student_confusion": [
+        "Students may jump randomly between fixes instead of following the pipeline from source environment to RViz display."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "debug checklist",
+        "RViz blank screen",
+        "pipeline diagram"
+      ],
+      "explanation_style": "Sound firm and practical: start at environment and package visibility, then move downstream through launch, nodes, model, data, TF, and RViz.",
+      "story_hint": "Turn the whole session into a debugging order students can follow when RViz is blank or the sliders seem disconnected.",
+      "delivery_goal": "Students should leave with a reusable order for diagnosing Panda visualization failures.",
+      "scene_hint": "Use the debugging checklist as the main visual anchor and move through it top to bottom."
+    },
+    {
+      "slide_ref": {
+        "index": 52,
+        "source_title": "How This Connects To MoveIt"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Bridge to MoveIt without teaching it yet. The same Panda model, panda_link0, robot_description, and panda_arm return next time.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "preferred",
+      "must_cover": [
+        "MoveIt starts from the same robot model.",
+        "The MoveIt RViz plugin uses robot_description and Panda planning configuration.",
+        "The official quickstart sets Fixed Frame to panda_link0."
+      ],
+      "must_say": [
+        "MoveIt starts from the same robot model and frame foundation."
+      ],
+      "emphasis_words": [
+        "MoveIt",
+        "panda_arm",
+        "panda_link0",
+        "planning"
+      ],
+      "transition_from_previous": "After debugging, show why this careful model work matters for the next planning session.",
+      "transition_to_next": "Move into the final checklist so students know what must be working before leaving.",
+      "likely_student_confusion": [
+        "Students may expect MoveIt planning to solve model or TF problems that should be fixed before planning begins."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "MoveIt preview",
+        "Panda planning group",
+        "panda_link0"
+      ],
+      "explanation_style": "Use the MoveIt image as a preview and repeatedly say that planning comes after a trustworthy model and TF tree.",
+      "story_hint": "Bridge forward to Session 5 without teaching planning yet: MoveIt uses the same Panda model and frame foundation.",
+      "delivery_goal": "Students should understand why Panda visualization is the prerequisite for MoveIt planning work.",
+      "scene_hint": "Use the MoveIt preview only as a forward bridge; do not start teaching planning details yet."
+    },
+    {
+      "slide_ref": {
+        "index": 53,
+        "source_title": "End Checklist"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Use this as the exit checklist. Students should know whether their own machine is ready before leaving.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Panda resources visible: ros2 pkg prefix --share moveit_resources_panda_description works.",
+        "Class package builds: cb --packages-select mcg5353_panda_viz succeeds.",
+        "Launch works: ros2 launch mcg5353_panda_viz display_panda.launch.py starts RViz and GUI.",
+        "Students should verify RViz shows Panda, slider motion updates the model, and /joint_states, /tf, and /tf_static are inspectable."
+      ],
+      "must_say": [],
+      "emphasis_words": [
+        "URDF",
+        "robot_description",
+        "joint_states",
+        "TF",
+        "RViz"
+      ],
+      "transition_from_previous": "Use the final slides to turn the lab into memory and a readiness checklist.",
+      "transition_to_next": "Close the session by saying that next time the same Panda model becomes the basis for planning.",
+      "likely_student_confusion": [
+        "Students may leave with the commands but not the pipeline memory needed for the next lab."
+      ],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [
+        "Panda in RViz",
+        "pipeline checklist",
+        "MoveIt preview"
+      ],
+      "explanation_style": "Recap the pipeline in plain speech and end with a clear handoff to the next session.",
+      "story_hint": "Close like a real lab: ask students to verify their setup, name the five pieces of the pipeline, and prepare for MoveIt next time.",
+      "delivery_goal": "Students should leave knowing what should work on their machine and why those pieces matter for MoveIt."
+    },
+    {
+      "slide_ref": {
+        "index": 54,
+        "source_title": "What To Remember"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Close warmly and professionally. Summarize the five pieces: URDF/Xacro, robot_description, joint_states, TF, and RViz, then hand off to MoveIt next session.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "minimal",
+      "object_policy": "suggested",
+      "must_cover": [
+        "URDF/Xacro describes structure: links, joints, geometry, and frames.",
+        "robot_description is the model parameter that other tools consume.",
+        "/joint_states gives the current joint values.",
+        "TF gives frame relationships, and RViz uses those relationships to place every visible Panda link."
+      ],
+      "must_say": [
+        "Today made the Panda model real in ROS; next we plan with it."
+      ],
+      "emphasis_words": [
+        "URDF",
+        "robot_description",
+        "joint_states",
+        "TF",
+        "RViz"
+      ],
+      "transition_from_previous": "Use the final slides to turn the lab into memory and a readiness checklist.",
+      "transition_to_next": "Close the session by saying that next time the same Panda model becomes the basis for planning.",
+      "likely_student_confusion": [
+        "Students may leave with the commands but not the pipeline memory needed for the next lab."
+      ],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [
+        "Panda in RViz",
+        "pipeline checklist",
+        "MoveIt preview"
+      ],
+      "explanation_style": "Recap the pipeline in plain speech and end with a clear handoff to the next session.",
+      "story_hint": "Close like a real lab: ask students to verify their setup, name the five pieces of the pipeline, and prepare for MoveIt next time.",
+      "delivery_goal": "Students should leave knowing what should work on their machine and why those pieces matter for MoveIt."
+    }
+  ]
+}

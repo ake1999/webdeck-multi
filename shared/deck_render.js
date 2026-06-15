@@ -5,6 +5,8 @@
 //   auto-linkify URLs, [label](url) links
 // - Math support (KaTeX): $$...$$ or \[...\] for display, \( ... \) for inline
 
+import { mountCalculusWidget } from "./calculus/index.js";
+
 function typesetMath(root) {
   if (!window.katex) return;
 
@@ -128,10 +130,581 @@ function renderBulletList(items, slideId, counters) {
       },
     );
 
+    if (Array.isArray(item.children) && item.children.length) {
+      li.appendChild(renderBulletList(item.children, slideId, counters));
+    }
+
     list.appendChild(li);
   });
 
   return list;
+}
+
+function renderBlockList(items, slideId, counters, ordered = false) {
+  const list = document.createElement(ordered ? "ol" : "ul");
+  list.className = ordered ? "calculus-step-list" : "bullets";
+  items.forEach((item) => {
+    const li = createRichTextElement(
+      "li",
+      item.text,
+      {
+        slideId,
+        elementId: item.id,
+        elementType: ordered ? "step" : "bullet",
+        label: plainTextForSay(item.text),
+      },
+      counters,
+      {
+        sayText: item.say || item.text,
+      },
+    );
+    attachWidgetParams(li, slideId, item);
+    if (Array.isArray(item.children) && item.children.length) {
+      li.appendChild(renderBlockList(item.children, slideId, counters, false));
+    }
+    list.appendChild(li);
+  });
+  return list;
+}
+
+function attachWidgetParams(element, slideId, source = {}) {
+  const params = source.widgetParams || source.paramsOnClick;
+  if (!element || !params || typeof params !== "object") return;
+  element.classList.add("widget-step-trigger");
+  element.dataset.widgetParams = JSON.stringify(params);
+  if (source.widgetId) element.dataset.widgetId = source.widgetId;
+  element.tabIndex = 0;
+  element.setAttribute("role", "button");
+  element.setAttribute("aria-label", `${element.dataset.elementLabel || "Step"}: show this state on the plot`);
+
+  const activate = () => {
+    window.dispatchEvent(new CustomEvent("webdeck:widget-params", {
+      detail: {
+        slideId,
+        widgetId: source.widgetId || "",
+        params,
+        duration: source.duration ?? 1000,
+      },
+    }));
+  };
+
+  element.addEventListener("click", activate);
+  element.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    activate();
+  });
+}
+
+function renderMathTable(block, slideId, counters) {
+  const table = document.createElement("table");
+  const firstHeader = Array.isArray(block.headers) ? plainTextForSay(block.headers[0] || "") : "";
+  table.className = /^steps?$/i.test(firstHeader) ? "math-table math-table--step-column" : "math-table";
+  applyElementMetadata(table, {
+    slideId,
+    elementId: block.id,
+    elementType: "math_table",
+    label: block.title || "Math table",
+  });
+
+  if (Array.isArray(block.headers) && block.headers.length) {
+    const thead = document.createElement("thead");
+    const row = document.createElement("tr");
+    block.headers.forEach((header, index) => {
+      const th = createRichTextElement(
+        "th",
+        header,
+        {
+          slideId,
+          parentElementId: block.id,
+          elementId: `${block.id}_header_${index + 1}`,
+          elementType: "table_header",
+          label: plainTextForSay(header),
+        },
+        counters,
+      );
+      row.appendChild(th);
+    });
+    thead.appendChild(row);
+    table.appendChild(thead);
+  }
+
+  const tbody = document.createElement("tbody");
+  (block.rows || []).forEach((cells, rowIndex) => {
+    const row = document.createElement("tr");
+    const rowAction = Array.isArray(block.rowActions) ? block.rowActions[rowIndex] : null;
+    attachWidgetParams(row, slideId, rowAction || {});
+    cells.forEach((cell, colIndex) => {
+      const td = createRichTextElement(
+        "td",
+        cell,
+        {
+          slideId,
+          parentElementId: block.id,
+          elementId: `${block.id}_r${rowIndex + 1}_c${colIndex + 1}`,
+          elementType: "table_cell",
+          label: plainTextForSay(cell),
+        },
+        counters,
+      );
+      row.appendChild(td);
+    });
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+  return table;
+}
+
+function blockTitle(block, fallback = "") {
+  return block.title || fallback;
+}
+
+function segmentPath(from, to) {
+  const dx = Math.max(40, Math.abs(to.x - from.x) * 0.45);
+  return `M ${from.x} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x} ${to.y}`;
+}
+
+function verticalSegmentPath(from, to) {
+  const dy = Math.max(32, Math.abs(to.y - from.y) * 0.38);
+  return `M ${from.x} ${from.y} C ${from.x} ${from.y + dy}, ${to.x} ${to.y - dy}, ${to.x} ${to.y}`;
+}
+
+function coursePathPoints(count, orientation = "horizontal") {
+  const total = Math.max(1, count);
+  if (orientation === "vertical") {
+    if (total === 1) return [{ x: 500, y: 430 }];
+    return Array.from({ length: total }, (_item, index) => {
+      const y = 76 + index * (708 / (total - 1));
+      const x = index % 2 === 0 ? 420 : 570;
+      return { x, y };
+    });
+  }
+  if (total === 1) return [{ x: 500, y: 108 }];
+  return Array.from({ length: total }, (_item, index) => {
+    const x = 76 + index * (848 / (total - 1));
+    const wave = index % 2 === 0 ? 82 : 140;
+    return { x, y: wave };
+  });
+}
+
+function renderCoursePathBody(block, slideId, counters) {
+  const items = Array.isArray(block.items) ? block.items : [];
+  if (block.layout === "topic_grid") {
+    return renderCourseTopicGrid(block, items, slideId, counters);
+  }
+  const orientation = block.orientation === "vertical" ? "vertical" : "horizontal";
+  const stage = document.createElement("div");
+  stage.className = `course-path-stage course-path-stage--${orientation}`;
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "course-path-svg");
+  svg.setAttribute("viewBox", orientation === "vertical" ? "0 0 1000 860" : "0 0 1000 220");
+  svg.setAttribute("aria-hidden", "true");
+
+  const points = coursePathPoints(items.length, orientation);
+  points.slice(0, -1).forEach((point, index) => {
+    const nextPoint = points[index + 1];
+    const nextStatus = items[index + 1]?.status || "upcoming";
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", orientation === "vertical" ? verticalSegmentPath(point, nextPoint) : segmentPath(point, nextPoint));
+    path.setAttribute("class", `course-path-curve course-path-curve--${nextStatus}`);
+    svg.appendChild(path);
+  });
+  stage.appendChild(svg);
+
+  items.forEach((item, index) => {
+    const point = points[index];
+    const status = item.status || (item.id === block.currentId ? "current" : "upcoming");
+    const node = document.createElement("div");
+    node.className = `course-path-node course-path-node--${status}`;
+    node.style.left = `${point.x / 10}%`;
+    node.style.top = orientation === "vertical" ? `${point.y / 8.6}%` : `${point.y / 2.2}%`;
+    applyElementMetadata(node, {
+      slideId,
+      parentElementId: block.id,
+      elementId: item.id || `${block.id}_item_${index + 1}`,
+      elementType: "course_path_item",
+      label: plainTextForSay([item.label, item.note].filter(Boolean).join(": ")),
+    });
+
+    const marker = document.createElement("div");
+    marker.className = "course-path-marker";
+    marker.textContent = status === "completed" ? "✓" : String(index + 1);
+    node.appendChild(marker);
+
+    node.appendChild(createRichTextElement(
+      "div",
+      item.label || `Step ${index + 1}`,
+      {
+        slideId,
+        parentElementId: item.id || block.id,
+        elementId: `${item.id || `${block.id}_item_${index + 1}`}_label`,
+        elementType: "course_path_label",
+        label: plainTextForSay(item.label || ""),
+      },
+      counters,
+      { className: "course-path-label", sayText: item.say || item.label || "" },
+    ));
+
+    if (item.note) {
+      node.appendChild(createRichTextElement(
+        "div",
+        item.note,
+        {
+          slideId,
+          parentElementId: item.id || block.id,
+          elementId: `${item.id || `${block.id}_item_${index + 1}`}_note`,
+          elementType: "course_path_note",
+          label: plainTextForSay(item.note),
+        },
+        counters,
+        { className: "course-path-note", sayText: item.note },
+      ));
+    }
+    stage.appendChild(node);
+  });
+
+  return stage;
+}
+
+function renderCourseTopicGrid(block, items, slideId, counters) {
+  const stage = document.createElement("div");
+  stage.className = "course-topic-grid";
+
+  const grouped = [];
+  items.forEach((item, index) => {
+    const session = item.session || "";
+    let group = grouped[grouped.length - 1];
+    if (!group || group.session !== session) {
+      group = { session, items: [] };
+      grouped.push(group);
+    }
+    group.items.push({ ...item, _index: index });
+  });
+
+  grouped.forEach((group, groupIndex) => {
+    const section = document.createElement("div");
+    section.className = "course-topic-session";
+
+    const heading = createRichTextElement(
+      "div",
+      group.session || `Session ${groupIndex + 1}`,
+      {
+        slideId,
+        parentElementId: block.id,
+        elementId: `${block.id}_session_${groupIndex + 1}`,
+        elementType: "course_path_session",
+        label: plainTextForSay(group.session || `Session ${groupIndex + 1}`),
+      },
+      counters,
+      { className: "course-topic-session-title", sayText: group.session || `Session ${groupIndex + 1}` },
+    );
+    section.appendChild(heading);
+
+    const track = document.createElement("div");
+    track.className = "course-topic-track";
+
+    group.items.forEach((item) => {
+      const status = item.status || (item.id === block.currentId ? "current" : "upcoming");
+      const expanded = Boolean(item.expanded || status === "current");
+      const node = document.createElement("div");
+      node.className = [
+        "course-topic-item",
+        `course-topic-item--${status}`,
+        expanded ? "course-topic-item--expanded" : "course-topic-item--compact",
+      ].join(" ");
+      applyElementMetadata(node, {
+        slideId,
+        parentElementId: block.id,
+        elementId: item.id || `${block.id}_topic_${item._index + 1}`,
+        elementType: "course_path_item",
+        label: plainTextForSay([item.number || item._index + 1, item.label, item.note].filter(Boolean).join(": ")),
+      });
+
+      const marker = document.createElement("span");
+      marker.className = "course-topic-number";
+      marker.textContent = String(item.number || item._index + 1);
+      node.appendChild(marker);
+
+      if (expanded) {
+        const textWrap = document.createElement("span");
+        textWrap.className = "course-topic-copy";
+        textWrap.appendChild(createRichTextElement(
+          "span",
+          item.label || `Topic ${item.number || item._index + 1}`,
+          {
+            slideId,
+            parentElementId: item.id || block.id,
+            elementId: `${item.id || `${block.id}_topic_${item._index + 1}`}_label`,
+            elementType: "course_path_label",
+            label: plainTextForSay(item.label || ""),
+          },
+          counters,
+          { className: "course-topic-label", sayText: item.say || item.label || "" },
+        ));
+        if (item.note) {
+          textWrap.appendChild(createRichTextElement(
+            "span",
+            item.note,
+            {
+              slideId,
+              parentElementId: item.id || block.id,
+              elementId: `${item.id || `${block.id}_topic_${item._index + 1}`}_note`,
+              elementType: "course_path_note",
+              label: plainTextForSay(item.note),
+            },
+            counters,
+            { className: "course-topic-note", sayText: item.note },
+          ));
+        }
+        node.appendChild(textWrap);
+      }
+
+      track.appendChild(node);
+    });
+
+    section.appendChild(track);
+    stage.appendChild(section);
+  });
+
+  return stage;
+}
+
+function renderBlock(block, slideId, counters) {
+  if (!block) return null;
+
+  if (block.type === "math_table") {
+    return renderMathTable(block, slideId, counters);
+  }
+
+  const wrapper = document.createElement("div");
+  const type = block.type || "paragraph";
+  wrapper.className = `content-block content-block--${type}`;
+  applyElementMetadata(wrapper, {
+    slideId,
+    elementId: block.id,
+    elementType: type,
+    label: plainTextForSay(block.title || block.text || block.formula || type),
+  });
+
+  const title = blockTitle(block, {
+    formula_block: "Formula",
+    derivation_steps: "Derivation",
+    theorem_box: "Theorem",
+    example_solution: "Example",
+    proof_sketch: "Proof sketch",
+    misconception_compare: "Compare",
+    pause_and_reveal: "Pause",
+    nested_bullets: "",
+    course_path: "",
+    paragraph: "",
+  }[type] || "");
+
+  if (title) {
+    wrapper.appendChild(
+      createRichTextElement(
+        "div",
+        title,
+        {
+          slideId,
+          parentElementId: block.id,
+          elementId: block.titleId || `${block.id}_title`,
+          elementType: `${type}_title`,
+          label: plainTextForSay(title),
+        },
+        counters,
+        { className: "content-block-title", sayText: title },
+      ),
+    );
+  }
+
+  if (type === "formula_block") {
+    const formulas = Array.isArray(block.formulas) && block.formulas.length
+      ? block.formulas
+      : [block.formula ? `$$${block.formula}$$` : block.text].filter(Boolean);
+    formulas.forEach((formula, index) => {
+      wrapper.appendChild(
+        createRichTextElement(
+          "div",
+          formula,
+          {
+            slideId,
+            parentElementId: block.id,
+            elementId: formulas.length === 1
+              ? block.bodyId || `${block.id}_body`
+              : `${block.id}_formula_${index + 1}`,
+            elementType: "formula",
+            label: plainTextForSay(formula),
+          },
+          counters,
+          { className: "formula-block-body", sayText: block.say || formula },
+        ),
+      );
+    });
+    return wrapper;
+  }
+
+  if (type === "derivation_steps" || type === "example_solution" || type === "proof_sketch") {
+    if (block.text) {
+      wrapper.appendChild(
+        createRichTextElement(
+          "p",
+          block.text,
+          {
+            slideId,
+            parentElementId: block.id,
+            elementId: block.bodyId || `${block.id}_body`,
+            elementType: `${type}_body`,
+            label: plainTextForSay(block.text),
+          },
+          counters,
+          { className: "deck-paragraph", sayText: block.say || block.text },
+        ),
+      );
+    }
+    if (Array.isArray(block.steps) && block.steps.length) {
+      wrapper.appendChild(renderBlockList(block.steps, slideId, counters, true));
+    }
+    return wrapper;
+  }
+
+  if (type === "theorem_box") {
+    if (block.text) {
+      wrapper.appendChild(
+        createRichTextElement(
+          "p",
+          block.text,
+          {
+            slideId,
+            parentElementId: block.id,
+            elementId: block.bodyId || `${block.id}_body`,
+            elementType: "theorem_statement",
+            label: plainTextForSay(block.text),
+          },
+          counters,
+          { className: "deck-paragraph", sayText: block.say || block.text },
+        ),
+      );
+    }
+    return wrapper;
+  }
+
+  if (type === "misconception_compare") {
+    const compare = document.createElement("div");
+    compare.className = "misconception-compare-grid";
+    const pairs = block.pairs || [
+      { label: "Tempting mistake", text: block.wrong || "" },
+      { label: "Safer reasoning", text: block.correct || block.text || "" },
+    ];
+    pairs.forEach((pair, index) => {
+      const panel = document.createElement("div");
+      panel.className = index === 0 ? "compare-panel compare-panel--wrong" : "compare-panel compare-panel--right";
+      panel.appendChild(createRichTextElement(
+        "div",
+        pair.label || (index === 0 ? "Mistake" : "Correction"),
+        {
+          slideId,
+          parentElementId: block.id,
+          elementId: `${block.id}_compare_${index + 1}_label`,
+          elementType: "compare_label",
+          label: pair.label || "",
+        },
+        counters,
+        { className: "compare-label" },
+      ));
+      panel.appendChild(createRichTextElement(
+        "p",
+        pair.text || "",
+        {
+          slideId,
+          parentElementId: block.id,
+          elementId: `${block.id}_compare_${index + 1}`,
+          elementType: "compare_text",
+          label: plainTextForSay(pair.text || ""),
+        },
+        counters,
+        { className: "deck-paragraph", sayText: pair.say || pair.text || "" },
+      ));
+      compare.appendChild(panel);
+    });
+    wrapper.appendChild(compare);
+    return wrapper;
+  }
+
+  if (type === "pause_and_reveal") {
+    const details = document.createElement("details");
+    details.className = "pause-reveal";
+    const summary = createRichTextElement(
+      "summary",
+      block.prompt || block.text || "Pause and predict",
+      {
+        slideId,
+        parentElementId: block.id,
+        elementId: block.bodyId || `${block.id}_prompt`,
+        elementType: "prompt",
+        label: plainTextForSay(block.prompt || block.text),
+      },
+      counters,
+      { sayText: block.say || block.prompt || block.text },
+    );
+    details.appendChild(summary);
+    if (block.reveal?.text) {
+      details.appendChild(createRichTextElement(
+        "div",
+        block.reveal.text,
+        {
+          slideId,
+          parentElementId: block.id,
+          elementId: block.reveal.id,
+          elementType: "reveal",
+          label: plainTextForSay(block.reveal.text),
+        },
+        counters,
+        { className: "reveal-body", sayText: block.reveal.say || block.reveal.text },
+      ));
+    }
+    wrapper.appendChild(details);
+    return wrapper;
+  }
+
+  if (type === "nested_bullets") {
+    wrapper.appendChild(renderBlockList(block.items, slideId, counters, false));
+    return wrapper;
+  }
+
+  if (type === "course_path") {
+    wrapper.appendChild(renderCoursePathBody(block, slideId, counters));
+    return wrapper;
+  }
+
+  if (block.text) {
+    wrapper.appendChild(
+      createRichTextElement(
+        "p",
+        block.text,
+        {
+          slideId,
+          parentElementId: block.id,
+          elementId: block.bodyId || `${block.id}_body`,
+          elementType: "paragraph",
+          label: plainTextForSay(block.text),
+        },
+        counters,
+        { className: "deck-paragraph", sayText: block.say || block.text },
+      ),
+    );
+  }
+
+  return wrapper;
+}
+
+function renderBlocks(blocks, slideId, counters) {
+  const fragment = document.createDocumentFragment();
+  (blocks || []).forEach((block) => {
+    const rendered = renderBlock(block, slideId, counters);
+    if (rendered) fragment.appendChild(rendered);
+  });
+  return fragment;
 }
 
 function renderLegacyHtml(html, meta, counters) {
@@ -141,6 +714,34 @@ function renderLegacyHtml(html, meta, counters) {
   applyElementMetadata(wrapper, meta);
   annotateRichArtifacts(wrapper, meta.slideId, meta.elementId, counters);
   return wrapper;
+}
+
+function resolveMediaSrc(src) {
+  const value = String(src || "").trim();
+  if (!value) return "";
+  if (/^(?:[a-z]+:|\/\/|\/|\.\/|\.\.\/|#)/i.test(value)) return value;
+  return `/${value}`;
+}
+
+function renderSlideQuestion(slide, slideEl, counters) {
+  if (!slide.question) return;
+  slideEl.appendChild(
+    createRichTextElement(
+      "div",
+      slide.question,
+      {
+        slideId: slide.slideId,
+        elementId: slide.questionId || "question",
+        elementType: "question",
+        label: plainTextForSay(slide.question),
+      },
+      counters,
+      {
+        className: "slide-question",
+        sayText: slide.questionSay || slide.question,
+      },
+    ),
+  );
 }
 
 function renderMedia(media, meta, counters) {
@@ -169,7 +770,7 @@ function renderMedia(media, meta, counters) {
       if (!item?.src) return;
 
       const img = document.createElement("img");
-      img.src = item.src;
+      img.src = resolveMediaSrc(item.src);
       img.alt = item.alt || item.caption || "";
       img.className = ((item.fit || fitDefault) + "").toLowerCase() === "cover"
         ? "fit-cover stacked-media"
@@ -218,7 +819,8 @@ function renderMedia(media, meta, counters) {
     return wrap;
   }
 
-  if (!media.src) return null;
+  const kind = (media.kind || "image").toLowerCase();
+  if (!media.src && kind !== "calculus_widget") return null;
 
   const wrap = document.createElement("div");
   wrap.className = "media-fill";
@@ -226,14 +828,16 @@ function renderMedia(media, meta, counters) {
   const stage = document.createElement("div");
   stage.className = "media-stage";
 
-  const kind = (media.kind || "image").toLowerCase();
   const fit = (media.fit || "contain").toLowerCase();
 
   let element;
 
-  if (kind === "video") {
+  if (kind === "calculus_widget") {
+    element = document.createElement("div");
+    element.className = "calculus-widget-mount";
+  } else if (kind === "video") {
     element = document.createElement("video");
-    element.src = media.src;
+    element.src = resolveMediaSrc(media.src);
     element.controls = media.controls ?? true;
     element.autoplay = media.autoplay ?? false;
     element.loop = media.loop ?? false;
@@ -242,7 +846,7 @@ function renderMedia(media, meta, counters) {
     if (media.poster) element.poster = media.poster;
   } else if (kind === "iframe" || kind === "widget") {
     element = document.createElement("iframe");
-    element.src = media.src;
+    element.src = resolveMediaSrc(media.src);
     element.allow = media.allow || "fullscreen";
     element.title = media.title || media.caption || media.source || media.id;
     element.loading = media.loading || "eager";
@@ -251,7 +855,7 @@ function renderMedia(media, meta, counters) {
     }
   } else {
     element = document.createElement("img");
-    element.src = media.src;
+    element.src = resolveMediaSrc(media.src);
     element.alt = media.alt || media.caption || "";
     element.loading = media.loading || "eager";
   }
@@ -264,14 +868,19 @@ function renderMedia(media, meta, counters) {
     slideId: meta.slideId,
     parentElementId: meta.parentElementId,
     elementId: media.id,
-    elementType: kind === "widget" ? "widget" : kind,
+    elementType: kind === "widget" || kind === "calculus_widget" ? "widget" : kind,
     label: media.title || media.caption || media.source || media.alt || media.id,
   });
 
   stage.appendChild(element);
   wrap.appendChild(stage);
 
-  const srcText = media.source || media.caption;
+  if (kind === "calculus_widget") {
+    const enqueue = window.queueMicrotask || ((fn) => window.setTimeout(fn, 0));
+    enqueue(() => mountCalculusWidget(element, media));
+  }
+
+  const srcText = kind === "calculus_widget" ? "" : (media.source || media.caption);
   const srcHref = media.sourceHref || media.href;
   if (srcText) {
     const cap = document.createElement("div");
@@ -330,6 +939,10 @@ function renderColumn(column, slideId, counters) {
     columnEl.appendChild(renderParagraphList(column.paragraphs, slideId, counters));
   }
 
+  if (Array.isArray(column.blocks) && column.blocks.length) {
+    columnEl.appendChild(renderBlocks(column.blocks, slideId, counters));
+  }
+
   if (Array.isArray(column.bullets) && column.bullets.length) {
     columnEl.appendChild(renderBulletList(column.bullets, slideId, counters));
   }
@@ -380,6 +993,8 @@ function renderTextSlide(slide, slideEl, counters) {
     );
   }
 
+  renderSlideQuestion(slide, slideEl, counters);
+
   if (slide.lead) {
     slideEl.appendChild(
       createRichTextElement(
@@ -403,6 +1018,18 @@ function renderTextSlide(slide, slideEl, counters) {
 
   if (Array.isArray(slide.paragraphs) && slide.paragraphs.length) {
     slideEl.appendChild(renderParagraphList(slide.paragraphs, slide.slideId, counters));
+  }
+
+  if (Array.isArray(slide.blocks) && slide.blocks.length) {
+    slideEl.appendChild(renderBlocks(slide.blocks, slide.slideId, counters));
+  }
+
+  if (slide.media) {
+    const media = renderMedia(slide.media, {
+      slideId: slide.slideId,
+      parentElementId: "",
+    }, counters);
+    if (media) slideEl.appendChild(media);
   }
 }
 
@@ -512,8 +1139,22 @@ export function renderSlide(slideData, idx) {
       );
     }
 
+    renderSlideQuestion(slideData, slide, counters);
+
+    const hasBlocks = Array.isArray(slideData.blocks) && slideData.blocks.length;
+    const body = hasBlocks ? document.createElement("div") : slide;
+    if (hasBlocks) {
+      body.className = "bullets-with-blocks";
+    }
+
+    const main = hasBlocks ? document.createElement("div") : body;
+    if (hasBlocks) {
+      main.className = "bullets-main";
+      body.appendChild(main);
+    }
+
     if (slideData.lead) {
-      slide.appendChild(
+      main.appendChild(
         createRichTextElement(
           "p",
           slideData.lead,
@@ -533,13 +1174,79 @@ export function renderSlide(slideData, idx) {
       );
     }
 
-    slide.appendChild(renderBulletList(slideData.bullets || [], slideId, counters));
+    main.appendChild(renderBulletList(slideData.bullets || [], slideId, counters));
+
+    if (hasBlocks) {
+      const side = document.createElement("div");
+      side.className = "bullets-side";
+      side.appendChild(renderBlocks(slideData.blocks, slideId, counters));
+      body.appendChild(side);
+      slide.appendChild(body);
+    }
+
     typesetMath(slide);
     return slide;
   }
 
   if (slideData.type === "text") {
     renderTextSlide(slideData, slide, counters);
+    typesetMath(slide);
+    return slide;
+  }
+
+  if (slideData.type === "visual_lab") {
+    slide.classList.add("visual-lab-slide");
+    if (slideData.title) {
+      slide.appendChild(
+        createRichTextElement(
+          "h2",
+          slideData.title,
+          {
+            slideId,
+            elementId: slideData.titleId,
+            elementType: "title",
+            label: plainTextForSay(slideData.title),
+          },
+          counters,
+          {
+            sayText: slideData.titleSay || slideData.title,
+          },
+        ),
+      );
+    }
+
+    if (slideData.lead) {
+      slide.appendChild(
+        createRichTextElement(
+          "p",
+          slideData.lead,
+          {
+            slideId,
+            elementId: slideData.leadId,
+            elementType: "lead",
+            label: plainTextForSay(slideData.lead),
+          },
+          counters,
+          {
+            className: "muted visual-lab-lead",
+            sayText: slideData.lead,
+          },
+        ),
+      );
+    }
+
+    if (Array.isArray(slideData.blocks) && slideData.blocks.length) {
+      slide.appendChild(renderBlocks(slideData.blocks, slideId, counters));
+    }
+
+    if (slideData.media) {
+      const media = renderMedia(slideData.media, {
+        slideId,
+        parentElementId: "",
+      }, counters);
+      if (media) slide.appendChild(media);
+    }
+
     typesetMath(slide);
     return slide;
   }
@@ -563,6 +1270,8 @@ export function renderSlide(slideData, idx) {
         ),
       );
     }
+
+    renderSlideQuestion(slideData, slide, counters);
 
     const grid = document.createElement("div");
     grid.className = "two-col";

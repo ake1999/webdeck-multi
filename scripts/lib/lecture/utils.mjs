@@ -301,7 +301,16 @@ export function verbalizeCodeBlock(code) {
 
 export function summarizeMediaLabel(media) {
   if (!media) return "";
-  return plainTextForSpeech(media.caption || media.alt || media.source || media.title || media.id || "");
+  return plainTextForSpeech(
+    media.caption
+      || media.alt
+      || media.title
+      || media.widget
+      || media.sourceSpec
+      || media.source
+      || media.id
+      || "",
+  );
 }
 
 export function bulletLead(index, total) {
@@ -317,7 +326,7 @@ export function bulletLead(index, total) {
 }
 
 export function defaultAttentionMode(targetType) {
-  if (["image", "gallery", "video", "iframe", "widget", "caption"].includes(targetType)) {
+  if (["image", "gallery", "video", "iframe", "widget", "calculus_widget", "caption"].includes(targetType)) {
     return "hybrid_focus";
   }
   return "slide_focus";

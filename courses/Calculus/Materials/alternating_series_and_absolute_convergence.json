@@ -1,0 +1,372 @@
+{
+  "lecture_meta": {
+    "title": "Alternating Series and Absolute Convergence",
+    "topic": "Series convergence tests",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Apply the Alternating Series Test to determine convergence of alternating series",
+      "Distinguish between absolute and conditional convergence",
+      "Use the Absolute Convergence Theorem to prove convergence",
+      "Analyze series with irregular sign patterns using absolute convergence",
+      "Evaluate series convergence using the Ratio Test for absolute convergence"
+    ],
+    "prerequisite_reminder": "Comparison Test and p-series: ∑ 1/n^p converges if p>1, diverges if p≤1."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "The Bouncing Ball and the Drunkard's Walk",
+      "left": {
+        "content_type": "text",
+        "content": "An alternating series is like a bouncing ball settling to rest. But some series only converge because of careful cancellation - like a drunkard's walk where forward and backward steps happen to balance. Which series are reliable?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Bouncing ball animation with decaying amplitude",
+        "visual_spec": "Draw a vertical line representing height. Animate a ball bouncing with each bounce half the previous height. Show a horizontal line at final resting height. Use matplotlib.axes and a slider to control number of bounces (1 to 10).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(6,4))\nplt.subplots_adjust(bottom=0.25)\nax.set_ylim(0, 1.1)\nax.set_xlim(0, 10)\nax.set_xlabel('Bounce number')\nax.set_ylabel('Height')\n\nn_max = 10\nheights = [1/(2**i) for i in range(n_max)]\nline, = ax.stem(range(1, n_max+1), heights, linefmt='-', markerfmt='o', basefmt=' ')\nax.axhline(0, color='gray', linestyle='--')\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'Bounces', 1, n_max, valinit=n_max, valstep=1)\n\ndef update(val):\n    n = int(slider.val)\n    h = [1/(2**i) for i in range(n)]\n    line.set_data(range(1, n+1), h)\n    ax.set_xticks(range(1, n+1))\n    plt.draw()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for number of bounces from 1 to 10"
+        ]
+      },
+      "on_screen_text": "An alternating series is like a bouncing ball. But some series only converge because the signs cancel. Which are trustworthy?",
+      "teacher_narration": "Think of an alternating series as a bouncing ball that gradually settles. The Alternating Series Test tells us when the ball comes to rest: the bounces must get smaller and approach zero. But here's the twist: some series only converge because of careful cancellation between positive and negative terms. If you take all terms as positive, they diverge. That's conditional convergence. Today we'll learn to tell the difference.",
+      "student_prompt": "If the ball bounces with heights 1, 1/2, 1/3, 1/4, ..., does it ever settle? Why might this be different from heights 1, 1/2, 1/4, 1/8, ...?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Alternating Series Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\sum_{n=1}^{\\infty} (-1)^{n-1} b_n = b_1 - b_2 + b_3 - b_4 + \\cdots$$\n\n**Conditions:**\n- $b_n > 0$\n- $b_{n+1} \\leq b_n$ for all $n$\n- $\\lim_{n\\to\\infty} b_n = 0$\n\nIf all hold, the series converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of b_n decreasing to zero with alternating signs highlighted",
+        "visual_spec": "Plot b_n = 1/n as blue points for n=1..20. Add red vertical lines for positive terms (upward from x-axis) and green vertical lines for negative terms (downward from x-axis) to show the alternating signs. Label axes: n and b_n. Show a horizontal dashed line at y=0.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Three conditions: positive terms, decreasing, limit zero → convergence guaranteed.",
+      "teacher_narration": "The Alternating Series Test is our first tool for series with alternating signs. It has three conditions: the terms must be positive, they must be decreasing (or at least non‑increasing), and they must approach zero. If all three hold, the series converges. Notice the test does not tell us the sum, only that it exists. Also important: the error after n terms is at most the first omitted term.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up Example: Alternating Series Test",
+      "left": {
+        "content_type": "steps",
+        "content": "**Test $\\sum_{n=1}^{\\infty} \\frac{(-1)^{n+1}}{n^2}$**\n\n1. $b_n = \\frac{1}{n^2} > 0$\n2. Decreasing: $\\frac{1}{(n+1)^2} < \\frac{1}{n^2}$ for all $n$\n3. $\\lim b_n = 0$ → Both conditions satisfied.\n\n**Conclusion:** Converges by Alternating Series Test.\n\n**Absolute convergence:** $\\sum \\frac{1}{n^2}$ converges (p-series, p=2), so the series converges absolutely."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Partial sums converging to π²/12",
+        "visual_spec": "Plot partial sums S_n for n=1..20. Show a horizontal line at the limit π²/12 ≈ 0.822. Highlight how even and odd partial sums bracket the limit.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∑ (-1)^{n+1}/n²: b_n = 1/n², decreasing, limit 0 → converges.",
+      "teacher_narration": "Let's test the series ∑ (-1)^{n+1} over n squared. The positive part b_n is 1/n². It's clearly decreasing as n increases, and its limit is zero. Both conditions are satisfied, so the series converges. Later we'll see that this series actually converges absolutely, meaning the series of absolute values also converges. This is a nice example because the absolute series is a convergent p-series, so we get absolute convergence automatically. The partial sums approach π²/12, which is about 0.822. Notice how the even and odd partial sums bracket this limit from below and above, giving us a natural error bound.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Standard Example: Using Calculus to Check Decreasing",
+      "left": {
+        "content_type": "steps",
+        "content": "**Test $\\sum_{n=1}^{\\infty} \\frac{(-1)^n n}{n^2+1}$**\n\n1. $b_n = \\frac{n}{n^2+1}$\n2. $\\lim b_n = 0$ (degrees: numerator < denominator)\n3. Check decreasing via derivative:\n   $f(x)=\\frac{x}{x^2+1}$\n   $f'(x)=\\frac{1-x^2}{(x^2+1)^2}$\n   $f'(x)<0$ for $x>1$ → decreasing for $n\\ge2$\n\n**Conclusion:** Converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x/(x^2+1) showing decreasing after x=1",
+        "visual_spec": "Plot f(x) from x=0 to 10. Mark x=1 with vertical dashed line. Shade region where f'(x)<0. Show points for n=1..10. Set y-axis range from 0 to 0.6. Overlay discrete points at integer x values.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "b_n = n/(n²+1): limit zero, decreasing for n≥2 → AST applies.",
+      "teacher_narration": "Here the decreasing condition isn't obvious. We use calculus: define f(x) = x/(x²+1). Its derivative is (1−x²)/(x²+1)², which is negative for x>1. So the terms b_n are decreasing for n≥2. Since the Alternating Series Test only requires eventual decreasing, the series converges. This example shows how to combine differentiation with the alternating series test. It's a common technique when the terms are rational functions that aren't obviously monotonic from inspection alone.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Does This Series Converge?",
+      "left": {
+        "content_type": "text",
+        "content": "**Test $\\sum_{n=1}^{\\infty} \\frac{(-1)^n}{\\sqrt{n}}$ for convergence.**\n\nThink about the three conditions. Is the series absolutely or conditionally convergent?",
+        "student_prompt": "Attempt before the next slide reveals the solution."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Question mark with series",
+        "visual_spec": "Simple display: large question mark, series formula, blank space for answer.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∑ (-1)^n / √n: does it converge? Is it absolute or conditional? Try it.",
+      "teacher_narration": "Take a moment to test this series yourself. Write down the steps: what is b_n? Is it decreasing? Does the limit go to zero? Then think about the absolute series. I'll give you a few seconds to try, then we'll go through the answer. Remember that the absolute series is ∑ 1/√n, which is a p-series with p=1/2. Since p ≤ 1, that absolute series diverges. So if the alternating version converges, it will be conditionally convergent.",
+      "student_prompt": "Before revealing the answer, try to determine convergence and classify as absolutely or conditionally convergent.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution: ∑ (-1)^n / √n",
+      "left": {
+        "content_type": "steps",
+        "content": "1. $b_n = 1/\\sqrt{n} > 0$\n2. Decreasing? $b_{n+1} < b_n$ since denominator increases.\n3. $\\lim b_n = 0$ → AST gives convergence.\n4. Absolute series: $\\sum 1/\\sqrt{n}$ = p-series with p=1/2 → diverges.\n\n**Conclusion:** Conditionally convergent."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Partial sums of alternating 1/√n vs absolute harmonic divergence",
+        "visual_spec": "Plot partial sums of original series (blue) and absolute partial sums (red) for n=1..50. Show how absolute sum grows without bound while alternating sum stabilizes around -0.6. Set y-axis range from -2 to 5.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Converges conditionally: AST works, absolute series diverges.",
+      "teacher_narration": "The series converges by the Alternating Series Test because b_n = 1/√n decreases to zero. But the absolute series ∑ 1/√n is a p-series with p=1/2, which diverges. So this series is conditionally convergent—it converges only because of cancellation. If you rearranged the terms, you could change the sum dramatically. This is a classic example that illustrates the difference between absolute and conditional convergence.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Absolute Convergence",
+      "left": {
+        "content_type": "formula_block",
+        "content": "A series $\\sum a_n$ is **absolutely convergent** if $\\sum |a_n|$ converges.\n\nIt is **conditionally convergent** if $\\sum a_n$ converges but $\\sum |a_n|$ diverges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Venn diagram: Absolutely convergent (subset of convergent), conditionally convergent (convergent but not absolute)",
+        "visual_spec": "Draw a large rectangle labeled 'All series'. Inside, a circle labeled 'Convergent'. Inside that, a shaded circle labeled 'Absolutely convergent'. The region in 'Convergent' but outside 'Absolutely convergent' is labeled 'Conditionally convergent'. The 'Absolutely convergent' circle should be about half the diameter of the 'Convergent' circle, centered within it.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Absolute convergence: ∑ |a_n| converges. Conditional: converges but not absolute.",
+      "teacher_narration": "Absolute convergence is a stronger condition: if the series of absolute values converges, then the original series also converges. Conditional convergence means the series only converges because of sign cancellation. This distinction matters because conditionally convergent series are fragile—rearranging terms can change the sum or even cause divergence. The Riemann rearrangement theorem tells us that conditionally convergent series can be rearranged to converge to any real number or even diverge.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Absolute Convergence Implies Convergence Theorem",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Theorem:** If $\\sum |a_n|$ converges, then $\\sum a_n$ converges.\n\n**Proof idea:**\n- $0 \\le a_n + |a_n| \\le 2|a_n|$\n- $\\sum 2|a_n|$ converges → $\\sum (a_n+|a_n|)$ converges (Comparison Test)\n- Then $\\sum a_n = \\sum (a_n+|a_n|) - \\sum |a_n|$ converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Proof steps in a flow diagram",
+        "visual_spec": "Flowchart: Start with '∑ |a_n| converges' → '∑ 2|a_n| converges' → '0 ≤ a_n+|a_n| ≤ 2|a_n|' → '∑ (a_n+|a_n|) converges by Comparison' → '∑ a_n = ∑ (a_n+|a_n|) - ∑ |a_n| converges'. Arrange boxes vertically with downward arrows. Use rounded rectangles for boxes and solid arrowheads.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Absolute convergence implies convergence. Proof uses Comparison Test.",
+      "teacher_narration": "This theorem is our safety net. If we can show absolute convergence, we automatically get convergence of the original series. The proof uses a clever inequality: a_n plus its absolute value is always between 0 and 2|a_n|. Since ∑ 2|a_n| converges, the Comparison Test forces ∑ (a_n+|a_n|) to converge, and then the original series is the difference of two convergent series.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Partial Sums of Alternating Series",
+      "left": {
+        "content_type": "text",
+        "content": "Explore how partial sums approach the limit. Use the slider to adjust the number of terms. Observe how the even and odd partial sums bracket the limit."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive plot of partial sums for alternating harmonic series",
+        "visual_spec": "Plot partial sums S_n = ∑_{k=1}^n (-1)^{k+1}/k for n from 1 to N (controlled by slider). Show horizontal line at limit ln 2. Indicate whether current partial sum is below or above the limit with color (green if below, red if above).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(7,5))\nplt.subplots_adjust(bottom=0.25)\n\nN_max = 50\nn_vals = np.arange(1, N_max+1)\nterms = (-1)**(n_vals+1) / n_vals\npartial_sums = np.cumsum(terms)\nlimit = np.log(2)\n\nline, = ax.plot(n_vals, partial_sums, 'b-o', markersize=3, label='Partial sums')\nax.axhline(limit, color='r', linestyle='--', label='Limit = ln 2')\nax.set_xlabel('n')\nax.set_ylabel('S_n')\nax.legend()\nax.grid(True, alpha=0.3)\nax.set_xlim(1, N_max)\nax.set_ylim(0.5, 0.8)\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'Number of terms', 1, N_max, valinit=20, valstep=1)\n\ndef update(val):\n    N = int(slider.val)\n    line.set_data(n_vals[:N], partial_sums[:N])\n    ax.set_xlim(1, N if N>1 else 2)\n    plt.draw()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for number of terms from 1 to 50",
+          "Toggle: show/hide error band (not implemented in code above, but can be added)"
+        ]
+      },
+      "on_screen_text": "Slider controls number of terms. Watch partial sums approach ln 2.",
+      "teacher_narration": "This interactive plot shows partial sums of the alternating harmonic series. Notice how they oscillate around the limit ln 2. Even partial sums are below the limit, odd sums are above. As you add more terms, the oscillations shrink. This visualizes why the alternating series test requires the terms to decrease to zero—the swings get smaller, so the sum settles.",
+      "student_prompt": "Try moving the slider back and forth. What happens if you use terms that do not decrease? (e.g., 1/n instead of 1/n^2?)",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Absolute vs Conditional Convergence",
+      "left": {
+        "content_type": "text",
+        "content": "Compare three series: ∑ 1/n² (absolute convergent), ∑ (-1)^{n+1}/n (conditional convergent), and ∑ 1/n (divergent). Use the button to reset."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Side-by-side partial sums of absolute, conditional, and divergent harmonic series",
+        "visual_spec": "Plot three lines on same axes: absolute convergent (green, ∑ 1/n²), conditional convergent (blue, ∑ (-1)^{n+1}/n), divergent harmonic (red, ∑ 1/n). X-axis: n, Y-axis: partial sum. Show legend. Add a button to reset view. Set y-axis range from 0 to 5. Label lines with colors and series names.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Button\n\nfig, ax = plt.subplots(figsize=(7,5))\nplt.subplots_adjust(bottom=0.2)\n\nN_max = 100\nn = np.arange(1, N_max+1)\n\nabs_conv = np.cumsum(1/n**2)\ncond_conv = np.cumsum((-1)**(n+1)/n)\nharmonic = np.cumsum(1/n)\n\nline_abs, = ax.plot(n, abs_conv, 'g-', label='∑ 1/n² (absolute conv)')\nline_cond, = ax.plot(n, cond_conv, 'b-', label='∑ (-1)^{n+1}/n (conditional)')\nline_harm, = ax.plot(n, harmonic, 'r--', label='∑ 1/n (divergent)')\n\nax.legend()\nax.set_xlabel('n')\nax.set_ylabel('Partial sum')\nax.grid(True, alpha=0.3)\nax.set_xlim(1, N_max)\nax.set_ylim(0, 5)\n\nax_button = plt.axes([0.45, 0.05, 0.1, 0.04])\nbutton = Button(ax_button, 'Reset')\ndef reset(event):\n    ax.set_xlim(1, N_max)\n    ax.set_ylim(0, 5)\n    plt.draw()\nbutton.on_clicked(reset)\n\nplt.show()",
+        "interactive_controls": [
+          "Button: reset view"
+        ]
+      },
+      "on_screen_text": "Green: absolutely convergent (approaches π²/6). Blue: conditional (approaches ln 2). Red: divergent harmonic.",
+      "teacher_narration": "This plot shows three series side by side. The green line ∑ 1/n² converges to about 1.64. The blue alternating harmonic series converges to ln 2 (about 0.69). The red harmonic series grows without bound—it diverges. The interesting part is that the blue and red series use the same absolute terms 1/n, but the alternating signs make the difference between convergence and divergence. That's conditional convergence.",
+      "student_prompt": "Why does the green series converge even though all terms are positive? (It's a p-series with p>1.)",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Forgetting to Check Decreasing",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:**\n\"For $\\sum \\frac{(-1)^n}{\\sqrt{n} + (-1)^n}$, the terms look like $1/\\sqrt{n}$ which goes to zero, so it converges.\"\n\n**Why it's wrong:** The presence of $(-1)^n$ in the denominator breaks the monotonic decrease. The sequence $b_n = 1/(\\sqrt{n}+(-1)^n)$ is not decreasing. AST does not apply."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot b_n = 1/(√n+(-1)^n) showing non-monotonic behavior",
+        "visual_spec": "Plot b_n for n=1..30. Highlight that b_2 > b_1, b_4 > b_3, etc. Use red circles for points that are not decreasing and blue circles for points that are decreasing. Draw arrows (e.g., upward red arrows) to indicate where the sequence increases.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "The terms must be decreasing. A term like 1/(√n+(-1)^n) is NOT decreasing.",
+      "teacher_narration": "A very common mistake is to only check the limit condition and ignore the decreasing condition. Here the terms are 1 over sqrt(n) plus a wobble. Because the denominator alternates between adding and subtracting 1, the terms bounce up and down. They do not satisfy the decreasing condition, so the Alternating Series Test cannot be applied. You must always verify both conditions.",
+      "student_prompt": "Can you find a different test that might work on this series? (Hint: Try the divergence test first.)",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example: Irregular Signs (cos n) - Using Absolute Convergence",
+      "left": {
+        "content_type": "steps",
+        "content": "**Test $\\sum \\frac{\\cos n}{n^2}$**\n\n1. Bound absolute value: $|\\frac{\\cos n}{n^2}| \\le \\frac{1}{n^2}$\n2. $\\sum \\frac{1}{n^2}$ converges (p-series, p=2)\n3. By Comparison Test, $\\sum |\\frac{\\cos n}{n^2}|$ converges.\n4. Therefore original series converges absolutely (and hence converges)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of cos n/ n^2 partial sums, highlighting convergence",
+        "visual_spec": "Plot partial sums S_n = ∑_{k=1}^n cos(k)/k^2 for n=1..50. Show it settling. Also plot the absolute partial sums to show they also converge. Use blue for original series and red for absolute series. Set y-axis range from 0 to 1.2. Label both lines.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Irregular signs? Bound |cos n| ≤ 1, compare to p-series.",
+      "teacher_narration": "When signs are irregular like cos n, the Alternating Series Test doesn't apply because signs don't alternate in a fixed pattern. Instead, we take absolute values and bound them. Since |cos n| ≤ 1, the absolute series is bounded by ∑ 1/n², which converges. So the original series converges absolutely. This technique works for many series with trigonometric or other oscillating terms.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example: Ratio Test for Absolute Convergence",
+      "left": {
+        "content_type": "steps",
+        "content": "**Test $\\sum \\frac{(-1)^n n}{2^n}$ for absolute convergence**\n\n1. $|a_n| = \\frac{n}{2^n}$\n2. Compute $\\lim \\frac{|a_{n+1}|}{|a_n|} = \\lim \\frac{n+1}{2^{n+1}} \\cdot \\frac{2^n}{n} = \\lim \\frac{n+1}{2n} = \\frac12$\n3. Since $\\frac12 < 1$, $\\sum |a_n|$ converges.\n4. Original series converges absolutely."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of ratio approaching 1/2",
+        "visual_spec": "Plot ratio |a_{n+1}|/|a_n| for n=1..20, with a horizontal dashed line at 1/2. Show the limit approaching 0.5. Set y-axis range from 0 to 1. Annotate the limit line with text 'Limit = 1/2'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Ratio test: limit = 1/2 < 1 → absolute convergence.",
+      "teacher_narration": "For series with exponentials or factorials, the Ratio Test is most efficient. Here the absolute terms are n/2^n. The ratio of consecutive terms simplifies to (n+1)/(2n), which has limit 1/2. Since that limit is less than 1, the series of absolute values converges, and thus the original series converges absolutely. This is often faster than the Alternating Series Test. The Ratio Test is particularly useful because it directly tests absolute convergence, and it works well for series where terms involve exponentials or factorials.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Conditional Convergence of ∑ (-1)^n / ln n",
+      "left": {
+        "content_type": "steps",
+        "content": "**Test $\\sum_{n=2}^{\\infty} \\frac{(-1)^n}{\\ln n}$**\n\n1. $b_n = 1/\\ln n$ positive, decreasing, limit 0 → AST gives convergence.\n2. Absolute series: $\\sum 1/\\ln n$ diverges by comparison to harmonic: $1/\\ln n > 1/n$ for $n\\ge 3$.\n3. Hence conditionally convergent."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of 1/ln n vs 1/n, showing divergence of harmonic",
+        "visual_spec": "Plot 1/ln n and 1/n for n=2..30. Note that 1/ln n > 1/n, so by Comparison Test the sum 1/ln n diverges. Show partial sums of absolute series growing. Use blue for 1/ln n and red for 1/n. Set y-axis range from 0 to 1.5. For partial sums, plot cumulative sum of 1/ln n in a separate subplot or overlay with y-axis on the right.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "[Challenge] ∑ (-1)^n/ln n converges conditionally. Absolute series diverges.",
+      "teacher_narration": "This series converges by AST because 1/ln n decreases to zero. But the absolute series diverges because 1/ln n is larger than 1/n for large n, and we know the harmonic series diverges. So it's conditionally convergent. This is an example where the series converges very slowly—the limit of ln n to zero is extremely slow. It shows that conditional convergence can happen even with very slowly decaying terms.",
+      "student_prompt": "Why is it important to know whether a series is conditionally convergent? (Hint: Riemann rearrangement theorem.)",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary & Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Learning Objectives met:**\n- Alternating Series Test: three conditions (positive, decreasing, limit zero).\n- Absolute convergence: ∑ |a_n| converges → original converges.\n- Conditional convergence: converges but not absolute.\n- Use Ratio Test or Comparison Test to prove absolute convergence.\n\n**Common Pitfalls:**\n- Don't forget to check decreasing condition.\n- Absolute vs conditional ≠ convergent vs divergent.\n- Absolute convergence is stronger."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "AST: check three conditions. Absolute => convergent. Conditional is fragile.",
+      "teacher_narration": "Today we covered two important concepts: the Alternating Series Test and the distinction between absolute and conditional convergence. Remember that absolute convergence is a stronger condition—it guarantees ordinary convergence and protects against weird behavior when rearranging terms. The Alternating Series Test is simple but you must check both the decreasing and limit conditions. Use the Ratio Test for factorials or exponentials. Keep practicing and you'll master these ideas.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

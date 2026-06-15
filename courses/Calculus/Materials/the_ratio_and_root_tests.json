@@ -1,0 +1,343 @@
+{
+  "lecture_meta": {
+    "title": "The Ratio and Root Tests",
+    "topic": "Infinite series convergence tests",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate limits of ratios and nth roots to determine series convergence",
+      "Apply the Ratio Test to series containing factorials and nth powers",
+      "Apply the Root Test to series with terms raised to the nth power",
+      "Interpret the inconclusive case (L = 1) and know when to use alternative tests",
+      "Analyze whether a series converges absolutely, conditionally, or diverges"
+    ],
+    "prerequisite_reminder": "Understand absolute convergence and basic convergence tests (p-series, geometric series, divergence test)."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Do Some Infinite Sums Converge?",
+      "left": {
+        "content_type": "text",
+        "content": "Imagine tracking a bacterial colony: if population shrinks by half daily, it vanishes (converges). If it doubles daily, it explodes (diverges). The Ratio Test measures this daily growth rate; the Root Test checks average growth per step."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two animated sequences in one plot: red dots represent terms of a convergent series (ratio 0.5), blue dots represent terms of a divergent series (ratio 2). Both start at 1 at n=1.",
+        "visual_spec": "Plot two sequences: a_n = (0.5)^n (convergent) and b_n = 2^n (divergent) from n=1 to 20. Use circles for points, different colors. Animate the addition of points one by one. So that around n=10 the red series is near zero and the blue series is huge. Animate with a for loop and pause in matplotlib.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom matplotlib.animation import FuncAnimation\n\nfig, ax = plt.subplots(figsize=(8, 5))\nax.set_xlim(1, 20)\nax.set_ylim(-1, 20)\nax.axhline(0, color='gray', linestyle='--', alpha=0.5)\nax.set_xlabel('n')\nax.set_ylabel('a_n')\nax.set_title('Convergent vs Divergent Series')\n\nn_vals = np.arange(1, 21)\nconvergent = 0.5 ** n_vals\ndivergent = 2 ** n_vals\n\nred_dots, = ax.plot([], [], 'ro', markersize=8, label='Convergent (0.5^n)')\nblue_dots, = ax.plot([], [], 'bo', markersize=8, label='Divergent (2^n)')\nax.legend()\n\ndef init():\n    red_dots.set_data([], [])\n    blue_dots.set_data([], [])\n    return red_dots, blue_dots\n\ndef update(frame):\n    red_dots.set_data(n_vals[:frame], convergent[:frame])\n    blue_dots.set_data(n_vals[:frame], divergent[:frame])\n    return red_dots, blue_dots\n\nani = FuncAnimation(fig, update, frames=range(1, 21), init_func=init, blit=True, interval=500, repeat=True)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Series converge when terms shrink fast enough. Ratio and Root tests measure the 'shrink rate'.",
+      "teacher_narration": "Think about two bacterial colonies. One colony shrinks by half each day — eventually it vanishes. The other doubles each day — it explodes. Infinite series behave in exactly the same way. The Ratio Test compares each term to the previous one, like checking daily population ratios. The Root Test looks at the nth root, revealing the average growth per step. Today we learn how to apply these tests to decide if a series converges or diverges.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Ratio Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\n\\lim_{n \\to \\infty} \\left| \\frac{a_{n+1}}{a_n} \\right| = L\n$$\n\n**Decision rule:**\n- If $L < 1$ → series converges absolutely.\n- If $L > 1$ (or $\\infty$) → series diverges.\n- If $L = 1$ → test is inconclusive (try another test)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two panels: left panel shows a sequence of ratios converging to 0.5 (below threshold 1), right panel shows ratios converging to 2 (above threshold 1). Both panels have dashed horizontal line at y=1.",
+        "visual_spec": "Plot two subplots. Left: line graph of |a_{n+1}/a_n| for a convergent series (e.g., a_n=1/2^n) approaching 0.5. Right: diverging series ratios approaching 2. Use markers. Both have green dashed line at y=1. Title 'Ratio Test'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Ratio Test: L = lim |a_{n+1}/a_n|. Converges if L<1, diverges if L>1, inconclusive if L=1.",
+      "teacher_narration": "The Ratio Test comes from comparing a series to a geometric series. If the ratio of successive terms approaches a number less than one, the series behaves like a convergent geometric series. If the ratio is greater than one, it diverges. Notice the absolute values – we test for absolute convergence. When L exactly equals one, the test tells us nothing – we need another method.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Root Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\n\\lim_{n \\to \\infty} \\sqrt[n]{|a_n|} = L\n$$\n\n**Decision rule:**\n- If $L < 1$ → series converges absolutely.\n- If $L > 1$ (or $\\infty$) → series diverges.\n- If $L = 1$ → test is inconclusive (try another test)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two panels: left panel shows nth root converging to 0.75 (below threshold), right panel shows nth root converging to 1.5 (above threshold). Derive from a_n = ((2n+1)/(3n+1))^n for convergent and a_n = ((3n+1)/(2n+1))^n for divergent.",
+        "visual_spec": "Same layout as Slide 2 but for root test: plot |a_n|^{1/n} vs n. For convergent: use a_n = ((3n+1)/(4n+1))^n so limit ~0.75. For divergent: a_n = ((4n+1)/(3n+1))^n so limit >1. Use markers. Threshold line at y=1.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Root Test: L = lim |a_n|^{1/n}. Converges if L<1, diverges if L>1, inconclusive if L=1.",
+      "teacher_narration": "The Root Test is especially powerful when terms are raised to the nth power. It effectively 'unwraps' the exponent. Like the Ratio Test, it compares to a geometric series. If the limit L is less than one, absolute convergence follows. Be careful: both tests fail when L equals one. However, they are not equivalent – one might give a conclusive answer where the other gives L=1.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 1: Warm-Up – Ratio Test with Factorials",
+      "left": {
+        "content_type": "steps",
+        "content": "Test $\\sum_{n=1}^{\\infty} \\frac{2^n}{n!}$.\n\n1. $a_n = \\frac{2^n}{n!}$.\n2. $|\\frac{a_{n+1}}{a_n}| = \\frac{2}{n+1}$.\n3. $\\lim_{n\\to\\infty} \\frac{2}{n+1} = 0 < 1$.\n4. Series converges absolutely."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two plots: left shows terms a_n (bars) decaying rapidly; right shows ratio 2/(n+1) dropping below 1 and approaching 0.",
+        "visual_spec": "Bar chart of a_n = 2^n / n! for n=1..10, values decaying. Second plot: line of ratio = 2/(n+1) for n=1..10 with threshold line at y=1.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Sum 2^n / n! from 1 to infinity. Ratio = 2/(n+1) → 0. Converges absolutely.",
+      "teacher_narration": "Here our series has a factorial in the denominator. Factorials grow faster than exponentials, so the ratio shrinks to zero. We set up the ratio of consecutive terms, cancel carefully, and get a simple limit. The limit is zero, well below one, so the series converges absolutely. This example shows why the Ratio Test is perfect for factorials. It is a good warm-up because the algebra is straightforward and the conclusion is clear.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 2: Standard – Root Test with nth Powers",
+      "left": {
+        "content_type": "steps",
+        "content": "Test $\\sum_{n=1}^{\\infty} \\left(\\frac{2n+3}{3n+2}\\right)^n$.\n\n1. $a_n = \\left(\\frac{2n+3}{3n+2}\\right)^n$.\n2. $\\sqrt[n]{|a_n|} = \\frac{2n+3}{3n+2}$.\n3. $\\lim_{n\\to\\infty} \\frac{2n+3}{3n+2} = \\frac{2}{3} < 1$.\n4. Series converges absolutely."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of nth root = (2n+3)/(3n+2) vs n, approaching 2/3, with threshold at 1.",
+        "visual_spec": "Line plot of (2n+3)/(3n+2) for n=1..50. Markers, blue line. Horizontal lines at y=2/3 (dashed purple) and y=1 (dashed green).",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Sum ((2n+3)/(3n+2))^n. nth root = (2n+3)/(3n+2) → 2/3. Converges.",
+      "teacher_narration": "When you see a term raised to the nth power, the Root Test is often your best friend. We take the nth root, which removes the exponent, leaving a rational function. As n goes to infinity, the limit is 2/3, less than one. So the series converges absolutely. Notice how directly the Root Test gives the answer. This example is a standard application that shows the test's efficiency.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Forgetting the Absolute Value",
+      "left": {
+        "content_type": "text",
+        "content": "For $\\sum_{n=1}^{\\infty} \\frac{(-1)^n}{n^2}$, computing $\\frac{a_{n+1}}{a_n}$ without absolute value gives $-\\frac{n^2}{(n+1)^2} \\to -1$.\n\n**Wrong conclusion:** Since $-1 < 1$, some might think the series converges by Ratio Test.\n\n**Correct:** Always use absolute value. Then limit is $1$, so Ratio Test is inconclusive. Use Alternating Series Test."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side: left shows wrong computation (blue) and right shows correct absolute value (red) with threshold at 1.",
+        "visual_spec": "Two plots: left plot of a_{n+1}/a_n (no abs) approaching -1; right plot of |a_{n+1}/a_n| approaching 1. Both have y=1 line. Emphasize that left is wrong.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Always use absolute value in Ratio and Root tests. Forgetting it can give wrong conclusions.",
+      "teacher_narration": "A frequent error is to omit the absolute value when computing the ratio. For alternating series like this, the ratio without absolute value might be -1, which is less than one in absolute value, but the test requires the absolute value. With absolute value, the limit is 1, which is inconclusive. So you must then use the Alternating Series Test. Always include the absolute value symbols.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause and Try – Which Test for $\\sum \\frac{n!}{n^n}$?",
+      "left": {
+        "content_type": "text",
+        "content": "We need to test convergence of $\\sum_{n=1}^{\\infty} \\frac{n!}{n^n}$.\n\n**Your turn:** Decide whether to use Ratio Test or Root Test. Predict the limit.\n\nClick the button to reveal the solution."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Initially blank text '?'. After clicking a button, show step-by-step ratio test: ratio = (n/(n+1))^n → 1/e.",
+        "visual_spec": "Use matplotlib Figure with a Button widget. Initially display text 'Choose test'. On button click, clear and display the steps: 'Ratio Test: |a_{n+1}/a_n| = (n/(n+1))^n → 1/e < 1, so converges.'",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reveal solution"
+        ]
+      },
+      "on_screen_text": "Sum n!/n^n. Pause: which test? Predict limit. Then click to reveal.",
+      "teacher_narration": "Before we work through, take a moment to decide: for this series with a factorial and n to the n, which test do you think works better? The Ratio Test or the Root Test? Make your prediction, then click the button to see the solution. This pause helps you think critically about test selection.",
+      "student_prompt": "Which test would you use? Predict the limit L.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 3: Tricky – Factorial vs Exponential (Solution)",
+      "left": {
+        "content_type": "steps",
+        "content": "Test $\\sum_{n=1}^{\\infty} \\frac{n!}{n^n}$.\n\n1. Ratio Test: $a_n = \\frac{n!}{n^n}$.\n2. $|\\frac{a_{n+1}}{a_n}| = \\frac{(n+1)!/(n+1)^{n+1}}{n!/n^n} = \\left(\\frac{n}{n+1}\\right)^n$.\n3. $\\lim_{n\\to\\infty} \\left(\\frac{n}{n+1}\\right)^n = \\frac{1}{e} < 1$.\n4. Series converges absolutely."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show ratio vs n approaching 1/e ~ 0.3679, with threshold line at 1.",
+        "visual_spec": "Line plot of ratio (n/(n+1))^n for n=1..30, approaching 1/e. Horizontal line at y=1/e (dashed) and y=1 (dashed).",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Sum n!/n^n. Ratio Test: limit = 1/e < 1. Converges absolutely.",
+      "teacher_narration": "Now we see the solution. The Ratio Test simplifies beautifully, giving (n/(n+1))^n. As n grows, this approaches 1/e, which is about 0.3679, well below 1. So the series converges. The Root Test would be messy because of the factorial. This example reinforces the idea: use the Ratio Test when factorials are present. The limit 1/e is a classic result worth remembering.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4: Edge Case – When Both Tests Fail",
+      "left": {
+        "content_type": "steps",
+        "content": "Test $\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$.\n\n1. Ratio: $|\\frac{a_{n+1}}{a_n}| = \\frac{n^2}{(n+1)^2} \\to 1$.\n2. Root: $\\sqrt[n]{|a_n|} = n^{-2/n} \\to 1$.\n3. Both inconclusive.\n4. Known p-series: $p=2>1$, so converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two plots: ratio approaching 1, root approaching 1. Then show that the series is a convergent p-series.",
+        "visual_spec": "Side-by-side subplots: left plot of ratio vs n approaching 1; right plot of nth root (n^{-2/n}) approaching 1. Below, text overlay: 'p-series with p=2>1 → converges'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Sum 1/n^2. Ratio & Root both give L=1 (inconclusive). But p-series test says converges (p=2>1).",
+      "teacher_narration": "Even the best tools have limits. For the p-series 1/n^2, both the Ratio and Root Tests give L equals 1, meaning inconclusive. Yet we know from the p-series test that it converges. This is why you need a toolkit of convergence tests. When L equals one, switch to another test like comparison or integral. This example highlights the importance of knowing multiple tests.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 5: Application – Alternating Signs and Factorials",
+      "left": {
+        "content_type": "steps",
+        "content": "Test $\\sum_{n=1}^{\\infty} \\frac{(-3)^n}{n!}$.\n\n1. $|\\frac{a_{n+1}}{a_n}| = \\frac{3}{n+1}$.\n2. $\\lim_{n\\to\\infty} \\frac{3}{n+1} = 0 < 1$.\n3. Series converges absolutely.\n4. (Related to Taylor series for $e^{-3}$.)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show absolute ratio dropping to 0, and partial sums converging to e^{-3} ≈ 0.0498.",
+        "visual_spec": "Line plot of absolute ratio 3/(n+1) vs n (converging to 0). Second plot of partial sums S_N vs N, approaching e^{-3} (dashed line).",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Sum (-3)^n/n!. Ratio (abs) = 3/(n+1) → 0. Converges absolutely. Related to e^{-3}.",
+      "teacher_narration": "Our last example combines alternating signs from (-3)^n and a factorial. The absolute value removes the sign, and the limit simplifies to 3/(n+1) which goes to zero. So the series converges absolutely. In fact, this is the Taylor series for e to the minus 3 centered at zero. Applications like this show the power of the Ratio Test. It connects abstract series to concrete functions.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Ratio Test Visualizer",
+      "left": {
+        "content_type": "concept",
+        "content": "Explore the Ratio Test by adjusting parameters. See how the ratio of terms behaves and whether it crosses the threshold L=1."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive Ratio Test plot with sliders.",
+        "visual_spec": "Two plots: top shows series terms a_n = a^n / n! for n up to N, bottom shows ratio |a_{n+1}/a_n|. Use sliders for base a (0.5 to 5) and max n (1 to 30). Highlight threshold at 1.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom math import factorial\nfrom matplotlib.widgets import Slider\n\n# Initialize\nn_max = 20\nbase = 2.0\nn_vals = np.arange(1, n_max+1)\nterms = [base**n / factorial(n) for n in n_vals]\nratios = terms[1:] / terms[:-1]\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))\nplt.subplots_adjust(bottom=0.3)\n\nax1.plot(n_vals, terms, 'b-o')\nax1.axhline(0, color='gray', ls='--')\nax1.set_xlabel('n'); ax1.set_ylabel('a_n')\nax1.set_title('Series terms')\n\nline2, = ax2.plot(n_vals[1:], ratios, 'r-o')\nax2.axhline(1, color='green', ls='--', label='L=1')\nax2.set_xlabel('n'); ax2.set_ylabel('|a_{n+1}/a_n|')\nax2.set_title('Ratio Test')\nax2.legend()\n\n# Sliders\nax_slider_a = plt.axes([0.2, 0.15, 0.6, 0.03])\nslider_a = Slider(ax_slider_a, 'base a', 0.5, 5.0, valinit=base)\n\nax_slider_n = plt.axes([0.2, 0.07, 0.6, 0.03])\nslider_n = Slider(ax_slider_n, 'max n', 1, 30, valinit=n_max, valstep=1)\n\ndef update(val):\n    a = slider_a.val\n    N = int(slider_n.val)\n    n_vals = np.arange(1, N+1)\n    terms = [a**n / factorial(n) for n in n_vals]\n    ratios = np.array(terms[1:]) / np.array(terms[:-1])\n    ax1.clear(); ax1.plot(n_vals, terms, 'b-o'); ax1.axhline(0, color='gray', ls='--'); ax1.set_xlabel('n'); ax1.set_title('Series terms')\n    ax2.clear(); ax2.plot(n_vals[1:], ratios, 'r-o'); ax2.axhline(1, color='green', ls='--', label='L=1'); ax2.set_xlabel('n'); ax2.set_title('Ratio Test'); ax2.legend()\n    fig.canvas.draw_idle()\n\nslider_a.on_changed(update)\nslider_n.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for base a from 0.5 to 5",
+          "Slider for max n from 1 to 30"
+        ]
+      },
+      "on_screen_text": "Explore the Ratio Test. Adjust the base and see if the ratio limit crosses 1.",
+      "teacher_narration": "Now you can explore the Ratio Test interactively. Slide the base a and see how the ratio of terms changes. When the limit stays below one, the series converges. If it goes above, it diverges. Notice that for a^n/n!, the ratio is |a|/(n+1) which tends to 0, so the Ratio Test always gives L=0, confirming convergence for any a. Try other series if you want.",
+      "student_prompt": "Try base a=2 and see the ratio. Now try a=3. What happens to the limit? Pause and predict.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Root Test Visualizer",
+      "left": {
+        "content_type": "concept",
+        "content": "Explore the Root Test by adjusting the coefficients inside the nth power. Watch the nth root converge to a limit."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive Root Test plot with sliders.",
+        "visual_spec": "Single plot of nth root = (p*n+q)/(r*n+s) vs n with sliders for p,q,r,s, and threshold lines at limit and 1.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom matplotlib.widgets import Slider\n\nn_max = 50\np,q,r,s = 2,3,3,2\n\nfig, ax = plt.subplots(figsize=(8,4))\nplt.subplots_adjust(bottom=0.35)\n\nn = np.arange(1, n_max+1)\nroot = (p*n+q)/(r*n+s)\nline, = ax.plot(n, root, 'b-', label='nth root')\nax.axhline(1, color='green', ls='--', label='L=1')\nax.axhline(p/r, color='purple', ls='--', label='Limit')\nax.set_xlabel('n'); ax.set_ylabel('|a_n|^{1/n}')\nax.set_title('Root Test')\nax.legend()\n\nax_slider_p = plt.axes([0.2, 0.2, 0.6, 0.03])\nax_slider_r = plt.axes([0.2, 0.14, 0.6, 0.03])\nslider_p = Slider(ax_slider_p, 'num coeff p', 1, 10, valinit=p)\nslider_r = Slider(ax_slider_r, 'denom coeff r', 1, 10, valinit=r)\n\ndef update(val):\n    p = slider_p.val\n    r = slider_r.val\n    root = (p*n+q)/(r*n+s)\n    line.set_ydata(root)\n    ax.set_ylim(min(root)-0.5, max(root)+0.5)\n    # update limit line\n    ax.lines[2].set_ydata(np.full(n_max, p/r))\n    fig.canvas.draw_idle()\n\nslider_p.on_changed(update)\nslider_r.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for numerator coefficient p",
+          "Slider for denominator coefficient r"
+        ]
+      },
+      "on_screen_text": "Explore the Root Test. Change coefficients and see the nth root limit.",
+      "teacher_narration": "Similarly, here you can adjust the coefficients inside the nth power term. Watch the nth root stabilize to a limit. If the limit is less than one, the series converges; greater than one, diverges. This visual helps you see why the Root Test works: it unwraps the exponent and reveals the underlying growth rate. Experiment with different values to build intuition.",
+      "student_prompt": "Set numerator coefficient to 2 and denominator to 3. What's the limit? Now try 3 and 2. What happens?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary – When to Use Ratio vs Root",
+      "left": {
+        "content_type": "text",
+        "content": "| Test | Best for | Notes |\n|------|----------|-------|\n| Ratio | Factorials, products, exponentials | Cancels factorials neatly |\n| Root | nth powers | Unwraps exponent |\n| Both | All series | Inconclusive at L=1; try other tests |\n\n**Key idea:** Both test absolute convergence by comparing to geometric series."
+      },
+      "right": null,
+      "on_screen_text": "Ratio Test: factorials, exponentials. Root Test: nth powers. Both inconclusive at L=1. Try other tests.",
+      "teacher_narration": "Today we learned two powerful convergence tests. The Ratio Test compares successive terms, ideal for factorials. The Root Test unwraps exponents, perfect for nth powers. Both test for absolute convergence and fail when L equals one. Practice with the problems in the description. Next time we'll cover the strategy of choosing among all convergence tests. Remember to always use absolute values.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Why the Ratio Test Works (Proof Sketch)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Assume $\\lim |a_{n+1}/a_n| = L < 1$.**\n\n1. Choose $r$ with $L < r < 1$.\n2. For $n \\geq N$, $|a_{n+1}| < r |a_n|$.\n3. By induction, $|a_{N+k}| < r^k |a_N|$.\n4. Tail $\\sum_{k=0}^\\infty |a_{N+k}| < |a_N| \\sum r^k$ (convergent geometric series).\n5. So original series converges absolutely by comparison.\n\nSimilar argument for $L > 1$ leads to divergence."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing the inequality chain: from ratio bound to geometric series domination.",
+        "visual_spec": "Flowchart: start with |a_{n+1}| < r|a_n|, then show |a_{N+1}| < r|a_N|, |a_{N+2}| < r^2|a_N|, etc. Then a box: 'Tail bounded by geometric series $|a_N| \\sum r^k$'. Then arrow to 'Converges'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "If L<1, pick r between L and 1. Tail bounded by geometric series. So converges absolutely.",
+      "teacher_narration": "For those interested, here's why the Ratio Test works. If L is less than one, we can pick a number r strictly between L and one. For large enough n, the ratio stays below r. Then by repeatedly applying the inequality, the tail of the series is bounded by a geometric series with ratio r, which converges. Similar reasoning applies for L greater than one.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    }
+  ]
+}

@@ -1,0 +1,334 @@
+{
+  "lecture_meta": {
+    "title": "The Integral Test and p-Series",
+    "topic": "Integral Test and p-Series",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Verify the three conditions for applying the Integral Test",
+      "Apply the Integral Test to determine series convergence",
+      "Identify and classify p-series",
+      "Use p-series convergence rules to analyze series",
+      "Estimate series sums using the Integral Test remainder bound"
+    ],
+    "prerequisite_reminder": "You should be comfortable with improper integrals and the definition of series convergence."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Surprising Truth About Infinite Sums",
+      "left": {
+        "content_type": "text",
+        "content": "**The harmonic series** $\\sum_{n=1}^\\infty \\frac{1}{n}$ diverges even though its terms approach zero. Could a simple integral tell us why?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph comparing the harmonic series terms (bars) and the integral of 1/x from 1 to ∞ showing divergence",
+        "visual_spec": "Plot area under curve f(x)=1/x from x=1 to 10, with rectangles of width 1 height 1/n for n=1..10. Use different colors: red for rectangles, blue for curve. Show that the integral diverges (unbounded area) by extending the x-axis to at least 100 and including a text annotation that the area grows without bound as the upper limit increases. X-axis label 'n', y-axis 'value'. Title: 'Harmonic Series: Integral Test Intuition'.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nx = np.linspace(1, 100, 2000)\nplt.figure(figsize=(6,4))\nplt.plot(x, 1/x, 'b-', linewidth=2, label='f(x)=1/x')\nfor n in range(1,101):\n    plt.bar(n, 1/n, width=1, alpha=0.3, color='red', align='edge')\nplt.xlabel('n')\nplt.ylabel('value')\nplt.title('Harmonic Series: Integral Test Intuition')\nplt.legend()\nplt.grid(alpha=0.3)\nplt.text(50, 0.5, 'Area grows without bound', fontsize=12, ha='center')\nplt.show()",
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band"
+        ]
+      },
+      "on_screen_text": "The harmonic series diverges even though its terms approach zero. An integral shows why.",
+      "teacher_narration": "Welcome. Today we explore a classic surprise: the harmonic series, summing one over n, diverges. Despite terms shrinking to zero, the total sum grows without bound. The Integral Test will give us a powerful lens to understand this. We'll see that comparing a series to an integral reveals convergence or divergence, and the p-series becomes our first quick-check tool. Think of the integral as measuring the area under the curve, and the series as summing rectangle areas. When the integral diverges, the series does too.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "p-Series: The Quick Check",
+      "left": {
+        "content_type": "concept",
+        "content": "**Definition:** A p-series is $\\sum_{n=1}^\\infty \\frac{1}{n^p}$\n\n**Convergence Rule:**\n- Converges if $p > 1$\n- Diverges if $p \\leq 1$\n\nExamples:\n- $p=2$: converges (sum = $\\pi^2/6$)\n- $p=1$: diverges (harmonic series)\n- $p=0.5$: diverges"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graphs of 1/x^p for p=0.5,1,2 showing area under curve",
+        "visual_spec": "Plot three curves on same axes: f(x)=1/sqrt(x) (dashed red), f(x)=1/x (solid black), f(x)=1/x^2 (dotted blue) from x=1 to 5. Shade area under each with light color: red for 1/sqrt(x), black for 1/x, blue for 1/x^2. Annotate at x=3: 'p=0.5 diverges', 'p=1 diverges', 'p=2 converges'. Axis labels: x, y. Legend outside plot.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: change parameter p",
+          "Toggle: show/hide exact value"
+        ]
+      },
+      "on_screen_text": "p-series: Converges if p > 1, diverges if p ≤ 1. The harmonic series (p=1) is the boundary.",
+      "teacher_narration": "The p-series is our fastest tool. When you see a series like one over n to some power, just check that exponent. If p is greater than one, the series converges. If p is one or less, it diverges. Remember the harmonic series at p=1: it's the slowest divergent series you'll encounter. Its terms decrease slowly, and the total sum never reaches a finite limit. This rule comes directly from the Integral Test applied to 1/x^p.",
+      "student_prompt": "Quick check: Does ∑ 1/n^{0.8} converge?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up Example",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example 1:** Does $\\sum_{n=1}^\\infty \\frac{1}{n^{3/2}}$ converge?\n\n1. Identify $p = \\frac{3}{2}$.\n2. Compare to 1: $\\frac{3}{2} > 1$.\n3. Conclusion: Converges (p-series rule)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=1/x^{1.5} with shaded area indication of convergence (finite area)",
+        "visual_spec": "Plot f(x)=1/x^1.5 from x=1 to 10. Fill under curve with light blue. Overlay a rectangle from x=1 to 2 showing one term of the series. X-axis label 'n', y-label 'value'. Title: 'p=1.5: Converges'.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Button: reveal next step"
+        ]
+      },
+      "on_screen_text": "p = 3/2 > 1 → Converges.",
+      "teacher_narration": "Let's start with a straightforward one. Here we have 1 over n to the three-halves. That exponent is 1.5, which is greater than one. According to the p-series rule, this series converges. Quick check: what about 1 over n to the 0.8? That diverges, since 0.8 is less than one. Now let's move to the general test. The visual on the right shows the area under the curve is finite, matching the convergence.",
+      "student_prompt": "Does ∑ 1/n^{0.8} converge or diverge?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Integral Test Conditions",
+      "left": {
+        "content_type": "concept",
+        "content": "If $f$ is continuous, positive, and decreasing on $[N,\\infty)$ and $a_n = f(n)$, then:\n\n$$\\sum_{n=N}^\\infty a_n \\text{ conv.} \\iff \\int_N^\\infty f(x)\\,dx \\text{ conv.}$$\n\n**Three conditions:**\n1. Continuous\n2. Positive\n3. Decreasing (or eventually decreasing)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing a decreasing positive function with rectangles for left and right sums",
+        "visual_spec": "Plot f(x) = 1/x^2 from 1 to 5. Overlay left rectangles (height f(n)) in red with alpha=0.3 and right rectangles (height f(n+1)) in green with alpha=0.3. X-axis: n, y: f(n). Title: 'Integral Test: Left vs Right Sums'. Legend: 'Left rectangles (overestimate)', 'Right rectangles (underestimate)'.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band"
+        ]
+      },
+      "on_screen_text": "Continuous, positive, decreasing. Then series and integral share convergence.",
+      "teacher_narration": "The Integral Test requires three conditions: the function must be continuous, positive, and decreasing on the interval from N onward. If it's eventually decreasing that's fine too. When these hold, the series that takes function values at integers converges exactly when the improper integral of the function converges. The rectangles you see on the right show why: the series sum is trapped between two integrals. This sandwich relationship is the heart of the test.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Integral vs Series",
+      "left": {
+        "content_type": "text",
+        "content": "Adjust the number of terms $N$ to see how the series sum (rectangles) relates to the integral (area under curve). Cause: The series converges when the integral is finite."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot with slider for N, showing f(x)=1/x^2, left and right rectangles, and shaded integral area",
+        "visual_spec": "Interactive matplotlib plot using ipywidgets. Plot f(x)=1/x^2 from 1 to N+2. For a given N (slider 1 to 30), draw left rectangles (height f(n), width 1, alpha 0.3, red) and right rectangles (height f(n+1), alpha 0.3, green). Shade integral area under curve from 1 to N+2 with light blue. Display numerical values: approximate series sum (∑_{n=1}^N 1/n^2) and integral from 1 to N+2. Title: 'Series sum vs Integral area'. X-axis label 'n', y-label 'f(n)'.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom ipywidgets import interact\n\ndef update(N):\n    x = np.linspace(1, N+2, 200)\n    plt.figure(figsize=(8,5))\n    plt.plot(x, 1/x**2, 'b-', label='f(x)=1/x^2')\n    # left rectangles\n    for n in range(1, N+1):\n        plt.bar(n, 1/n**2, width=1, alpha=0.3, color='red', align='edge')\n    # right rectangles\n    for n in range(1, N+1):\n        plt.bar(n, 1/(n+1)**2, width=1, alpha=0.3, color='green', align='edge')\n    # fill integral area\n    xs = np.linspace(1, N+2, 200)\n    plt.fill_between(xs, 0, 1/xs**2, alpha=0.1, color='blue')\n    plt.axhline(0, color='gray')\n    plt.xlim(0.5, N+2.5)\n    plt.ylim(0, max(1, 1/(N+2)**2)+0.2)\n    plt.xlabel('n')\n    plt.ylabel('f(n)')\n    plt.title('Series vs Integral (N='+str(N)+')')\n    plt.legend()\n    plt.show()\n\ninteract(update, N=(1,30,1))",
+        "interactive_controls": [
+          "Slider for N from 1 to 30"
+        ]
+      },
+      "on_screen_text": "Move the slider. Does the series sum catch up to the integral area?",
+      "teacher_narration": "Drag the slider to increase the number of terms. Watch the left and right rectangles—they sandwich the integral. For this p=2 function, the integral area approaches about 1.64. The series sum also approaches a finite number. This visual tool helps you see why the Integral Test works: the series behavior matches the integral growth.",
+      "student_prompt": "Predict: What happens to the rectangles if we use f(x)=1/x instead?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Standard Rational Function",
+      "left": {
+        "content_type": "steps",
+        "content": "**Test $\\sum_{n=1}^\\infty \\frac{1}{n^2+1}$ for convergence.**\n\n| Step | Action |\n|------|--------|\n| 1 | Set $f(x)=\\frac{1}{x^2+1}$ on $[1,\\infty)$ |\n| 2 | **Check conditions:** |\n|    | Continuous? Yes (denom > 0) |\n|    | Positive? Yes (numerator > 0) |\n|    | Decreasing? $f'(x)=\\frac{-2x}{(x^2+1)^2}<0$ for $x>0$ ✅ |\n| 3 | Compute $\\int_1^\\infty \\frac{1}{x^2+1}dx = \\frac{\\pi}{4}$ |\n| 4 | **Conclusion:** Series converges (integral finite) |"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=1/(x^2+1) from 1 to 10 with shaded area under curve, showing the finite area",
+        "visual_spec": "Plot f(x)=1/(x^2+1) from x=1 to 10. Fill under curve with light blue. X-axis label 'x', y-label 'f(x)'. Title: 'Integral of 1/(x^2+1) from 1 to ∞ = π/4'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∫ 1/(x²+1) from 1 to ∞ = π/4 → Series converges.",
+      "teacher_narration": "Now a standard example. Our function is rational, clearly continuous and positive for all x≥1. The derivative is negative for positive x, so it's decreasing. The integral of 1 over x^2 plus one is arctan x, which from 1 to infinity evaluates to pi over four—a finite number. So the series converges. Notice we didn't need to compute the sum exactly.",
+      "student_prompt": "Try: Test ∑ 1/(n²+2n+2). (Hint: complete the square).",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: When Decreasing Is Not Obvious",
+      "left": {
+        "content_type": "text",
+        "content": "**Avoid the trap: $\\sum_{n=2}^\\infty \\frac{\\ln n}{n}$**\n\nWrong approach: Assume decreasing because $\\ln n$ grows slowly.\n\n**Correct:** Check derivative!\n\n$$f(x)=\\frac{\\ln x}{x},\\quad f'(x)=\\frac{1-\\ln x}{x^2}$$\n\n$$f'(x)<0 \\text{ only when } x>e$$\n\nSo decreasing on $[3,\\infty)$ – still works (eventually decreasing).\n\nIntegral: $\\int_3^\\infty \\frac{\\ln x}{x}dx = \\infty$ → **Diverges**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot f(x)=ln x / x from 1 to 10, highlighting that it increases from x=1 to e, then decreases",
+        "visual_spec": "Plot f(x)=ln x / x from x=1 to 10. Mark vertical line at x=e with dashed line. Shade region from 1 to e where function increases (red) and from e to ∞ where it decreases (green). Title: 'Increasing then Decreasing – Check Derivative'. X-axis label 'x', y-label 'f(x)'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Don't assume decreasing! Derivative shows increase for x<e.",
+      "teacher_narration": "Here's a common mistake: many students see ln x over n and think it's obviously decreasing. But it's not! The derivative reveals that for x between 1 and e, the function actually increases. It only becomes decreasing after e. Fortunately, the Integral Test only requires eventual decreasing—so we start the integral at 3. That integral diverges, so the series diverges. Always compute the derivative.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Edge Case: Boundary p-Value",
+      "left": {
+        "content_type": "steps",
+        "content": "**Test $\\sum_{n=2}^\\infty \\frac{1}{n \\ln n}$**\n\n1. $f(x) = \\frac{1}{x \\ln x}$ on $[2,\\infty)$\n2. Conditions: continuous, positive, decreasing (check derivative: $f'(x) = -\\frac{\\ln x+1}{x^2(\\ln x)^2}<0$)\n3. Integral: $\\int_2^\\infty \\frac{1}{x\\ln x}dx = \\left|\\ln(\\ln x)\\right|_2^\\infty = \\infty$\n4. **Conclusion:** Diverges (even though terms →0)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=1/(x ln x) with slow decay showing divergence",
+        "visual_spec": "Plot f(x)=1/(x ln x) from 2 to 20. Fill area under curve with light red. X-axis label 'x', y-label 'f(x)'. Title: '1/(n ln n): Diverges (p=1 like)'. Annotation: 'Integral diverges like ln(ln x)'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∫ 1/(x ln x) diverges → series diverges. A p=1-like boundary.",
+      "teacher_narration": "This series looks like it might converge because ln n grows. But use the substitution u equals ln x. The integral becomes du over u, which diverges. This is analogous to the harmonic series but even slower. Students often guess convergence here—wrong! The Integral Test clearly shows divergence. This is a classic exam trap. The key is that the integral diverges logarithmically, so the series sum grows without bound.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Remainder Estimate",
+      "left": {
+        "content_type": "concept",
+        "content": "For a convergent series $\\sum a_n$ via Integral Test, the remainder $R_n = S - S_n$ satisfies:\n\n$$\\int_{n+1}^\\infty f(x)dx \\leq R_n \\leq \\int_n^\\infty f(x)dx$$\n\nUsed to find number of terms for desired accuracy.\n\n**Example:** For $\\sum 1/n^3$, find $n$ so $R_n < 0.001$.\n\n- Upper bound: $\\int_n^\\infty 1/x^3 dx = 1/(2n^2)$\n- Solve $1/(2n^2) < 0.001 \\implies n > \\sqrt{500} \\approx 22.36$\n- So $n=23$ terms guarantee error < 0.001."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive slider showing error bound as function of n",
+        "visual_spec": "Interactive plot: for a given n (slider 1 to 50), show the series sum from n=1 to n, and shade the remainder area from n+1 to ∞. Display numerical values. Use f(x)=1/x^3. Title: 'Remainder Estimate for p=3'. X-axis label 'n', y-axis 'f(n)'.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom ipywidgets import interact\n\ndef plot_remainder(N):\n    x = np.linspace(1, 20, 400)\n    plt.figure(figsize=(8,5))\n    plt.plot(x, 1/x**3, 'b-', label='f(x)=1/x^3')\n    # shade remainder area from N+1 to ∞ (approximate to 20)\n    xs = np.linspace(N+1, 20, 100)\n    plt.fill_between(xs, 0, 1/xs**3, alpha=0.3, color='orange', label='Remainder bound area')\n    # bars for terms\n    for n in range(1, N+1):\n        plt.bar(n, 1/n**3, width=0.8, alpha=0.5, color='blue', align='center')\n    plt.xlabel('n')\n    plt.ylabel('value')\n    plt.title('Remainder: n='+str(N)+', bound=1/('+str(2*N**2)+')')\n    plt.legend()\n    plt.show()\n\ninteract(plot_remainder, N=(1,50,1))",
+        "interactive_controls": [
+          "Slider for N from 1 to 50"
+        ]
+      },
+      "on_screen_text": "Remainder bound: ∫ from n+1 to ∞ ≤ R_n ≤ ∫ from n to ∞. Use to find n for desired error.",
+      "teacher_narration": "For those wanting more depth: once we know a series converges, we often need to approximate the sum. The Integral Test provides a remainder estimate. The true sum after n terms is between two integrals. For p-series, we can solve for the number of terms needed to guarantee a given error. In the example, 23 terms give error less than one thousandth. That's efficient!",
+      "student_prompt": "Try for ∑ 1/n^4: find n such that error < 0.0001.",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Your Turn",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Determine whether $\\sum_{n=1}^\\infty \\frac{1}{n^2 + 2n + 2}$ converges using the Integral Test.\n\nHint: Complete the square: $n^2 + 2n + 2 = (n+1)^2 + 1$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Blank workspace with graph axes, no data yet",
+        "visual_spec": "Empty plot with axes from 0 to 10, labeled x and y, with a text annotation: 'Your turn: compute the integral'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause the video and try this problem yourself first.",
+      "teacher_narration": "Now it's your turn. Pause the video and try to determine convergence using the Integral Test. Remember to check the three conditions: continuous, positive, decreasing. Then compute the integral. After you've tried, resume to see the solution. This problem is a good test of your ability to handle a quadratic denominator by completing the square.",
+      "student_prompt": "Test ∑ 1/(n²+2n+2) for convergence. Hint: complete the square.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Solution: Your Turn",
+      "left": {
+        "content_type": "steps",
+        "content": "**Solution:**\n\n1. $f(x) = \\frac{1}{(x+1)^2+1}$ on $[1,\\infty)$.\n2. Conditions: continuous (denom >0), positive, decreasing ($f'(x) = -\\frac{2(x+1)}{((x+1)^2+1)^2}<0$).\n3. Integral: $\\int_1^\\infty \\frac{1}{(x+1)^2+1}dx$.\n   Let $u = x+1$, $du = dx$ → $\\int_2^\\infty \\frac{1}{u^2+1}du = \\left[\\arctan u\\right]_2^\\infty = \\frac{\\pi}{2} - \\arctan 2$ (finite).\n4. Conclusion: **Series converges**."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∫ π/2 – arctan 2 ≈ 0.46365 → Converges.",
+      "teacher_narration": "Here's the full solution. After completing the square, we see the integral becomes arctan of u from 2 to infinity. That's a finite number, so the series converges. Good job if you got that. The key was recognizing the quadratic structure and applying the substitution. This technique will be useful for many similar problems.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Decision Tree: Which Test to Use?",
+      "left": {
+        "content_type": "text",
+        "content": "**Flowchart:**\n\n\nIs it a p-series (1/n^p)?\n  ├─ Yes → Check p > 1?\n  │       ├─ Yes → Converges\n  │       └─ No → Diverges\n  └─ No → Can we use Integral Test?\n          ├─ Conditions: Continuous, Positive, Decreasing?\n          │   ├─ All yes → Apply Integral Test\n          │   └─ Any no → Try another test (e.g., Comparison, Ratio)\n          └─ Result: Converges if integral converges\n"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Quick flowchart: p-series? No? Check conditions for Integral Test.",
+      "teacher_narration": "This flowchart summarizes our approach. First check if the series is a p-series. If not, see if the Integral Test applies. If the function is not decreasing, you'll need other tests like comparison. For today's lecture, keep this in mind as your first two options. Having a systematic approach prevents mistakes and saves time on exams.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary and Next Steps",
+      "left": {
+        "content_type": "text",
+        "content": "**Key Takeaways:**\n\n1. **p-Series:** $\\sum 1/n^p$ converges iff $p > 1$.\n2. **Integral Test:** Requires continuous, positive, decreasing $f$; series converges iff $\\int f$ converges.\n3. **Remainder Estimate:** $\\int_{n+1}^\\infty f \\leq R_n \\leq \\int_n^\\infty f$ (for convergent series).\n4. Always check conditions before applying a test.\n\n**Next lecture:** Comparison Tests."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "p-series: p>1 converges. Integral Test: check conditions. Remainder bound. Next: Comparison Tests.",
+      "teacher_narration": "Today we learned two powerful tools: the p-series for quick classification, and the Integral Test for a broader class of series. Remember the three conditions and the remainder bound for approximation. In the next lecture, we'll use comparison tests to handle series that don't match a p-series but can be bounded by one. Thank you for watching. Practice with the examples provided to build confidence.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

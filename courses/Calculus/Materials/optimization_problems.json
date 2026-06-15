@@ -1,0 +1,355 @@
+{
+  "lecture_meta": {
+    "title": "Optimization Problems: From Word Problems to Calculus Solutions",
+    "topic": "Optimization",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Formulate real-world word problems as mathematical optimization problems by identifying objective functions and constraints",
+      "Apply the six-step problem-solving framework to convert word problems into single-variable functions",
+      "Analyze functions to find absolute maximum and minimum values using critical points and domain analysis",
+      "Interpret optimization results in the context of the original problem, including appropriate units",
+      "Construct constraint equations from geometric or physical relationships to reduce multivariable problems to single-variable functions"
+    ],
+    "prerequisite_reminder": "You should be comfortable with derivatives, critical points, and the Closed Interval Method for absolute extrema on closed intervals."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Optimization Matters",
+      "left": {
+        "content_type": "text",
+        "content": "Everyday decisions: Maximize area with limited fencing. Minimize cost for a fixed volume. Find fastest travel path. These are **optimization problems**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive farmer field with slider for width – shows area changing",
+        "visual_spec": "Plot a rectangle with one side along a river (top side no fence). Show width x and length y. As user moves a slider (width from 0 to 1200), the rectangle updates and the area is displayed as a number. Also show a small dot on the area vs width curve. Label axes: Width (ft), Area (sq ft). Use matplotlib with interactivity (ipywidgets Slider).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom ipywidgets import interactive, FloatSlider\nimport ipywidgets as widgets\n\ndef update_plot(width):\n    plt.clf()\n    # Rectangle coordinates\n    x_rect = [0, width, width, 0, 0]\n    y_rect = [0, 0, 2400-2*width, 2400-2*width, 0]\n    plt.figure(figsize=(6,4))\n    plt.plot(x_rect, y_rect, 'b-', linewidth=2)\n    plt.fill(x_rect, y_rect, alpha=0.3, color='skyblue')\n    plt.plot([0, 2400], [0,0], 'k--', label='river')  # river line\n    plt.xlim(0,1300)\n    plt.ylim(0,2500)\n    plt.xlabel('Width (ft)')\n    plt.ylabel('Length (ft)')\n    area = width*(2400-2*width)\n    plt.title(f'Width = {width:.1f} ft, Area = {area:.0f} sq ft')\n    plt.legend()\n    plt.gca().set_aspect('equal')\n    plt.show()\n\nwidth_slider = FloatSlider(min=1, max=1199, step=10, value=600, description='Width')\ninteractive(update_plot, width=width_slider)",
+        "interactive_controls": [
+          "Slider for width from 1 to 1199 in steps of 10",
+          "Display of computed area and rectangle shape"
+        ]
+      },
+      "on_screen_text": "Optimization turns real-life constraints into math problems. Explore how changing one variable affects the outcome.",
+      "teacher_narration": "Imagine you have 2400 feet of fencing and want to make a rectangular pen next to a river. You don't need fence along the river. How do you choose the width and length to get the biggest area? That's an optimization problem. The secret is to write down what you want to maximize—area—and the constraint—the fixed amount of fencing. Then you use calculus to find the best dimensions. This kind of problem appears everywhere: business, engineering, even medicine. Let's learn a systematic way to solve them.",
+      "student_prompt": "Predict: What do you think is the optimal width for the pen?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "The Six-Step Framework",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Key Question |\n|------|--------|--------------|\n| 1 | Understand the Problem | What is unknown? What is given? |\n| 2 | Draw a Diagram | Label all quantities |\n| 3 | Introduce Notation | Assign symbols to all quantities |\n| 4 | Write the Objective Function | Expression for quantity to optimize |\n| 5 | Write the Constraint Equation | Fixed relationship among variables |\n| 6 | Reduce to One Variable & Solve | Use constraint to eliminate variables, then find critical points |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Six steps: 1) Understand  2) Diagram  3) Notation  4) Objective  5) Constraint  6) Reduce & Solve",
+      "teacher_narration": "There's no magic formula for optimization, but there is a universal process. The hardest part is not the calculus—it's translating English into math. Step one: read the problem until you really understand it. Step two: draw a picture. Step three: give every quantity a symbol. Step four: write what you want to maximize or minimize as a function of those symbols. Step five: capture any fixed relationship in a constraint equation. Step six: use the constraint to eliminate all but one variable, then use single-variable calculus to find the optimum. Let's apply this to a concrete example.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Core Equations & Notation",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Objective Function (after reduction):**\n\n$$ Q = f(x) $$\n\nwhere $Q$ is the quantity to optimize, $x$ is the independent variable.\n\n**Constraint Equation:**\n\n$$ g(x_1, x_2, ..., x_n) = \\text{constant} $$\n\n**Critical Point Condition:**\n\n$$ f'(x) = 0 \\quad \\text{or} \\quad f'(x) \\text{ DNE}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Flowchart: Problem → Objective + Constraint → Eliminate variables → Single-variable function f(x) → Find critical points → Interpret",
+        "visual_spec": "A simple flowchart diagram: Start box 'Word Problem' -> arrow to 'Objective function Q' and 'Constraint equation' -> arrow to 'Use constraint to eliminate extra variables' -> arrow to 'Q = f(x)' -> arrow to 'Set f'(x)=0' -> arrow to 'Critical points' -> arrow to 'Check endpoints/domain' -> arrow to 'Answer'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport matplotlib.patches as patches\nfig, ax = plt.subplots(figsize=(8,4))\nax.set_xlim(0,10)\nax.set_ylim(0,6)\nax.axis('off')\n# Boxes\nboxes = [(0.5,4.5,'Word\nProblem'), (3,4.5,'Objective\nQ'), (3,2.5,'Constraint\nequation'), (6,3.5,'Eliminate\nvariables'), (8,3.5,'f(x)'), (8,1.5,'f\\'(x)=0'), (8,0,'Critical\npoints'), (5,0,'Check domain\n& interpret')]\nfor x,y,text in boxes:\n    ax.add_patch(patches.FancyBboxPatch((x,y), 1.5,1, boxstyle=\"round,pad=0.1\", facecolor='lightblue', edgecolor='black'))\n    ax.text(x+0.75, y+0.5, text, ha='center', va='center', fontsize=8)\n# Arrows\nax.annotate('', xy=(2,5), xytext=(3.3,5), arrowprops=dict(arrowstyle='->'))\nax.annotate('', xy=(3,3), xytext=(3.3,4.5), arrowprops=dict(arrowstyle='->'))\nax.annotate('', xy=(4.5,3.5), xytext=(6,3.5), arrowprops=dict(arrowstyle='->'))\nax.annotate('', xy=(7.5,3.5), xytext=(8,3.5), arrowprops=dict(arrowstyle='->'))\nax.annotate('', xy=(8,3), xytext=(8,2), arrowprops=dict(arrowstyle='->'))\nax.annotate('', xy=(8,1), xytext=(8,0.5), arrowprops=dict(arrowstyle='->'))\nax.annotate('', xy=(6.5,0.5), xytext=(5.5,0.5), arrowprops=dict(arrowstyle='->'))\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Objective function after reduction: Q = f(x). Constraint: relationship among variables. Critical points: f'(x)=0.",
+      "teacher_narration": "Regardless of the problem, the structure is always the same. You define a symbol for the quantity you want to maximize or minimize, let's call it Q. Then you express Q in terms of several variables, but a constraint equation ties those variables together. You use that constraint to rewrite Q as a function of just one variable. Then you find the derivative, set it equal to zero, and solve. That gives you the critical points, which are the candidates for the optimum. But you also have to check the domain—the problem might restrict the range of acceptable values.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "First Derivative Test for Open Intervals",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Theorem:** If $f$ is continuous and differentiable on $(a,\\infty)$ (except possibly at $c$) and has exactly one critical point $c$, then:\n\n- If $f'(x) < 0$ for $x < c$ and $f'(x) > 0$ for $x > c$ → $f(c)$ is absolute minimum.\n- If $f'(x) > 0$ for $x < c$ and $f'(x) < 0$ for $x > c$ → $f(c)$ is absolute maximum."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two function graphs: one with a single minimum, one with a single maximum. Show sign of derivative with + and - markers.",
+        "visual_spec": "Two subplots: left shows a parabola opening up (minimum at c), right shows parabola opening down (maximum at c). On each, label critical point c, and along x-axis mark intervals with + or - signs indicating sign of f'(x). Also write 'abs min' or 'abs max' near the point.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(-2, 2, 400)\nfig, (ax1, ax2) = plt.subplots(1,2,figsize=(8,4))\n# left: minimum at 0\nfmin = (x-0)**2 + 1\nax1.plot(x, fmin, 'b')\nax1.scatter([0], [1], color='red', zorder=5)\nax1.text(0, 1.5, 'c', ha='center')\nax1.set_title('Absolute minimum')\nax1.axhline(0, color='gray', linewidth=0.5)\nax1.text(-1, 0.5, '-', fontsize=16)\nax1.text(1, 0.5, '+', fontsize=16)\nax1.set_xlabel('x')\nax1.set_ylabel('f(x)')\n# right: maximum at 0\nfmax = -(x-0)**2 + 3\nax2.plot(x, fmax, 'b')\nax2.scatter([0], [3], color='red', zorder=5)\nax2.text(0, 3.5, 'c', ha='center')\nax2.set_title('Absolute maximum')\nax2.axhline(0, color='gray', linewidth=0.5)\nax2.text(-1, 2.5, '+', fontsize=16)\nax2.text(1, 2.5, '-', fontsize=16)\nax2.set_xlabel('x')\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Single critical point on open interval: check sign change of derivative to confirm absolute extremum.",
+      "teacher_narration": "Many optimization problems have domains like x greater than zero, which are open intervals. The Closed Interval Method doesn't apply directly. But if the function has only one critical point on that interval, you can use the first derivative test. If the derivative goes from negative to positive at that point, it's an absolute minimum. If it goes from positive to negative, it's an absolute maximum. This works because the function is monotonic on each side of the critical point, so the critical point has to be the global extremum.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Try the Farmer Problem",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** A farmer has 2400 ft of fencing to enclose a rectangular field bordering a river (no fence on river side). Find the dimensions that maximize the area.\n\n- Step 1: Understand\n- Step 2: Draw\n- Step 3: Notation\n- Step 4: Objective\n- Step 5: Constraint\n- Step 6: Reduce and solve"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Blank diagram of rectangle with river on top. User can drag width slider to explore.",
+        "visual_spec": "Same interactive plot as slide 1 but without showing the solution. Only rectangle and river. Slider for width, but area is not precomputed – just visual. Or show area as they slide but no answer display. Better to leave area blank for prediction. We'll show the rectangle but not compute area. Add a button to reveal answer after pause.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom ipywidgets import interactive, FloatSlider, Button, Output\nimport ipywidgets as widgets\n\nout = Output()\ndef draw(width):\n    plt.clf()\n    x = [0, width, width, 0, 0]\n    y = [0, 0, 2400-2*width, 2400-2*width, 0]\n    plt.figure(figsize=(6,4))\n    plt.plot(x, y, 'b-', linewidth=2)\n    plt.plot([0, 2400], [0,0], 'k--', label='river')\n    plt.xlim(0,1300)\n    plt.ylim(0,2500)\n    plt.xlabel('Width (ft)')\n    plt.ylabel('Length (ft)')\n    plt.title(f'Width = {width:.0f}')\n    plt.gca().set_aspect('equal')\n    plt.show()\n\nwidth_slider = FloatSlider(min=1, max=1199, step=10, value=600, description='Width')\ninteractive(draw, width=width_slider)",
+        "interactive_controls": [
+          "Slider for width",
+          "Button: 'Reveal optimal dimensions' (triggers overlay text)"
+        ]
+      },
+      "on_screen_text": "Pause: Apply the six steps to the farmer problem. Write down your answer.",
+      "teacher_narration": "Now it's your turn. Take a minute and try to solve the farmer problem on your own. Use the six-step framework. Draw a diagram, label the width and length, write the objective function for area, write the constraint for fencing, then reduce to one variable and find the critical point. When you're ready, I'll show the solution on the next slide. Don't worry if you get stuck — we'll go through it step by step.",
+      "student_prompt": "What width and length maximize the area?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Farmer Problem Solution",
+      "left": {
+        "content_type": "text",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | Understand | Maximize area with fixed fencing |\n| 2 | Draw | Rectangle with river as one side |\n| 3 | Notation | Width = $x$, Length = $y$ |\n| 4 | Objective | $A = x \\cdot y$ |\n| 5 | Constraint | $2x + y = 2400$ |\n| 6 | Reduce & Solve | $A(x)=x(2400-2x)=2400x-2x^2$, $A'(x)=2400-4x=0 \\Rightarrow x=600$, $y=2400-1200=1200$, $A=720000$ sq ft |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Optimal: width=600 ft, length=1200 ft, max area=720,000 sq ft.",
+      "teacher_narration": "Here's the full solution. After steps 1 through 5, we have area A equals x times y, and the constraint is 2x plus y equals 2400 feet of fencing. From the constraint, y equals 2400 minus 2x, so A as a function of x is 2400x minus 2x squared. The derivative is 2400 minus 4x. Setting that equal to zero gives x equals 600. Then y equals 1200. The area is 600 times 1200, which is 720,000 square feet. The second derivative is negative, confirming a maximum. Width must be positive and less than 1200, so this critical point is inside the domain.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Box with Square Base",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** A box with a square base and open top must have volume 32,000 cm³. Find dimensions that minimize material (surface area).\n\nApply the six steps again. Try to find the base side length $x$ and height $h$ that minimize $S = x^2 + 4xh$ with constraint $x^2 h = 32,000$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive 3D box? Or 2D cross-section with slider for x showing how surface area changes. We'll do 2D net or cross-section with labeled dimensions.",
+        "visual_spec": "Draw a rectangular prism (box) with square base of side x and height h. As user moves slider for x (from 1 to 100), compute h from constraint and draw the box to scale. Also show a line graph of S(x) with a dot at current x. Mark the critical point region.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom ipywidgets import interactive, FloatSlider\n\ndef plot_box(x):\n    fig = plt.figure(figsize=(8,4))\n    ax = fig.add_subplot(121, projection='3d')\n    # box dimensions\n    h = 32000 / (x**2)\n    # vertices\n    vertices = np.array([[0,0,0], [x,0,0], [x,x,0], [0,x,0],\n                         [0,0,h], [x,0,h], [x,x,h], [0,x,h]])\n    edges = [(0,1),(1,2),(2,3),(3,0),\n             (4,5),(5,6),(6,7),(7,4),\n             (0,4),(1,5),(2,6),(3,7)]\n    for i,j in edges:\n        ax.plot3D(*zip(vertices[i], vertices[j]), color='b')\n    # hide top\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n    ax.set_zlabel('z')\n    ax.set_title(f'x={x:.1f}, h={h:.1f}')\n    # surface area plot\n    ax2 = fig.add_subplot(122)\n    xs = np.linspace(1, 100, 400)\n    hs = 32000 / (xs**2)\n    S = xs**2 + 4*xs*hs\n    ax2.plot(xs, S, 'b-')\n    ax2.scatter([x], [x**2 + 4*x*h], color='red', zorder=5)\n    ax2.set_xlabel('x (cm)')\n    ax2.set_ylabel('Surface area (cm²)')\n    ax2.set_title('S(x)')\n    plt.tight_layout()\n    plt.show()\n\nx_slider = FloatSlider(min=1, max=100, step=1, value=40, description='x')\ninteractive(plot_box, x=x_slider)",
+        "interactive_controls": [
+          "Slider for x from 1 to 100",
+          "3D box updates, and a curve of S(x) shows current point"
+        ]
+      },
+      "on_screen_text": "Pause: Find x that minimizes surface area for volume 32,000 cm³. Use S = x² + 4xh, constraint x²h = 32000.",
+      "teacher_narration": "Here's another classic problem: a box with a square base and open top must hold 32,000 cubic centimeters. We want to use as little material as possible—that is, minimize the surface area. The surface area consists of the base, which is x squared, plus four sides, each of area x times h. The volume constraint is x squared h equals 32,000. Eliminate h and you get a function of x. Try to find the critical point. I'll show the solution in the next slide.",
+      "student_prompt": "What is the optimal base side length?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Box Problem Solution",
+      "left": {
+        "content_type": "text",
+        "content": "**Solution:**\n- $h = \\frac{32000}{x^2}$\n- $S(x) = x^2 + 4x \\cdot \\frac{32000}{x^2} = x^2 + \\frac{128000}{x}$\n- $S'(x) = 2x - \\frac{128000}{x^2} = 0 \\Rightarrow 2x^3 = 128000 \\Rightarrow x = 40$ cm\n- $h = 32000/40^2 = 20$ cm\n- Check: $S''(x) = 2 + \\frac{256000}{x^3} > 0$ at $x=40$ → minimum\n- Minimum surface area: $40^2 + 4\\cdot40\\cdot20 = 1600+3200 = 4800$ cm²"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Optimal: base side 40 cm, height 20 cm, min area 4800 cm².",
+      "teacher_narration": "Here's the solution. We eliminate h using the volume constraint, getting S of x equals x squared plus 128,000 over x. The derivative is 2x minus 128,000 over x squared. Setting that equal to zero gives x cubed equals 64,000, so x equals 40 centimeters. Then h is 32,000 divided by 1,600, which is 20 centimeters. The second derivative is positive, confirming a minimum. So the optimal box is 40 by 40 by 20 centimeters, using 4,800 square centimeters of material.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Wrong Side Count",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** For the box with square base, some students forget the open top and include 6 faces. Or they forget there are 4 sides of size $x \\times h$.\n\n**Correct:** $S = x^2 + 4xh$ (base + 4 sides, no top).\n\n**Why they get it wrong:** They don't read 'open top' or miscount faces. Always draw and label each face."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two diagrams: left shows wrong net (6 faces), right shows correct net (5 faces). Highlight with red X on wrong and green check on correct.",
+        "visual_spec": "Draw the 2D net of a box: a square base with four rectangles attached. One net (wrong) includes a top square crossed out. The other (correct) omits the top. Label each face 'base' or 'side'. Use color coding.",
+        "python_code": "import matplotlib.pyplot as plt\nimport matplotlib.patches as patches\n\nfig, (ax1, ax2) = plt.subplots(1,2,figsize=(8,4))\nax1.set_aspect('equal')\nax2.set_aspect('equal')\n# Wrong net (6 faces)\nax1.add_patch(patches.Rectangle((0,0), 2,2, facecolor='lightgray', edgecolor='black'))\nax1.add_patch(patches.Rectangle((0,2), 2,1, facecolor='lightblue', edgecolor='black'))\nax1.add_patch(patches.Rectangle((0,-1), 2,1, facecolor='lightblue', edgecolor='black'))\nax1.add_patch(patches.Rectangle((2,0), 1,2, facecolor='lightblue', edgecolor='black'))\nax1.add_patch(patches.Rectangle((-1,0), 1,2, facecolor='lightblue', edgecolor='black'))\nax1.add_patch(patches.Rectangle((-1,2), 1,2, facecolor='lightgreen', edgecolor='black'))  # top?\nax1.text(-0.5,2.5, 'TOP?', color='red', fontsize=12, weight='bold')\nax1.set_xlim(-2,4)\nax1.set_ylim(-2,4)\nax1.set_title('Wrong: includes top', color='red')\nax1.axis('off')\n\n# Correct net (5 faces)\nax2.add_patch(patches.Rectangle((0,0), 2,2, facecolor='lightgray', edgecolor='black'))\nax2.add_patch(patches.Rectangle((0,2), 2,1, facecolor='lightblue', edgecolor='black'))\nax2.add_patch(patches.Rectangle((0,-1), 2,1, facecolor='lightblue', edgecolor='black'))\nax2.add_patch(patches.Rectangle((2,0), 1,2, facecolor='lightblue', edgecolor='black'))\nax2.add_patch(patches.Rectangle((-1,0), 1,2, facecolor='lightblue', edgecolor='black'))\nax2.text(0.5, -0.5, '', color='green')\nax2.set_xlim(-2,4)\nax2.set_ylim(-2,4)\nax2.set_title('Correct: open top', color='green')\nax2.axis('off')\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Don't miscount faces! 'Open top' means no top face. Draw the net to verify.",
+      "teacher_narration": "One of the most common mistakes in optimization is miscounting the number of sides. For a box with an open top, there are five faces: the base and four sides, not six. Always draw a clear diagram or a net. In the problem we just did, if you included the top, you'd get the wrong function and a different answer. So take the time to visualize the shape. Check the problem statement carefully for words like 'open top', 'no lid', or 'without a top'.",
+      "student_prompt": "What would be the surface area function if the box had a top?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Tricky Example: Box with Different Material Costs",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Rectangular container, open top, volume 10 m³. Length = 2 × width. Base material $10/m², sides $6/m². Find cheapest dimensions.\n\nSteps:\n1. Let width = $w$, length = $2w$, height = $h$\n2. Constraint: $2w^2 h = 10$\n3. Cost: $C = 10\\cdot(2w^2) + 6\\cdot(2wh+4wh) = 20w^2 + 36wh$\n4. Eliminate $h$: $h = 5/w^2$\n5. $C(w) = 20w^2 + 180/w$, $w>0$\n6. $C'(w)=40w - 180/w^2=0 \\Rightarrow w^3 = 4.5 \\Rightarrow w \\approx 1.65$ m\n7. $h \\approx 1.84$ m, length $\\approx 3.30$ m"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of rectangular box with labels: width w, length 2w, height h. Also a cost vs w graph with critical point marked.",
+        "visual_spec": "Plot a rectangular box (not square) with dimensions labeled. Then a graph below of C(w) for w from 0.5 to 5, with a red dot at optimum. Show vertical dashed line at critical point.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom ipywidgets import interactive, FloatSlider\n\ndef plot_cost(w):\n    fig, (ax1, ax2) = plt.subplots(1,2,figsize=(8,4))\n    # box diagram (2D sketch)\n    length = 2*w\n    h = 5/(w**2)  # from constraint\n    ax1.plot([0, w, w, 0, 0], [0, 0, h, h, 0], 'b-')\n    ax1.plot([0, 0], [0, h], 'b-')  # back edge\n    ax1.plot([w, w], [0, h], 'b-')  # front edge\n    ax1.plot([0, length], [h, h], 'b--')  # top back? actually simplify to 2D side view\n    # Better: 3D would be complex. Just a 2D side view with labels.\n    ax1.set_xlim(-0.5, w+0.5)\n    ax1.set_ylim(-0.5, h+0.5)\n    ax1.set_aspect('equal')\n    ax1.set_xlabel('x')\n    ax1.set_ylabel('z')\n    ax1.set_title(f'w={w:.2f}, h={h:.2f}')\n    # cost curve\n    ws = np.linspace(0.5, 5, 400)\n    hs = 5/(ws**2)\n    costs = 20*ws**2 + 36*ws*hs\n    ax2.plot(ws, costs, 'b-')\n    ax2.scatter([w], [20*w**2 + 36*w*h], color='red', zorder=5)\n    ax2.axvline(w, color='gray', linestyle='--', alpha=0.7)\n    ax2.set_xlabel('w (m)')\n    ax2.set_ylabel('Cost ($)')\n    ax2.set_title('C(w)')\n    plt.tight_layout()\n    plt.show()\n\nw_slider = FloatSlider(min=0.5, max=5, step=0.1, value=2, description='w')\ninteractive(plot_cost, w=w_slider)",
+        "interactive_controls": [
+          "Slider for w to explore shape and cost"
+        ]
+      },
+      "on_screen_text": "Cost = base area × $10 + side area × $6. Use volume constraint to eliminate h, then minimize C(w).",
+      "teacher_narration": "This problem adds a twist: different material costs for base and sides. The base costs ten dollars per square meter, the sides six dollars. We still have a volume constraint of 10 cubic meters, and the length is twice the width. The cost function becomes 20 w squared plus 36 w h, and after eliminating h we get 20 w squared plus 180 over w. The derivative gives w cubed equals 4.5, so w is about 1.65 meters. Then h is about 1.84 meters, and length about 3.30 meters. The total cost at optimum is about 163 dollars. Always remember to include the correct areas for each material.",
+      "student_prompt": "Why is the side area 6wh and not 8wh?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Edge Case: Point on a Line Closest to Origin",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Find the point on line $y = 2x+1$ closest to origin $(0,0)$.\n\n- Distance $d = \\sqrt{x^2 + y^2} = \\sqrt{x^2+(2x+1)^2}$.\n- Minimize $d^2$: $f(x)=5x^2+4x+1$.\n- $f'(x)=10x+4=0 \\Rightarrow x = -2/5$.\n- $y = 2(-2/5)+1 = 1/5$.\n- Point: $(-0.4, 0.2)$.\n- Check $f''(x)=10>0$ → minimum."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Coordinate plane with line y=2x+1, origin, and the closest point highlighted. Also show distance as a dashed line.",
+        "visual_spec": "Plot line from x=-1 to x=1. Mark origin (0,0) with a dot. On the line, mark the point ( -0.4, 0.2 ) with a red dot. Draw a dashed line from origin to that point. Show the distance formula. Annotate the coordinates.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx_vals = np.linspace(-1,1,200)\ny_vals = 2*x_vals+1\nplt.figure(figsize=(6,6))\nplt.plot(x_vals, y_vals, 'b-', label='y=2x+1')\nplt.scatter(0,0, color='black', zorder=5, label='Origin')\nplt.scatter(-0.4,0.2, color='red', zorder=5, s=80, label='Closest point')\nplt.plot([0,-0.4],[0,0.2], 'r--', linewidth=1.5, label='Distance')\nplt.xlim(-1,1)\nplt.ylim(-1,3)\nplt.axhline(0, color='gray')\nplt.axvline(0, color='gray')\nplt.grid(True, alpha=0.3)\nplt.legend()\nplt.gca().set_aspect('equal')\nplt.title('Closest point on line to origin')\nplt.xlabel('x')\nplt.ylabel('y')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Closest point: (-0.4, 0.2). Minimizing distance squared avoids square root derivative.",
+      "teacher_narration": "This is an edge case because the objective is distance, which involves a square root. To avoid the messy derivative, we minimize the squared distance instead. Since the square root function is increasing, minimizing the square is equivalent. The squared distance is x squared plus (2x+1) squared, which simplifies to 5x squared plus 4x plus 1. The derivative is 10x plus 4, giving x equals negative two-fifths. That's the point negative 0.4, 0.2. Always check second derivative or use monotonicity to confirm it's a minimum. This trick of minimizing the square works for any distance optimization.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Application: Lifeguard Problem (Snell's Law)",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Lifeguard at point A (beach) must reach swimmer at B (water). Run speed $v_1$, swim speed $v_2$. Shoreline is straight line. Find entry point P that minimizes time.\n\n- Coordinates: A = (0, a), B = (d, -b).\n- P = (x, 0) on shoreline, $0 \\le x \\le d$.\n- Time: $T(x)=\\frac{\\sqrt{x^2+a^2}}{v_1} + \\frac{\\sqrt{(d-x)^2+b^2}}{v_2}$.\n- Set $T'(x)=0$ leads to $\\frac{\\sin\\theta_1}{v_1} = \\frac{\\sin\\theta_2}{v_2}$ (Snell's Law)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: Shoreline as x-axis, point A above, B below. Entry point P on shoreline. Angles θ1 and θ2 marked. Interactive slider for x to see path and time.",
+        "visual_spec": "Plot beach as x-axis from -1 to d+1. Mark A at (0, a) with 'A', B at (d, -b) with 'B'. Let a=10, b=10, d=20. Draw the two line segments from A to P and P to B. Show labels for distances. As user drags point P (slider for x), update both the path and the time displayed. Also show a graph of T(x) with dot at current x. Use ipywidgets. Add a dashed perpendicular line at P to emphasize angles.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom ipywidgets import interactive, FloatSlider\n\ndef update_lifeguard(x, a=10, b=10, d=20, v1=5, v2=2):\n    fig, (ax1, ax2) = plt.subplots(1,2,figsize=(10,4))\n    # left: diagram\n    ax1.plot([-1, d+1], [0,0], 'k-', linewidth=2)\n    ax1.scatter([0], [a], color='blue', s=100, zorder=5, label='A (beach)')\n    ax1.scatter([d], [-b], color='red', s=100, zorder=5, label='B (water)')\n    ax1.scatter([x], [0], color='green', s=80, zorder=5, label='P (entry)')\n    ax1.plot([0, x], [a, 0], 'b--')\n    ax1.plot([x, d], [0, -b], 'r--')\n    ax1.plot([x, x], [0, -1], 'g:', linewidth=1)  # perpendicular\n    ax1.set_xlim(-2, d+2)\n    ax1.set_ylim(-b-2, a+2)\n    ax1.set_aspect('equal')\n    ax1.set_xlabel('Distance along shore')\n    ax1.set_ylabel('Distance perpendicular')\n    ax1.legend()\n    ax1.set_title(f'x = {x:.2f}')\n    # right: time graph\n    xs = np.linspace(0, d, 200)\n    times = np.sqrt(xs**2 + a**2)/v1 + np.sqrt((d-xs)**2 + b**2)/v2\n    ax2.plot(xs, times, 'b-')\n    ax2.scatter([x], [np.sqrt(x**2+a**2)/v1 + np.sqrt((d-x)**2+b**2)/v2], color='red', zorder=5)\n    ax2.set_xlabel('x')\n    ax2.set_ylabel('Time')\n    ax2.set_title('Total time T(x)')\n    plt.tight_layout()\n    plt.show()\n\nx_slider = FloatSlider(min=0, max=20, step=0.5, value=10, description='Entry point x')\ninteractive(update_lifeguard, x=x_slider)",
+        "interactive_controls": [
+          "Slider for x from 0 to d, with step 0.5",
+          "Two plots update: path diagram and time curve"
+        ]
+      },
+      "on_screen_text": "Minimize total travel time by choosing entry point x. The optimal satisfies Snell's Law: sin θ1 / v1 = sin θ2 / v2.",
+      "teacher_narration": "This is a real-world application that connects to physics. A lifeguard runs on sand at speed v1 and swims at speed v2. The total time is the sum of distances divided by speeds. After taking the derivative and setting it to zero, we get a relationship that involves the angles the path makes with the perpendicular to the shoreline. That relationship is exactly Snell's Law of refraction: sine of angle one over speed one equals sine of angle two over speed two. Light follows the same principle when it bends between media. Play with the slider to see how the time changes and find the optimal point.",
+      "student_prompt": "What happens to the optimal entry point if the swim speed is much slower than run speed?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof of the First Derivative Test for Absolute Extrema",
+      "left": {
+        "content_type": "text",
+        "content": "**Theorem:** If $f$ is continuous on $(0,\\infty)$ and has exactly one critical point $c$, and $f'(x)<0$ for $x<c$ and $f'(x)>0$ for $x>c$, then $f(c)$ is the absolute minimum.\n\n**Proof:**\n- For $x<c$, by the Mean Value Theorem there exists $u$ in $(x,c)$ such that $f(c)-f(x)=f'(u)(c-x)$. Since $f'(u)<0$ and $c-x>0$, we have $f(c)-f(x)<0$, so $f(x) > f(c)$.\n- For $x>c$, similarly $f(x)-f(c)=f'(v)(x-c)$ with $v$ in $(c,x)$ and $f'(v)>0$, so $f(x) > f(c)$.\n- Hence $f(c) \\le f(x)$ for all $x$, so absolute minimum.\n\nThe maximum case follows by reversing signs."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof: For any x ≠ c, f(x) > f(c) using MVT and sign of derivative. Hence f(c) is absolute min.",
+      "teacher_narration": "For those who want a deeper understanding, here's the proof. The key is the Mean Value Theorem. If the derivative is negative before the critical point and positive after, then the function is decreasing up to c and increasing after. By the MVT, any point to the left has f(x) greater than f(c), and any point to the right also has f(x) greater than f(c). So f(c) is the smallest value in the entire domain. This rigorous argument justifies why we can trust a single critical point as the global extremum.",
+      "student_prompt": "Why must we also check that the derivative doesn't change sign at the endpoints of the domain?",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: Optimization Problem-Solving",
+      "left": {
+        "content_type": "text",
+        "content": "| Learning Objective | Key Takeaway |\n|--------------------|--------------|\n| Formulate word problems | Use six-step framework: Understand, Diagram, Notation, Objective, Constraint, Reduce & Solve |\n| Reduce multivariable to single variable | Eliminate extra variables using constraint equation |\n| Find absolute extrema | Use critical points: f'(x)=0, then check domain and first derivative test |\n| Interpret results | Include units and verify that the answer makes sense in the original context |\n| Avoid common mistakes | Always draw and label all parts; do not forget sides; minimize squared distances when possible |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Optimization = translate → reduce → differentiate → verify → interpret.",
+      "teacher_narration": "Let's recap. Optimization problems are all about translating a real-world situation into a mathematical function. The six-step framework ensures you don't miss any constraints. The calculus part is straightforward — derivatives and critical points. The real challenge is setting up the problem correctly. Remember to check the domain, use the first derivative test on open intervals, and always interpret your answer in the context of the problem. With practice, you'll develop an intuition for what to maximize or minimize and how to reduce the number of variables.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

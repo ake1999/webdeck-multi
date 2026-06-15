@@ -76,6 +76,42 @@ const COURSE_PROFILES = {
       methods: ["mental model", "guided build", "debugging checkpoints", "recap"],
     },
   },
+  AU: {
+    audience_level: "first-year university and advanced high-school students learning calculus through visual intuition, formulas, and guided practice",
+    topic_takeaways: [
+      "Students should connect the visual intuition to the formal calculus statement.",
+      "Students should practice reading formulas, graphs, and units together.",
+      "Students should leave with one method they can apply to a new problem.",
+    ],
+    style_notes: [
+      "Keep the tone personal, warm, and precise, as if teaching directly to a YouTube viewer.",
+      "On the first slide, introduce the instructor as Arian from Arian University once, then move quickly into the mathematical hook.",
+      "On learning-objective slides, orient students on the course roadmap/progress visual before listing what the topic covers.",
+      "Make the course feel intentionally managed: name where this topic sits, what came immediately before, and what comes next when the roadmap shows it.",
+      "Move between graph, formula, and plain-language interpretation instead of staying in only one representation.",
+      "Use student-prediction moments before revealing a rule, limit, derivative, or integral conclusion.",
+    ],
+    transition_style: "Move from a visual question to the formal calculus language, then close with a tiny test students can try immediately.",
+    scene_policy_default: "hybrid",
+    object_policy_default: "suggested",
+    topic_defaults: {
+      voice_style: "clear_teacher",
+      tone: "clear_teacher",
+      energy: 0.6,
+      pace: 0.94,
+      attention_mode: "hybrid_focus",
+      scene_policy: "hybrid",
+      avatar_anchor: "right_bottom",
+      autoplay: false,
+    },
+    teaching_arc: {
+      entry_point: "Start from a concrete graph, motion, area, or change question students can see.",
+      progression: "Build intuition first, introduce notation second, and use guided checks to make the idea feel usable.",
+      destination: "End with students able to explain the concept in words and apply it to a nearby problem.",
+      tone: "warm, visual, rigorous without intimidation",
+      methods: ["visual intuition", "formalize", "guided prediction", "worked reasoning", "recap"],
+    },
+  },
   "UO/MCG5353_Robotics_W2026": {
     audience_level: "undergraduate mechanical engineering students learning robotics fundamentals, modeling, control, sensing, and robot-system reasoning",
     style_notes: [

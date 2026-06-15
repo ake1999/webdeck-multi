@@ -1,0 +1,378 @@
+{
+  "lecture_meta": {
+    "title": "Maximum Minimum Problems And Lagrange Multipliers",
+    "topic": "Lagrange Multipliers",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Apply the method of Lagrange multipliers to find extreme values of functions subject to constraints",
+      "Solve systems of equations arising from gradient equality conditions",
+      "Analyze constrained optimization problems with multiple constraints",
+      "Interpret the Lagrange multiplier λ as a rate of change of the optimal value",
+      "Distinguish between boundary and interior critical points in constrained problems"
+    ],
+    "prerequisite_reminder": "You should be comfortable with gradient vectors, partial derivatives, and unconstrained critical points."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Finding the Highest Point on a Trail",
+      "left": {
+        "content_type": "concept",
+        "content": "A hiker wants the highest elevation **while staying on a narrow trail**. The mountain height is $f(x,y)$, the trail is $g(x,y)=k$.\n\nAt the optimum, the trail just touches a contour line – the gradients $\\nabla f$ and $\\nabla g$ become parallel."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Mountain with a trail and optimal point annotation",
+        "visual_spec": "Plot a 3D surface (mountain) with a bright red trail curve. Mark the optimal point where the trail is tangent to a contour line. Show two gradient arrows (one for f, one for g) pointing in the same direction from that point. Use matplotlib 3D. Label axes: x, y, z (height). Add legend.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\n\n# mountain surface f(x,y)=4 - x^2 - y^2 + some perturbation\nx = np.linspace(-2,2,40)\ny = np.linspace(-2,2,40)\nX,Y = np.meshgrid(x,y)\nZ = 4 - 0.5*X**2 - 0.3*Y**2 + 0.1*np.sin(2*X)*np.cos(2*Y)\nax.plot_surface(X,Y,Z, alpha=0.7, cmap='viridis')\n\n# trail: g(x,y)=x^2+y^2=2 (circle)\ntheta = np.linspace(0,2*np.pi,100)\nxt = np.sqrt(2)*np.cos(theta)\nyt = np.sqrt(2)*np.sin(theta)\nzt = 4 - 0.5*xt**2 - 0.3*yt**2 + 0.1*np.sin(2*xt)*np.cos(2*yt)\nax.plot(xt, yt, zt, 'r-', linewidth=3, label='trail')\n\n# optimal point (tangency)\nopt_x = np.sqrt(2)/np.sqrt(1+0.6/0.5)  # approximate\nopt_y = 0.6/0.5 * opt_x\nopt_z = 4 - 0.5*opt_x**2 - 0.3*opt_y**2 + 0.1*np.sin(2*opt_x)*np.cos(2*opt_y)\nax.scatter([opt_x],[opt_y],[opt_z], color='black', s=100, label='optimum')\n\n# gradient arrows (simplified direction)\nax.quiver(opt_x, opt_y, opt_z, -opt_x, -0.6*opt_y, 0, length=0.3, color='blue', label='∇f')\nax.quiver(opt_x, opt_y, opt_z, opt_x, opt_y, 0, length=0.3, color='green', label='∇g')\n\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('f')\nax.legend()\nplt.show()",
+        "interactive_controls": [
+          "Slider: change the trail radius to see how the optimal point moves",
+          "Toggle: show/hide contour lines on the mountain surface"
+        ]
+      },
+      "on_screen_text": "Hiker: highest elevation on a trail.\nAt the optimum, trail touches a contour line → ∇f ∥ ∇g.",
+      "teacher_narration": "Imagine you are a hiker trying to reach the highest point on a mountain, but you must stay exactly on a narrow trail. The mountain height is your function f, and the trail is the constraint curve g equals k. At the very best point along the trail, something special happens: the trail just kisses a contour line of the mountain. That means it does not cross the contour, it runs along it. Since gradients are perpendicular to contour lines, both gradients become parallel. That is the entire idea behind Lagrange multipliers. This geometric insight is the foundation for the algebraic method we will develop.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Lagrange Multiplier Condition",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Single constraint:**\n$$\\nabla f = \\lambda \\nabla g, \\quad g(x,y,z)=k$$\n\n**Component form (2D):**\n$$f_x = \\lambda g_x, \\quad f_y = \\lambda g_y, \\quad g(x,y)=k$$\n\nλ is the **Lagrange multiplier** – it measures how the optimal value changes if the constraint is relaxed."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two gradient arrows pointing in the same direction from a common point",
+        "visual_spec": "A 2D diagram with a curve g=k, a point P on it, and two parallel arrows representing ∇f and ∇g. Label: '∇f = λ∇g'. Show a small label 'λ scalar'. Use matplotlib 2D.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nfig, ax = plt.subplots(figsize=(5,5))\n\n# constraint curve: circle\ntheta = np.linspace(0,2*np.pi,100)\nr = 2\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nax.plot(x,y,'k',label='g(x,y)=k')\n\n# point P\nP = np.array([1.2,1.6])\nax.scatter(P[0],P[1],color='red',s=50,zorder=5)\n\n# gradient of f (example f = x^2 + y^2 => ∇f = (2x,2y))\ngrad_f = 2*P\n# gradient of g (g = x^2+y^2 => ∇g = (2x,2y)) same direction\ngrad_g = 2*P\n# normalize for display\nscale = 0.5\nax.arrow(P[0], P[1], scale*grad_f[0], scale*grad_f[1], head_width=0.2, color='blue', label='∇f')\nax.arrow(P[0], P[1], scale*grad_g[0], scale*grad_g[1], head_width=0.2, color='green', alpha=0.7, label='∇g')\n\nax.set_aspect('equal')\nax.legend()\nax.set_xlim(-3,3); ax.set_ylim(-3,3)\nplt.show()",
+        "interactive_controls": [
+          "Slider: change the scalar λ to see how the length of ∇f changes relative to ∇g",
+          "Toggle: show/hide the constraint curve equation"
+        ]
+      },
+      "on_screen_text": "∇f = λ ∇g  and constraint g=k.\nλ is the Lagrange multiplier.",
+      "teacher_narration": "Here is the formal condition. For a function f subject to a single constraint g equals k, at any local extremum the gradient of f must be parallel to the gradient of g. That is, there exists a scalar λ such that ∇f equals λ times ∇g. We then solve the component equations together with the constraint. The number λ tells you how sensitive the optimal value is to changes in the constraint – a large λ means small changes in k greatly affect the optimum.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm‑Up: $f=x^2+y^2$ with $xy=1$",
+      "left": {
+        "content_type": "text",
+        "content": "**Goal:** Find extreme values of $f(x,y)=x^2+y^2$ on the hyperbola $xy=1$.\n\n**Key steps:**\n1. ∇f = ⟨2x,2y⟩, ∇g = ⟨y,x⟩\n2. Set $2x=λy$, $2y=λx$, $xy=1$\n3. Multiply first by x: $2x^2=λxy=λ$\n4. Multiply second by y: $2y^2=λxy=λ → x^2=y^2$\n5. $x=±y$; from $xy=1$ only $x=y$ works → $(1,1),(-1,-1)$\n6. $f=2$ at both. No maximum (unbounded)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D plot of paraboloid with hyperbola constraint and two optima",
+        "visual_spec": "Same as v2 slide 4 but with both optima marked. Use mpl_toolkits.mplot3d. Surface f(x,y)=x^2+y^2, red curve for xy=1, two black dots at (1,1,2) and (-1,-1,2). Add gradient arrows at one optimum.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\n\nx = np.linspace(-2,2,50)\ny = np.linspace(-2,2,50)\nX,Y = np.meshgrid(x,y)\nZ = X**2 + Y**2\nax.plot_surface(X,Y,Z, alpha=0.6, cmap='viridis')\n\n# constraint xy=1\nt = np.linspace(0.1,2,100)\nt = np.concatenate([t, np.linspace(-2,-0.1,100)])\nxc = t\nyc = 1/t\nzc = xc**2 + yc**2\nax.plot(xc,yc,zc,'r-',linewidth=3,label='xy=1')\n\n# optima\nax.scatter([1,-1],[1,-1],[2,2],color='black',s=100,zorder=10)\n\n# gradient at (1,1)\nax.quiver(1,1,2,2,2,0,color='blue',length=0.3)\n\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('f')\nax.legend()\nplt.show()",
+        "interactive_controls": [
+          "Slider: change the constraint constant k to see how the optimum value changes",
+          "Toggle: show/hide the gradient arrows at the optimum point"
+        ]
+      },
+      "on_screen_text": "Min f=2 at (1,1) and (−1,−1). No maximum.",
+      "teacher_narration": "Let's walk through a basic problem. We want the extreme values of the distance-squared from the origin, but we have to stay on the hyperbola xy equals 1. Set up the Lagrange equations — two gradient equations plus the constraint. Multiplying by x and y cleverly uses the constraint to eliminate λ. This gives x squared equals y squared, so x equals plus or minus y. Only x equals y gives real points on the constraint. So we get two points each giving the value 2. As x goes to zero along the hyperbola, y goes to infinity, so f becomes arbitrarily large — no maximum. The minimum is 2.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Prediction: What if $xy = -1$?",
+      "left": {
+        "content_type": "text",
+        "content": "**Your turn:** Find the extreme values of $f(x,y)=x^2+y^2$ on $xy=-1$.\n\nStart with the same gradients. The only change is the constraint.\n\n**Pause and solve** before clicking the reveal."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Same 3D plot but with xy=-1 constraint (two branches)",
+        "visual_spec": "3D plot as before, but replace constraint curve with xy=-1. Only show plot without markers initially? Actually just show the surface and constraint, no labels for optimum.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\nx = np.linspace(-2,2,50)\ny = np.linspace(-2,2,50)\nX,Y = np.meshgrid(x,y)\nZ = X**2+Y**2\nax.plot_surface(X,Y,Z, alpha=0.6, cmap='viridis')\n# constraint xy=-1\nt = np.linspace(0.1,2,100); t = np.concatenate([t, np.linspace(-2,-0.1,100)])\nxc = t; yc = -1/t; zc = xc**2+yc**2\nax.plot(xc,yc,zc,'r-',linewidth=3)\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('f')\nplt.show()",
+        "interactive_controls": [
+          "Button: reveal the solution points on the plot",
+          "Toggle: show/hide the gradient arrows at the solution points"
+        ]
+      },
+      "on_screen_text": "Try: $f=x^2+y^2$, $xy=-1$.\nPause and solve.",
+      "teacher_narration": "Now I want you to try a small variation. The function is still the distance squared from the origin, but this time the constraint is xy equals negative 1. Pause the video now and try to find the extreme values using the same Lagrange method. After you've attempted it, resume to see the solution. This exercise will help you see how the sign of the constraint constant affects the location of the optimum points.",
+      "student_prompt": "Find the extreme values of f(x,y)=x^2+y^2 subject to xy=-1.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution for $xy=-1$",
+      "left": {
+        "content_type": "text",
+        "content": "Following same steps:\n- Gradient equations unchanged.\n- Multiplying gives $x^2 = y^2$ and $λ = 2x^2$.\n- From xy=-1, $x=y$ gives $x^2=-1$ impossible.\n- $x=-y$ gives $-x^2 = -1$ → $x=±1$, $y=∓1$.\n- Points: (1,-1), (-1,1). f=2.\n- Again no maximum.\n\n**Minimum 2 at (1,-1) and (-1,1).**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Same 3D plot with xy=-1 and the two optimum points marked",
+        "python_code": "Same as slide 4 right but add two black dots at (1,-1,2) and (-1,1,2).",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Minimum 2 at (1,−1) and (−1,1).",
+      "teacher_narration": "Here is the solution. The only difference is that now x equals negative y works because xy equals negative 1. We get the points (1,-1) and (-1,1) again giving f equals 2. The same minimum value, just different locations. Did you get it? Notice the method is essentially the same — the algebra branches depending on the sign of the constraint constant.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Don't Forget Interior Points!",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** Use Lagrange on the boundary only, ignore interior.\n\n**Example:** $f=x^2+2y^2$ on $x^2+y^2\\le 1$.\n- Interior: ∇f=0 at (0,0), f=0. (Critical point!)\n- Boundary: Lagrange gives candidates.\n- Must compare ALL candidates to find global max/min.\n\n**Why it fails:** Lagrange only finds extrema *on* the constraint. If the domain has interior, check critical points inside too."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "2D contour plot of f with disk domain, mark interior (0,0) and boundary Lagrange points",
+        "visual_spec": "Contour plot of f(x,y)=x^2+2y^2 over the unit disk. Highlight the interior point (0,0) with a marker, and the four boundary points from Lagrange (1,0),(-1,0),(0,1),(0,-1). Use different colors. Add labels with f-values.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(-1.2,1.2,200)\ny = np.linspace(-1.2,1.2,200)\nX,Y = np.meshgrid(x,y)\nZ = X**2 + 2*Y**2\n\nfig, ax = plt.subplots(figsize=(6,6))\ncp = ax.contourf(X, Y, Z, levels=20, cmap='viridis', alpha=0.6)\nplt.colorbar(cp)\n\n# disk boundary\ntheta = np.linspace(0,2*np.pi,100)\nax.plot(np.cos(theta), np.sin(theta), 'k', linewidth=2)\n\n# interior candidate\nax.scatter(0,0, color='red', s=80, label='interior (0,0) f=0')\n# boundary candidates\nax.scatter([1,-1,0,0], [0,0,1,-1], color='blue', s=80, label='Lagrange candidates')\nax.legend()\nax.set_aspect('equal')\nax.set_xlim(-1.2,1.2)\nax.set_ylim(-1.2,1.2)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Interior matters! Lagrange only for boundary.",
+      "teacher_narration": "A very common mistake is to only apply Lagrange multipliers to the boundary of a closed domain, forgetting that the extremum could be inside. For example, suppose we want the extreme values of f equals x squared plus 2 y squared on the closed disk of radius 1. If you just use Lagrange on the circle, you get boundary points but you miss the interior critical point at (0,0) where the gradient is zero. That point gives f equals 0, which turns out to be the minimum. So remember: always check interior critical points separately.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard: Disk with Interior and Boundary",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Find max/min of $f(x,y)=x^2+2y^2$ on $x^2+y^2\\le 1$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | Interior: ∇f=0 | (0,0) → f=0 |\n| 2 | Boundary: Lagrange | 2x=λ·2x, 4y=λ·2y, x²+y²=1 |\n| 3 | Case x=0 → y=±1 | f=2 |\n| 4 | Case λ=1 → y=0 → x=±1 | f=1 |\n| 5 | Compare all: 0,1,2 | **Min 0, Max 2** |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Min f=0 at (0,0); Max f=2 at (0,±1).",
+      "teacher_narration": "Now let's solve the complete problem. First find interior critical points by setting the gradient to zero. That gives the origin with f equals 0. Then apply Lagrange on the boundary circle. The system splits into cases. When x equals 0, we get points (0,1) and (0,-1) with f equals 2. When λ equals 1, we get y equals 0 and points (1,0) and (-1,0) with f equals 1. Comparing all candidate values, the minimum is 0 at the interior point, and the maximum is 2 on the boundary.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Disk Example",
+      "left": {
+        "content_type": "text",
+        "content": "Interact with the 3D plot. Use the slider to change λ (not the Lagrange multiplier but a parameter) to see where the constraint circle intersects the surface. Toggle contour lines to see the geometry."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive 3D plot with slider and toggle",
+        "visual_spec": "Plot the surface f= x^2+2y^2 and the constraint cylinder x^2+y^2=1 in 3D. Add a slider to change the radius of the cylinder from 0.5 to 1.5. Add a toggle to show/hide contour lines on surface. Mark candidates with dots. Use matplotlib widgets (Slider, CheckButtons).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, CheckButtons\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.25)\n\nx = np.linspace(-1.5,1.5,50)\ny = np.linspace(-1.5,1.5,50)\nX,Y = np.meshgrid(x,y)\nZ = X**2 + 2*Y**2\n\n# initial cylinder radius r=1\ndef plot_surface(r, show_contour):\n    ax.clear()\n    ax.plot_surface(X,Y,Z, alpha=0.5, cmap='viridis')\n    # cylinder\n    theta = np.linspace(0,2*np.pi,50)\n    xc = r*np.cos(theta)\n    yc = r*np.sin(theta)\n    zc = xc**2 + 2*yc**2\n    ax.plot(xc, yc, zc, 'r-', linewidth=3, label='constraint')\n    if show_contour:\n        ax.contour(X,Y,Z, levels=10, offset=0, alpha=0.3)\n    ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('f')\n    ax.set_zlim(0,4)\n    ax.legend()\n    plt.draw()\n\nplot_surface(1, False)\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'Radius', 0.5, 1.5, valinit=1)\ncheck_ax = plt.axes([0.7, 0.02, 0.1, 0.1])\ncheck = CheckButtons(check_ax, ['Contours'], [False])\n\ndef update(val):\n    r = slider.val\n    show = check.get_status()[0]\n    plot_surface(r, show)\nslider.on_changed(update)\ndef toggle(label):\n    r = slider.val\n    show = check.get_status()[0]\n    plot_surface(r, show)\ncheck.on_clicked(toggle)\nplt.show()",
+        "interactive_controls": [
+          "Slider for cylinder radius from 0.5 to 1.5",
+          "Toggle: show/hide contour lines"
+        ]
+      },
+      "on_screen_text": "Adjust the constraint radius to see its effect on the candidate points.",
+      "teacher_narration": "This interactive visual lets you see how the constrained optimization changes with the constraint. The red curve is the boundary of the disk. Use the slider to change the radius. Notice that the candidate points from Lagrange move along the surface. The toggle shows contour lines, which can help you see why the optimum occurs where the constraint is tangent to a contour.",
+      "student_prompt": "What happens to the maximum value as you increase the radius?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof Sketch",
+      "left": {
+        "content_type": "text",
+        "content": "**Theorem:** If $f$ has local extremum at $P_0$ on $g=k$ and $\\nabla g(P_0)\\neq\\mathbf{0}$, then $\\nabla f(P_0)=\\lambda\\nabla g(P_0)$.\n\n**Idea:** Let $\\mathbf{r}(t)$ be any smooth path on $g=k$ through $P_0$. Then $g(\\mathbf{r}(t))=k$, differentiate: $\\nabla g\\cdot\\mathbf{r}'=0$ so $\\nabla g$ is perpendicular to the surface. Since $f$ has extremum, $\\nabla f$ also perpendicular. Two vectors perpendicular to same plane are parallel."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing surface, tangent plane, and gradient vectors perpendicular to it",
+        "visual_spec": "Draw a smooth surface (part of a sphere) with a point P. Show tangent plane at P. Draw ∇g as an arrow perpendicular to surface, and ∇f as another arrow parallel. Label λ scalar. Use matplotlib 3D.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\n\n# sphere surface\nphi, theta = np.meshgrid(np.linspace(0,np.pi,20), np.linspace(0,2*np.pi,20))\nr=2\nX = r*np.sin(phi)*np.cos(theta)\nY = r*np.sin(phi)*np.sin(theta)\nZ = r*np.cos(phi)\nax.plot_wireframe(X,Y,Z, alpha=0.3)\n\n# point P\nP = np.array([1.2,1.6,1.2])\nax.scatter(P[0],P[1],P[2],color='red',s=80)\n\n# tangent plane (small patch)\nu = np.linspace(-0.5,0.5,2)\nv = np.linspace(-0.5,0.5,2)\nU,V = np.meshgrid(u,v)\n# tangent vectors: approximate by plane perpendicular to P (since sphere)\nn = P / np.linalg.norm(P)  # normal\n# create orthonormal basis\ne1 = np.array([1,0,0]) if abs(n[0])<0.9 else np.array([0,1,0])\ne1 = e1 - np.dot(e1,n)*n\ne1 = e1/np.linalg.norm(e1)\ne2 = np.cross(n, e1)\nplane = P + U[...,None]*e1 + V[...,None]*e2\nax.plot_surface(plane[:,:,0], plane[:,:,1], plane[:,:,2], alpha=0.4, color='gray')\n\n# gradient arrows\nax.quiver(P[0],P[1],P[2], 2*P[0],2*P[1],2*P[2], color='blue', length=0.5, label='∇g')\nax.quiver(P[0],P[1],P[2], 2*P[0],2*P[1],2*P[2], color='green', length=0.5, alpha=0.7, label='∇f parallel')\n\nax.legend()\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "∇f and ∇g both perpendicular to tangent plane → parallel.",
+      "teacher_narration": "For those wanting a deeper understanding, here is the intuition behind the proof. Consider any smooth path on the constraint surface through the optimum point. Because the path stays on g equals k, its velocity vector is perpendicular to the gradient of g. Since f has an extremum along that path, its gradient dot the velocity is zero, so ∇f is also perpendicular to every velocity vector. That means both gradients are perpendicular to the same plane — so they must be parallel. This is the geometric heart of the theorem.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Tricky: Closest/Farthest Point on a Sphere",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Find points on sphere $x^2+y^2+z^2=4$ closest to and farthest from $(3,1,-1)$.\n\n- Minimize $d^2=(x-3)^2+(y-1)^2+(z+1)^2$.\n- Constraint: $g=x^2+y^2+z^2=4$.\n- Equate gradients, solve.\n- Result: $λ=1\\pm\\frac{\\sqrt{11}}{2}$.\n- **Closest:** $(6/\\sqrt{11},\\,2/\\sqrt{11},\\,-2/\\sqrt{11})$.\n- **Farthest:** $(-6/\\sqrt{11},\\,-2/\\sqrt{11},\\,2/\\sqrt{11})$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D plot of sphere with two points and vector from external point to each",
+        "visual_spec": "Sphere radius 2. Mark external point P=(3,1,-1) outside. Draw line from P to closest point (in green) and from P to farthest point (in red). Use matplotlib 3D. Show coordinate axes.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\n\n# sphere\nphi, theta = np.meshgrid(np.linspace(0,np.pi,30), np.linspace(0,2*np.pi,30))\nr=2\nX = r*np.sin(phi)*np.cos(theta)\nY = r*np.sin(phi)*np.sin(theta)\nZ = r*np.cos(phi)\nax.plot_wireframe(X,Y,Z, alpha=0.3)\n\n# external point\nP = np.array([3,1,-1])\nax.scatter(P[0],P[1],P[2], color='orange', s=100, label='External point')\n\n# closest and farthest\nclosest = np.array([6/np.sqrt(11), 2/np.sqrt(11), -2/np.sqrt(11)])\nfarthest = -closest\nax.scatter(closest[0],closest[1],closest[2], color='green', s=100, label='Closest')\nax.scatter(farthest[0],farthest[1],farthest[2], color='red', s=100, label='Farthest')\n\n# lines\nax.plot([P[0],closest[0]],[P[1],closest[1]],[P[2],closest[2]], 'g--')\nax.plot([P[0],farthest[0]],[P[1],farthest[1]],[P[2],farthest[2]], 'r--')\n\nax.legend()\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Closest and farthest points are opposite ends of a diameter through the external point's projection.",
+      "teacher_narration": "Here is a classic geometry problem. Find the points on a sphere nearest to and farthest from a given external point. We minimize the squared distance because it has the same optimum as distance. Setting up the Lagrange equations leads to a system where x, y, z are all proportional to the corresponding components of the external point. The algebra yields two opposite points on the sphere. The closest point lies along the line from the sphere's center to the external point, and the farthest is the opposite point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: What if the external point is inside the sphere?",
+      "left": {
+        "content_type": "text",
+        "content": "**Think:** If the point $(3,1,-1)$ were inside the sphere (radius > distance from origin), would the closest point still be along that line? Would there be a farthest? Predict before proceeding."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Empty sphere with invisible interior point? Actually just text on right: 'Consider point (1,0,0) inside sphere radius 2.'",
+        "visual_spec": "Simple diagram: sphere radius 2, a point inside near origin. No code needed, just image description.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause: Consider point (1,0,0) inside sphere radius 2.",
+      "teacher_narration": "Pause the video for a moment. Suppose the external point is inside the sphere, for example (1,0,0) inside a sphere of radius 2. What would be the closest and farthest points on the sphere? Would the closest still be along the line through the center? Would the farthest be the opposite point? Think about the geometry and then resume. This thought experiment helps solidify your understanding of how the Lagrange method works in different scenarios.",
+      "student_prompt": "If the point is inside the sphere, how do the closest and farthest points change?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Two Constraints: Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Two constraints:**\n$$\\nabla f = \\lambda \\nabla g + \\mu \\nabla h$$\n$$g(x,y,z)=k,\\quad h(x,y,z)=c$$\n\nNow the gradient of f is a **linear combination** of the two constraint gradients."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: Two intersecting surfaces (plane and cylinder) with three gradient arrows",
+        "visual_spec": "3D plot of a plane and a cylinder intersecting in a curve. At a point on that curve, show three arrows: ∇g (normal to plane), ∇h (normal to cylinder), and ∇f as linear combination (in the plane spanned by them). Use different colors. Animate or static.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\n\n# plane: x - y + z = 1\nx = np.linspace(-2,2,10)\ny = np.linspace(-2,2,10)\nX,Y = np.meshgrid(x,y)\nZ = 1 - X + Y\nax.plot_surface(X,Y,Z, alpha=0.4, color='cyan')\n\n# cylinder: x^2 + y^2 = 1\ntheta = np.linspace(0,2*np.pi,50)\nz_cyl = np.linspace(-2,2,10)\nT, Z_cyl = np.meshgrid(theta, z_cyl)\nXc = np.cos(T)\nYc = np.sin(T)\nax.plot_surface(Xc,Yc,Z_cyl, alpha=0.3, color='orange')\n\n# point on intersection (approximate)\nP = np.array([0.6, 0.8, 1 - 0.6 + 0.8])\nax.scatter(P[0],P[1],P[2], color='red', s=80)\n\n# gradients\n# ∇g = (1,-1,1) normal to plane\n# ∇h = (2x,2y,0)\ngrad_g = np.array([1,-1,1])\ngrad_h = np.array([2*P[0], 2*P[1], 0])\nax.quiver(P[0],P[1],P[2], grad_g[0], grad_g[1], grad_g[2], color='blue', length=0.3, label='∇g')\nax.quiver(P[0],P[1],P[2], grad_h[0], grad_h[1], grad_h[2], color='green', length=0.3, label='∇h')\n# ∇f as combination (arbitrary example)\ngrad_f = 0.5*grad_g + 0.3*grad_h\nax.quiver(P[0],P[1],P[2], grad_f[0], grad_f[1], grad_f[2], color='red', length=0.3, label='∇f = λ∇g+μ∇h')\n\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')\nax.legend()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "∇f = λ∇g + μ∇h",
+      "teacher_narration": "When there are two constraints, the intersection is typically a curve. At an optimum on that curve, the gradient of f must lie in the plane spanned by the gradients of the two constraints. That is, ∇f is a linear combination with coefficients λ and μ. The method now gives five equations: one vector equation (three components) plus the two constraint equations. We solve for x, y, z, λ, μ.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Two Constraints Example",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Maximize $f=x+2y+3z$ on intersection of plane $x-y+z=1$ and cylinder $x^2+y^2=1$.\n\n| Step | Action | Detail |\n|------|--------|--------|\n| 1 | Set ∇f = λ∇g + μ∇h | ∇f=⟨1,2,3⟩, ∇g=⟨1,-1,1⟩, ∇h=⟨2x,2y,0⟩ |\n| 2 | Write components | 1=λ+2μx, 2=-λ+2μy, 3=λ |\n| 3 | From z: λ=3 | Substitute |\n| 4 | Solve for x,y in μ | x=-1/μ, y=5/(2μ) |\n| 5 | Use cylinder | x²+y²=1 → μ²=29/4 → μ=±√29/2 |\n| 6 | Find points | (x,y,z) from μ signs |\n| 7 | Evaluate f | Max: 3+√29, Min: 3-√29 |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Max f = 3+√29 ≈ 8.385, Min f = 3-√29 ≈ -2.385.",
+      "teacher_narration": "Here is a full problem with two constraints. The function is linear, the constraints are a plane and a cylinder. Using the two-constraint formula, we set up the equations. Notice from the z-component we immediately get λ equals 3. Then we solve for x and y in terms of μ using the plane constraint? Actually we used the cylinder and the equations from x and y. Plugging into the cylinder gives μ squared. Taking both signs yields two points, one giving the maximum, the other the minimum on the ellipse of intersection.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] When Lagrange Fails: ∇g = 0",
+      "left": {
+        "content_type": "text",
+        "content": "**Example:** Minimize $f(x,y)=x$ on $y^2+x^4-x^3=0$ (piriform curve).\n\n- Lagrange: ∇f=⟨1,0⟩, ∇g=⟨4x³-3x²,2y⟩.\n- Equations: 1=λ(4x³-3x²), 0=λ·2y.\n- From 0=2λy: either λ=0 or y=0.\n- λ=0 impossible (1=0). So y=0.\n- Then constraint: x⁴-x³=0 → x=0 or x=1.\n- At x=1: ∇g=⟨1,0⟩, fine.\n- At x=0: ∇g=⟨0,0⟩! **Lagrange fails** because ∇g=0.\n- Actual minimum is at (0,0): f=0 (smallest x on curve)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of piriform curve y^2+x^4-x^3=0 with cusp at origin",
+        "visual_spec": "Plot the curve over x in [0,1.2]. Show cusp at (0,0) where the gradient is zero. Mark Lagrange candidate at (1,0) and actual min at (0,0). Use different colors for curve branches (y positive and negative).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0,1.2,200)\ny_sq = x**3 - x**4  # y^2\nvalid = y_sq >= 0\nx_valid = x[valid]\ny_sq_valid = y_sq[valid]\ny_pos = np.sqrt(y_sq_valid)\ny_neg = -np.sqrt(y_sq_valid)\n\nfig, ax = plt.subplots(figsize=(6,6))\nax.plot(x_valid, y_pos, 'b', label='y>0')\nax.plot(x_valid, y_neg, 'b', label='y<0')\nax.scatter([1],[0], color='red', s=80, label='Lagrange candidate')\nax.scatter([0],[0], color='green', s=80, label='Actual min (∇g=0)')\nax.axvline(0, color='gray', linestyle='--')\nax.set_xlabel('x'); ax.set_ylabel('y')\nax.set_title('Piriform curve: y² + x⁴ - x³ = 0')\nax.legend()\nplt.axis('equal')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "If ∇g=0 at the candidate, Lagrange theorem does not apply. Check separately!",
+      "teacher_narration": "A critical edge case: Lagrange multipliers require that the gradient of the constraint is not zero at the optimum. If it is zero, the method fails. Here, the piriform curve has a cusp at the origin, where the gradient vanishes. The Lagrange equations lead to a contradiction at that point, so we would miss the true minimum. Always check whether ∇g is zero on the constraint surface; those points are candidates too.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summarize",
+      "layout": "split_left_right",
+      "title": "Summary and Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Lagrange Multiplier Method**\n1. For one constraint: ∇f = λ∇g.\n2. For multiple constraints: ∇f = Σ λ_i ∇g_i.\n3. Check interior points if domain has interior.\n4. Check if ∇g=0 on the constraint — Lagrange may miss those.\n5. Lagrange gives candidates, but doesn't distinguish max/min — compare values.\n\nλ measures sensitivity: how much the optimum changes when constraint is relaxed."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A diagram showing all geometric pieces: level curves, gradient parallelism, tangent plane",
+        "visual_spec": "A 2D schematic: a few contour lines of f, the constraint curve g=k, a point where they are tangent, with ∇f and ∇g parallel arrows. Below, a small table listing λ= sensitivity. Use matplotlib.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nfig, ax = plt.subplots(figsize=(6,4))\n\n# contour circles\nr = [0.5,1,1.5,2,2.5]\nfor ri in r:\n    circle = plt.Circle((0,0), ri, fill=False, color='blue', alpha=0.5)\n    ax.add_patch(circle)\n\n# constraint ellipse\ntheta = np.linspace(0,2*np.pi,100)\na=1.2; b=0.8\nxe = a*np.cos(theta)\nye = b*np.sin(theta)+0.2\nax.plot(xe, ye, 'k', linewidth=2, label='g=k')\n\n# tangent point\nP = np.array([0.6,0.6])\nax.scatter(P[0],P[1],color='red',s=50)\nax.arrow(P[0],P[1],1.2,0.8, head_width=0.1, color='blue', label='∇f')\nax.arrow(P[0],P[1],1.2,0.8, head_width=0.1, color='green', alpha=0.7, label='∇g')\n\nax.set_aspect('equal')\nax.legend()\nax.set_xlim(-3,3)\nax.set_ylim(-3,3)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "∇f = λ∇g   |   λ = sensitivity",
+      "teacher_narration": "Let's review the key ideas. Lagrange multipliers solve constrained optimization by equating gradients. With one constraint, ∇f must be parallel to ∇g. With more constraints, it's a linear combination. Always remember to check interior critical points when the domain is closed and bounded, and watch out for points where the constraint gradient vanishes. The multiplier λ itself tells you how sensitive the optimal value is to the constraint constant. This method is a cornerstone of multivariable calculus and appears everywhere in physics, economics, and engineering.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

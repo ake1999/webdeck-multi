@@ -1,0 +1,362 @@
+{
+  "lecture_meta": {
+    "title": "The Multivariable Chain Rule",
+    "topic": "Multivariable Chain Rule",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate derivatives of composite multivariable functions using tree diagrams and the Chain Rule",
+      "Apply the Chain Rule to find partial derivatives when variables depend on multiple parameters",
+      "Interpret the gradient as a tool for implicit differentiation and tangent planes",
+      "Analyze relationships between dependent and independent variables through dependency graphs",
+      "Solve real-world problems involving rates of change in multivariable systems"
+    ],
+    "prerequisite_reminder": "You should be comfortable with the single-variable Chain Rule and basic partial differentiation."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "How fast does the temperature change as you hike?",
+      "left": {
+        "content_type": "concept",
+        "content": "You're hiking a mountain. Temperature $T$ depends on latitude $x$, longitude $y$, altitude $z$. Your position changes with time $t$. How does $T$ change?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A 3D contour landscape with a moving point along a trail",
+        "visual_spec": "Plot a 3D surface representing a mountain (smooth hills). Overlay a serpentine trail in a bright colour. Animate a red dot moving along the trail. Show temperature labels at the dot (numerical value). Use matplotlib 3D. Axes: x, y, altitude. Title: 'Temperature changes along trail'. The dot position should update with a slider for time t from 0 to 10. Use ipywidgets or matplotlib slider.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt, ipywidgets as widgets\nfrom mpl_toolkits.mplot3d import Axes3D\nx = np.linspace(-3,3,100); y = np.linspace(-3,3,100); X,Y = np.meshgrid(x,y)\nZ = 5*np.exp(-0.2*X**2 - 0.2*Y**2) + 2\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\nax.plot_surface(X, Y, Z, alpha=0.6, cmap='viridis')\n# parametric trail\nt_vals = np.linspace(0, 2*np.pi, 200)\ntrail_x = 2*np.cos(t_vals)\ntrail_y = 2*np.sin(t_vals)\ntrail_z = 5*np.exp(-0.2*trail_x**2 - 0.2*trail_y**2) + 2\nax.plot(trail_x, trail_y, trail_z, 'r-', lw=2)\npoint, = ax.plot([], [], [], 'ro', markersize=8)\ndef update(t):\n    ti = int(t/ (2*np.pi/200))\n    point.set_data([trail_x[ti]], [trail_y[ti]])\n    point.set_3d_properties([trail_z[ti]])\nwidgets.interact(update, t=(0,2*np.pi,0.1))",
+        "interactive_controls": [
+          "Slider for time t from 0 to 2π"
+        ]
+      },
+      "on_screen_text": "You're hiking. Temperature depends on position. Position changes with time. How fast does the temperature change?",
+      "teacher_narration": "Imagine you're a climate scientist hiking in the mountains. The temperature depends on where you are: your latitude, longitude, and altitude. But you're moving, so all three coordinates change over time. The question we want to answer today is: how fast does the temperature change as you hike? This problem naturally leads us to the multivariable chain rule, which tells us how to combine all these effects together. Let's build that rule step by step.",
+      "student_prompt": "Take a guess: how would you compute dT/dt from the partial derivatives of T and the rates of change of the coordinates?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Tree Diagrams: One Independent Variable",
+      "left": {
+        "content_type": "formula_block",
+        "content": "If $z = f(x,y)$ with $x=g(t), y=h(t)$, then:\n$$\\frac{dz}{dt} = \\frac{\\partial z}{\\partial x}\\frac{dx}{dt} + \\frac{\\partial z}{\\partial y}\\frac{dy}{dt}$$\n\nTree diagram:\n\n    z\n   / \\\n  x   y\n  |   |\n  t   t\n"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive tree diagram with highlight on paths",
+        "visual_spec": "Draw a tree diagram with nodes: z at top, x and y in middle, t at bottom. For each branch, show partial derivative label. Include buttons or clickable regions for each path (z→x→t and z→y→t). When a path is clicked, highlight that path in red and display the corresponding product term (e.g., ∂z/∂x * dx/dt). Use matplotlib with event handling (e.g., pick events on annotations) to implement the interactivity.",
+        "python_code": "import matplotlib.pyplot as plt, matplotlib.patches as patches\nfig, ax = plt.subplots(figsize=(6,4))\nax.set_xlim(0,10); ax.set_ylim(0,10)\nax.axis('off')\n# nodes\nax.annotate('z', (5,9), fontsize=20, ha='center')\nax.annotate('x', (2,5), fontsize=20, ha='center')\nax.annotate('y', (8,5), fontsize=20, ha='center')\nax.annotate('t', (5,1), fontsize=20, ha='center')\n# branches\nax.plot([5,2],[8.5,5.5], 'k-', lw=2)\nax.plot([5,8],[8.5,5.5], 'k-', lw=2)\nax.plot([2,5],[4.5,1.5], 'k-', lw=2)\nax.plot([8,5],[4.5,1.5], 'k-', lw=2)\n# labels\nax.text(3.5,7.5, '∂z/∂x', fontsize=12, rotation=-30)\nax.text(7.5,7.5, '∂z/∂y', fontsize=12, rotation=30)\nax.text(3.5,3.5, 'dx/dt', fontsize=12, rotation=-30)\nax.text(7.5,3.5, 'dy/dt', fontsize=12, rotation=30)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Tree diagram: sum of products of partial derivatives along each path from z to t.",
+      "teacher_narration": "The key idea is to draw a dependency tree. z depends on x and y, and each of those depends on t. To find dz/dt, you follow every path from z to t, multiply the partial derivatives along that path, and then add up all the products. This sum gives the total rate of change. Practise with the tree diagram on the right — notice that each branch carries a specific partial derivative label.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm‑Up: Direct Application",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $z = x^2y + 3xy^4$, $x = \\sin(2t)$, $y = \\cos t$. Find $dz/dt$ at $t=0$.\n\n| Step | Action |\n|------|--------|\n| 1 | $\\partial z/\\partial x = 2xy + 3y^4$, $\\partial z/\\partial y = x^2 + 12xy^3$ |\n| 2 | $dx/dt = 2\\cos(2t)$, $dy/dt = -\\sin t$ |\n| 3 | Chain: $dz/dt = (2xy+3y^4)(2\\cos 2t) + (x^2+12xy^3)(-\\sin t)$ |\n| 4 | At $t=0$: $x=0$, $y=1$, so $dz/dt = (0+3)(2) + (0+0)(0) = 6$ |\n\n**Answer:** $\\left.\\frac{dz}{dt}\\right|_{t=0}=6$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Use the Chain Rule: sum partials times parametric derivatives. Evaluate at t=0. Answer: 6.",
+      "teacher_narration": "Let's try a simple example. We have z given in terms of x and y, and both x and y are functions of t. First find the partial derivatives of z, then the ordinary derivatives of x and y with respect to t. Multiply and add. At t=0, x is 0 and y is 1, so most terms vanish, giving 6. This is a straightforward check of the tree diagram method.",
+      "student_prompt": "Pause the video and try this problem before I reveal the answer.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Multiple Independent Variables",
+      "left": {
+        "content_type": "formula_block",
+        "content": "If $z = f(x,y)$ with $x=g(s,t), y=h(s,t)$, then:\n\n$$\\frac{\\partial z}{\\partial s} = \\frac{\\partial z}{\\partial x}\\frac{\\partial x}{\\partial s} + \\frac{\\partial z}{\\partial y}\\frac{\\partial y}{\\partial s}$$\n\n$$\\frac{\\partial z}{\\partial t} = \\frac{\\partial z}{\\partial x}\\frac{\\partial x}{\\partial t} + \\frac{\\partial z}{\\partial y}\\frac{\\partial y}{\\partial t}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Tree diagram for two independent variables",
+        "visual_spec": "Draw a tree with z at top, x and y in second layer, s and t at bottom. Branches: z->x, z->y; x->s, x->t; y->s, y->t. Label each branch with corresponding partial derivative. Use distinct colors for paths from z to s (e.g., red) and z to t (blue). The diagram should be clear and symmetrical.",
+        "python_code": "import matplotlib.pyplot as plt\nfig, ax = plt.subplots(figsize=(6,5))\nax.set_xlim(0,10); ax.set_ylim(0,10)\nax.axis('off')\n# positions\nax.annotate('z', (5,9), fontsize=20, ha='center')\nax.annotate('x', (2,5), fontsize=20, ha='center')\nax.annotate('y', (8,5), fontsize=20, ha='center')\nax.annotate('s', (1,1), fontsize=20, ha='center')\nax.annotate('t', (4,1), fontsize=20, ha='center')\nax.annotate('s', (6,1), fontsize=20, ha='center')\nax.annotate('t', (9,1), fontsize=20, ha='center')\n# branches from z\nax.plot([5,2],[8.5,5.5], 'k-', lw=2)\nax.plot([5,8],[8.5,5.5], 'k-', lw=2)\n# branches from x\nax.plot([2,1],[4.5,1.5], 'k-', lw=2)\nax.plot([2,4],[4.5,1.5], 'k-', lw=2)\n# branches from y\nax.plot([8,6],[4.5,1.5], 'k-', lw=2)\nax.plot([8,9],[4.5,1.5], 'k-', lw=2)\n# labels (simplified)\nax.text(3.5,7.5, '∂z/∂x', fontsize=10)\nax.text(6.5,7.5, '∂z/∂y', fontsize=10)\nax.text(0.5,3, '∂x/∂s', fontsize=10)\nax.text(3.5,3, '∂x/∂t', fontsize=10)\nax.text(5.5,3, '∂y/∂s', fontsize=10)\nax.text(8.5,3, '∂y/∂t', fontsize=10)\nplt.show()",
+        "interactive_controls": [
+          "Radio button: show/hide labels for s-paths",
+          "Toggle: highlight all paths to s in red"
+        ]
+      },
+      "on_screen_text": "For each independent variable, sum products along all paths from z to that variable.",
+      "teacher_narration": "Now suppose z still depends on x and y, but x and y each depend on two parameters, say s and t. To find the partial derivative of z with respect to s, you follow every path from z to s — there are two: one through x and one through y. Multiply the partials along each path and add. The same for t. The tree diagram now has four branches at the bottom instead of two.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Standard Example: Spherical Coordinates",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $w = x^2 + y^2 + z^2$, where $x = \\rho\\sin\\phi\\cos\\theta$, $y = \\rho\\sin\\phi\\sin\\theta$, $z = \\rho\\cos\\phi$. Find $\\partial w/\\partial\\rho$, $\\partial w/\\partial\\phi$, $\\partial w/\\partial\\theta$.\n\n**Tree:** $w$ depends on $x,y,z$; each depends on $\\rho,\\phi,\\theta$.\n\nCompute partials of $w$: $\\partial w/\\partial x = 2x$, etc.\n\nFor $\\rho$:\n$$\\frac{\\partial w}{\\partial\\rho} = 2x\\sin\\phi\\cos\\theta + 2y\\sin\\phi\\sin\\theta + 2z\\cos\\phi$$\nSubstitute $x,y,z$ and simplify using trigonometric identities:\n$$= 2\\rho(\\sin^2\\phi\\cos^2\\theta+\\sin^2\\phi\\sin^2\\theta+\\cos^2\\phi) = 2\\rho$$\n\nSimilarly, $\\partial w/\\partial\\phi=0$, $\\partial w/\\partial\\theta=0$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D spherical coordinate system with interactive sliders",
+        "visual_spec": "Create a 3D plot showing a point on a sphere. The sphere radius is 1 (for simplicity). Point coordinates (x,y,z) computed from spherical angles phi and theta. Show the vector from origin to point. Allow user to adjust phi (0 to pi) and theta (0 to 2pi) via sliders. Display the partial derivative values? Optional: show a small table of partial derivatives. Use mpl_toolkits.mplot3d and ipywidgets.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt, ipywidgets as widgets\nfrom mpl_toolkits.mplot3d import Axes3D\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\nax.set_xlim(-1.5,1.5); ax.set_ylim(-1.5,1.5); ax.set_zlim(-1.5,1.5)\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')\n# draw sphere\nphi = np.linspace(0, np.pi, 30)\ntheta = np.linspace(0, 2*np.pi, 30)\nPhi, Theta = np.meshgrid(phi, theta)\nX = np.sin(Phi)*np.cos(Theta)\nY = np.sin(Phi)*np.sin(Theta)\nZ = np.cos(Phi)\nax.plot_wireframe(X, Y, Z, alpha=0.2, color='gray')\n# initial point\npoint, = ax.plot([0], [0], [0], 'ro', markersize=8)\ndef update(phi, theta):\n    x = np.sin(phi)*np.cos(theta)\n    y = np.sin(phi)*np.sin(theta)\n    z = np.cos(phi)\n    point.set_data([x], [y])\n    point.set_3d_properties([z])\n    return point\nwidgets.interact(update, phi=(0.01,np.pi-0.01,0.1), theta=(0,2*np.pi,0.1))",
+        "interactive_controls": [
+          "Slider for phi from 0 to pi",
+          "Slider for theta from 0 to 2pi"
+        ]
+      },
+      "on_screen_text": "Three intermediate variables, three independent. Apply Chain Rule. Answer: ∂w/∂ρ = 2ρ, others 0.",
+      "teacher_narration": "Here we have a classic problem: w is the squared distance from the origin, expressed in spherical coordinates. We compute the partial derivative with respect to rho, phi, and theta. The chain rule gives three terms for each derivative because there are three intermediate variables. After substituting and simplifying using trig identities, we find that only the rho derivative is non-zero — confirming that w equals rho squared in spherical coordinates. This is a typical exam problem.",
+      "student_prompt": "Try to compute ∂w/∂φ yourself before I show the steps.",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Watch Out: Forgetting a Path!",
+      "left": {
+        "content_type": "concept",
+        "content": "**Common mistake:** For $z = f(x,y)$ with $x = r\\cos\\theta$, $y=r\\sin\\theta$, a student writes:\n$$\\frac{\\partial z}{\\partial \\theta} = \\frac{\\partial z}{\\partial x}(-r\\sin\\theta) + \\frac{\\partial z}{\\partial y}(r\\cos\\theta)$$\nand then treats $\\partial z/\\partial x$ and $\\partial z/\\partial y$ as constants, forgetting that they are functions of $x$ and $y$, which themselves depend on $\\theta$.\n\n**Correct reasoning:** The formula is correct, but the partials $\\partial z/\\partial x$ and $\\partial z/\\partial y$ must be evaluated at $(x,y) = (r\\cos\\theta, r\\sin\\theta)$. They are not constants; they implicitly depend on $\\theta$ through $x$ and $y$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Tree diagram showing that x and y depend on theta, which influences the partials",
+        "visual_spec": "Draw the tree: z -> x,y -> r,theta. On the branch from x to theta, label ∂x/∂θ. On the branch from y to theta, label ∂y/∂θ. Highlight that the partial derivatives ∂z/∂x and ∂z/∂y are functions of x and y, which themselves depend on theta. Use an arrow or note: 'Evaluate these at (x,y) = (r cosθ, r sinθ)'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "A common mistake: forgetting that the partial derivatives are evaluated at the current (x,y) which depend on theta.",
+      "teacher_narration": "A very common mistake occurs in polar coordinates. The student correctly writes the chain rule formula, but then treats the partial derivatives of z as constants. Remember, ∂z/∂x is itself a function — it depends on x and y, and x and y depend on theta. So when you substitute x = r cosθ and y = r sinθ into the partial derivatives, you are implicitly including the theta dependence. The formula is fine, but you must always evaluate the partials at the correct point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "General Chain Rule Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**General formula:** If $u$ is a function of $x_1,\\dots,x_n$, and each $x_j$ is a function of $t_1,\\dots,t_m$, then for each $i$:\n\n$$\\frac{\\partial u}{\\partial t_i} = \\sum_{j=1}^n \\frac{\\partial u}{\\partial x_j}\\frac{\\partial x_j}{\\partial t_i}$$\n\nOne term for each intermediate variable."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Generalized tree diagram with many branches",
+        "visual_spec": "Draw a tree: u at top, then a row of n intermediate nodes (x1 to xn), then a row of m independent nodes (t1 to tm). Label one representative path from u to ti through xj. Show that the sum is over j. Use small dots for omitted nodes. This is abstract but shows pattern.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "General formula: sum over all intermediate variables of (∂u/∂xj)(∂xj/∂ti).",
+      "teacher_narration": "The pattern generalises naturally. If u depends on n intermediate variables, and each of those depends on m independent variables, then for any independent variable ti, the partial derivative is a sum of n terms. Each term is the product of the partial derivative of u with respect to an intermediate variable times the partial derivative of that intermediate variable with respect to ti. The tree diagram helps you keep track of all paths.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Tricky Example: Polar Coordinates Again",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Let $z = f(x,y)$ where $x = r\\cos\\theta$, $y = r\\sin\\theta$. Express $\\partial z/\\partial r$ and $\\partial z/\\partial \\theta$ in terms of $\\partial z/\\partial x$ and $\\partial z/\\partial y$.\n\n**Solution:**\n- $\\partial z/\\partial r = \\cos\\theta \\frac{\\partial z}{\\partial x} + \\sin\\theta \\frac{\\partial z}{\\partial y}$\n- $\\partial z/\\partial \\theta = -r\\sin\\theta \\frac{\\partial z}{\\partial x} + r\\cos\\theta \\frac{\\partial z}{\\partial y}$\n\n**Note:** The partial derivatives on the right are evaluated at $(r\\cos\\theta, r\\sin\\theta)$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Polar coordinate grid showing influence of r and theta on point",
+        "visual_spec": "Plot a Cartesian plane with a point at (x,y) = (r cosθ, r sinθ). Show the polar grid (circles and rays). Animate changing r and theta with sliders. Colour the point. Show the partial derivative labels as annotations? Possibly show the tangent vectors.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt, ipywidgets as widgets\nfig, ax = plt.subplots(figsize=(6,6))\nax.set_xlim(-2,2); ax.set_ylim(-2,2)\nax.grid(True)\n# polar grid circles\nfor r in np.linspace(0.5,2,4):\n    circle = plt.Circle((0,0), r, fill=False, color='gray', alpha=0.3)\n    ax.add_patch(circle)\n# rays\nfor theta in np.linspace(0,2*np.pi,12, endpoint=False):\n    ax.plot([0,2*np.cos(theta)], [0,2*np.sin(theta)], color='gray', alpha=0.3)\npoint, = ax.plot([],[], 'ro', markersize=8)\ndef update(r, theta):\n    x = r*np.cos(theta)\n    y = r*np.sin(theta)\n    point.set_data([x],[y])\nwidgets.interact(update, r=(0.1,2,0.1), theta=(0,2*np.pi,0.1))",
+        "interactive_controls": [
+          "Slider for r from 0.1 to 2",
+          "Slider for theta from 0 to 2π"
+        ]
+      },
+      "on_screen_text": "Polar coordinates: ∂z/∂r = cosθ ∂z/∂x + sinθ ∂z/∂y. ∂z/∂θ = -r sinθ ∂z/∂x + r cosθ ∂z/∂y.",
+      "teacher_narration": "Let's revisit polar coordinates with the chain rule. This is a classic 'tricky' example because the formulas are easy to get right, but the evaluation point is subtle. When you see ∂z/∂x on the right side, remember it's the partial derivative of f with respect to its first argument, evaluated at the actual x and y, which are r cosθ and r sinθ. Try adjusting the sliders to see how the partial derivatives might change with r and theta.",
+      "student_prompt": "Predict: what would ∂z/∂θ be if z = x^2 + y^2? Use the formula and check.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Implicit Differentiation (Two Variables)",
+      "left": {
+        "content_type": "formula_block",
+        "content": "If $F(x,y) = 0$ defines $y$ implicitly as a function of $x$, then\n\n$$\\frac{dy}{dx} = -\\frac{F_x}{F_y}, \\quad F_y \\neq 0.$$\n\n**Derivation:** Differentiate both sides of $F(x,y)=0$ with respect to $x$ using the Chain Rule:\n\n$F_x \\cdot 1 + F_y \\cdot \\frac{dy}{dx} = 0 \\implies \\frac{dy}{dx} = -\\frac{F_x}{F_y}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of implicit curve with tangent line",
+        "visual_spec": "Plot the curve defined by F(x,y)=0 for some simple F (e.g., unit circle x^2+y^2-1=0). Show the tangent line at a movable point. Display the slope computed by formula. Allow user to click/drag a point along the curve and see updated dy/dx and tangent line. Use matplotlib with event handling.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\nfig, ax = plt.subplots(figsize=(6,6))\ntheta = np.linspace(0,2*np.pi,400)\nx_circ = np.cos(theta)\ny_circ = np.sin(theta)\nax.plot(x_circ, y_circ, 'b-', label='x^2+y^2=1')\nax.set_aspect('equal')\nax.set_xlim(-1.5,1.5); ax.set_ylim(-1.5,1.5)\nax.grid(True)\n# initial point\npt, = ax.plot([np.cos(0.5)], [np.sin(0.5)], 'ro', markersize=8)\n# tangent line (use a small segment)\ntangent, = ax.plot([], [], 'k--', lw=2)\ndef update(t):\n    x0 = np.cos(t)\n    y0 = np.sin(t)\n    pt.set_data([x0],[y0])\n    # derivative dy/dx = -x/y\n    if abs(y0) > 0.001:\n        m = -x0/y0\n        # compute line endpoints\n        x_vals = np.linspace(x0-0.5, x0+0.5, 100)\n        y_vals = y0 + m*(x_vals - x0)\n        tangent.set_data(x_vals, y_vals)\n    else:\n        tangent.set_data([],[])\n    fig.canvas.draw_idle()\nslider_ax = plt.axes([0.2,0.02,0.6,0.03])\nslider = Slider(slider_ax, 'angle', 0, 2*np.pi, valinit=0.5)\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for angle (parameter) to move point along curve"
+        ]
+      },
+      "on_screen_text": "Implicit differentiation: differentiate F(x,y)=0, solve for dy/dx = -Fx/Fy.",
+      "teacher_narration": "The chain rule also gives us a powerful tool for implicit differentiation. If a curve is defined by F(x,y) = 0, we can differentiate both sides with respect to x. The partial derivative of F with respect to x times 1, plus the partial with respect to y times dy/dx equals zero. Solve for dy/dx and you get minus Fx over Fy, provided Fy is not zero. This formula is fast and avoids solving for y explicitly.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Edge Case: Implicit Differentiation with Folium of Descartes",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find $dy/dx$ if $x^3 + y^3 = 6xy$.\n\n| Step | Action |\n|------|--------|\n| 1 | Rewrite: $F(x,y)=x^3+y^3-6xy=0$ |\n| 2 | $F_x = 3x^2 - 6y$ |\n| 3 | $F_y = 3y^2 - 6x$ |\n| 4 | $\\frac{dy}{dx} = -\\frac{3x^2-6y}{3y^2-6x} = -\\frac{x^2-2y}{y^2-2x}$ |\n\n**Edge case:** The derivative is undefined when $y^2-2x=0$. At such points the curve has a vertical tangent or is not locally a function."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example: x^3+y^3=6xy → dy/dx = -(x^2-2y)/(y^2-2x). Undefined when y^2=2x.",
+      "teacher_narration": "Let's apply implicit differentiation to the folium of Descartes. Write the equation as F=0, compute the partial derivatives, and plug into the formula. The result is a rational expression. Note the edge case: the derivative fails when y squared equals 2x. At those points, the curve either has a vertical tangent or is not locally a function of x. Real-world systems often have such singularities, so knowing where the derivative exists is as important as computing it.",
+      "student_prompt": "Find dy/dx at the point (3,3). Does it make sense?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Implicit Differentiation (Three Variables)",
+      "left": {
+        "content_type": "formula_block",
+        "content": "If $F(x,y,z) = 0$ defines $z$ implicitly as a function of $x$ and $y$, then\n\n$$\\frac{\\partial z}{\\partial x} = -\\frac{F_x}{F_z}, \\qquad \\frac{\\partial z}{\\partial y} = -\\frac{F_y}{F_z}$$\n\nprovided $F_z \\neq 0$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D surface defined implicitly, with tangent plane",
+        "visual_spec": "Plot the surface of a simple implicit function, e.g., F(x,y,z)=x^2+y^2+z^2-1=0 (sphere). Show the tangent plane at a movable point. Display the partial derivatives ∂z/∂x and ∂z/∂y computed by formula. Allow user to drag a point on the sphere (or use sliders for angles). Use mpl_toolkits.mplot3d and ipywidgets.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt, ipywidgets as widgets\nfrom mpl_toolkits.mplot3d import Axes3D\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\n# sphere\nphi = np.linspace(0,np.pi,40)\ntheta = np.linspace(0,2*np.pi,40)\nPhi, Theta = np.meshgrid(phi,theta)\nX = np.sin(Phi)*np.cos(Theta)\nY = np.sin(Phi)*np.sin(Theta)\nZ = np.cos(Phi)\nax.plot_wireframe(X,Y,Z, alpha=0.2)\nax.set_xlim(-1.5,1.5); ax.set_ylim(-1.5,1.5); ax.set_zlim(-1.5,1.5)\npoint, = ax.plot([1],[0],[0], 'ro', markersize=8)\n# tangent plane as a small patch\n# Skip plane for brevity; can add later\ndef update(phi, theta):\n    x = np.sin(phi)*np.cos(theta)\n    y = np.sin(phi)*np.sin(theta)\n    z = np.cos(phi)\n    point.set_data([x],[y])\n    point.set_3d_properties([z])\nwidgets.interact(update, phi=(0.01,np.pi-0.01,0.1), theta=(0,2*np.pi,0.1))",
+        "interactive_controls": [
+          "Slider for phi",
+          "Slider for theta"
+        ]
+      },
+      "on_screen_text": "For F(x,y,z)=0: ∂z/∂x = -Fx/Fz, ∂z/∂y = -Fy/Fz. Generalises the 2D case.",
+      "teacher_narration": "The implicit differentiation formula extends to three variables. If F(x,y,z) = 0 defines z implicitly as a function of x and y, then the partial derivatives of z are given by similar ratios. The minus sign is crucial, and the denominator Fz must be non-zero. Geometrically, this gives the slope of the tangent plane. The interactive sphere on the right lets you see how these partial derivatives change as you move on the surface.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Real‑World Application: Bug on a Metal Plate",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Temperature $T(x,y)=100-x^2-2y^2$ on a metal plate. A bug crawls along $x(t)=2\\cos t$, $y(t)=3\\sin t$. Find $dT/dt$ at $t=\\pi/4$.\n\n**Solution:**\n1. $\\partial T/\\partial x = -2x$, $\\partial T/\\partial y = -4y$\n2. $dx/dt = -2\\sin t$, $dy/dt = 3\\cos t$\n3. Chain: $dT/dt = -2x(-2\\sin t) + (-4y)(3\\cos t) = 4x\\sin t -12y\\cos t$\n4. At $t=\\pi/4$: $x=\\sqrt{2}$, $y=3\\sqrt{2}/2$\n5. $dT/dt = 4\\sqrt{2}(\\sqrt{2}/2) - 12\\cdot 3\\sqrt{2}/2 \\cdot \\sqrt{2}/2 = 4 - 18 = -14$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Temperature contour plot with bug's path and instantaneous velocity vector",
+        "visual_spec": "Contour plot of T(x,y) with levels. Overlay the bug's elliptical path. At a selected time, show a red dot representing the bug, and an arrow indicating the direction of motion. Display the computed dT/dt value. Use sliders to move the bug along the path.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt, ipywidgets as widgets\nx = np.linspace(-3,3,400); y = np.linspace(-3,3,400)\nX,Y = np.meshgrid(x,y)\nT = 100 - X**2 - 2*Y**2\nfig, ax = plt.subplots(figsize=(6,6))\ncontour = ax.contourf(X,Y,T, levels=20, cmap='hot')\nplt.colorbar(contour, ax=ax)\n# path\nt_vals = np.linspace(0,2*np.pi,200)\npath_x = 2*np.cos(t_vals)\npath_y = 3*np.sin(t_vals)\nax.plot(path_x, path_y, 'c-', lw=2, label='bug path')\npoint, = ax.plot([], [], 'ro', markersize=8)\n# velocity arrow\narrow = ax.quiver([],[],[],[], scale_units='xy', scale=0.5, color='green')\ndef update(t):\n    x0 = 2*np.cos(t)\n    y0 = 3*np.sin(t)\n    dx = -2*np.sin(t)\n    dy = 3*np.cos(t)\n    point.set_data([x0],[y0])\n    arrow.set_offsets([[x0,y0]])\n    arrow.set_UVC(dx, dy)\n    ax.set_title(f'dT/dt = {4*x0*np.sin(t) - 12*y0*np.cos(t):.2f}')\n    fig.canvas.draw_idle()\nwidgets.interact(update, t=(0,2*np.pi,0.1))",
+        "interactive_controls": [
+          "Slider for time t to move bug along path",
+          "Toggle: show/hide velocity vector"
+        ]
+      },
+      "on_screen_text": "Bug on a metal plate: temperature T(x,y). Find dT/dt along the bug's elliptical path.",
+      "teacher_narration": "Let's apply everything to a real-world scenario. A bug crawls on a metal plate with a given temperature distribution. Its path is an ellipse. Using the chain rule, we find that the temperature changes at a rate of -14 degrees per unit time at t equals pi/4. Notice the combination: the temperature decreases because the bug moves toward cooler regions. The interactive contour plot lets you explore how the rate of change varies along the path.",
+      "student_prompt": "Before I reveal the answer, use the sliders to find where dT/dt is zero. What does that mean physically?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Gradient and the Chain Rule",
+      "left": {
+        "content_type": "concept",
+        "content": "The multivariable chain rule has a compact gradient formulation. If $\\mathbf{r}(t) = (x(t), y(t), z(t))$ and $f$ is differentiable, then\n\n$$\\frac{df}{dt} = \\nabla f(\\mathbf{r}(t)) \\cdot \\mathbf{r}'(t)$$\n\nThis means the rate of change of $f$ along a path is the dot product of the gradient and the velocity vector.\n\n**Interpretation:** The direction in which $f$ increases fastest is the gradient direction; the dot product measures how much the path aligns with that direction."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D surface with path and gradient vectors",
+        "visual_spec": "Plot a 3D surface (e.g., a saddle). Show a parametric path on the surface. At several points along the path, show the gradient vector (2D projection and 3D arrow) and the velocity vector. The dot product is shown numerically. Allow user to adjust a slider to move along the path and see the instantaneous dot product.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt, ipywidgets as widgets\nfrom mpl_toolkits.mplot3d import Axes3D\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\n# surface\nx = np.linspace(-2,2,40); y = np.linspace(-2,2,40)\nX,Y = np.meshgrid(x,y)\nZ = X**2 - Y**2\nax.plot_surface(X,Y,Z, alpha=0.6, cmap='viridis')\n# path\nt_vals = np.linspace(0,2*np.pi,100)\npx = 1.5*np.cos(t_vals)\npy = 1.5*np.sin(t_vals)\npz = px**2 - py**2\nax.plot(px, py, pz, 'r-', lw=2)\n# point and vectors\npoint, = ax.plot([],[],[], 'ko', markersize=6)\n# gradient vector (arrow) - we'll use quiver on 2D? Sorry; for 3D use quiver from mpl_toolkits.mplot3d.art3d\n# Simpler: show arrow in 3D using a line\narrow_grad, = ax.plot([],[],[], 'g-', lw=2)\narrow_vel, = ax.plot([],[],[], 'b-', lw=2)\ndef update(t_index):\n    i = int(t_index)\n    x0 = px[i]; y0 = py[i]; z0 = pz[i]\n    point.set_data([x0],[y0])\n    point.set_3d_properties([z0])\n    # gradient of f = (2x, -2y)\n    grad = np.array([2*x0, -2*y0])\n    # velocity (dx, dy, dz = derivative of path)\n    dt = 0.1\n    dx = px[i+1]-px[i] if i<len(px)-1 else 0\n    dy = py[i+1]-py[i] if i<len(py)-1 else 0\n    dz = pz[i+1]-pz[i] if i<len(pz)-1 else 0\n    vel = np.array([dx, dy, dz])\n    # scale grad for display (limit length)\n    scale=0.5\n    g_end = [x0+scale*grad[0], y0+scale*grad[1], z0]\n    arrow_grad.set_data([x0,g_end[0]],[y0,g_end[1]])\n    arrow_grad.set_3d_properties([z0,g_end[2]])\n    v_end = [x0+0.2*vel[0], y0+0.2*vel[1], z0+0.2*vel[2]]\n    arrow_vel.set_data([x0,v_end[0]],[y0,v_end[1]])\n    arrow_vel.set_3d_properties([z0,v_end[2]])\n    fig.canvas.draw_idle()\nwidgets.interact(update, t_index=(0,len(px)-2,1))",
+        "interactive_controls": [
+          "Slider for time index along path"
+        ]
+      },
+      "on_screen_text": "Chain Rule in gradient form: df/dt = ∇f · r'(t). The dot product reveals alignment.",
+      "teacher_narration": "For advanced students, the chain rule can be written compactly using the gradient. If r(t) is a path, the derivative of f along that path is the dot product of the gradient of f and the velocity vector. This tells you that the rate of change is largest when the path goes directly uphill — when the velocity is parallel to the gradient. If the path is along a level set, the dot product is zero. This geometric insight is powerful in physics and optimisation.",
+      "student_prompt": "Using the dot product interpretation, why is dT/dt zero when the bug moves perpendicular to the gradient?",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary",
+      "left": {
+        "content_type": "text",
+        "content": "**Key Formulas:**\n\n1. One independent variable (tree diagram): $\\frac{dz}{dt} = \\frac{\\partial z}{\\partial x}\\frac{dx}{dt} + \\frac{\\partial z}{\\partial y}\\frac{dy}{dt}$\n\n2. Multiple independent variables: $\\frac{\\partial z}{\\partial s} = \\sum \\frac{\\partial z}{\\partial x_j}\\frac{\\partial x_j}{\\partial s}$\n\n3. Implicit differentiation (2D): $\\frac{dy}{dx} = -\\frac{F_x}{F_y}$\n\n4. Implicit differentiation (3D): $\\frac{\\partial z}{\\partial x} = -\\frac{F_x}{F_z}, \\quad \\frac{\\partial z}{\\partial y} = -\\frac{F_y}{F_z}$\n\n5. Gradient form: $\\frac{df}{dt} = \\nabla f \\cdot \\mathbf{r}'(t)$\n\n**Learning Objectives Revisited:**\n- ✅ Calculate derivatives using tree diagrams\n- ✅ Apply chain rule with multiple parameters\n- ✅ Interpret gradient for implicit differentiation and tangent planes\n- ✅ Analyse dependency graphs\n- ✅ Solve real‑world rate problems"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Mastered the multivariable chain rule. You can now handle compositions with any number of variables.",
+      "teacher_narration": "Today we've covered the multivariable chain rule from several angles: tree diagrams, formulas for one and multiple independent variables, implicit differentiation, and the elegant gradient formulation. Remember that the chain rule is all about summing contributions along all paths in the dependency graph. Practise with the exercises, and especially draw tree diagrams for any composite function you encounter. This skill will be essential in multivariable calculus, physics, and engineering.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

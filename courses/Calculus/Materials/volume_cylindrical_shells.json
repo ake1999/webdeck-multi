@@ -1,0 +1,386 @@
+{
+  "lecture_meta": {
+    "title": "Volume by Cylindrical Shells",
+    "topic": "Cylindrical Shell Method",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate volumes of solids of revolution using the cylindrical shell method",
+      "Determine when to use shells versus washers/disks based on the axis of rotation and region shape",
+      "Apply the shell method to rotations about vertical lines other than the y‑axis",
+      "Analyze complex regions where solving for the opposite variable is difficult or impossible",
+      "Set up integrals for rotation about the x‑axis using shells with the appropriate variable"
+    ],
+    "prerequisite_reminder": "You should already know how to set up disk/washer integrals for solids of revolution."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Another Method?",
+      "left": {
+        "content_type": "text",
+        "content": "Sometimes slicing perpendicular to the axis of rotation forces you to solve a difficult equation. The shell method slices **parallel** to the axis, creating thin cylindrical layers—like unrolling a paper towel."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Cylindrical shell diagram",
+        "visual_spec": "Draw a 3D cylindrical shell with inner radius r_inner, outer radius r_outer, and height h. Use mpl_toolkits.mplot3d. Show a semi-transparent blue inner cylinder, red outer cylinder, and green top/bottom rings. Label the radius and height. Title: 'Cylindrical Shell: a thin layer'.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\n\nr_inner = 1.0\nr_outer = 1.3\nheight = 2.0\ntheta = np.linspace(0, 2*np.pi, 100)\n\n# Inner cylinder\nx_in = r_inner * np.outer(np.cos(theta), np.ones(2))\ny_in = r_inner * np.outer(np.sin(theta), np.ones(2))\nz_in = np.outer(np.ones(100), [0, height])\nax.plot_surface(x_in, y_in, z_in, alpha=0.4, color='blue')\n\n# Outer cylinder\nx_out = r_outer * np.outer(np.cos(theta), np.ones(2))\ny_out = r_outer * np.outer(np.sin(theta), np.ones(2))\nz_out = np.outer(np.ones(100), [0, height])\nax.plot_surface(x_out, y_out, z_out, alpha=0.4, color='red')\n\n# Rings\ntheta_ring = np.linspace(0, 2*np.pi, 50)\nfor z_level in [0, height]:\n    x_ring = np.linspace(r_inner, r_outer, 20)\n    T, R = np.meshgrid(theta_ring, x_ring)\n    X = R * np.cos(T)\n    Y = R * np.sin(T)\n    Z = z_level * np.ones_like(X)\n    ax.plot_surface(X, Y, Z, alpha=0.3, color='green')\n\nax.set_xlabel('X')\nax.set_ylabel('Y')\nax.set_zlabel('Z')\nax.set_title('Cylindrical Shell (r_inner=1, r_outer=1.3, h=2)')\nplt.show()",
+        "interactive_controls": [
+          "Slider for inner radius from 0.5 to 3.0",
+          "Slider for outer radius from inner+0.1 to 4.0",
+          "Slider for height from 0.5 to 5.0"
+        ]
+      },
+      "on_screen_text": "If solving for x in terms of y is hard, try slicing parallel to the axis.",
+      "teacher_narration": "Welcome. So far you have used disks and washers to find volumes of revolution. That method works great when you can slice perpendicular to the axis. But what if the region is defined by a function that is difficult to invert? For example the cubic y equals 2x squared minus x cubed. Today we learn a clever alternative: the cylindrical shell method. Think of a roll of paper towels. Each layer is a thin cylindrical shell. The volume of the whole roll is just the sum of the volumes of those shells. That simple idea is the key to our new technique.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Intuition & Metaphor",
+      "left": {
+        "content_type": "concept",
+        "content": "Take a vertical strip of width $\\Delta x$ at position $x$. Rotating it about the y‑axis sweeps out a thin cylindrical shell.\n- **Radius** = $x$\n- **Height** = $f(x)$\n- **Thickness** = $\\Delta x$\nThe shell's volume is approximately $2\\pi x \\, f(x) \\, \\Delta x$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Vertical strip rotating into a shell",
+        "visual_spec": "2D plot of a region under y=f(x) with a thin vertical strip shaded. Then an arrow showing rotation about y-axis. Next to it, a 3D sketch of a single cylindrical shell from that strip. Use different colors for radius, height, thickness.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 2, 400)\ny = x**2\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,4))\n\n# Left: region with strip\nax1.fill_between(x, y, alpha=0.2)\nax1.plot(x, y, 'b', lw=2)\nax1.axvline(1.2, color='red', lw=3, label='strip at x=1.2')\nax1.set_xlim(0,2)\nax1.set_ylim(0,4)\nax1.set_xlabel('x')\nax1.set_ylabel('y')\nax1.legend()\nax1.set_title('Region with a vertical strip')\n\n# Right: shell representation (3D in 2D schematic)\n# We'll just show a rectangle labeled as 'unrolled shell'\nrect = plt.Rectangle((0.5,0.5), 2.4, 1.44, edgecolor='red', facecolor='none', lw=2)\nax2.add_patch(rect)\nax2.text(1.7, 1.2, 'circumference = 2πr', ha='center')\nax2.text(1.7, 0.3, 'height = f(x)', ha='center')\nax2.set_xlim(0,3)\nax2.set_ylim(0,3)\nax2.set_aspect('equal')\nax2.set_title('Unrolled shell')\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band",
+          "Button: reveal next step"
+        ]
+      },
+      "on_screen_text": "Volume of one shell ≈ (circumference) × height × thickness = 2πx · f(x) · Δx",
+      "teacher_narration": "Imagine a thin vertical strip under the curve. When it rotates around the y-axis, it traces out a cylinder with no top or bottom—a shell. The radius of that shell is the x-coordinate of the strip, the height is the function value, and the thickness is the width of the strip. If we slice that shell open and lay it flat, we get a rectangular sheet. The length of that rectangle is the circumference 2πx, the width is the height f(x), and the thickness is Δx. So the volume of that one shell is just length times width times thickness. That is the heart of the shell method.",
+      "student_prompt": "Pause and sketch: Imagine a vertical strip at x=0.8 under y = x². What are the radius, height, and approximate volume of the shell it sweeps out?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Shell Formula – Rotation About the y‑axis",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$V = 2\\pi \\int_{a}^{b} \\, (\\text{radius}) \\cdot (\\text{height}) \\, dx$$\n\nwhere radius = $x$ (distance from y‑axis) and height = $f(x)$ (top − bottom)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of a typical shell with labels",
+        "visual_spec": "Draw a region under y=f(x) from x=a to x=b. Highlight one thin vertical strip at position x. Show an arrow indicating rotation about y-axis. Inset: a magnified cylindrical shell with radius x, height f(x), thickness dx. Use color coding: radius in blue, height in red, thickness in green.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 2, 400)\ny = x**2\n\nfig, ax = plt.subplots(figsize=(8,5))\nax.fill_between(x, y, alpha=0.2, label='region')\nax.plot(x, y, 'b', lw=2)\nax.axvline(1.2, color='red', lw=2, linestyle='--', label='strip at x')\nax.annotate('', xy=(1.2,0), xytext=(0,0), arrowprops=dict(arrowstyle='<->', color='blue'), label='radius x')\nax.text(0.6, -0.3, 'radius = x', color='blue', fontsize=12)\nax.annotate('', xy=(1.2,0), xytext=(1.2,1.44), arrowprops=dict(arrowstyle='<->', color='red'))\nax.text(1.3, 0.7, 'height = f(x)', color='red', fontsize=12, rotation=90)\nax.set_xlim(0,2.5)\nax.set_ylim(-0.5,4)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('One shell: radius x, height f(x)')\nax.legend()\nplt.show()",
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band",
+          "Button: reveal next step"
+        ]
+      },
+      "on_screen_text": "$V = 2\\pi \\int_a^b x \\, f(x) \\, dx$",
+      "teacher_narration": "By adding up all the thin shells from the innermost radius a to the outermost radius b, we get the total volume. The factor 2π comes from the circumference of each shell. So the shell method formula is V equals 2π times the integral of radius times height. For rotation about the y-axis, the radius is simply x, and the height is the function f(x). Notice we integrate with respect to x—no need to solve for x in terms of y. That is the power of this method.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Warm‑Up",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Rotate the region bounded by $y=x^2$, $y=0$, $x=0$, $x=1$ about the y‑axis.\n\n| Step | Action |\n|------|--------|\n| 1 | Bounds: $x=0$ to $x=1$ |\n| 2 | Radius = $x$, Height = $x^2$ |\n| 3 | $V = 2\\pi \\int_0^1 x \\cdot x^2 \\, dx = 2\\pi \\int_0^1 x^3 \\, dx$ |\n| 4 | $V = 2\\pi \\left[\\frac{x^4}{4}\\right]_0^1 = \\frac{\\pi}{2}$ |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$V = 2\\pi \\int_0^1 x(x^2)\\,dx = \\frac{\\pi}{2}$",
+      "teacher_narration": "Let's try a simple example. The region is a parabola under the curve from x equals 0 to 1. Radius is x, height is x squared. The integral simplifies to 2π times the integral of x cubed from 0 to 1. Antiderivative is x to the fourth over 4, evaluate from 0 to 1 gives one quarter, times 2π gives pi over 2. That's the volume of the solid. Notice we never had to rewrite the function. That's the beauty of shells.",
+      "student_prompt": "Before we reveal the answer, try setting up the integral yourself.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Shell Formula – Rotation About the x‑axis",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$V = 2\\pi \\int_{c}^{d} \\, (\\text{radius}) \\cdot (\\text{height}) \\, dy$$\n\nNow radius = $y$ (distance from x‑axis) and height = $g(y)$ (right − left)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Horizontal strip rotating about x‑axis",
+        "visual_spec": "Plot of a region bounded by x = g(y). Show a thin horizontal strip at height y, with arrows showing rotation about the x-axis. Inset: cylindrical shell with radius y, height expressed in y, thickness dy.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ny = np.linspace(0, 2, 400)\nx = y**2\n\nfig, ax = plt.subplots(figsize=(8,5))\nax.fill_betweenx(y, 0, x, alpha=0.2, label='region')\nax.plot(x, y, 'b', lw=2)\nax.axhline(1.2, color='red', lw=2, linestyle='--', label='strip at y')\nax.annotate('', xy=(0,1.2), xytext=(0,0), arrowprops=dict(arrowstyle='<->', color='blue'))\nax.text(0.2, 0.6, 'radius = y', color='blue', fontsize=12)\nax.annotate('', xy=(0,1.2), xytext=(1.44,1.2), arrowprops=dict(arrowstyle='<->', color='red'))\nax.text(0.7, 1.3, 'height = g(y)', color='red', fontsize=12)\nax.set_xlim(-0.5,4)\nax.set_ylim(-0.5,2.5)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Rotation about x‑axis: horizontal shell')\nax.legend()\nplt.show()",
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band",
+          "Button: reveal next step"
+        ]
+      },
+      "on_screen_text": "$V = 2\\pi \\int_c^d y \\, g(y) \\, dy$",
+      "teacher_narration": "What if we rotate the region around the x-axis instead? Then the shells are horizontal. The radius becomes the vertical distance from the x-axis, which is y. The height is now measured horizontally from the curve to the y-axis, so we need the function expressed as x equals something in terms of y. We integrate with respect to y from the lowest y to the highest y. The formula looks similar: V equals 2π times the integral of y times g(y) dy. Always remember: the variable of integration matches the axis direction—dx for y‑axis rotation, dy for x‑axis rotation.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 2: Standard",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Rotate the region bounded by $y = \\frac{1}{x}$, $y=0$, $x=1$, $x=2$ about the y‑axis.\n\n1. Bounds: $x=1$ to $x=2$\n2. Radius = $x$, Height = $\\frac{1}{x}$\n3. $V = 2\\pi \\int_1^2 x \\cdot \\frac{1}{x}\\,dx = 2\\pi \\int_1^2 1\\,dx$\n4. $V = 2\\pi [x]_1^2 = 2\\pi$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Region plot with shell highlighted",
+        "visual_spec": "2D plot of y=1/x from x=1 to 2. Shade region. Indicate a representative vertical strip at some x. Show that height times radius simplifies to constant 1. Side note: comparison with washer method would require solving x=1/y.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0.5, 2.5, 400)\ny = 1/x\n\nfig, ax = plt.subplots(figsize=(6,5))\nax.fill_between(x, y, 0, where=(x>=1)&(x<=2), alpha=0.2, label='region')\nax.plot(x, y, 'b', lw=2)\nax.axvline(1.4, color='red', lw=2, linestyle='--', label='strip at x=1.4')\nax.set_xlim(0.5,2.5)\nax.set_ylim(0,2)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('y = 1/x, x in [1,2]')\nax.legend()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "$V = 2\\pi \\int_1^2 x \\cdot \\frac{1}{x}\\,dx = 2\\pi(2-1)=2\\pi$",
+      "teacher_narration": "Here we have the hyperbola y equals 1 over x from x equals 1 to 2. Radius is x, height is 1 over x. The product x times 1 over x is just 1! So the integral reduces to 2π times the length of the interval. The volume is 2π. Try to set up the washer method for the same region—you would need to solve for x as 1 over y, then integrate with respect to y. That is doable here, but the shell method is much simpler.",
+      "student_prompt": "How would you set up the washer integral for this same region?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Radius ≠ x Always",
+      "left": {
+        "content_type": "concept",
+        "content": "**Wrong approach:** Using radius = $x$ when rotating about $x=2$.\n\n**Correct:** radius = $|x - \\text{axis}| = |x-2|$.\n\nFor the region $y = x - x^2$ from $x=0$ to $1$, radius = $2 - x$ (since $x \\le 2$)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing wrong vs correct radius",
+        "visual_spec": "2D plot of region y=x-x^2. Show the axis x=2 as a vertical dashed line. Mark a strip at x=1.2. Show incorrect radius arrow from axis to strip (length 1.2) and correct radius (length 0.8). Label both. Use red for wrong, green for correct.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 2.5, 400)\ny = lambda x: x - x**2\n\nfig, ax = plt.subplots(figsize=(7,5))\nax.axvline(2, color='grey', linestyle='--', lw=2, label='axis x=2')\nx_vals = np.linspace(0,1,100)\nax.fill_between(x_vals, y(x_vals), 0, alpha=0.2, label='region')\nax.plot(x, y(x), 'b', lw=2)\n# strip at x=1.2\nax.axvline(1.2, color='orange', lw=2, label='strip at x=1.2')\n# wrong radius: from (0,0) to (1.2,0)\nax.annotate('', xy=(1.2,0.1), xytext=(0,0.1), arrowprops=dict(arrowstyle='<->', color='red', lw=2))\nax.text(0.6, 0.15, 'wrong: x=1.2', color='red', fontsize=10)\n# correct radius: from (1.2,0) to (2,0)\nax.annotate('', xy=(2,0.1), xytext=(1.2,0.1), arrowprops=dict(arrowstyle='<->', color='green', lw=2))\nax.text(1.6, 0.15, 'correct: 2-x=0.8', color='green', fontsize=10)\nax.set_xlim(0,2.5)\nax.set_ylim(-0.2,0.5)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Mistake: using x as radius when axis is at x=2')\nax.legend()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Radius = distance from **axis of rotation** to the shell. Not always the x-coordinate.",
+      "teacher_narration": "A very common mistake is to assume the radius is always the x coordinate. That's only true when the axis is the y-axis. Suppose we rotate around the line x equals 2. The radius is the distance from that line to your shell. If your shell is at x equals 1.2, the distance to the line x equals 2 is 0.8, not 1.2. So always ask: what is the axis? Then radius equals absolute value of x minus the axis value. For regions left of the axis, that is axis minus x.",
+      "student_prompt": "Pause: For a strip at x=0.5 when rotating about x=2, what is the radius?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3: Tricky (Rotation about x=2)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Rotate region under $y = x - x^2$ from $x=0$ to $1$ about $x=2$.\n\n| Step | Action |\n|------|--------|\n| 1 | Intersection: $x-x^2=0 \\rightarrow x=0,1$ |\n| 2 | Radius = $2 - x$ (since $x \\le 2$) |\n| 3 | Height = $x - x^2$ |\n| 4 | $V = 2\\pi \\int_0^1 (2-x)(x-x^2)\\,dx$ |\n| 5 | Expand: $2x - 3x^2 + x^3$ |\n| 6 | Integrate: $V = 2\\pi \\left[ x^2 - x^3 + \\frac{x^4}{4} \\right]_0^1 = \\frac{\\pi}{2}$ |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$V = 2\\pi \\int_0^1 (2-x)(x-x^2)\\,dx = \\frac{\\pi}{2}$",
+      "teacher_narration": "Now let's apply the correct radius to a full problem. The region is a simple parabola from 0 to 1. The axis is at x equals 2. We set radius as 2 minus x, height as x minus x squared. Multiply them, expand, integrate term by term. The antiderivative is x squared minus x cubed plus x to the fourth over 4. Evaluate from 0 to 1 gives 1 minus 1 plus one quarter equals one quarter. Multiply by 2π gives pi over 2. Notice that the volume is the same as our warm-up example—interesting coincidence, but the shells are different.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4: Edge Case – Rotation About x‑axis",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Rotate region under $y = \\sqrt{x}$ from $x=0$ to $1$ about the x‑axis.\n\n1. Rewrite: $x = y^2$ \n2. Bounds: $y=0$ to $y=1$\n3. Radius = $y$, Height = $y^2$\n4. $V = 2\\pi \\int_0^1 y \\cdot y^2\\,dy = 2\\pi \\int_0^1 y^3\\,dy = \\frac{\\pi}{2}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Region with horizontal strip",
+        "visual_spec": "2D plot of x=y^2. Shade region. Show a thin horizontal strip at y=0.7. Animate rotation about x-axis? Not needed. Show horizontal strip as a rectangle when unrolled. Label radius (vertical) and height (horizontal).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ny = np.linspace(0, 1.2, 400)\nx = y**2\n\nfig, ax = plt.subplots(figsize=(6,5))\nax.fill_betweenx(y, 0, x, where=(y>=0)&(y<=1), alpha=0.2, label='region')\nax.plot(x, y, 'b', lw=2)\nax.axhline(0.7, color='red', lw=2, linestyle='--', label='strip at y=0.7')\nax.annotate('', xy=(0,0), xytext=(0,0.7), arrowprops=dict(arrowstyle='<->', color='blue'))\nax.text(0.1, 0.35, 'radius = y', color='blue', fontsize=12)\nax.annotate('', xy=(0,0.7), xytext=(0.49,0.7), arrowprops=dict(arrowstyle='<->', color='red'))\nax.text(0.25, 0.75, 'height = y^2', color='red', fontsize=12)\nax.set_xlim(-0.1,1.5)\nax.set_ylim(-0.1,1.3)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Rotation about x‑axis: horizontal shell')\nax.legend()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "$V = 2\\pi \\int_0^1 y \\cdot y^2\\,dy = \\frac{\\pi}{2}$",
+      "teacher_narration": "Here is a rotation about the x-axis using shells. We first rewrite y equals square root of x as x equals y squared. Now the bounds are from y equals 0 to 1. The radius is y, the height is y squared. The integral is 2π times the integral of y cubed dy, giving pi over 2 again. This example highlights that when rotating about the x-axis, you must express functions in terms of y.",
+      "student_prompt": "Why did we need to rewrite the function? What happens if we try to use dx?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Build a Shell",
+      "left": {
+        "content_type": "text",
+        "content": "Adjust the inner radius $r_1$, outer radius $r_2$, and height $h$ of a cylindrical shell. Watch how its volume changes.\n\n$V = \\pi(r_2^2 - r_1^2)h$ (difference of two cylinders)\n\nBut the shell formula gives: $V \\approx 2\\pi r \\, h \\, \\Delta r$ for thin shells."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive cylindrical shell",
+        "visual_spec": "3D plot of a cylindrical shell with sliders for inner radius (0.5 to 3), outer radius (inner+0.1 to 4), height (0.5 to 5). Display volume value. Use matplotlib.widgets.Slider.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider\n\ndef update(val):\n    r_in = slider_in.val\n    r_out = slider_out.val\n    h = slider_h.val\n    ax.cla()\n    # draw shell\n    theta = np.linspace(0, 2*np.pi, 100)\n    # inner cylinder\n    x_in = r_in * np.outer(np.cos(theta), np.ones(2))\n    y_in = r_in * np.outer(np.sin(theta), np.ones(2))\n    z_in = np.outer(np.ones(100), [0, h])\n    ax.plot_surface(x_in, y_in, z_in, alpha=0.4, color='blue')\n    # outer cylinder\n    x_out = r_out * np.outer(np.cos(theta), np.ones(2))\n    y_out = r_out * np.outer(np.sin(theta), np.ones(2))\n    z_out = np.outer(np.ones(100), [0, h])\n    ax.plot_surface(x_out, y_out, z_out, alpha=0.4, color='red')\n    # top and bottom rings\n    theta_ring = np.linspace(0, 2*np.pi, 50)\n    for z_level in [0, h]:\n        radii = np.linspace(r_in, r_out, 20)\n        T, R = np.meshgrid(theta_ring, radii)\n        X = R * np.cos(T)\n        Y = R * np.sin(T)\n        Z = z_level * np.ones_like(X)\n        ax.plot_surface(X, Y, Z, alpha=0.3, color='green')\n    volume = np.pi * (r_out**2 - r_in**2) * h\n    ax.set_xlim(-5,5)\n    ax.set_ylim(-5,5)\n    ax.set_zlim(0,6)\n    ax.set_xlabel('X')\n    ax.set_ylabel('Y')\n    ax.set_zlabel('Z')\n    ax.set_title(f'Cylindrical Shell\\nVolume = {volume:.2f}')\n    fig.canvas.draw_idle()\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.3)\n\nr_in_init, r_out_init, h_init = 1.0, 1.5, 2.0\n\nax_slider_in = plt.axes([0.2, 0.2, 0.6, 0.03])\nslider_in = Slider(ax_slider_in, 'Inner radius', 0.5, 3.0, valinit=r_in_init, valstep=0.1)\nax_slider_out = plt.axes([0.2, 0.15, 0.6, 0.03])\nslider_out = Slider(ax_slider_out, 'Outer radius', 0.6, 4.0, valinit=r_out_init, valstep=0.1)\nax_slider_h = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider_h = Slider(ax_slider_h, 'Height', 0.5, 5.0, valinit=h_init, valstep=0.1)\n\nslider_in.on_changed(update)\nslider_out.on_changed(update)\nslider_h.on_changed(update)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for inner radius from 0.5 to 3.0",
+          "Slider for outer radius from inner+0.1 to 4.0",
+          "Slider for height from 0.5 to 5.0"
+        ]
+      },
+      "on_screen_text": "Adjust the sliders. For thin shells, volume ≈ 2πrhΔr.",
+      "teacher_narration": "Let's play with a physical shell. You can adjust the inner radius, outer radius, and height. The volume displayed is the exact volume from the difference of two cylinders. When the shell is very thin, the volume is approximately 2π times the average radius times height times thickness. That approximation becomes exact in the limit—that's the integral. Use the sliders to see how the shape changes.",
+      "student_prompt": "Set the inner radius to 1, outer radius to 1.1, and height to 2. Compare the exact volume with 2π*1*2*0.1. How close are they?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof of the Shell Formula",
+      "left": {
+        "content_type": "steps",
+        "content": "**Riemann sum derivation:**\n\n1. Partition $[a,b]$ into $n$ subintervals of width $\\Delta x$.\n2. Sample point $x_i^*$ in the $i$-th subinterval.\n3. Shell volume ≈ $2\\pi x_i^* f(x_i^*) \\Delta x$.\n4. Sum: $\\sum_{i=1}^n 2\\pi x_i^* f(x_i^*) \\Delta x$.\n5. As $n \\to \\infty$, $\\Delta x \\to 0$, sum → $2\\pi \\int_a^b x f(x)\\,dx$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Riemann sum visualization of shells",
+        "visual_spec": "2D plot of a region with many thin vertical strips. Show the corresponding shells as concentric rings in 3D (optional). Use bar chart of shell volumes as Riemann sum. Animate adding more shells.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 2, 400)\ny = x**2\n\ndef riemann_shells(n):\n    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,4))\n    # left: region with shells\n    ax1.fill_between(x, y, alpha=0.1, label='region')\n    ax1.plot(x, y, 'b', lw=2)\n    a, b = 0, 2\n    dx = (b-a)/n\n    x_edges = np.linspace(a, b, n+1)\n    volumes = []\n    for i in range(n):\n        xi = (x_edges[i] + x_edges[i+1]) / 2\n        hi = xi**2\n        vol = 2*np.pi * xi * hi * dx\n        volumes.append(vol)\n        # draw rectangle representing the shell's cross-section area (circumference * height)\n        # but here we just show rectangle representing the unrolled shell area\n        ax1.add_patch(plt.Rectangle((x_edges[i], 0), dx, hi, alpha=0.3, edgecolor='red'))\n    ax1.set_xlim(0,2.2)\n    ax1.set_ylim(0,4.5)\n    ax1.set_xlabel('x')\n    ax1.set_ylabel('y')\n    ax1.set_title(f'Shells: n={n}')\n    # right: bar chart of shell volumes\n    colors = plt.cm.viridis(np.linspace(0,1,n))\n    ax2.bar(range(n), volumes, color=colors, edgecolor='k')\n    ax2.set_xlabel('Shell index')\n    ax2.set_ylabel('Volume')\n    ax2.set_title('Individual shell volumes')\n    plt.tight_layout()\n    plt.show()\n\nriemann_shells(10)",
+        "interactive_controls": [
+          "Slider for n from 1 to 50 (to animate increasing number of shells)"
+        ]
+      },
+      "on_screen_text": "Proof sketch: Riemann sum of shell volumes → definite integral.",
+      "teacher_narration": "For those who want a more rigorous derivation, here is the Riemann sum argument. We divide the x-interval into n pieces, pick a sample point in each, and approximate the volume of that shell as 2π times radius times height times thickness. Adding them up and taking the limit gives the integral. This is exactly the same process we used for disks and washers, but now the slices are parallel to the axis.",
+      "student_prompt": "Why does the factor 2π appear?",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 5: Application – Where Shells Beat Washers",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Rotate region under $y = 2x^2 - x^3$ from $x=0$ to $2$ about the y‑axis.\n\n| Step | Action |\n|------|--------|\n| 1 | Intercepts: $x^2(2-x)=0 \\rightarrow x=0,2$ |\n| 2 | Radius = $x$, Height = $2x^2 - x^3$ |\n| 3 | $V = 2\\pi \\int_0^2 x(2x^2 - x^3)\\,dx = 2\\pi \\int_0^2 (2x^3 - x^4)\\,dx$ |\n| 4 | $V = 2\\pi \\left[ \\frac{x^4}{2} - \\frac{x^5}{5} \\right]_0^2 = 2\\pi(8 - \\frac{32}{5}) = \\frac{16\\pi}{5}$ |\n\n**Why shells?** Washers would require solving $y=2x^2-x^3$ for $x$ in terms of $y$ – a cubic that is messy."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$V = 2\\pi \\int_0^2 x(2x^2-x^3)\\,dx = \\frac{16\\pi}{5}$",
+      "teacher_narration": "This is the classic example from Stewart's calculus. The region is under a cubic from 0 to 2. If we tried to use washers, we would need to solve for x in terms of y – that means solving a cubic equation, which is doable but not fun. With shells, we keep x as the variable and integrate directly. The set-up is straightforward: radius x, height the cubic. The integral simplifies to 2x cubed minus x to the fourth, easy to integrate. The answer is 16π over 5. This is the power of the shell method.",
+      "student_prompt": "Before seeing the solution, try setting up the integral yourself. How would you set up a washer integral? Why is it harder?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Shells vs Washers: Decision Guide",
+      "left": {
+        "content_type": "concept",
+        "content": "| Situation | Preferred Method |\n|-----------|------------------|\n| Rotation about y‑axis, region defined by $y=f(x)$ | Shells (use $dx$) |\n| Rotation about y‑axis, region defined by $x=g(y)$ | Washers (use $dy$) |\n| Rotation about x‑axis, region defined by $x=g(y)$ | Shells (use $dy$) |\n| Rotation about x‑axis, region defined by $y=f(x)$ | Washers (use $dx$) |\n\n**Tip:** If you can easily express the region in terms of the variable perpendicular to the axis, use washers. Otherwise, use shells."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Flowchart diagram",
+        "visual_spec": "Flowchart: Start -> Rotating about y-axis? -> Yes: Can you solve for x in terms of y easily? -> If yes: Washers; If no: Shells. -> Rotating about x-axis? -> Yes: Can you solve for y in terms of x easily? -> If yes: Washers; If no: Shells. Use boxes and arrows.",
+        "python_code": "import matplotlib.pyplot as plt\nimport matplotlib.patches as mpatches\n\nfig, ax = plt.subplots(figsize=(8,6))\nax.axis('off')\n\n# nodes\nnodes = {\n    'start': (0.5, 0.9, 'Axis?'),\n    'yaxis': (0.3, 0.7, 'Rotating about y-axis?'),\n    'xaxis': (0.7, 0.7, 'Rotating about x-axis?'),\n    'y_easy': (0.2, 0.5, 'Solve x in y easily?'),\n    'x_easy': (0.8, 0.5, 'Solve y in x easily?'),\n    'shell_y': (0.2, 0.3, 'Use Shells (dx)'),\n    'washer_y': (0.4, 0.3, 'Use Washers (dy)'),\n    'shell_x': (0.8, 0.3, 'Use Shells (dy)'),\n    'washer_x': (0.6, 0.3, 'Use Washers (dx)')\n}\n\nfor name, (x, y, text) in nodes.items():\n    ax.text(x, y, text, ha='center', va='center', fontsize=10,\n            bbox=dict(boxstyle='round,pad=0.3', facecolor='lightblue', edgecolor='black'))\n\n# arrows\nax.annotate('', xy=(0.3,0.72), xytext=(0.5,0.88), arrowprops=dict(arrowstyle='->', lw=2))\nax.annotate('', xy=(0.7,0.72), xytext=(0.5,0.88), arrowprops=dict(arrowstyle='->', lw=2))\nax.annotate('', xy=(0.2,0.52), xytext=(0.3,0.68), arrowprops=dict(arrowstyle='->', lw=2))\nax.annotate('', xy=(0.8,0.52), xytext=(0.7,0.68), arrowprops=dict(arrowstyle='->', lw=2))\nax.annotate('', xy=(0.2,0.32), xytext=(0.2,0.48), arrowprops=dict(arrowstyle='->', lw=2, color='g'))\nax.annotate('Yes', xy=(0.2,0.4), fontsize=8, color='g')\nax.annotate('', xy=(0.4,0.32), xytext=(0.2,0.48), arrowprops=dict(arrowstyle='->', lw=2, color='r'))\nax.annotate('No', xy=(0.32,0.4), fontsize=8, color='r')\nax.annotate('', xy=(0.8,0.32), xytext=(0.8,0.48), arrowprops=dict(arrowstyle='->', lw=2, color='g'))\nax.annotate('Yes', xy=(0.8,0.4), fontsize=8, color='g')\nax.annotate('', xy=(0.6,0.32), xytext=(0.8,0.48), arrowprops=dict(arrowstyle='->', lw=2, color='r'))\nax.annotate('No', xy=(0.7,0.4), fontsize=8, color='r')\n\nplt.title('Decision Guide: Shells vs Washers', fontsize=14)\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Shells: slice parallel to axis. Washers: slice perpendicular. Choose the one that avoids solving a difficult equation.",
+      "teacher_narration": "So when should you use shells instead of washers? Here is a simple decision guide. If you are rotating about the y-axis, ask yourself: can I easily solve for x in terms of y? If yes, washers are fine. If not, shells are the way to go. Similarly for x-axis rotation. The shell method lets you keep the original variable when the region is defined by a function that is easy to evaluate but hard to invert.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Pro Tips & Common Traps",
+      "left": {
+        "content_type": "concept",
+        "content": "1. **Always ask**: What is the axis of rotation? Radius = distance to axis.\n2. **Check variable**: Rotation about y‑axis → $dx$ ; x‑axis → $dy$.\n3. **Height**: top minus bottom (for $dx$) or right minus left (for $dy$).\n4. **When in doubt**: Try shells. If the integrand becomes messy, washers might be better.\n5. **Common trap**: Forgetting to rewrite $x$ as a function of $y$ when rotating about x‑axis."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Summary formula card",
+        "visual_spec": "Display two formulas: one for y-axis rotation (V=2π∫x f(x) dx) and one for x-axis rotation (V=2π∫y g(y) dy). Show a small diagram of a shell next to each.",
+        "python_code": "import matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(8,3))\nax.axis('off')\nax.text(0.2, 0.7, '$V = 2\\pi \\int_a^b x f(x)\\,dx$', fontsize=16, verticalalignment='center')\nax.text(0.2, 0.2, '$V = 2\\pi \\int_c^d y g(y)\\,dy$', fontsize=16, verticalalignment='center')\nax.set_title('Cylindrical Shell Method Formulas', fontsize=14)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Remember: radius x axis distance, height the slice length, thickness dx or dy.",
+      "teacher_narration": "Let's summarize with some pro tips. First, always identify the axis of rotation; the radius is the distance from that axis to the shell. Second, the variable of integration matches the axis: dx for y-axis rotation, dy for x-axis rotation. Third, height is top minus bottom if using dx, or right minus left if using dy. Finally, if you ever get stuck, try shells first. They often save you from messy algebra. The formulas on the right are your anchor.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "What You Should Know",
+      "left": {
+        "content_type": "concept",
+        "content": "**Learning objectives revisited:**\n\n1. Calculate volumes of revolution using cylindrical shells: $V = 2\\pi \\int (\\text{radius})(\\text{height})\\,d\\text{(parallel variable)}$.\n2. Choose shells when the perpendicular slice would require solving a difficult equation.\n3. Handle rotations about vertical lines other than the y‑axis by using radius = $|x - c|$.\n4. Apply to rotations about the x‑axis by rewriting functions in terms of $y$.\n5. Recognize that the method is a Riemann sum of thin cylindrical layers."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Cylindrical shells: slice parallel to axis. Sum of (circumference × height × thickness).",
+      "teacher_narration": "Great work today. You now have a second powerful tool for computing volumes of revolution. Remember, the shell method excels when the region is defined by a function that is easier to evaluate than to invert. Practice setting up the integrals carefully, especially the radius when rotating about a line other than the axes. With both shells and washers in your toolbox, you can tackle a wide variety of volume problems. In the next lesson, we'll extend these ideas to volumes by slicing with known cross sections.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

@@ -2,37 +2,16 @@
 // Dynamically loads the correct *.slides.js module based on URL:
 //   session.html?school=AC&course=ROB9205_Industrial_Robots_W2026&session=S01&topic=01_course_intro_and_expectations
 
-const SCHOOL_CONFIG = {
-  AC: {
-    email: "karimza@algonquincollege.com",
-    defaultHud: "ROB9205 — INDUSTRIAL ROBOTS",
-    hudPrefix: "Algonquin • ",
-    logoSrc: "/shared/media/ac-footer.png",
-  },
-  UO: {
-    email: "Ali.Karimzade@uOttawa.ca",
-    defaultHud: "MCG 5138 — AUTONOMOUS MOBILE ROBOTS",
-    hudPrefix: "uOttawa • ",
-    logoSrc: "/shared/media/uo-footer.png",
-  },
-};
-
-const COURSE_CONFIG = {
-  ROB9205_Industrial_Robots_W2026: {
-    defaultHud: "ROB9205 — INDUSTRIAL ROBOTS",
-  },
-  MCG5138_Autonomous_Mobile_Robots_W2026: {
-    defaultHud: "MCG 5138 — AUTONOMOUS MOBILE ROBOTS",
-  },
-  MCG5353_Robotics_W2026: {
-    defaultHud: "MCG 5353 — ROBOTICS",
-  },
-};
+import {
+  getCourseConfig,
+  getSchoolConfig,
+} from "./course_catalog.js";
+import { adaptCalculusMaterialToDeck } from "./calculus_material_adapter.js";
 
 export async function bootSession({ initDeck }) {
   const params = new URLSearchParams(window.location.search);
 
-  const school = params.get("school") || "AC"; // "AC" or "UO"
+  const school = params.get("school") || "AC"; // "AC", "UO", or "AU"
   const course = params.get("course") || "";
   const session = params.get("session") || "";
   const topic = params.get("topic") || "";
@@ -86,36 +65,18 @@ export async function bootSession({ initDeck }) {
     return;
   }
 
-  // 2) Compute module path for the topic slides
-  //    Matches your current structure:
-  //    /courses/AC/ROB9205_Industrial_Robots_W2026/sessions/S01/01_course_intro_and_expectations.slides.js
-  //    /courses/UO/MCG5138_Autonomous_Mobile_Robots_W2026/sessions/S01/01_mobile_robotics_lab_intro_and_expectations.slides.js
+  const schoolCfg = getSchoolConfig(school);
+  const courseCfg = getCourseConfig(course) || {};
+
+  // Matches the authored deck structure:
+  // /courses/AU/ARIAN_Calculus_1/sessions/S01/review_of_functions_and_graphs.slides.js
   const modulePath =
     `/courses/${encodeURIComponent(school)}/` +
     `${encodeURIComponent(course)}/` +
     `sessions/${encodeURIComponent(session)}/` +
     `${encodeURIComponent(topic)}.slides.js`;
 
-  try {
-    // 3) Dynamically import the slides module
-    const mod = await import(modulePath);
-
-    const slidesData = mod.default || [];
-    const topicMeta = mod.topicMeta || null;
-
-    if (!slidesData.length) {
-      showError("Slides loaded, but list is empty.");
-      return;
-    }
-
-    // 4) Decide theme based on school
-    const schoolCfg = SCHOOL_CONFIG[school] || SCHOOL_CONFIG.AC;
-    const courseCfg = COURSE_CONFIG[course] || {};
-    const runtimeCfg = {
-      ...schoolCfg,
-      ...courseCfg,
-    };
-
+  function initLoadedSlides({ slidesData, topicMeta, runtimeCfg }) {
     const hudDefault =
       (topicMeta && topicMeta.hudDefault) || runtimeCfg.defaultHud;
 
@@ -128,14 +89,12 @@ export async function bootSession({ initDeck }) {
         ? topicMeta.logoSrc
         : runtimeCfg.logoSrc;
 
-    // Update HUD label with topic title if available
     if (hudLabel) {
       hudLabel.textContent =
         (topicMeta && topicMeta.title) ||
         `Session ${session} — ${topic.replace(/_/g, " ")}`;
     }
 
-    // 5) Call the engine
     return initDeck({
       slidesData,
       topicMeta,
@@ -150,11 +109,110 @@ export async function bootSession({ initDeck }) {
       hudPrefix,
       email,
       homeHref: `sessions.html?school=${encodeURIComponent(school)}&course=${encodeURIComponent(course)}`,
+      homeIconSrc: topicMeta?.homeIconSrc || runtimeCfg.homeIconSrc || "",
+      homeIconDarkSrc: topicMeta?.homeIconDarkSrc || runtimeCfg.homeIconDarkSrc || "",
+      footerLogoSrc: topicMeta?.footerLogoSrc || runtimeCfg.footerLogoSrc || logoSrc || "",
       ttsEnabled: false,
-      theme: school === "UO" ? "uo" : "ac",
+      theme: runtimeCfg.theme || (school === "UO" ? "uo" : "ac"),
       analysisMode,
       debugOverlay,
       initialSlide,
+    });
+  }
+
+  async function loadCalculusMaterialTopic() {
+    const materialRoot = courseCfg.materialRoot || "/courses/Calculus/Materials";
+    const materialPath = `${materialRoot.replace(/\/+$/, "")}/${encodeURIComponent(topic)}.json`;
+    const response = await fetch(materialPath);
+    if (!response.ok) {
+      throw new Error(`Could not fetch calculus material ${materialPath}: HTTP ${response.status}`);
+    }
+    const material = await response.json();
+    return adaptCalculusMaterialToDeck(material, {
+      school,
+      schoolName: schoolCfg.displayName || "Arian University",
+      course,
+      courseTitle: courseCfg.title || courseCfg.displayName || "Calculus",
+      session,
+      topic,
+      topicTitle: courseCfg.sessions
+        ?.find((item) => item.id === session)
+        ?.topics
+        ?.find((item) => item.id === topic)
+        ?.title,
+    });
+  }
+
+  if (courseCfg.sourceKind === "calculus_material_json") {
+    try {
+      const mod = await import(modulePath);
+      const slidesData = mod.default || [];
+      const topicMeta = mod.topicMeta || null;
+      if (slidesData.length) {
+        return initLoadedSlides({
+          slidesData,
+          topicMeta,
+          runtimeCfg: {
+            ...schoolCfg,
+            ...courseCfg,
+          },
+        });
+      }
+    } catch {
+      // No finalized authored deck yet; fall back to adapting the material JSON.
+    }
+
+    try {
+      const { slidesData, topicMeta } = await loadCalculusMaterialTopic();
+      return initDeck({
+        slidesData,
+        topicMeta,
+        topicId: topicMeta?.id || topic,
+        descriptor: {
+          school,
+          course,
+          session,
+          topic,
+        },
+        hudDefault: topicMeta?.hudDefault || courseCfg.defaultHud || schoolCfg.defaultHud,
+        hudPrefix: topicMeta?.hudPrefix || schoolCfg.hudPrefix,
+        email: topicMeta?.email || schoolCfg.email,
+        homeHref: `sessions.html?school=${encodeURIComponent(school)}&course=${encodeURIComponent(course)}`,
+        homeIconSrc: courseCfg.homeIconSrc || schoolCfg.homeIconSrc || "",
+        homeIconDarkSrc: courseCfg.homeIconDarkSrc || schoolCfg.homeIconDarkSrc || "",
+        footerLogoSrc: courseCfg.footerLogoSrc || topicMeta?.footerLogoSrc || schoolCfg.footerLogoSrc || "",
+        ttsEnabled: false,
+        theme: schoolCfg.theme || "ac",
+        analysisMode,
+        debugOverlay,
+        initialSlide,
+      });
+    } catch (err) {
+      console.error("Failed to load calculus material topic:", err);
+      showError("Could not load the calculus material JSON. Check console for details.");
+      return null;
+    }
+  }
+
+  try {
+    // 3) Dynamically import the slides module
+    const mod = await import(modulePath);
+
+    const slidesData = mod.default || [];
+    const topicMeta = mod.topicMeta || null;
+
+    if (!slidesData.length) {
+      showError("Slides loaded, but list is empty.");
+      return;
+    }
+
+    return initLoadedSlides({
+      slidesData,
+      topicMeta,
+      runtimeCfg: {
+        ...schoolCfg,
+        ...courseCfg,
+      },
     });
   } catch (err) {
     console.error("Failed to import slide module:", modulePath, err);

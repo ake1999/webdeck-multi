@@ -111,6 +111,52 @@ function preferredTargetId(layoutContext, id, options = {}) {
   return preferred?.id || id;
 }
 
+function blockLabel(block) {
+  const pieces = [
+    block?.title,
+    block?.text,
+    block?.formula,
+    block?.prompt,
+    ...asArray(block?.items).map((item) => item.text || item.say || ""),
+    ...asArray(block?.steps).map((item) => item.text || item.say || ""),
+    ...asArray(block?.pairs).map((item) => `${item.label || ""} ${item.text || ""}`),
+  ];
+  return plainTextSummary(pieces.filter(Boolean).join(" "));
+}
+
+function addBlockTargets(push, blocks, layoutContext) {
+  asArray(blocks).forEach((block) => {
+    push({
+      id: block.id,
+      type: block.type || "block",
+      label: blockLabel(block),
+    });
+    asArray(block.steps).forEach((step) => {
+      push({
+        id: step.id,
+        type: "step",
+        label: plainTextSummary(step.say || step.text),
+      });
+    });
+    asArray(block.items).forEach((item) => {
+      push({
+        id: item.id,
+        type: "bullet",
+        label: plainTextSummary(item.say || item.text),
+      });
+    });
+    asArray(layoutContext.childrenByParentId.get(block.id)).forEach((child) => {
+      if (["math", "code", "table_cell", "compare_text", "reveal"].includes(child.type)) {
+        push({
+          id: child.id,
+          type: child.type,
+          label: child.label || blockLabel(block),
+        });
+      }
+    });
+  });
+}
+
 function buildTargetQueue(slide, rawSlide, layoutContext) {
   const queue = [];
   const push = (entry) => addTarget(queue, layoutContext.availableIds, entry);
@@ -155,6 +201,11 @@ function buildTargetQueue(slide, rawSlide, layoutContext) {
 
   if (slide.type === "text") {
     push({
+      id: slide.questionId,
+      type: "question",
+      label: plainTextSummary(rawSlide.questionSay || rawSlide.question),
+    });
+    push({
       id: slide.leadId,
       type: "lead",
       label: plainTextSummary(rawSlide.lead),
@@ -166,10 +217,45 @@ function buildTargetQueue(slide, rawSlide, layoutContext) {
         label: plainTextSummary(item.say || item.text),
       });
     });
+    addBlockTargets(push, slide.blocks, layoutContext);
+    if (slide.media?.id) {
+      push({
+        id: slide.media.id,
+        type: slide.media.kind || "image",
+        label: summarizeMediaLabel(slide.media),
+      });
+    }
+    return queue;
+  }
+
+  if (slide.type === "visual_lab") {
+    push({
+      id: slide.questionId,
+      type: "question",
+      label: plainTextSummary(rawSlide.questionSay || rawSlide.question),
+    });
+    push({
+      id: slide.leadId,
+      type: "lead",
+      label: plainTextSummary(rawSlide.lead),
+    });
+    addBlockTargets(push, slide.blocks, layoutContext);
+    if (slide.media?.id) {
+      push({
+        id: slide.media.id,
+        type: slide.media.kind || "widget",
+        label: summarizeMediaLabel(slide.media),
+      });
+    }
     return queue;
   }
 
   if (slide.type === "two-col") {
+    push({
+      id: slide.questionId,
+      type: "question",
+      label: plainTextSummary(rawSlide.questionSay || rawSlide.question),
+    });
     [slide.left, slide.right].forEach((column) => {
       if (!column) return;
       push({
@@ -191,6 +277,7 @@ function buildTargetQueue(slide, rawSlide, layoutContext) {
           label: plainTextSummary(item.say || item.text),
         });
       });
+      addBlockTargets(push, column.blocks, layoutContext);
       if (column.media?.id) {
         push({
           id: column.media.id,
@@ -341,7 +428,7 @@ function inferDeliveryKind({ segment, planSlide, targetType, slide, index, total
   if (index === total - 1 && (role.includes("exit") || role.includes("recap"))) return "recap";
   if (role.includes("caution") || segment?.voice?.tone === "serious_clear") return "caution";
   if (strategy.includes("compare") || voiceStyle.includes("compare")) return "compare";
-  if (role.includes("demo") || ["image", "iframe", "widget", "video"].includes(targetType)) return "demo";
+  if (role.includes("demo") || ["image", "iframe", "widget", "calculus_widget", "video"].includes(targetType)) return "demo";
   if (role.includes("practice") || slide.type === "mcq") return "quiz_prompt";
   if (role.includes("recap") || role.includes("exit")) return "recap";
   return "explain";

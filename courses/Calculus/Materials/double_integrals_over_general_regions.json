@@ -1,0 +1,395 @@
+{
+  "lecture_meta": {
+    "title": "Double Integrals Over General Regions",
+    "topic": "Double Integrals",
+    "category": "calculus",
+    "student_level": "First-year University / Advanced High School",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Set up double integrals over Type I and Type II regions",
+      "Evaluate iterated integrals with variable limits",
+      "Choose the optimal integration order for a given region",
+      "Decompose complex regions into simpler subregions"
+    ],
+    "prerequisite_reminder": "Familiarity with double integrals over rectangles and Fubini's Theorem."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Rectangles to Irregular Shapes",
+      "left": {
+        "content_type": "text",
+        "content": "Real-world regions are rarely perfect rectangles. Double integrals over general regions let us compute volumes, areas, and averages over any shape you can draw."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side comparison: left image shows a rectangular region with a uniform grid; right image shows an irregular leaf-shaped region with curved boundaries and a vertical slice. Use matplotlib to plot both, label axes and curves.",
+        "visual_spec": "Create a figure with two subplots. Left: rectangle [0,2]x[0,3] with grid lines. Right: region bounded by y = x^2 and y = 4 - x^2 (from x=-2 to 2), shaded, with one vertical slice line at x=0. Add 'Rectangular' and 'General' titles.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "From rectangles to irregular shapes. The key: understand how to describe the region.",
+      "teacher_narration": "Think about calculating the area of a leaf-shaped pond. You can't just use width times height. But if you slice it at each x-position, the height varies. That's the core idea of double integrals over general regions: we integrate first in y between the boundary curves, then in x. This approach extends the rectangular case to any shape you can draw, making it a powerful tool for real-world applications like computing volumes, areas, and averages over irregular domains.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Type I Regions",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{Type I: } D = \\{(x,y) \\mid a\\le x\\le b,\\; g_1(x)\\le y\\le g_2(x)\\}$$ $$\\iint_D f\\,dA = \\int_a^b \\int_{g_1(x)}^{g_2(x)} f(x,y)\\,dy\\,dx$$"
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive Type I region with vertical slice",
+        "visual_spec": "Plot region D bounded by y=2x^2 and y=1+x^2 from x=-1 to 1. Shade region in light blue. Add a vertical dashed line at current x = x0. Highlight the y-interval [g1(x0), g2(x0)] in yellow. Include a slider for x0 from -1 to 1 and a button to reset x0 to 0. Label axes and curves.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\nfig, ax = plt.subplots(figsize=(7,6))\nplt.subplots_adjust(bottom=0.3)\n\nx = np.linspace(-1, 1, 400)\ng1 = lambda x: 2*x**2\ng2 = lambda x: 1 + x**2\ny_low = g1(x)\ny_high = g2(x)\n\nax.fill_between(x, y_low, y_high, alpha=0.3, label='Region D', color='skyblue')\nax.plot(x, y_low, 'b', lw=2, label='$y=2x^2$')\nax.plot(x, y_high, 'r', lw=2, label='$y=1+x^2$')\nax.set_xlim(-1.2, 1.2)\nax.set_ylim(-0.2, 2.5)\nax.set_xlabel('$x$')\nax.set_ylabel('$y$')\nax.legend()\nax.grid(True)\n\nx0_init = 0.0\nslice_line, = ax.plot([x0_init, x0_init], [g1(x0_init), g2(x0_init)], 'k--', lw=2)\n# highlight fill using polygon\nfrom matplotlib.patches import Polygon\nvert = [(x0_init, g1(x0_init)), (x0_init, g2(x0_init))]\npatch = ax.add_patch(Polygon(vert, closed=False, color='yellow', alpha=0.6))\n\nax_slider = plt.axes([0.25, 0.1, 0.5, 0.03])\nslider = Slider(ax_slider, 'x', -1.0, 1.0, valinit=x0_init)\n\nax_button = plt.axes([0.4, 0.05, 0.2, 0.04])\nreset_button = Button(ax_button, 'Reset x=0')\n\ndef update(val):\n    x0 = slider.val\n    slice_line.set_data([x0, x0], [g1(x0), g2(x0)])\n    patch.set_xy([(x0, g1(x0)), (x0, g2(x0))])\n    fig.canvas.draw_idle()\n\ndef reset(event):\n    slider.reset()\n    update(0.0)\n\nslider.on_changed(update)\nreset_button.on_clicked(reset)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for x from -1 to 1",
+          "Button: reset x to 0"
+        ]
+      },
+      "on_screen_text": "Type I: fix x, y varies between two functions. Integrate dy first.",
+      "teacher_narration": "For a Type I region, we fix an x position and slice vertically. The y coordinate runs from the bottom curve to the top curve. The outer integration then adds up all these vertical slices. Notice how the inner limits are functions of x, while the outer limits are constants.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 1: [Warm-Up] Area Between Parabolas",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find the area between $y = 2x^2$ and $y = 1 + x^2$.\n\n**Step 1:** Intersection: $2x^2 = 1 + x^2 \\Rightarrow x = \\pm 1$\n\n**Step 2:** Type I: $-1 \\le x \\le 1$, $2x^2 \\le y \\le 1+x^2$\n\n**Step 3:** $A = \\int_{-1}^1 \\int_{2x^2}^{1+x^2} 1\\,dy\\,dx$\n\n**Step 4:** Inner: $(1+x^2) - (2x^2) = 1 - x^2$\n\n**Step 5:** Outer: $\\int_{-1}^1 (1-x^2)\\,dx = \\frac{4}{3}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot the two parabolas on [-1,1], shade the region between them. Label intersection points at (-1,2) and (1,2). Add a vertical slice at x=0.5.",
+        "visual_spec": "Create a matplotlib plot: curves y=2x^2 and y=1+x^2 from x=-1.2 to 1.2. Fill region between them with light green. Mark intersection points with red dots. Label axes. Add text showing area = 4/3.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Find area between y=2x² and y=1+x². Steps: intersect, describe, integrate.",
+      "teacher_narration": "Try this problem on your own before we work through it. The region is bounded by two parabolas. First find where they intersect by setting the equations equal. You'll get x equals plus or minus one. The region is clearly Type I: for any x between minus one and one, y goes from the lower parabola to the upper one. The integral then becomes straightforward: inner integral of dy gives the vertical height, outer gives the sum.",
+      "student_prompt": "Sketch the region. What type is it? Set up the iterated integral.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Type II Regions",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{Type II: } D = \\{(x,y) \\mid c\\le y\\le d,\\; h_1(y)\\le x\\le h_2(y)\\}$$ $$\\iint_D f\\,dA = \\int_c^d \\int_{h_1(y)}^{h_2(y)} f(x,y)\\,dx\\,dy$$"
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive Type II region with horizontal slice",
+        "visual_spec": "Plot the same region but described as Type II: from y=0 to y=2, x between left and right curves (solve x in terms of y). For region between y=2x^2 and y=1+x^2, solving: x=±√(y/2) and x=±√(y-1). But this region is simpler as Type I; for this demo, use a region like triangle with vertices (0,0),(2,0),(0,1) to show Type II nicely. Let's use triangle: y from 0 to 1, x from 0 to 2(1-y). Plot region, horizontal slice at y0, shade x-interval. Slider for y, reset button.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\nfig, ax = plt.subplots(figsize=(7,6))\nplt.subplots_adjust(bottom=0.3)\n\n# Triangle region: y in [0,1], x in [0, 2(1-y)]\ny_vals = np.linspace(0, 1, 200)\nx_low = np.zeros_like(y_vals)\nx_high = 2*(1 - y_vals)\nax.fill_betweenx(y_vals, x_low, x_high, alpha=0.3, color='lightcoral', label='Region D')\nax.plot(x_high, y_vals, 'b', lw=2, label='$x=2(1-y)$')\nax.plot(x_low, y_vals, 'k', lw=1)\nax.set_xlim(-0.2, 2.5)\nax.set_ylim(-0.2, 1.2)\nax.set_xlabel('$x$')\nax.set_ylabel('$y$')\nax.legend()\nax.grid(True)\n\ny0_init = 0.5\nslice_line, = ax.plot([0, 2*(1-y0_init)], [y0_init, y0_init], 'k--', lw=2)\n# highlight fill\nfrom matplotlib.patches import Polygon\npatch = ax.add_patch(Polygon([(0, y0_init), (2*(1-y0_init), y0_init)], closed=False, color='yellow', alpha=0.6))\n\nax_slider = plt.axes([0.25, 0.1, 0.5, 0.03])\nslider = Slider(ax_slider, 'y', 0.0, 1.0, valinit=y0_init)\n\nax_button = plt.axes([0.4, 0.05, 0.2, 0.04])\nreset_button = Button(ax_button, 'Reset y=0.5')\n\ndef update(val):\n    y0 = slider.val\n    slice_line.set_data([0, 2*(1-y0)], [y0, y0])\n    patch.set_xy([(0, y0), (2*(1-y0), y0)])\n    fig.canvas.draw_idle()\n\ndef reset(event):\n    slider.reset()\n    update(0.5)\n\nslider.on_changed(update)\nreset_button.on_clicked(reset)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for y from 0 to 1",
+          "Button: reset y to 0.5"
+        ]
+      },
+      "on_screen_text": "Type II: fix y, x varies between two functions. Integrate dx first.",
+      "teacher_narration": "Type II regions flip the perspective. Now we fix a y value and slice horizontally. The x coordinate runs from the left boundary to the right boundary, both expressed as functions of y. This is especially useful when the region is naturally described by y ranges and the boundary curves are easier to write as x equals something in y.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 2: [Standard] Volume Under a Surface",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\iint_D (x+2y)\\,dA$, same region $y=2x^2$, $y=1+x^2$.\n\n**Step 1:** Region: $-1\\le x\\le1$, $2x^2\\le y\\le1+x^2$\n\n**Step 2:** $\\int_{-1}^1 \\int_{2x^2}^{1+x^2} (x+2y)\\,dy\\,dx$\n\n**Step 3:** Inner: $[xy+y^2]_{2x^2}^{1+x^2} = 1+x+2x^2 - x^3 - 3x^4$\n\n**Step 4:** Outer: $\\int_{-1}^1 (1+x+2x^2 - x^3 - 3x^4)\\,dx = \\frac{32}{15}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D surface plot of f(x,y)=x+2y over the region D, showing the volume as a solid region above D and under the surface.",
+        "visual_spec": "Use matplotlib 3D: plot the surface z=x+2y over the region D defined by x from -1 to 1, y from 2x^2 to 1+x^2. Shade the surface. Optionally show vertical walls at the boundary. Label axes. Add text with answer 32/15.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Volume above same region. Set up iterated integral, evaluate inner then outer.",
+      "teacher_narration": "Now we integrate a function, not just area. The setup is the same region, but instead of integrating 1, we integrate x plus 2y. Work through the inner integral carefully: treat x as constant, integrate in y. After simplifying, you'll get a polynomial in x. The outer integral from minus one to one benefits from symmetry: odd powers integrate to zero. The final answer is 32 over 15.",
+      "student_prompt": "Set up the iterated integral and evaluate it. Use symmetry to simplify the outer integral.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Variable Limits on Outer Integral",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** For Type I, writing $\\int_{g_1(x)}^{g_2(x)} \\int_a^b f(x,y)\\,dx\\,dy$ or putting $x$ limits that depend on $y$\n\n**Why it fails:** The outer integral must have constant limits. Variable outer limits would make the result a function, not a number.\n\n**Correct:** Outer limits are constants; inner limits are functions of the outer variable."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show a diagram of a Type I region with vertical slices. Erroneously draw a horizontal slice that would try to put y limits on outer. Highlight that such slicing would miss parts of the region.",
+        "visual_spec": "Plot the region from Example 1. Overlay both a correct vertical slice (solid) and an incorrect horizontal slice (dashed) that extends outside the region. Add labels 'Valid vertical slice' and 'Invalid horizontal slice for Type I'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Outer limits must be constants! Inner limits depend on outer variable.",
+      "teacher_narration": "A very common mistake is to swap the order without thinking. If you try to integrate dx first when the region is Type I, the x limits would need to be functions of y, but the region's x range is constant only after integrating y. Always check: the outer integral's limits must be numerical constants. This is why sketching the region and identifying its type is crucial.",
+      "student_prompt": "Why is $\\int_{g_1(x)}^{g_2(x)} \\int_a^b f\\,dx\\,dy$ usually incorrect for a Type I region?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Properties of Double Integrals",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Linearity:** $\\iint_D (f+g)\\,dA = \\iint_D f\\,dA + \\iint_D g\\,dA$, $\\iint_D cf\\,dA = c\\iint_D f\\,dA$\n\n**Additivity (splitting):** If $D = D_1\\cup D_2$ with disjoint interiors, $\\iint_D f = \\iint_{D_1}f + \\iint_{D_2}f$\n\n**Area:** $A(D) = \\iint_D 1\\,dA$\n\n**Monotonicity:** If $f\\ge g$ on $D$, then $\\iint_D f \\ge \\iint_D g$\n\n**Absolute value:** $\\left|\\iint_D f\\,dA\\right| \\le \\iint_D |f|\\,dA$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Key properties: linearity, additivity, area formula, monotonicity, triangle inequality.",
+      "teacher_narration": "These properties are direct extensions of the rectangular case. The additivity property is especially powerful: if your region is too complicated to describe as a single Type I or Type II, you can split it into simpler pieces, evaluate each, and add. Remember, the pieces should only meet at boundaries—no overlap, or you'll double count. This approach is essential for handling complex shapes in real-world applications like computing volumes or averages over irregular domains.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Reversing the Order of Integration",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\int_0^1 \\int_y^1 \\sin(x^2)\\,dx\\,dy$\n\n**Why direct fails:** $\\sin(x^2)$ has no elementary antiderivative in $x$.\n\n**Solution:** Reverse order.\n\n**Step 1:** Sketch region: $0\\le y\\le1$, $y\\le x\\le1$ → Type I: $0\\le x\\le1$, $0\\le y\\le x$\n\n**Step 2:** $\\int_0^1 \\int_0^x \\sin(x^2)\\,dy\\,dx = \\int_0^1 x\\sin(x^2)\\,dx$\n\n**Step 3:** Substitute $u=x^2$: $\\frac12\\int_0^1\\sin u\\,du = \\frac12(1-\\cos1)$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show the region with both horizontal and vertical slices. Indicate that the original integral uses horizontal slices (dy in, dx out) but that forces impossible antiderivative. Reversing uses vertical slices (dy inner, dx outer) and works.",
+        "visual_spec": "Plot region: triangle with vertices (0,0), (1,0), (1,1). Show a horizontal slice at y=0.5 (original order) and a vertical slice at x=0.7 (reversed order). Label which order works.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Reversing order can make impossible integrals possible. Sketch, redraw, swap.",
+      "teacher_narration": "This example is a classic. The integral looks innocent, but you cannot find an antiderivative for sine of x squared with respect to x. So we must reverse the order. By sketching the region, we see that the original limits describe a triangle. Describing it as Type I instead of Type II gives an inner integral in y, which is trivial, and the outer becomes x sine x squared, which yields to substitution. The moral: if one order is hard, try the other.",
+      "student_prompt": "Try to integrate $\\sin(x^2)$ with respect to x. What happens? Now set up the reversed order and evaluate.",
+      "youtube_pause": true,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 3: [Edge Case] Region That Is Both Types",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\iint_D xy\\,dA$, $D$ = triangle with vertices (0,0), (2,0), (0,1).\n\n**Both orders work.**\n\n**Type I:** $0\\le x\\le2$, $0\\le y\\le 1 - x/2$\n   $\\int_0^2 \\int_0^{1-x/2} xy\\,dy\\,dx$\n\n**Type II:** $0\\le y\\le1$, $0\\le x\\le 2(1-y)$\n   $\\int_0^1 \\int_0^{2(1-y)} xy\\,dx\\,dy$\n\nBoth yield $\\frac16$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot the triangle. Show a vertical slice (Type I) and a horizontal slice (Type II) in different colors, side by side or in two panels.",
+        "visual_spec": "Create two subplots. Left: Type I representation with vertical slice line at x=1, highlight y-interval [0,1-1/2]=[0,0.5]. Right: Type II representation with horizontal slice at y=0.5, highlight x-interval [0,2(1-0.5)]=[0,1].",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Triangle: both Type I and Type II. Use whichever gives simpler integrand.",
+      "teacher_narration": "Some regions can be described both ways. Here the triangle is simple either way. When this happens, choose the order that makes the integral easier. If you're not sure, try both—they must give the same answer. This builds confidence in your setup.",
+      "student_prompt": "Set up the integral for this triangle using both orders. Which one looks simpler to you?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4: [Application] Exponential Integrand",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\iint_D e^{x^2}\\,dA$, $D$ bounded by $y=x$, $y=0$, $x=1$.\n\n**Step 1:** Region: $0\\le x\\le1$, $0\\le y\\le x$ (Type I)\n\n**Step 2:** $\\int_0^1 \\int_0^x e^{x^2}\\,dy\\,dx = \\int_0^1 x e^{x^2}\\,dx$\n\n**Step 3:** $u=x^2 \\Rightarrow \\frac12\\int_0^1 e^u\\,du = \\frac12(e-1)$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot the triangular region. Show that integrating in y first makes the inner integral trivial and yields a simple substitution in x.",
+        "visual_spec": "Plot region: triangle (0,0)-(1,0)-(1,1). Overlay a vertical slice at x=0.7. Add text showing the simplified integral after inner integration.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Application: integrate $e^{x^2}$ over a triangle. Type I order makes it possible.",
+      "teacher_narration": "This is a practical example: the function e to the x squared cannot be integrated directly with respect to x. But by integrating in y first, we get a simple factor of x that makes the outer integral solvable via substitution. This technique appears in probability when finding marginal distributions from joint densities, and in physics for moments of inertia.",
+      "student_prompt": "Why is Type I the natural choice here? Try Type II—what happens?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Region Explorer",
+      "left": {
+        "content_type": "concept",
+        "content": "Explore both Type I and Type II descriptions for the triangle from Example 3. Switch between vertical and horizontal slicing. Observe how the limits change."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive region with toggle between Type I and Type II slices",
+        "visual_spec": "Triangle D: vertices (0,0), (2,0), (0,1). Two modes: Type I (vertical slice) with slider for x; Type II (horizontal slice) with slider for y. Radio button to switch modes. Show the current integration limits (as text) update dynamically. Highlight the active slice.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, RadioButtons\n\nfig, ax = plt.subplots(figsize=(7,6))\nplt.subplots_adjust(bottom=0.35, left=0.1, right=0.8)\n\n# D triangle\ny = np.linspace(0,1,200)\nx_low = np.zeros_like(y)\nx_high = 2*(1-y)\nax.fill_betweenx(y, x_low, x_high, alpha=0.3, color='gray', label='Region D')\nax.plot([0,2],[0,0],'k',lw=1)\nax.plot([0,0],[0,1],'k',lw=1)\nax.plot([0,2],[1,0],'b',lw=2, label='hypotenuse')\nax.set_xlim(-0.2,2.5)\nax.set_ylim(-0.2,1.2)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.grid(True)\nax.legend()\n\n# Initial slice (Type I)\nmode = 'Type I'\nx0 = 1.0\nslice_line, = ax.plot([x0, x0], [0, 1-x0/2], 'k--', lw=2)\ntext_limits = ax.text(0.5, -0.1, 'x in [0,2], y in [0,1-x/2]', transform=ax.transData, ha='center')\n\n# Slider\nax_slider = plt.axes([0.25, 0.1, 0.5, 0.03])\nslider = Slider(ax_slider, 't', 0.0, 1.0, valinit=0.5)\n\n# Radio buttons\nax_radio = plt.axes([0.85, 0.4, 0.15, 0.2])\nradio = RadioButtons(ax_radio, ('Type I', 'Type II'))\n\ndef update(val):\n    t = slider.val\n    if mode == 'Type I':\n        x_val = 2*t  # map t to x in [0,2]\n        y_low = 0\n        y_high = 1 - x_val/2\n        slice_line.set_data([x_val, x_val], [y_low, y_high])\n        text_limits.set_text(f'x={x_val:.2f}, y in [{y_low:.2f},{y_high:.2f}]')\n    else:\n        y_val = t  # t in [0,1]\n        x_low = 0\n        x_high = 2*(1-y_val)\n        slice_line.set_data([x_low, x_high], [y_val, y_val])\n        text_limits.set_text(f'y={y_val:.2f}, x in [{x_low:.2f},{x_high:.2f}]')\n    fig.canvas.draw_idle()\n\ndef set_mode(label):\n    global mode\n    mode = label\n    update(slider.val)\n\nradio.on_clicked(set_mode)\nslider.on_changed(update)\nupdate(0.5)\n\nplt.show()",
+        "interactive_controls": [
+          "Radio buttons: Type I / Type II",
+          "Slider for the position of the slice"
+        ]
+      },
+      "on_screen_text": "Toggle between slicing modes. See how limits change with slice position.",
+      "teacher_narration": "Now you can explore the same region with both slicing strategies. Switch between Type I and Type II, and drag the slider to see how the limits of integration change. This hands-on experience will solidify your understanding of why we need both types and how to choose which to use.",
+      "student_prompt": "Switch to Type II mode. For y = 0.3, what are the x limits?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Quick Check MCQ 1",
+      "left": {
+        "content_type": "text",
+        "content": "Which describes the region bounded by $y=x^2$ and $y=4$ as a Type I region?\n\nA) $0\\le x\\le2$, $x^2\\le y\\le4$\n\nB) $-2\\le x\\le2$, $x^2\\le y\\le4$\n\nC) $0\\le y\\le4$, $-\\sqrt{y}\\le x\\le\\sqrt{y}$\n\nD) $-2\\le x\\le2$, $0\\le y\\le x^2$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot the region: parabola y=x^2 and horizontal line y=4. Mark intersection at x=±2, y=4. Shade region. Indicate vertical slice to show Type I description.",
+        "visual_spec": "Plot y=x^2 from x=-2.5 to 2.5, and y=4 as a horizontal line. Fill region between them (from x=-2 to 2). Label intersection points. Add a vertical dashed line at x=1 to illustrate Type I.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Select the correct Type I description of the region.",
+      "teacher_narration": "Take a moment to visualize the region. The parabola opens upward and meets the line y=4 at x equals minus two and plus two. For a Type I description, the outer integral runs between these constant x limits, and for each x, y goes from the lower boundary (the parabola) to the upper boundary (the line). Which choice matches that?",
+      "student_prompt": "Before clicking, sketch the region in your mind. Which choice gives the correct Type I limits?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Quick Check MCQ 2",
+      "left": {
+        "content_type": "text",
+        "content": "When evaluating $\\iint_D f\\,dA$ over a Type I region, which is TRUE?\n\nA) The outer integral always has variable limits\n\nB) The inner integral limits are functions of the outer variable\n\nC) The order of integration doesn't matter for any region\n\nD) You must always integrate with respect to y first"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show a diagram of a Type I region with outer constant a,b and inner functions g1(x), g2(x). Highlight the structure.",
+        "visual_spec": "Same region as before with labels 'a' and 'b' on x-axis, and 'y=g1(x)' and 'y=g2(x)' on the y boundaries. Emphasize that a and b are numbers.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Which statement about Type I integrals is always true?",
+      "teacher_narration": "This tests your understanding of the structure. Remember: the outer integral's limits must be constants; the inner limits are functions of the outer variable. For a Type I region you integrate dy first, but that's not always the case—you can have Type II where dx comes first. Think about the definition. This distinction is crucial for correctly setting up integrals over general regions.",
+      "student_prompt": "Recall the definition of a Type I region. How are the limits structured?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Quick Check MCQ 3",
+      "left": {
+        "content_type": "text",
+        "content": "Evaluate $\\int_0^1 \\int_0^{x} (x+y)\\,dy\\,dx$\n\nA) $\\frac12$\n\nB) $\\frac23$\n\nC) $\\frac56$\n\nD) $1$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show a 3D plot of the function over the triangular region, or a simple 2D region diagram with the integration path.",
+        "visual_spec": "Plot the triangular region under y=x from x=0 to 1. Indicate that the inner integral is dy first. Emphasize that x is treated as constant in the inner integration.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Compute this iterated integral. Which answer is correct?",
+      "teacher_narration": "Work through this step by step: the inner integral treats x as constant. Integrate x plus y with respect to y from 0 to x. That gives x times y plus y squared over 2, evaluated at y equals x and 0. You get three x squared over 2. Then integrate that from 0 to 1. Check your calculation against the four options.",
+      "student_prompt": "Try the integral yourself. What is the inner integral first? Then integrate in x.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary & Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Remember:**\n- Type I: $\\int_a^b \\int_{g_1(x)}^{g_2(x)} f\\,dy\\,dx$\n- Type II: $\\int_c^d \\int_{h_1(y)}^{h_2(y)} f\\,dx\\,dy$\n- Always sketch the region first.\n- Use properties to split complex regions.\n- If one order leads to a dead end, try reversing."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary: Region type determines integration order. Sketch, set limits, evaluate.",
+      "teacher_narration": "Today we learned how to handle double integrals over general regions. The key step is always to sketch the region and decide if it's Type I, Type II, or needs splitting. Then set up the iterated integral with the inner limits as functions of the outer variable. Remember the properties—especially additivity—and don't be afraid to reverse order when you hit a wall. Practice with the homework problems to build fluency.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Practice Problems (Homework)",
+      "left": {
+        "content_type": "text",
+        "content": "**Warm-up:** 1. $\\iint_D (2x - y)\\,dA$, $D$ bounded by $y=x^2$, $y=x^3$\n\n**Standard:** 2. Area between $y=\\sin x$, $y=\\cos x$, $x=0$, $x=\\pi/4$\n\n**Challenge:** 3. $\\iint_D e^{y^2}\\,dA$, $D$ triangle bounded by $y=x$, $y=1$, $x=0$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Homework: three problems at increasing difficulty.",
+      "teacher_narration": "Here are additional problems to practice. The warm-up is similar to what we did. The standard problem asks for area, which means integrating 1. The challenge problem requires reversing the order of integration to handle e to the y squared. Good luck! These exercises will help you build confidence in setting up and evaluating double integrals over general regions.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": true
+    }
+  ]
+}

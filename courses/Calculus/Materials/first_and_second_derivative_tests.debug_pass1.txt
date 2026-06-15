@@ -1,0 +1,394 @@
+{
+  "lecture_meta": {
+    "title": "First and Second Derivative Tests",
+    "topic": "Derivative Tests for Local Extrema",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Find critical numbers of a function",
+      "Classify local extrema using the First Derivative Test",
+      "Classify critical points using the Second Derivative Test",
+      "Determine when each test is appropriate or inconclusive"
+    ],
+    "prerequisite_reminder": "You should be comfortable finding derivatives and solving equation  sf′(x)=0."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Hiking the Derivative Trail",
+      "left": {
+        "content_type": "text",
+        "content": "Imagine hiking a mountain trail. Your elevation is $f(x)$, the slope is $f'(x)$. Uphill: $f'(x) > 0$. Downhill: $f'(x) < 0$. Flat spot: $f'(x) = 0$.\n\nThe **First Derivative Test** asks: 'Which way were you walking before and after the flat spot?'\n- Up → Flat → Down = Peak (local max)\n- Down → Flat → Up = Valley (local min)\n\nThe **Second Derivative Test** asks: 'Is the trail curving upward (smile 😊) or downward (frown 😟) at the flat spot?'"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Mountain trail visual",
+        "visual_spec": "A side view of a mountain trail with labeled slopes: increasing (uphill arrow, +), decreasing (downhill arrow, -), zero (flat line). Mark a peak and a valley with labels 'local max' and 'local min'. Use simple curves and arrows. Colors: green for increasing, red for decreasing, black for flat.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Hiking metaphor: slope tells you if you're going up or down. Flat spots = candidate peaks & valleys.",
+      "teacher_narration": "Imagine you're hiking along a mountain trail. Your elevation at any point is f of x, and the steepness of the trail is the derivative f prime of x. When you're walking uphill, the slope is positive. When you're going downhill, it's negative. And when you reach the very top of a hill or the bottom of a valley, the trail is momentarily flat — that's where the derivative equals zero. The First Derivative Test looks at the slope just before and after that flat spot. If you were going up and then down, you've reached a peak. If you were going down and then up, you've found a valley. The Second Derivative Test looks at the curvature at the flat spot: a frown means a peak, a smile means a valley. These tests help us classify all local maxima and minima.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Critical Numbers — The Foundation",
+      "left": {
+        "content_type": "concept",
+        "content": "**Definition:** A critical number of $f$ is a value $c$ in the domain where\n\\[ f'(c) = 0 \\quad \\text{or} \\quad f'(c) \\text{ does not exist}. \\]\n\nCritical numbers are *candidates* for local extrema, but not every critical number gives a max or min.\n\n**Example:** $f(x) = x^3$ has $f'(0) = 0$, but $x=0$ is neither a max nor min — it's an inflection point."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^3",
+        "visual_spec": "Plot of f(x)=x^3 from x=-2 to 2. Mark the point (0,0) with a dot and label 'critical number' but not an extremum. Show a horizontal tangent line at (0,0). The curve continues increasing through the point. No local max/min.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Critical numbers: where f' = 0 or undefined. Not all give extrema — e.g., f(x)=x³ at x=0.",
+      "teacher_narration": "Before we can apply the derivative tests, we need to find the critical numbers. A critical number is any point c in the domain where the derivative is either zero or does not exist. These are the only places where a function can have a local maximum or minimum — but not every critical number actually gives an extremum. For example, the function f of x equals x cubed has derivative 3x squared. At x equals zero the derivative is zero, but the function is increasing through that point — it's an inflection point, not a peak or valley. So critical numbers are just candidates; we need the derivative tests to decide which ones are actually local extrema.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: First Derivative Test Sign Chart",
+      "left": {
+        "content_type": "concept",
+        "content": "**First Derivative Test** at a critical number $c$:\n\n| Sign change of $f'$ | Conclusion |\n|:---:|:---:|\n| $+ \\to -$ | Local max |\n| $- \\to +$ | Local min |\n| No change | No extremum |\n\nTest points on both sides of $c$. Use the slider below to explore."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive sign chart and number line",
+        "visual_spec": "A horizontal number line with a movable red point representing the test point. A critical number c is marked (e.g., c=2). As the test point moves left or right of c, the derivative sign (positive/negative) and an arrow (up/down) update. A button 'Show Sign Chart' overlays signed intervals. Python code provides slider and button.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\nfig, ax = plt.subplots(figsize=(8,3))\nplt.subplots_adjust(bottom=0.4)\nc = 2.0\n# Simple function: f'(x) = (x-2)*(x+1) for demonstration\ndef deriv_sign(x):\n    return (x-2)*(x+1)\n\nax.set_xlim(-1, 5)\nax.set_ylim(-2, 2)\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(c, color='black', lw=2, linestyle='--', label=f'Critical num c={c}')\nax.set_title('Move test point to see derivative sign')\npoint, = ax.plot(0, 0, 'ro', markersize=10)\nsign_text = ax.text(0.5, 1.5, '', fontsize=12, ha='center')\n\ndef update(val):\n    x = slider.val\n    point.set_xdata([x])\n    if deriv_sign(x) > 0:\n        sign = '+'\n        arrow = '↑'\n    elif deriv_sign(x) < 0:\n        sign = '-'\n        arrow = '↓'\n    else:\n        sign = '0'\n        arrow = '—'\n    sign_text.set_text(f\"f'({x:.2f}) = {sign} {arrow}\")\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'Test point', -1, 5, valinit=0.5, valstep=0.1)\nslider.on_changed(update)\n\nax_button = plt.axes([0.4, 0.2, 0.2, 0.05])\nbutton = Button(ax_button, 'Show sign chart')\ndef show_chart(event):\n    intervals = [(-1, c), (c, 5)]\n    colors = ['lightgreen' if deriv_sign((a+b)/2) > 0 else 'lightcoral' for a,b in intervals]\n    for (a,b), col in zip(intervals, colors):\n        ax.axvspan(a, b, alpha=0.3, color=col)\n    fig.canvas.draw()\nbutton.on_clicked(show_chart)\n\nupdate(0.5)\nplt.show()",
+        "interactive_controls": [
+          "Slider to move test point left or right of critical number c",
+          "Button to show sign chart overlay with colored intervals"
+        ]
+      },
+      "on_screen_text": "First Derivative Test: sign change +→− means max, −→+ means min. Explore with the interactive chart.",
+      "teacher_narration": "Let's see the First Derivative Test in action with an interactive sign chart. On the right you see a number line with a critical number marked at c equals 2. Use the slider to move a test point to the left or right of c. The chart shows the sign of the derivative at your chosen point and an arrow indicating the function's direction. If you press the 'Show Sign Chart' button, the intervals where the derivative is positive or negative will be highlighted in green and red. Remember: if the sign changes from positive to negative as you cross c, it's a local maximum. If it changes from negative to positive, it's a local minimum. If there's no change, no extremum. Try it yourself and build intuition.",
+      "student_prompt": "Predict: If f'(x) changes from + to − at c, what type of extremum do we get? Move the slider to confirm.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Try It: Warm-Up Problem",
+      "left": {
+        "content_type": "text",
+        "content": "Find all local extrema of $f(x) = x^2 - 6x + 5$.\n\n1. Find $f'(x)$ and the critical number.\n2. Apply the First Derivative Test.\n3. State whether it's a max or min and give the value.\n\nPause the video and try it yourself before seeing the solution."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Empty placeholder for student prediction",
+        "visual_spec": "A blank area with a dashed border and text 'Your work here'. No visual content.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Find local extrema of f(x)=x²−6x+5. Use First Derivative Test. Pause and try!",
+      "teacher_narration": "Here's a warm-up problem for you. Pause the video now and try to find all local extrema of f of x equals x squared minus six x plus five. Follow the steps: find the derivative, set it equal to zero to find the critical number, then pick test points on either side to see how the sign of f prime changes. Use the First Derivative Test to decide if it's a maximum or minimum, and then compute the function value. When you're ready, play the video to see the solution.",
+      "student_prompt": "Solve: f(x)=x²−6x+5. Find local extrema using the First Derivative Test.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm-Up Solution",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|:---:|:---|:---|\n| 1 | $f'(x) = 2x - 6$ | Derivative |\n| 2 | $2x - 6 = 0 \\implies x = 3$ | Critical number |\n| 3 | Test left: $x=2$; $f'(2) = -2 < 0$ | Decreasing |\n| 4 | Test right: $x=4$; $f'(4) = 2 > 0$ | Increasing |\n| 5 | Sign change: $-\\to +$ | **Local minimum at $x=3$** |\n| 6 | Value: $f(3) = -4$ | Minimum value $-4$ |\n\n**Check:** $f(x) = x^2 - 6x + 5 = (x-3)^2 - 4$ confirms vertex at $(3,-4)$, opening up."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^2-6x+5",
+        "visual_spec": "Parabola opening upward with vertex at (3, -4). Mark the vertex with a green dot and label 'Local min (3,-4)'. Show the axis of symmetry and coordinate axes.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Solution: Critical number x=3; f' changes from − to +, so local min at (3,−4).",
+      "teacher_narration": "Here's the solution. We found the derivative 2x minus 6, set it equal to zero to get x equals 3 as the only critical number. Testing a point to the left, x equals 2, gives a negative derivative, meaning the function is decreasing. Testing a point to the right, x equals 4, gives a positive derivative, so the function is increasing. Since the sign changed from negative to positive, the First Derivative Test tells us this is a local minimum. The minimum value is f of 3 equals 9 minus 18 plus 5, which is negative 4. We can verify by completing the square: the original function is x minus 3 squared minus 4, a parabola opening upward with vertex at 3 comma negative 4.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Second Derivative Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Second Derivative Test:**\n\nIf $f'(c)=0$ and $f''$ is continuous near $c$:\n\n| Condition | Conclusion |\n|:---:|:---:|\n| $f''(c) > 0$ | Local min (concave up 😊) |\n| $f''(c) < 0$ | Local max (concave down 😟) |\n| $f''(c) = 0$ | **Test inconclusive** |\n\n**Memory aid:** Positive second derivative → smile → minimum. Negative → frown → maximum."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Smiley/frown parabolas",
+        "visual_spec": "Two graphs: left parabola y=x^2 (open up) with a smiley face and label 'f''>0 → min'; right parabola y=-x^2 (open down) with a frowning face and label 'f''<0 → max'. Use distinct colors.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Second Derivative Test: f''>0 → min (upward curve). f''<0 → max (downward curve). f''=0 → inconclusive.",
+      "teacher_narration": "The Second Derivative Test can often classify a critical point more quickly — but it only works when the first derivative is zero and the function is smooth enough to have a second derivative. The idea is simple: if the second derivative is positive at a critical point, the function is concave up, like a smile, so that point is a local minimum. If the second derivative is negative, the function is concave down, like a frown, so it's a local maximum. However, if the second derivative equals zero, the test gives no information — you must fall back to the First Derivative Test.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Second Derivative Test",
+      "left": {
+        "content_type": "concept",
+        "content": "Explore the Second Derivative Test with the slider below. The function $f(x) = a x^2$ has critical number $x=0$ for any $a \\neq 0$.\n\n- $a > 0$: $f''(0) = 2a > 0$ → local min\n- $a < 0$: $f''(0) = 2a < 0$ → local max\n\nThe slider lets you change $a$ and see the effect."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive parabola: slider for a",
+        "visual_spec": "Dynamic plot of f(x)=a*x^2 with slider controlling a from -3 to 3. Show the point (0,0) labeled as critical point. Update the sign of f'' and classification text in real time. Color: green for positive a, red for negative a.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8,5))\nplt.subplots_adjust(bottom=0.25)\n\nx = np.linspace(-2, 2, 400)\na_init = 1\nline, = ax.plot(x, a_init*x**2, 'b-', lw=2)\npoint, = ax.plot(0, 0, 'ro', markersize=10, zorder=5)\ncrit_label = ax.text(0, 0.5, '', fontsize=14, ha='center')\n\nax.set_xlim(-2, 2)\nax.set_ylim(-4, 4)\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(0, color='gray', lw=0.5)\nax.set_title('Second Derivative Test: f(x)=a x^2')\n\ndef update(val):\n    a = slider.val\n    line.set_ydata(a*x**2)\n    color = 'green' if a > 0 else 'red'\n    line.set_color(color)\n    if a > 0:\n        cls = 'Local min (f\" > 0)'\n        point.set_color('green')\n    elif a < 0:\n        cls = 'Local max (f\" < 0)'\n        point.set_color('red')\n    else:\n        cls = 'f\" = 0, inconclusive'\n        point.set_color('black')\n    crit_label.set_text(cls)\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'a', -3, 3, valinit=a_init, valstep=0.1)\nslider.on_changed(update)\n\nupdate(a_init)\nplt.show()",
+        "interactive_controls": [
+          "Slider to change parameter a from -3 to 3",
+          "Real-time update of classification text and graph color"
+        ]
+      },
+      "on_screen_text": "Slide the parameter a to see f'' change: positive a → min, negative a → max, a=0 → inconclusive.",
+      "teacher_narration": "Let's see the Second Derivative Test visually. Here we have the function f of x equals a times x squared, which always has a critical number at x equals zero. Use the slider to change the parameter a. When a is positive, the parabola opens upward, the second derivative at zero is 2a which is positive, so we get a local minimum — the point turns green. When a is negative, the parabola opens downward, the second derivative is negative, so it's a local maximum — the point turns red. And when a equals zero, the function becomes flat, the second derivative is zero, and the test is inconclusive — the point turns black. Notice that the shape of the curve instantly reveals the concavity.",
+      "student_prompt": "Set a negative and predict: is the critical point a max or min? Then slide to positive and check.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example: Using Both Tests",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find all local extrema of $f(x) = x^3 - 3x^2 + 1$.\n\n| Step | Action | Result |\n|:---:|:---|:---|\n| 1 | $f'(x) = 3x^2 - 6x = 3x(x-2)$ | |\n| 2 | Critical numbers | $x=0,\\; x=2$ |\n| 3 | $f''(x) = 6x - 6$ | |\n| 4 | $f''(0) = -6 < 0$ | Local max at $x=0$ |\n| 5 | $f''(2) = 6 > 0$ | Local min at $x=2$ |\n| 6 | Values | $f(0)=1,\\; f(2)=-3$ |\n\nNote: The Second Derivative Test works here because $f'(c)=0$ for both critical numbers."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^3-3x^2+1 with extrema",
+        "visual_spec": "Plot from x=-1 to 3. Mark local max at (0,1) with red dot and label, local min at (2,-3) with green dot and label. Show axes, grid, and title.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "f(x)=x³−3x²+1: critical numbers x=0,2. f''(0)<0 → max; f''(2)>0 → min.",
+      "teacher_narration": "Now let's apply both tests to a typical exam problem. For f of x equals x cubed minus 3 x squared plus 1, the derivative is 3x squared minus 6x, which factors as 3 x times x minus 2. So the critical numbers are x equals zero and x equals 2. The second derivative is 6x minus 6. Evaluating at zero gives negative 6, which is less than zero, so by the Second Derivative Test, x equals 0 is a local maximum with value f of 0 equals 1. At x equals 2, the second derivative is 6, positive, so x equals 2 is a local minimum with value f of 2 equals negative 3. This example works nicely because the second derivative is defined at both critical points and it's non-zero.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Pitfalls and Misconceptions",
+      "left": {
+        "content_type": "text",
+        "content": "**Mistake #1: Forgetting that $f'$ undefined gives critical numbers**\n- Wrong: 'Only solve $f'(x)=0$.'\n- Correct: Include where $f'$ does not exist (e.g., cusps, corners).\n\n**Mistake #2: Assuming $f''(c)=0$ means no extremum**\n- Wrong: 'The test is inconclusive, so definitely not a max or min.'\n- Correct: $f''(c)=0$ means we need the First Derivative Test — an extremum may still exist (e.g., $f(x)=x^4$ at $x=0$)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Visual showing two misconceptions",
+        "visual_spec": "Left panel: graph of f(x)=x^(2/3)*(x-1) showing a cusp/corner at x=0 (critical point where f' undefined) and a smooth min at x=0.4. Right panel: graph of f(x)=x^4 showing minimum at x=0 with horizontal tangent and label 'f''(0)=0 but still a min'. Use red X over wrong statements.",
+        "python_code": null,
+        "interactive_controls": [
+          "Toggle to show/hide common mistake annotations"
+        ]
+      },
+      "on_screen_text": "Don't forget: critical numbers include where f' undefined. And f''=0 does not automatically mean no extremum.",
+      "teacher_narration": "Let's address two common misconceptions. The first mistake: many students only solve f prime of x equals zero and forget that critical numbers also include points where the derivative does not exist. For instance, in a function like x to the two-thirds times x minus 1, the derivative is undefined at x equals zero, but that point can be a local extremum. The second mistake: when the second derivative is zero at a critical point, students sometimes assume there is no extremum. That is not true; the test is simply inconclusive. For example, f of x equals x to the fourth has a second derivative of zero at x equals zero, yet it clearly has a local minimum there. You must fall back to the First Derivative Test in these cases.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Try It: Tricky Example",
+      "left": {
+        "content_type": "text",
+        "content": "Find all local extrema of $f(x) = x^{2/3}(x-1)$.\n\nHint: There are two critical numbers — one from $f'(x)=0$ and one from $f'(x)$ undefined.\n\nPause and classify them before seeing the solution."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Empty placeholder for prediction",
+        "visual_spec": "Blank area with text 'Your work here'. No other visual.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Find local extrema of f(x)=x^{2/3}(x-1). Two critical numbers: one from f'=0, one from f' undefined.",
+      "teacher_narration": "Here's a tricky example that tests your understanding of critical numbers. The function f of x is x to the two-thirds times x minus 1. It has two critical numbers: one where the derivative equals zero, and one where the derivative is undefined. Pause the video now and try to find both critical numbers, then use the First Derivative Test to classify each. Remember that the derivative is undefined when the denominator is zero. See if you can determine which critical number gives a maximum and which gives a minimum.",
+      "student_prompt": "Find critical numbers and classify using First Derivative Test. Pause and solve.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Solution: Tricky Example",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $f(x) = x^{2/3}(x-1)$, domain $(-\\infty,\\infty)$ (cube root exists for negatives).\n\n| Step | Action | Result |\n|:---:|:---|:---|\n| 1 | $f'(x) = \\frac{5x-2}{3x^{1/3}}$ | |\n| 2 | $f'(x)=0 \\implies x = \\frac{2}{5}$ | Critical number |\n| 3 | $f'(x)$ undef. at $x=0$ (denom zero) | Critical number |\n| 4 | Test $x=-1$: $f'(-1) = \\frac{-7}{-3} > 0$ | Increasing on $(-\\infty,0)$ |\n| 5 | Test $x=0.1$: $f'(0.1) = \\frac{0.5-2}{3\\cdot 0.464} < 0$ | Decreasing on $(0,\\frac{2}{5})$ |\n| 6 | Test $x=1$: $f'(1) = \\frac{5-2}{3} = 1 > 0$ | Increasing on $(\\frac{2}{5},\\infty)$ |\n| 7 | Sign $+\\to -$ at $x=0$ | **Local max** $f(0)=0$ |\n| 8 | Sign $-\\to +$ at $x=\\frac{2}{5}$ | **Local min** $f(\\frac{2}{5}) \\approx -0.325$ |"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^{2/3}(x-1)",
+        "visual_spec": "Plot from x=-1 to 2. Mark cusp at (0,0) with red dot (local max) and smooth minimum at (0.4, -0.325) with green dot. Show axes and grid.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Critical numbers: x=0 (f' undefined, local max) and x=0.4 (f'=0, local min). Solution shown.",
+      "teacher_narration": "Here's the full solution. The derivative is 5x minus 2 over 3 times the cube root of x. Setting the numerator equal to zero gives x equals two-fifths, which is 0.4. Also, the derivative is undefined when the denominator is zero, which happens at x equals 0. So we have two critical numbers: 0 and 0.4. Testing intervals: left of 0, the derivative is positive; between 0 and 0.4, it is negative; and after 0.4, it becomes positive again. So at x equals zero, the sign changes from positive to negative, giving a local maximum with value zero. At x equals 0.4, the sign changes from negative to positive, giving a local minimum with value approximately negative 0.325. This shows why you must always include points where the derivative is undefined.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Edge Case: When the Second Derivative Test Fails",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Classify $f(x) = x^4 - 4x^3 + 6x^2 - 4x + 1$.\n\n| Step | Action | Result |\n|:---:|:---|:---|\n| 1 | $f'(x) = 4(x-1)^3$ | $f'(1)=0$ only critical number |\n| 2 | $f''(x) = 12(x-1)^2$ | $f''(1)=0$ → test **inconclusive** |\n| 3 | Use First Derivative Test | |\n| 4 | Test left $x=0$: $f'(0) = -4 < 0$ | Decreasing |\n| 5 | Test right $x=2$: $f'(2) = 4 > 0$ | Increasing |\n| 6 | Sign $-\\to +$ | **Local minimum at $x=1$** |\n| 7 | Value | $f(1) = 0$ |\n\n**Key takeaway:** $f''(c)=0$ does not mean no extremum — always try First Derivative Test."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x) near x=1 showing minimum",
+        "visual_spec": "Plot from x=0 to 2. Show sharp minimum at x=1 with horizontal tangent. Label 'f''(1)=0 but still local min'. Use a dot marker.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "f''(1)=0 → inconclusive. But FDT shows −→+, so local min at x=1. Don't assume no extremum!",
+      "teacher_narration": "This example shows what to do when the Second Derivative Test fails. The function is x to the fourth minus 4 x cubed plus 6 x squared minus 4 x plus 1. Its derivative is 4 times x minus 1 cubed, so the only critical number is x equals 1. The second derivative is 12 times x minus 1 squared, which equals zero at x equals 1. The Second Derivative Test is inconclusive. But we can still use the First Derivative Test. Testing a point left of 1, say x equals 0, gives a negative derivative, meaning the function is decreasing. Testing a point right of 1, x equals 2, gives a positive derivative, so the function is increasing. Since the sign changes from negative to positive, we have a local minimum. The function value at x equals 1 is 0. So even though the second derivative was zero, we still found a local minimum.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Real-World Optimization",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Profit $P(x)=2x^3-15x^2+36x-10$ (thousands \$), $x$ hundred units, $0\\leq x\\leq5$. Find production levels that maximize and minimize profit.\n\n| Step | Action | Result |\n|:---:|:---|:---|\n| 1 | $P'(x)=6x^2-30x+36=6(x-2)(x-3)$ | |\n| 2 | Critical numbers | $x=2,\\; x=3$ |\n| 3 | $P''(x)=12x-30$ | |\n| 4 | $P''(2)=-6<0$ → local max | ($P(2)=18)\\| |\n| 5 | $P''(3)=6>0$ → local min | $P(3)=17$ |\n| 6 | Endpoints: $P(0)=-10,\\; P(5)=45$ | |\n| 7 | Compare all values | **Abs max at $x=5$: \$45,000** \\\n**Abs min at $x=0$: -\$10,000 loss** |\n\n**Always check endpoints for absolute extrema!**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of P(x) from 0 to 5 with points labeled",
+        "visual_spec": "Plot cubic polynomial from x=0 to 5. Mark local max at (2,18), local min at (3,17), absolute max endpoint (5,45) in green, absolute min endpoint (0,-10) in red. Include dashed vertical lines at endpoints.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Profit P(x)=2x³−15x²+36x−10 on [0,5]. Local max at x=2, local min at x=3, but absolute max at x=5!",
+      "teacher_narration": "Now let's apply derivative tests to a real-world profit optimization problem. A company's profit in thousands of dollars from selling x hundred units is given by this cubic polynomial. The derivative gives critical numbers at x equals 2 and 3. Using the Second Derivative Test, we find a local maximum at x equals 2 and a local minimum at x equals 3. But because this is a closed interval problem, we must also check the endpoints. The profit at the left endpoint, zero units, is negative 10 thousand dollars — a loss. At the right endpoint, 500 units, the profit is 45 thousand dollars. Comparing all values, the absolute maximum occurs at the right endpoint x equals 5, not at the local maximum. So the company should produce 500 units to maximize profit, and the worst case is producing nothing, which results in a loss.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Quick Check: Multiple Choice",
+      "left": {
+        "content_type": "text",
+        "content": "**Q1:** For $f(x)=x^3-3x$, the point $x=1$ is:\n- A) Local max\n- B) Local min\n- C) Neither\n- D) Inconclusive\n\n**Q2:** If $f'(2)=0$ and $f''(2)=0$, what can we conclude?\n- A) Local max\n- B) Local min\n- C) Test inconclusive\n- D) No extremum\n\n**Q3:** $f$ has critical numbers at $0$ and $2$. $f'$ is $+$ on $(-1,0)$, $-$ on $(0,2)$, $+$ on $(2,3)$. Then:\n- A) Max at 0, min at 2\n- B) Min at 0, max at 2\n- C) Both max\n- D) Both min"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Answer key shown after student attempts",
+        "visual_spec": "A blank area with three boxes for student answers, then a reveal button (not implemented in static spec). In video, teacher will show answers: Q1: B (min, f''=6>0), Q2: C (inconclusive), Q3: A (+ to - = max, - to + = min).",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Quick check: three multiple-choice questions. Pause to answer, then continue for solutions.",
+      "teacher_narration": "Let's test your understanding with a quick multiple-choice quiz. Question one: for f of x equals x cubed minus 3x, what is x equals 1? First derivative gives 3x squared minus 3, zero at x equals plus or minus 1. Second derivative is 6x, so at x equals 1 it's positive, meaning a local minimum. Question two: if f prime of 2 is zero and f double prime of 2 is zero, the test is inconclusive — we need the first derivative test. Question three: with sign changes positive to negative at zero, that's a maximum; negative to positive at 2, that's a minimum. Pause the video if you need more time to work through these.",
+      "student_prompt": "Answer the three multiple-choice questions before the teacher reveals the solutions.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof of the Derivative Tests",
+      "left": {
+        "content_type": "text",
+        "content": "**First Derivative Test Proof (sketch)**\n\nSuppose $f'(x)$ changes from positive to negative at $c$. Then there is an interval $(a,b)$ around $c$ with $f'(x)>0$ for $a<x<c$ and $f'(x)<0$ for $c<x<b$. By the I/D test, $f$ increases on $(a,c)$ and decreases on $(c,b)$. Therefore $f(x)<f(c)$ for all $x$ near $c$, so $f(c)$ is a local maximum. The case $-\\to +$ is analogous.\n\n**Second Derivative Test Proof (sketch)**\n\nIf $f'(c)=0$ and $f''(c)>0$, then $f'$ is increasing near $c$. Since $f'(c)=0$, $f'$ is negative just left of $c$ and positive just right of $c$. By the First Derivative Test, $f$ has a local minimum. The case $f''(c)<0$ gives a local maximum by symmetric reasoning."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Proof flow diagram",
+        "visual_spec": "A flowchart showing the logical steps: assumption → f' sign change → increasing/decreasing → extremum. For FDT and SDT, separate branches. Use arrows and small labels.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "[Challenge] Proof sketches for both derivative tests. For advanced students only.",
+      "teacher_narration": "For those who want to understand why these tests work, here are brief proof sketches. The First Derivative Test relies on the I/D test: if the derivative is positive on an interval, the function is increasing; if negative, the function is decreasing. By examining sign changes around a critical point, we can deduce whether the function values are higher or lower nearby. The Second Derivative Test is a corollary: a positive second derivative means the first derivative is increasing, and since it's zero at the critical point, it must go from negative to positive — giving a local minimum. A negative second derivative gives the opposite. These proofs solidify the logical foundation, but you mainly need to apply the tests correctly in problems.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "split_left_right",
+      "title": "Summary & Key Takeaways",
+      "left": {
+        "content_type": "concept",
+        "content": "**Learning Objectives Revisited:**\n1. Find critical numbers: $f'(c)=0$ or undefined.\n2. First Derivative Test: $+\\to -$ = max; $-\\to +$ = min; no change = neither.\n3. Second Derivative Test: $f''>0$ = min; $f''<0$ = max; $f''=0$ = inconclusive.\n4. When SDT fails, fall back to FDT.\n5. Always check endpoints for absolute extrema on closed intervals.\n\n**Key Formulas:**\n- Critical number: $c$ such that $f'(c)=0$ or DNE.\n- FDT: examine sign of $f'$ on both sides.\n- SDT: evaluate $f''$ at critical numbers (only when $f'(c)=0$)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Summary diagram with decision tree",
+        "visual_spec": "A simple flowchart: find f' → critical numbers → second derivative exists? → yes: evaluate f''; if f''>0: min, f''<0: max, f''=0: use FDT. → no: use FDT. End result: classify extremum or none.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary: critical numbers → FDT or SDT → classify extrema. When in doubt, use FDT.",
+      "teacher_narration": "Let's quickly review what we've learned today. First, we find critical numbers by solving f prime equals zero and also checking where the derivative is undefined. Then we can apply either the First Derivative Test, which looks at sign changes of f prime on either side of the critical number, or the Second Derivative Test, which examines concavity at the critical point. Remember that the Second Derivative Test only works when f prime is zero and is faster when it applies, but when it's inconclusive — when f double prime equals zero — you must go back to the First Derivative Test. Finally, for closed interval problems, always check endpoint values as well. These techniques are essential for analyzing the behavior of functions and applied optimization.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

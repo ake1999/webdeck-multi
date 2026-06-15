@@ -1,0 +1,627 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "review_of_functions_and_graphs",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Students already know basic graphing and algebra, but may not yet connect formula restrictions, graph shapes, and transformations as one system.",
+    "progression": "Start with the function-machine idea, review families, then build tools in order: domain and range, transformations, composition, symmetry, and piecewise behavior.",
+    "destination": "Students can inspect a formula or graph and say what family it belongs to, what inputs are allowed, how it moved, and what visual clue matters.",
+    "tone": "Clear, warm, visual, active, and personal-brand friendly.",
+    "methods": [
+      "Use interactive plots as the main explanation surface.",
+      "Use short worked steps for examples so students can follow without a wall of text.",
+      "Name common mistakes before they become habits.",
+      "During narrated playback, keep widgets moving at meaningful moments: sliders, highlighted points, or clicked solution steps should change when the instructor discusses them."
+    ]
+  },
+  "audience_level": "first-year university and advanced high-school students learning calculus through visual intuition, formulas, and guided practice",
+  "topic_goal": "Review functions and graphs as the visual language students need before limits, derivatives, and integrals.",
+  "topic_takeaways": [
+    "Recognize the main function families by both formula and graph shape.",
+    "Find domain and range by asking which inputs are allowed and what outputs can appear.",
+    "Apply shifts, stretches, and reflections in a deliberate order without the horizontal-sign mistake.",
+    "Compose functions while carrying both the inner-function and outer-function domain restrictions.",
+    "Use symmetry and piecewise boundary behavior to reason from formulas and graphs together."
+  ],
+  "style_notes": [
+    "The instructor is Arian from Arian University; the first slide should introduce that identity naturally and only once.",
+    "Use short visible chunks as narration anchors; do not read every bullet verbatim.",
+    "Move between formula, graph, and plain-language interpretation on each example.",
+    "When a widget is present, make the video feel active: call out the parameter or highlighted point, then let the scripted timeline or step state move while explaining.",
+    "For website mode, leave students with a reason to drag the controls themselves after the narrated explanation.",
+    "On dense visual slides, keep the avatar low and out of the main math area so the slide carries focus.",
+    "For pause-style questions, give students a real beat, then answer with one concrete test point or graph feature."
+  ],
+  "transition_style": "Use each slide as one teaching beat: name the task, point to the visual or formula, move the interactive state when useful, then preview the next tool.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Review of Functions and Graphs"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Open with the counterintuitive horizontal-shift question, then anchor Review of Functions and Graphs as the first topic in Session 1: Preliminaries of the Calculus 1 series, then introduce Arian University once.",
+      "voice_style": "energetic_demo",
+      "tone": "curious and direct",
+      "energy": 0.66,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Series anchor: Review of Functions and Graphs is the first topic in Session 1, Preliminaries, of Calculus 1.",
+        "This is a review, but it is not filler: every tool returns in limits, derivatives, and integrals.",
+        "Students should listen for the connection between formula, graph, and allowed inputs.",
+        "The session will stay visual, interactive, and example-driven."
+      ],
+      "transition_from_previous": "Open by framing the topic goal: Help students understand review of functions and graphs in a way they can explain, apply, and build on later.",
+      "transition_to_next": "Now that the destination is clear, show the exact skills students should be able to do by the end.",
+      "likely_student_confusion": "Students may think review means optional. Make it feel like sharpening the tools before calculus starts.",
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Start personally and directly, then move quickly into the purpose of the session.",
+      "delivery_goal": "Students should feel curiosity in the first 15 seconds and understand where this topic sits in the full Calculus 1 path.",
+      "must_say": [
+        "Quick prediction: why does f of x plus two move a graph left, not right?",
+        "Hi, I'm Arian, and welcome to Arian University.",
+        "This first toolkit video shows how to read a function from its formula, graph, and restrictions."
+      ],
+      "scene_hint": "Start with the horizontal-shift sign puzzle as the hook, then place the video inside the Calculus 1 series before introducing Arian University."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Learning Objectives"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Use the roadmap first at the session level: five sessions total, current Session 1 is Preliminaries, next Session 2 is Limits and Continuity, and this topic builds the graph language that limits assume. Then keep the objectives short and visual.",
+      "voice_style": "clear_teacher",
+      "tone": "focused and brisk",
+      "energy": 0.6,
+      "pace": 0.94,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Use the course roadmap at session level: five sessions total, current Session 1 Preliminaries, next Session 2 Limits and Continuity.",
+        "Do not say topic X of Y out loud; the numbered roadmap boxes show exact progress visually.",
+        "By the end, formulas should feel like visual instructions.",
+        "Inputs, graph movement, composition restrictions, symmetry, and piecewise boundaries are the main checklist."
+      ],
+      "transition_from_previous": "The title named the session; this slide turns it into a promise.",
+      "transition_to_next": "Begin with the simplest model of a function: one input goes in, one output comes out.",
+      "likely_student_confusion": "Students may see too many skills at once. Tell them the lecture will build them one at a time.",
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use the visible chunks as anchors, then explain in plain language with one concrete graph or formula reference.",
+      "delivery_goal": "Students should see where this topic sits in the Calculus 1 path and know the payoff without feeling trapped in a long checklist."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "Functions Are Like Vending Machines"
+      },
+      "slide_role": "intuition",
+      "importance": "medium",
+      "narration_seed": "Use the vending machine analogy only as a quick foundation, then pivot back to visual graph action.",
+      "voice_style": "clear_teacher",
+      "tone": "brief and concrete",
+      "energy": 0.58,
+      "pace": 0.94,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "A function assigns each valid input exactly one output.",
+        "Domain means the inputs that work.",
+        "Range means the outputs that can appear.",
+        "Transformations move or rescale the machine without changing the one-input-one-output rule."
+      ],
+      "transition_from_previous": "The objectives are abstract; this analogy makes the first words tangible.",
+      "transition_to_next": "Once students know what a function does, show the main families they will recognize again and again.",
+      "likely_student_confusion": "Do not let the analogy become too long. Use it to define input, output, domain, and range, then move on.",
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use the visible chunks as anchors, then explain in plain language with one concrete graph or formula reference.",
+      "delivery_goal": "Students should get input, output, domain, and range without losing momentum.",
+      "scene_hint": "No slider is needed here; use the image actively by naming button, input, output, domain, and range in sequence."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "Function Families at a Glance"
+      },
+      "slide_role": "reference",
+      "importance": "high",
+      "narration_seed": "Treat the eight-family slide as a fast montage under a minute, with one real-world sine frequency moment and a quick handoff to domain.",
+      "voice_style": "energetic_demo",
+      "tone": "fast visual montage",
+      "energy": 0.66,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Linear and quadratic functions are the baseline shapes for lines and parabolas.",
+        "Polynomial and power functions generalize familiar algebraic shapes.",
+        "Rational, logarithmic, and square-root style functions often create domain restrictions.",
+        "Trigonometric, exponential, and logarithmic families will return throughout calculus."
+      ],
+      "transition_from_previous": "The vending-machine model defines a function; the gallery shows the common machines we meet.",
+      "transition_to_next": "Before transforming graphs, first ask where a function is allowed to exist.",
+      "likely_student_confusion": "Students may try to copy all formulas. Emphasize pattern recognition and shape-reading.",
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use the visible chunks as anchors, then explain in plain language with one concrete graph or formula reference.",
+      "delivery_goal": "Students should recognize families fast without feeling the video has become a formula catalog.",
+      "scene_hint": "Use the family gallery like a quick visual scan: pause briefly on each graph family and name the signature shape."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Example 1: Domain and Range"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Walk this example slowly: the square root forces the radicand to be nonnegative, then the +2 lifts the lowest output.",
+      "voice_style": "clear_teacher",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "For \\(f(x)=\\sqrt{x-3}+2\\), require \\(x-3\\ge 0\\), so \\(x\\ge 3\\).",
+        "The smallest input is \\(x=3\\), and it gives \\(f(3)=2\\).",
+        "As \\(x\\) increases, \\(\\sqrt{x-3}\\) increases, so the range is \\([2,\\infty)\\).",
+        "Use the graph endpoint to confirm the algebra."
+      ],
+      "transition_from_previous": "The family gallery hinted at restrictions; this example turns that hint into a method.",
+      "transition_to_next": "Now that the allowed inputs are clear, show how graphs move when formulas change.",
+      "likely_student_confusion": "Students may say the range starts at 0 because of the square root parent. Point to the vertical shift.",
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Use the moving point on the square-root graph: start at the endpoint, move right as x increases, and connect that motion to range."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Vertical and Horizontal Shifts"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Separate vertical shifts from horizontal shifts. Vertical changes are direct; horizontal changes require solving the inside expression.",
+      "voice_style": "energetic_demo",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "\\(y=f(x)+c\\) moves the graph up when \\(c>0\\) and down when \\(c<0\\).",
+        "\\(y=f(x-c)\\) moves the graph right when \\(c>0\\) and left when \\(c<0\\).",
+        "The horizontal sign feels opposite because the input must solve \\(x-c=0\\).",
+        "Use one anchor point on the graph to verify the movement."
+      ],
+      "transition_from_previous": "Domain told us where the graph can live; transformations tell us where the whole graph moves.",
+      "transition_to_next": "After shifts, change the graph size and orientation with stretches and reflections.",
+      "likely_student_confusion": "Horizontal shifts are the main sign trap. Repeat the anchor-point test, not only the rule.",
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom",
+        "allow_center": true,
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Move the transformation controls while speaking: first vertical shift, then horizontal shift, and pause on the sign-opposite moment."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Stretches and Reflections"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Show vertical scaling as changing outputs and horizontal scaling as changing inputs. Use the sine period formula as the concrete anchor.",
+      "voice_style": "energetic_demo",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "\\(c f(x)\\) scales outputs: vertical stretch, shrink, or reflection across the x-axis.",
+        "\\(f(cx)\\) scales inputs: horizontal compression or stretch, and negative \\(c\\) reflects across the y-axis.",
+        "For \\(\\sin(bx)\\), the period is \\(2\\pi/|b|\\). Larger \\(|b|\\) means a shorter period.",
+        "Use the sliders to show amplitude first, then period, then reflection."
+      ],
+      "transition_from_previous": "Shifts move the graph; stretches and reflections reshape or flip it.",
+      "transition_to_next": "Before a full worked example, isolate the most common mistake about horizontal shifts.",
+      "likely_student_confusion": "Students may mix up vertical and horizontal scaling. Keep saying output scaling versus input scaling.",
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Move the stretch controls while speaking: amplitude first, period compression second, then reflection."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Common Mistake: Horizontal Shift Direction"
+      },
+      "slide_role": "caution",
+      "importance": "high",
+      "narration_seed": "Make this a warning slide: \\(f(x+3)\\) does not move right. Solve the inside equal to zero and the direction becomes left.",
+      "voice_style": "serious_clear",
+      "tone": "cautionary and clear",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "The tempting mistake is reading \\(x+3\\) as “right 3.”",
+        "To find the moved anchor point, solve \\(x+3=0\\), giving \\(x=-3\\).",
+        "So \\(f(x+3)\\) shifts left 3.",
+        "Use the visual comparison to show the wrong and correct interpretations side by side."
+      ],
+      "transition_from_previous": "Scaling was already enough; this slide prevents the sign mistake that breaks many sketches.",
+      "transition_to_next": "Now combine shifts, stretches, and reflections in a full transformation sequence.",
+      "likely_student_confusion": "Students may remember the slogan but not why. Anchor it to the equation (x+3=0).",
+      "teacher_strategy": "cautionary_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Use the visual comparison as a correction: show the tempting right-shift idea, then move to the left-shift interpretation."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Example 2: Transformation Sequence"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Build \\(y=-2(x+1)^2+3\\) one step at a time from \\(y=x^2\\). Let each clickable step move the graph to the next state.",
+      "voice_style": "energetic_demo",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Start from the parent parabola \\(y=x^2\\) with vertex \\((0,0)\\).",
+        "\\((x+1)^2\\) shifts the vertex left to \\((-1,0)\\).",
+        "The factor \\(-2\\) reflects across the x-axis and vertically stretches by 2.",
+        "The \\(+3\\) moves the vertex to \\((-1,3)\\)."
+      ],
+      "transition_from_previous": "The caution slide told us the horizontal sign; this example uses that rule in context.",
+      "transition_to_next": "Next, instead of changing one function, feed one function into another.",
+      "likely_student_confusion": "Students may apply the vertical shift before the reflection and stretch. Emphasize the visible staged order.",
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [
+        "parent curve",
+        "transformed curve",
+        "vertex marker",
+        "step buttons"
+      ],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Use the clickable/animated steps as the visual action: parent, left shift, reflect/stretch, then up shift."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Composition of Functions"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Explain composition as a pipeline: apply \\(g\\) first, then feed that output into \\(f\\). The domain must survive both stages.",
+      "voice_style": "clear_teacher",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "\\((f\\circ g)(x)=f(g(x))\\): \\(g\\) happens first.",
+        "The input must be in the domain of \\(g\\).",
+        "The value \\(g(x)\\) must also be in the domain of \\(f\\).",
+        "Order matters: \\(f\\circ g\\) and \\(g\\circ f\\) are usually different."
+      ],
+      "transition_from_previous": "Transformations changed one graph; composition chains two functions together.",
+      "transition_to_next": "Now apply the domain rule to an example with a square root and a denominator.",
+      "likely_student_confusion": "Students read left-to-right and may apply (f) first. Say “inside first” and point to the pipeline.",
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "point_right_mid",
+        "preferred_anchor": "left_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Use the composition pipeline as an active path: input enters g first, output feeds f second, then domain checks wrap around both."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Example 3: Composition with a Hole in the Domain"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "This example has two filters. The square root demands \\(x\\ge0\\), and the denominator demands \\(\\sqrt{x}\\ne1\\), so \\(x\\ne1\\).",
+      "voice_style": "clear_teacher",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "With \\(f(x)=\\frac{1}{x-1}\\) and \\(g(x)=\\sqrt{x}\\), the composition is \\(f(g(x))=\\frac{1}{\\sqrt{x}-1}\\).",
+        "The inner function requires \\(x\\ge0\\).",
+        "The outer denominator requires \\(\\sqrt{x}-1\\ne0\\), so \\(x\\ne1\\).",
+        "The final domain is \\([0,1)\\cup(1,\\infty)\\)."
+      ],
+      "transition_from_previous": "The composition rule had two checks; this example shows why both checks matter.",
+      "transition_to_next": "After composition, shift to another graph-reading shortcut: symmetry.",
+      "likely_student_confusion": "Students may stop after (xge0) and miss the hole at (x=1). Point to the denominator and the graph marker.",
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom",
+        "allow_center": true,
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Use the graph marker/domain highlight as each restriction is named: square-root restriction first, denominator hole second."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Even and Odd Functions"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Use the two plotted points to make symmetry physical: even means mirror across the y-axis, odd means rotate through the origin.",
+      "voice_style": "energetic_demo",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Even functions satisfy \\(f(-x)=f(x)\\) and mirror across the y-axis.",
+        "Odd functions satisfy \\(f(-x)=-f(x)\\) and have origin symmetry.",
+        "The algebraic test is: substitute \\(-x\\), simplify, and compare.",
+        "Symmetry can simplify later calculus work, especially integrals."
+      ],
+      "transition_from_previous": "Composition asked how functions combine; symmetry asks how one function behaves at opposite inputs.",
+      "transition_to_next": "Now use the algebraic test on a rational function that is not obvious at first glance.",
+      "likely_student_confusion": "Students may think “odd function” means odd powers only. Use the definition as the final test.",
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom",
+        "allow_center": true,
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Move paired points across the graph while explaining mirror symmetry and origin symmetry."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Example 4: Classify a Rational Function"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Compute \\(h(-x)\\) carefully. The numerator changes sign, the denominator stays the same, so the whole function changes sign.",
+      "voice_style": "clear_teacher",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "For \\(h(x)=\\frac{x^3}{x^2+1}\\), substitute \\(-x\\).",
+        "The numerator becomes \\(-x^3\\), while the denominator remains \\(x^2+1\\).",
+        "So \\(h(-x)=-h(x)\\).",
+        "Therefore the function is odd and has origin symmetry."
+      ],
+      "transition_from_previous": "The symmetry definitions become useful when the graph is not immediately obvious.",
+      "transition_to_next": "Next, read a function whose rule changes depending on where (x) is.",
+      "likely_student_confusion": "Students may see a denominator and assume the symmetry is gone. Show that the denominator is even.",
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Move the highlighted test point from x to -x while simplifying h(-x), then point to the origin symmetry."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Example 5: Piecewise Functions"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "For piecewise functions, first choose the correct condition, then evaluate. The open and closed dots decide what happens at boundaries.",
+      "voice_style": "clear_teacher",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Always choose the piece by checking the condition on \\(x\\) first.",
+        "\\(f(-1)=1\\) from the \\(x<0\\) piece.",
+        "\\(f(0)=1\\) because the middle piece includes \\(x=0\\).",
+        "\\(f(2)=5\\) because the middle piece includes \\(x=2\\), while the right piece starts after 2.",
+        "There is a jump at \\(x=0\\) and a jump at \\(x=2\\)."
+      ],
+      "transition_from_previous": "Symmetry gave one global test; piecewise functions require local decisions interval by interval.",
+      "transition_to_next": "End with a short proof challenge that uses the even and odd definitions directly.",
+      "likely_student_confusion": "Students may use the nearest-looking curve instead of the interval condition. Keep pointing to open versus closed dots.",
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom",
+        "allow_center": true,
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Use the piecewise marker and boundary dots actively: select the interval first, then evaluate the point."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "[Challenge – Optional] Product of Even × Odd"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Treat this as a short proof students can almost do in their heads. Multiply the definitions: even stays the same, odd changes sign, so the product changes sign.",
+      "voice_style": "clear_teacher",
+      "tone": "clear, warm, and visual",
+      "energy": 0.62,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Let \\(h(x)=f(x)g(x)\\), where \\(f\\) is even and \\(g\\) is odd.",
+        "Then \\(h(-x)=f(-x)g(-x)\\).",
+        "Use \\(f(-x)=f(x)\\) and \\(g(-x)=-g(x)\\).",
+        "So \\(h(-x)=-f(x)g(x)=-h(x)\\), which means \\(h\\) is odd.",
+        "The graph example \\(x^2\\cdot x^3=x^5\\) confirms the rule visually."
+      ],
+      "transition_from_previous": "Piecewise examples were computational; this challenge is a definition-based reasoning check.",
+      "transition_to_next": "Now compress the whole lecture into the checklist students should keep.",
+      "likely_student_confusion": "Students may memorize product rules without proof. Keep the definitions visible and let them do the work.",
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
+      "scene_hint": "Use the graph confirmation after the proof: even curve, odd curve, then product curve changing sign."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Key Takeaways"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Close by tying each takeaway back to one slide: families, domain and range, transformations, composition, symmetry, and piecewise boundaries.",
+      "voice_style": "calm_recap",
+      "tone": "confident and encouraging",
+      "energy": 0.58,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Recognize function families by formula and graph shape.",
+        "Check domain and range before doing operations.",
+        "Apply transformations in order and beware the horizontal-sign trap.",
+        "For composition, apply the inside function first and keep both domain restrictions.",
+        "Use symmetry and piecewise boundary behavior as graph-reading tools for calculus."
+      ],
+      "transition_from_previous": "The challenge proved one rule from definitions; the summary shows how all rules fit together.",
+      "transition_to_next": "Next lesson can start using this graph language for limits and rates of change.",
+      "likely_student_confusion": "Students may leave with separate facts instead of one toolkit. Frame the recap as a toolbox for limits and derivatives.",
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom",
+        "allow_center": true,
+        "allow_half_out": true
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use the visible chunks as anchors, then explain in plain language with one concrete graph or formula reference.",
+      "delivery_goal": "Students should know what to look at, what rule is being used, and why the rule matters."
+    }
+  ]
+}

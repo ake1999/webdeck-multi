@@ -25,7 +25,7 @@ import {
   validateLayoutManifest,
 } from "./manifest_schema.mjs";
 
-const VALID_MEDIA_KINDS = new Set(["image", "video", "iframe", "widget", "gallery"]);
+const VALID_MEDIA_KINDS = new Set(["image", "video", "iframe", "widget", "calculus_widget", "gallery"]);
 
 function pushIssue(issues, severity, code, message, options = {}) {
   issues.push({
@@ -74,6 +74,20 @@ function mediaCaptionId(media) {
   return media?.source || media?.caption ? `${media.id}_caption` : "";
 }
 
+function collectBlockIds(blocks, push) {
+  asArray(blocks).forEach((block) => {
+    push(block?.id);
+    push(block?.titleId);
+    push(block?.bodyId);
+    asArray(block?.items).forEach((item) => {
+      push(item?.id);
+      collectBlockIds(item?.children, push);
+    });
+    asArray(block?.steps).forEach((step) => push(step?.id));
+    if (block?.reveal) push(block.reveal.id);
+  });
+}
+
 function collectStructuredElementIds(slide) {
   const ids = [];
 
@@ -100,6 +114,8 @@ function collectStructuredElementIds(slide) {
 
   asArray(slide.bullets).forEach((item) => push(item.id));
   asArray(slide.paragraphs).forEach((item) => push(item.id));
+  collectBlockIds(slide.blocks, push);
+  pushMedia(slide.media);
 
   [slide.left, slide.right].forEach((column) => {
     if (!column) return;
@@ -107,6 +123,7 @@ function collectStructuredElementIds(slide) {
     push(column.htmlId);
     asArray(column.bullets).forEach((item) => push(item.id));
     asArray(column.paragraphs).forEach((item) => push(item.id));
+    collectBlockIds(column.blocks, push);
     pushMedia(column.media);
   });
 
@@ -134,7 +151,10 @@ function walkMedia(node, pathLabel, visit) {
     return;
   }
 
-  if (typeof node.kind === "string" && (node.src || node.kind === "gallery")) {
+  if (
+    typeof node.kind === "string"
+    && (node.src || node.kind === "gallery" || node.kind === "calculus_widget")
+  ) {
     visit(node, pathLabel);
   }
 
@@ -173,7 +193,7 @@ async function validateAssetRef({
     let code = "nondeterminism.remote_media";
     let message = `Remote ${kind} dependency requires network access during export.`;
 
-    if (kind === "iframe" || kind === "widget") {
+    if (kind === "iframe" || kind === "widget" || kind === "calculus_widget") {
       code = "nondeterminism.external_iframe";
       message = `External ${kind} dependency can change independently of the deck.`;
     }
@@ -263,6 +283,16 @@ async function validateMediaNode({
       });
     }
 
+    return;
+  }
+
+  if (kind === "calculus_widget") {
+    if (!String(media.widget || "").trim()) {
+      pushIssue(issues, "error", "media.missing_widget", "Calculus widget media must include a widget name.", {
+        location: `${location}.widget`,
+        slideId,
+      });
+    }
     return;
   }
 

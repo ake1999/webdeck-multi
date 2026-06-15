@@ -1,0 +1,423 @@
+{
+  "lecture_meta": {
+    "title": "Comparison Tests: Direct and Limit",
+    "topic": "Series convergence tests",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Apply the Direct Comparison Test to determine convergence or divergence by term-by-term comparison with a known benchmark series.",
+      "Calculate limits for the Limit Comparison Test and interpret the result to decide series behavior.",
+      "Choose between Direct and Limit Comparison Tests based on the algebraic structure of the series.",
+      "Analyze series with messy algebraic expressions by identifying their asymptotic behavior.",
+      "Interpret convergence/divergence when the limit equals 0, a finite nonzero number, or ∞."
+    ],
+    "prerequisite_reminder": "You need to know p-series and geometric series convergence, and basic limits at infinity."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Comparing Stacks of Coins",
+      "left": {
+        "content_type": "text",
+        "content": "**Direct Comparison**: Stack A always shorter than Stack B. If B is finite, A must be finite.\n\n**Limit Comparison**: Two plants grow side by side. If their growth rates approach a constant ratio, they share the same fate – both finite or both infinite."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two stacks of coins growing taller as n increases, then two plants growing at proportional rates.",
+        "visual_spec": "Create an animated side-by-side bar chart (two stacks of coins) using matplotlib. Left stack: heights = 1/n^2 (converging to finite). Right stack: heights = 1/n (diverging). Animate adding bars for n=1..20. Then switch to two plants: lines representing 1/n^2 and 3/n^2, showing they stay in constant proportion. Use colors: blue and orange. Labels: 'Convergent stack', 'Divergent stack'. Title: 'Intuition: Comparison Tests'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Direct Comparison: smaller-than-convergent converges, larger-than-divergent diverges.\nLimit Comparison: constant ratio → same fate.",
+      "teacher_narration": "Think of comparing series by stacking coins. If Stack A is always shorter than Stack B and Stack B is finite, then A must be finite. That's the Direct Comparison Test. But sometimes you can't line them up exactly—like two plants growing side by side. If their heights stay in a constant proportion, they will both stay bounded or both shoot up forever. That is the Limit Comparison Test, which we will build on today.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Direct Comparison Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Let $0 \\leq a_n \\leq b_n$ for all $n$ beyond some $N$.\n\n$$\\text{If } \\sum b_n \\text{ converges, then } \\sum a_n \\text{ converges.}$$\n$$\\text{If } \\sum a_n \\text{ diverges, then } \\sum b_n \\text{ diverges.}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing $a_n$ below $b_n$ for all n, with converging/diverging labels.",
+        "visual_spec": "Plot two sequences: $a_n=1/(n^2+5)$ (blue dots) and $b_n=1/n^2$ (orange dots) for n=1..30. Show that $a_n < b_n$ for all n. Add horizontal line at y=0.1 to indicate convergence region. Animate dots appearing. Title: 'Direct Comparison: $a_n \\leq b_n$'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(1, 31)\na_n = 1/(n**2 + 5)\nb_n = 1/n**2\n\nplt.figure(figsize=(8,5))\nplt.plot(n, a_n, 'bo-', label=r'$a_n = 1/(n^2+5)$')\nplt.plot(n, b_n, 'rs-', label=r'$b_n = 1/n^2$')\nplt.axhline(y=0.1, color='gray', linestyle='--', alpha=0.5)\nplt.yscale('log')\nplt.xlabel('n')\nplt.ylabel('Term value')\nplt.title('Direct Comparison: $a_n \\leq b_n$')\nplt.legend()\nplt.grid(alpha=0.3)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "If $a_n \\leq b_n$ and $\\sum b_n$ converges, then $\\sum a_n$ converges. If $a_n \\geq b_n$ and $\\sum b_n$ diverges, then $\\sum a_n$ diverges.",
+      "teacher_narration": "The Direct Comparison Test works when you can sandwich your series between a known benchmark. If your series is less than a known convergent series, it must converge because you are adding smaller numbers. If your series is greater than a known divergent series, it must diverge because you are adding numbers that are even larger. The key is the inequality direction – get that wrong and the test is useless.",
+      "student_prompt": "Check: If $a_n < b_n$ and $\\sum b_n$ diverges, can we conclude anything about $\\sum a_n$?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up: $\\sum \\frac{1}{n^2+5}$",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Observe $\\frac{1}{n^2+5} < \\frac{1}{n^2}$ for all $n \\geq 1$.\n2. $\\sum_{n=1}^\\infty \\frac{1}{n^2}$ converges (p-series, $p=2>1$).\n3. By Direct Comparison, $\\sum \\frac{1}{n^2+5}$ converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot $a_n$ and $b_n$ showing inequality and convergence.",
+        "visual_spec": "Same plot as slide 2 but with a title 'Example 1: Converges' and add an annotation highlighting that $a_n$ is always below $b_n$. Use log scale. Color code: blue for $a_n$, orange for $b_n$.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\frac{1}{n^2+5} < \\frac{1}{n^2}$ → converges (p-series $p=2$).",
+      "teacher_narration": "We start with a simple warm-up. We need to decide whether the series of 1 over n squared plus 5 converges. Since n squared plus 5 is always bigger than n squared, the fraction is smaller than 1 over n squared. And we know the p-series with p equals 2 converges. So by the Direct Comparison Test, our series is smaller than a convergent series, therefore it must converge.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Limit Comparison Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Let $a_n>0$, $b_n>0$, define $L = \\lim_{n\\to\\infty} \\frac{a_n}{b_n}$.\n\n**Main Case:** $0<L<\\infty$ → same convergence.\n\n**Extended Cases:**\n- $L=0$ and $\\sum b_n$ conv. → $\\sum a_n$ conv.\n- $L=\\infty$ and $\\sum b_n$ div. → $\\sum a_n$ div."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animated limit approaching a constant $L=3$.",
+        "visual_spec": "Plot the sequence $\\frac{a_n}{b_n}$ for a rational function example (like $a_n = \\frac{3n^2+2n+1}{n^4-5n^3+7}$, $b_n=1/n^2$) showing ratio approaching 3. Use dashed horizontal lines at $L=3$ and at $L-\\epsilon$, $L+\\epsilon$ to show convergence. Animate n from 1 to 100. Title: 'Limit Comparison: Ratio Approaching 3'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(1, 101)\na_n = (3*n**2 + 2*n + 1) / (n**4 - 5*n**3 + 7)\nb_n = 1/n**2\nratio = a_n / b_n\n\nplt.figure(figsize=(8,5))\nplt.plot(n, ratio, 'g-', label=r'$\\frac{a_n}{b_n}$')\nplt.axhline(y=3, color='red', linestyle='--', label='L = 3')\nplt.axhline(y=3+0.3, color='gray', linestyle=':', alpha=0.5)\nplt.axhline(y=3-0.3, color='gray', linestyle=':', alpha=0.5)\nplt.xlabel('n')\nplt.ylabel('Ratio')\nplt.title('Ratio Convergence to L = 3')\nplt.legend()\nplt.grid(alpha=0.3)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "If $0<L<\\infty$, both series do the same thing. If $L=0$ and $\\sum b_n$ converges, then $\\sum a_n$ converges. If $L=\\infty$ and $\\sum b_n$ diverges, then $\\sum a_n$ diverges.",
+      "teacher_narration": "The Limit Comparison Test is more flexible. We don't need a term-by-term inequality; we just need the limit of the ratio to exist. If the limit is a positive finite number, the two series behave identically. If the limit is zero and the comparison series converges, then our series, which is much smaller, must also converge. And if the limit is infinite and the comparison series diverges, our much larger series also diverges. But be careful: when the limit is zero and the comparison series diverges, or when the limit is infinity and the comparison series converges, we cannot conclude anything.",
+      "student_prompt": "Take 10 seconds: If $\lim a_n/b_n = 5$ and $\\sum b_n$ diverges, what does $\\sum a_n$ do?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Standard Example: Rational Function",
+      "left": {
+        "content_type": "steps",
+        "content": "Series: $\\sum_{n=1}^{\\infty} \\frac{3n^2+2n+1}{n^4-5n^3+7}$\n\n1. Leading behavior: $\\frac{3n^2}{n^4} = \\frac{3}{n^2}$.\n2. Choose $b_n = \\frac{1}{n^2}$ (convergent p-series).\n3. Compute $L = \\lim_{n\\to\\infty} \\frac{a_n}{b_n} = 3$.\n4. $0<3<\\infty$ → same fate. $\\sum b_n$ converges → $\\sum a_n$ converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of $a_n$, $b_n$, $3b_n$ showing alignment.",
+        "visual_spec": "Plot $a_n$, $b_n$, and $3b_n$ on log scale for n=1..50. Use markers: blue circles for $a_n$, red squares for $b_n$, green triangles for $3b_n$. Add legend. Title: 'Example 2: $a_n \\sim 3/n^2$'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$a_n \\sim \\frac{3}{n^2}$, $L=3$, $\\sum \\frac{1}{n^2}$ converges → $\\sum a_n$ converges.",
+      "teacher_narration": "Now a typical rational function. The highest degree terms dominate: numerator behaves like 3n squared, denominator like n to the fourth, so the whole series acts like 3 over n squared. That suggests comparing with 1 over n squared. We compute the limit of the ratio and get exactly 3. Since it's finite and nonzero, both series share the same convergence. And since 1 over n squared converges, our series converges. This is the bread and butter of the Limit Comparison Test.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Watching $a_n$ and $3b_n$ Align",
+      "left": {
+        "content_type": "text",
+        "content": "Use the slider to increase n and see how $a_n$ (blue) approaches $3\\cdot b_n$ (green dashed). Toggle the $3b_n$ line to see the pattern."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot with slider and checkbox.",
+        "visual_spec": "Create an interactive matplotlib figure. Plot $a_n = (3n^2+2n+1)/(n^4-5n^3+7)$ as blue circles, $b_n = 1/n^2$ as red squares, and $3b_n$ as green dashed line. Add a slider for n_max from 5 to 100 (initial 20). Add a checkbox to toggle visibility of the $3b_n$ line. Use log scale for y-axis. Title updates with current n_max. Write the code using matplotlib.widgets.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, CheckButtons\n\nfig, ax = plt.subplots(figsize=(8,6))\nplt.subplots_adjust(bottom=0.25)\n\nn_vals = np.arange(1, 101)\na_n = (3*n_vals**2 + 2*n_vals + 1) / (n_vals**4 - 5*n_vals**3 + 7)\nb_n = 1/n_vals**2\n\nline_a, = ax.semilogy(n_vals, a_n, 'bo-', markersize=4, label=r'$a_n$')\nline_b, = ax.semilogy(n_vals, b_n, 'rs-', markersize=4, label=r'$b_n=1/n^2$')\nline_3b, = ax.semilogy(n_vals, 3*b_n, 'g--', label=r'$3b_n$', lw=2)\nax.set_xlim(0, 100)\nax.set_ylim(1e-6, 1)\nax.set_xlabel('n')\nax.set_ylabel('Term value')\nax.set_title('$a_n$ vs $b_n$ and $3b_n$ (n_max=100)')\nax.legend(loc='upper right')\nax.grid(alpha=0.3)\n\n# Slider\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'n_max', 5, 100, valinit=100, valstep=1)\n\ndef update(val):\n    n_max = int(slider.val)\n    n_sub = n_vals[:n_max]\n    a_sub = a_n[:n_max]\n    b_sub = b_n[:n_max]\n    line_a.set_data(n_sub, a_sub)\n    line_b.set_data(n_sub, b_sub)\n    line_3b.set_data(n_sub, 3*b_sub[:n_max])\n    ax.set_xlim(0, n_max)\n    ax.set_title(f'$a_n$ vs $b_n$ and $3b_n$ (n_max={n_max})')\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\n\n# Checkbox\nax_check = plt.axes([0.02, 0.45, 0.12, 0.1])\ncheck = CheckButtons(ax_check, ['Show $3b_n$'], [True])\ndef toggle_3b(label):\n    line_3b.set_visible(not line_3b.get_visible())\n    fig.canvas.draw_idle()\n\ncheck.on_clicked(toggle_3b)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for n_max from 5 to 100",
+          "Checkbox to show/hide $3b_n$ line"
+        ]
+      },
+      "on_screen_text": "Drag the slider to increase n. Observe $a_n$ and $3b_n$ merging for large n.",
+      "teacher_narration": "This interactive plot lets you see the limit comparison in action. As you drag the slider to larger n, the blue points representing our series and the green dashed line representing 3 over n squared become indistinguishable. That's why the limit comparison test works: the ratio approaches a constant, and the two series behave the same way.",
+      "student_prompt": "Use the slider to n=50. How close is $a_n$ to $3b_n$?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Wrong Inequality Direction",
+      "left": {
+        "content_type": "steps",
+        "content": "Series: $\\sum_{n=2}^{\\infty} \\frac{1}{\\sqrt{n^2-1}}$\n\n**Wrong attempt:**\n- $\\frac{1}{\\sqrt{n^2-1}} > \\frac{1}{n}$ because $\\sqrt{n^2-1} < n$.\n- $\\sum \\frac{1}{n}$ diverges (harmonic).\n- **Conclusion: ???** \n\nThis inequality goes the wrong way! On the screen: larger-than-divergent tells us nothing."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot showing $a_n$ above $b_n=1/n$ and both diverging? Actually need to show that $a_n > 1/n$ but we don't know if it diverges.",
+        "visual_spec": "Plot $a_n = 1/\\sqrt{n^2-1}$ (blue) and $b_n = 1/n$ (red) for n=2..30 using linear scale. Animate dots appearing. Add annotation: 'a_n > 1/n, but harmonic diverges – no conclusion!'. Use error message style text. Title: 'Misconception: Direct Comparison Fails Here'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(2, 31)\na_n = 1 / np.sqrt(n**2 - 1)\nb_n = 1 / n\n\nplt.figure(figsize=(8,5))\nplt.plot(n, a_n, 'bo-', label=r'$a_n = 1/\\sqrt{n^2-1}$')\nplt.plot(n, b_n, 'rs-', label=r'$b_n = 1/n$ (harmonic)')\nplt.xlabel('n')\nplt.ylabel('Term value')\nplt.title('Misconception: $a_n > b_n$ but $\\sum b_n$ diverges – No info!')\nplt.legend()\nplt.grid(alpha=0.3)\n# Add text box\nplt.text(15, 0.2, 'Direct Comparison gives\\n NO CONCLUSION', fontsize=12,\n         bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.7))\nplt.show()",
+        "interactive_controls": [
+          "Button: Reveal correct Limit Comparison solution"
+        ]
+      },
+      "on_screen_text": "$\\frac{1}{\\sqrt{n^2-1}} > \\frac{1}{n}$, but $\\sum \\frac{1}{n}$ diverges → Direct Comparison inconclusive!",
+      "teacher_narration": "Here is a common pitfall. A student tries Direct Comparison and notices that the series terms are larger than the harmonic series. Since the harmonic series diverges, they might think the larger series must also diverge. But wait: saying your series is larger than a divergent series gives you no information because the divergent series is already infinite – your series could also diverge, or it could be finite? Actually, if it is larger than something that already blows up, it must also blow up. But the problem is: the inequality direction is correct: larger-than-divergent does imply divergence. The mistake here is that the student might then try to compare with a smaller series that diverges and get stuck? The real mistake is that Direct Comparison fails because the inequality is the wrong way for the other direction? Let me re-read the v2 slide: It says common mistake: "Your series is larger than a divergent series, so you can't conclude convergence? Actually, larger-than-divergent does imply divergence. Wait, the v2 says: 'If your series is larger than a divergent series, the Direct Comparison Test is useless — it tells you nothing.' That is correct: larger-than-divergent does **not** guarantee divergence? Actually, if $a_n \\ge b_n$ and $\\sum b_n$ diverges, then $\\sum a_n$ must diverge because the partial sums of $a_n$ are at least as large as those of $b_n$, which go to infinity. So that would give divergence. The v2 slide might have an error? Looking back at v2: Slide 3 says: 'If $\\sum a_n$ diverges, then $\\sum b_n$ converges? No, it says: If $\\sum a_n$ diverges, then $\\sum b_n$ diverges.' That is correct. The common mistake in v2 is about Example 3 where they try Direct Comparison and get $a_n > 1/n$, but then they cannot conclude because they need $a_n <$ convergent or $a_n >$ divergent? Actually, $a_n > 1/n$ and $\\sum 1/n$ diverges implies $\\sum a_n$ diverges by the Direct Comparison Test. So why does v2 say it's a common mistake? Let me re-read v2 Slide 7: it says 'Attempt direct comparison: $1/\\sqrt{n^2-1} > 1/n$. Since $\\sqrt{n^2-1} < n$, then $\\sum 1/n$ diverges. But our series is LARGER than a divergent series. **⚠️ Common Mistake:** This tells us nothing! Larger-than-divergent is inconclusive.' Wait, that seems wrong mathematically: if $a_n \\ge b_n$ and $\\sum b_n$ diverges, then $\\sum a_n$ must diverge because the partial sums are at least as large. So the statement 'larger-than-divergent is inconclusive' is false. Actually, I think I see the nuance: The Direct Comparison Test as stated: If $0 \\le a_n \\le b_n$ and $\\sum b_n$ converges, then $\\sum a_n$ converges. If $\\sum a_n$ diverges, then $\\sum b_n$ diverges. The test does NOT say that if $a_n \\ge b_n$ and $\\sum b_n$ diverges, then $\\sum a_n$ diverges. That is true by the contrapositive of the second part? Let's check: Second part: If $\\sum a_n$ diverges, then $\\sum b_n$ diverges. But if we have $a_n \\ge b_n$, then we can apply the test by swapping roles: Let $c_n = b_n$ and $d_n = a_n$. Then $c_n \\le d_n$ and we know $\\sum c_n$ diverges. The test says: if $\\sum c_n$ diverges, then $\\sum d_n$ diverges? No, the test only gives divergence when the smaller series diverges? The test's second part: 'If $\\sum a_n$ diverges, then $\\sum b_n$ diverges.' This is usually stated with $a_n \\le b_n$. So if $\\sum a_n$ diverges, then $b_n$ which is larger must diverge. So if we have $a_n \\ge b_n$, we can set $a'_n = b_n$ and $b'_n = a_n$ so that $a'_n \\le b'_n$. Then if $\\sum a'_n$ diverges, then $\\sum b'_n$ diverges. So indeed, if the smaller series diverges, the larger must diverge. So in Example 3, $1/\\sqrt{n^2-1} > 1/n$, so the smaller series is $1/n$ which diverges, so the larger must diverge. Thus Direct Comparison would work, and the series would diverge. But the v2 slide says it's inconclusive and switches to Limit Comparison. That is a mistake in the v2 lecture. The correct analysis: $a_n > 1/n$ and $\\sum 1/n$ diverges implies $\\sum a_n$ diverges. So why would the v2 say it's inconclusive? Possibly because they tried the other direction: they tried to compare $a_n$ to $1/n$ and concluded $a_n > 1/n$, but then they might have thought they need $a_n$ to be less than something convergent or greater than something divergent? Actually, the test says: If $a_n \\le b_n$ and $\\sum b_n$ converges, then $\\sum a_n$ converges. If $a_n \\ge b_n$ and $\\sum b_n$ diverges, then $\\sum a_n$ diverges. But note: in the second part, the inequality is $a_n \\ge b_n$; the test is symmetrical. So it is valid. So the v2 slide is incorrect.
+
+To maintain math accuracy (rule 9), we must correct this. The correct common mistake is when students try to force a comparison the wrong way: e.g., if they say $a_n < b_n$ and $b_n$ diverges, they might incorrectly think $a_n$ diverges (wrong). Or if they try Direct Comparison but the inequality goes in an unhelpful direction (e.g., $a_n > b_n$ and $b_n$ converges, then nothing). So the real misconception is that you cannot always use Direct Comparison if the inequality is not in the right direction relative to convergence/divergence. The standard miss is that students try to compare a series to a convergent series but the inequality is reversed ($a_n >$ convergent -> no conclusion). In Example 3, the series actually diverges, and Direct Comparison can prove it: $a_n > 1/n$ and $1/n$ diverges -> divergence. But the v2 claims it's inconclusive, which is wrong. So we will correct the example: we'll keep Example 3 as a tricky case where the direct comparison might be attempted but the inequality is not straightforward? Alternatively, we could use a different example for the misconception: e.g., $\\sum \\frac{1}{n^2+1}$ compared to $1/n$: $1/(n^2+1) < 1/n$ but $1/n$ diverges -> no conclusion. That is a classic mistake. The v2 Example 3 could be kept but we need to fix the logic: maybe the series actually diverges and Direct Comparison works, but the student might mistakenly apply the test incorrectly. To avoid confusion, I'll change the misconception to a series where the direct comparison yields a useless inequality (e.g., $a_n < b_n$ but $b_n$ diverges, student thinks that implies convergence? No, that would be wrong. The mistake is trying to use a divergent series to prove convergence by showing your series is smaller. That's a common error. So I'll use the series $\\sum \\frac{1}{n^2+1}$: $1/(n^2+1) < 1/n$, but $\\sum 1/n$ diverges. The student might incorrectly think that because their series is smaller, it must converge. That's the mistake. Actually, the correct conclusion is that we cannot conclude anything because the comparison series diverges. So the test is inconclusive. That's a better misconception.
+
+Thus we will replace the v2 tricky example with this one for the misconception slide. Then the later tricky example (slide 9) can be something else. We still need five examples: warm-up, standard, tricky, edge case, application. We'll keep warm-up, standard (rational), tricky (where direct comparison fails, e.g., $\\sum \\frac{1}{\\sqrt{n^2-1}}$ actually diverges, but we'll show that Limit Comparison works, and the direct comparison might be attempted but the inequality direction is not helpful because $a_n > 1/n$ and $1/n$ diverges -> actually that would prove divergence, so it's not a failure. So we need an example where direct comparison truly fails. A good one is $\\sum \\frac{\\sin^2 n}{n^2}$: we can bound it by $1/n^2$ which converges, but direct comparison works because $\\sin^2 n \\le 1$, so $a_n \\le 1/n^2$, so it converges. That's fine. Another example: $\\sum \\frac{1}{n \\ln n}$: we can't directly compare with p-series because it's smaller than $1/n$ but larger than $1/n^2$, so direct comparison is inconclusive because $1/n$ diverges and $1/n^2$ converges, but the series is between them. That's a classic case where limit comparison with $\\int$ is needed? Actually, integral test works. But limit comparison with $b_n = 1/n$ gives $\\frac{a_n}{1/n} = 1/(\\ln n) \\to 0$, and $\\sum 1/n$ diverges, so the edge case $L=0$ with divergent b_n is inconclusive. So indeed direct comparison fails. That's a perfect tricky example. And limit comparison also fails. So we need integral test, but that's not in our test set. However, the v2 had Example 3 as $\\sum 1/\\sqrt{n^2-1}$ which diverges, and they used limit comparison successfully. That example works: direct comparison with $1/n$ would give $a_n > 1/n$ and $1/n$ diverges -> that would prove divergence, so direct comparison works. So that's not a failure. So maybe we use $\\sum \\frac{1}{\\sqrt{n^2-1}}$ but show that direct comparison with $1/n$ gives $a_n > 1/n$, which actually proves divergence – but then why would they think it's tricky? Perhaps because the inequality is not obvious? Let's check: $n^2-1 < n^2$, so $\\sqrt{n^2-1} < n$, so $1/\\sqrt{n^2-1} > 1/n$. Yes. So direct comparison says: if $a_n \\ge b_n$ and $b_n$ diverges, then $a_n$ diverges. So it works. So that example is not a failure of direct comparison. The only tricky part might be that students might try to compare with $1/n^2$ which is smaller and converges, but that gives $a_n > 1/n^2$ and $1/n^2$ converges -> no conclusion. That is a mistake: trying to compare to a convergent series with wrong inequality. So the misconception slide can show that student tries to compare with $1/n^2$ (convergent) and gets $a_n > 1/n^2$, so they think it might diverge? Actually, that's also inconclusive. So that works.
+
+I'll redesign the misconception: The student attempts to use Direct Comparison by bounding $a_n$ with a convergent series $1/n^2$ but gets $a_n > 1/n^2$. Since $1/n^2$ converges, the test says nothing. That's the mistake: trying to use a convergent series but your series is larger, so you cannot conclude convergence. That's a common error. Then the correct approach is to use Limit Comparison with $1/n$, which yields $L=1$ and since $1/n$ diverges, $a_n$ diverges. That aligns with v2's Example 3.
+
+So for misconception slide 7, we'll show the wrong attempt: compare to $1/n^2$ (convergent) but $a_n > 1/n^2$ -> inconclusive. Then we'll have an interactive button to reveal the correct limit comparison approach. Good.
+
+Now we also need to incorporate the edge case (Example 4) and application (Example 5) as in v2.
+
+Let's continue constructing slides.
+
+Slide 8: pause_and_try after misconception: "Now try using Limit Comparison on this series." Then slide 9: solution (showing limit with $b_n=1/n$ gives $L=1$, thus diverges).
+
+We'll combine into one slide? Better to have a pause_and_try slide.
+
+Slide 10: edge case Example 4 ($\\ln n / n^3$) with $L=0$.
+
+Slide 11: application Example 5 (radicals).
+
+Slide 12: Challenge optional (proof sketch).
+
+Slide 13: summary.
+
+We need to fit within 12-18 slides. So far: 1 hook, 2 core DCT, 3 warm-up, 4 core LCT, 5 standard, 6 visual lab, 7 misconception, 8 pause_and_try (leave blank for student), 9 solution (tricky), 10 edge case, 11 application, 12 challenge, 13 summary. That's 13 slides. Good. But we need at least 3 interactive slides. We have slide 6 (visual lab with slider and checkbox). That's one. Slide 7 (misconception) can have an interactive button to reveal correct method – we'll add that as interactive_controls. That's two. Slide 10 (edge case) we can add interactive control: slider to see the limit approach zero, or toggle show/hide asymptotic bound. That's three. Also slide 4 (core LCT) could have a pause_and_try (youtube_pause:true) but no interactive controls. We already have at least three.
+
+We also need to ensure slide 8 is pause_and_try with no solution – just a prompt. Then slide 9 gives the solution.
+
+Now write the JSON. Be careful with math precision: in the edge case, $\\sum 1/n^2$ converges, L=0 implies $\\sum a_n$ converges (since $\\sum b_n$ converges). That's correct. For $\\sum \\ln n / n^3$, L=0 with $b_n = 1/n^2$ yields convergence. For the tricky example $\\sum 1/\\sqrt{n^2-1}$, we will use $b_n=1/n$, limit = 1, so diverges.
+
+Now produce JSON.{
+  "lecture_meta": {
+    "title": "Comparison Tests: Direct and Limit",
+    "topic": "Series convergence tests",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Apply the Direct Comparison Test to determine convergence or divergence by term-by-term comparison with a known benchmark series.",
+      "Calculate limits for the Limit Comparison Test and interpret the result to decide series behavior.",
+      "Choose between Direct and Limit Comparison Tests based on the algebraic structure of the series.",
+      "Analyze series with messy algebraic expressions by identifying their asymptotic behavior.",
+      "Interpret convergence/divergence when the limit equals 0, a finite nonzero number, or ∞."
+    ],
+    "prerequisite_reminder": "You need to know p-series and geometric series convergence, and basic limits at infinity."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Comparing Stacks of Coins",
+      "left": {
+        "content_type": "text",
+        "content": "**Direct Comparison**: Stack A always shorter than Stack B. If B is finite, A must be finite.\n\n**Limit Comparison**: Two plants grow side by side. If their growth rates approach a constant ratio, they share the same fate – both finite or both infinite."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two stacks of coins growing taller as n increases, then two plants growing at proportional rates.",
+        "visual_spec": "Create an animated side-by-side bar chart (two stacks of coins) using matplotlib. Left stack: heights = 1/n^2 (converging to finite). Right stack: heights = 1/n (diverging). Animate adding bars for n=1..20. Then switch to two plants: lines representing 1/n^2 and 3/n^2, showing they stay in constant proportion. Use colors: blue and orange. Labels: 'Convergent stack', 'Divergent stack'. Title: 'Intuition: Comparison Tests'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Direct Comparison: smaller-than-convergent converges, larger-than-divergent diverges.\nLimit Comparison: constant ratio → same fate.",
+      "teacher_narration": "Think of comparing series by stacking coins. If Stack A is always shorter than Stack B and Stack B is finite, then A must be finite. That's the Direct Comparison Test. But sometimes you can't line them up exactly—like two plants growing side by side. If their heights stay in a constant proportion, they will both stay bounded or both shoot up forever. That is the Limit Comparison Test, which we will build on today.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Direct Comparison Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Let $0 \\leq a_n \\leq b_n$ for all $n$ beyond some $N$.\n\n$$\\text{If } \\sum b_n \\text{ converges, then } \\sum a_n \\text{ converges.}$$\n$$\\text{If } \\sum a_n \\text{ diverges, then } \\sum b_n \\text{ diverges.}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing $a_n$ below $b_n$ for all n, with converging/diverging labels.",
+        "visual_spec": "Plot two sequences: $a_n=1/(n^2+5)$ (blue dots) and $b_n=1/n^2$ (orange dots) for n=1..30. Show that $a_n < b_n$ for all n. Add horizontal line at y=0.1 to indicate convergence region. Animate dots appearing. Title: 'Direct Comparison: $a_n \\leq b_n$'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(1, 31)\na_n = 1/(n**2 + 5)\nb_n = 1/n**2\n\nplt.figure(figsize=(8,5))\nplt.plot(n, a_n, 'bo-', label=r'$a_n = 1/(n^2+5)$')\nplt.plot(n, b_n, 'rs-', label=r'$b_n = 1/n^2$')\nplt.axhline(y=0.1, color='gray', linestyle='--', alpha=0.5)\nplt.yscale('log')\nplt.xlabel('n')\nplt.ylabel('Term value')\nplt.title('Direct Comparison: $a_n \\leq b_n$')\nplt.legend()\nplt.grid(alpha=0.3)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "If $a_n \\leq b_n$ and $\\sum b_n$ converges, then $\\sum a_n$ converges. If $a_n \\geq b_n$ and $\\sum b_n$ diverges, then $\\sum a_n$ diverges.",
+      "teacher_narration": "The Direct Comparison Test works when you can sandwich your series between a known benchmark. If your series is less than a known convergent series, it must converge because you are adding smaller numbers. If your series is greater than a known divergent series, it must diverge because you are adding numbers that are even larger. The key is the inequality direction – get that wrong and the test is useless.",
+      "student_prompt": "Check: If $a_n < b_n$ and $\\sum b_n$ diverges, can we conclude anything about $\\sum a_n$?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up: $\\sum \\frac{1}{n^2+5}$",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Observe $\\frac{1}{n^2+5} < \\frac{1}{n^2}$ for all $n \\geq 1$.\n2. $\\sum_{n=1}^\\infty \\frac{1}{n^2}$ converges (p-series, $p=2>1$).\n3. By Direct Comparison, $\\sum \\frac{1}{n^2+5}$ converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot $a_n$ and $b_n$ showing inequality and convergence.",
+        "visual_spec": "Same plot as slide 2 but with a title 'Example 1: Converges' and add an annotation highlighting that $a_n$ is always below $b_n$. Use log scale. Color code: blue for $a_n$, orange for $b_n$.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\frac{1}{n^2+5} < \\frac{1}{n^2}$ → converges (p-series $p=2$).",
+      "teacher_narration": "We start with a simple warm-up. We need to decide whether the series of 1 over n squared plus 5 converges. Since n squared plus 5 is always bigger than n squared, the fraction is smaller than 1 over n squared. And we know the p-series with p equals 2 converges. So by the Direct Comparison Test, our series is smaller than a convergent series, therefore it must converge.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Limit Comparison Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Let $a_n>0$, $b_n>0$, define $L = \\lim_{n\\to\\infty} \\frac{a_n}{b_n}$.\n\n**Main Case:** $0<L<\\infty$ → same convergence.\n\n**Extended Cases:**\n- $L=0$ and $\\sum b_n$ conv. → $\\sum a_n$ conv.\n- $L=\\infty$ and $\\sum b_n$ div. → $\\sum a_n$ div."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animated limit approaching a constant $L=3$.",
+        "visual_spec": "Plot the sequence $\\frac{a_n}{b_n}$ for a rational function example (like $a_n = \\frac{3n^2+2n+1}{n^4-5n^3+7}$, $b_n=1/n^2$) showing ratio approaching 3. Use dashed horizontal lines at $L=3$ and at $L-\\epsilon$, $L+\\epsilon$ to show convergence. Animate n from 1 to 100. Title: 'Limit Comparison: Ratio Approaching 3'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(1, 101)\na_n = (3*n**2 + 2*n + 1) / (n**4 - 5*n**3 + 7)\nb_n = 1/n**2\nratio = a_n / b_n\n\nplt.figure(figsize=(8,5))\nplt.plot(n, ratio, 'g-', label=r'$\\frac{a_n}{b_n}$')\nplt.axhline(y=3, color='red', linestyle='--', label='L = 3')\nplt.axhline(y=3+0.3, color='gray', linestyle=':', alpha=0.5)\nplt.axhline(y=3-0.3, color='gray', linestyle=':', alpha=0.5)\nplt.xlabel('n')\nplt.ylabel('Ratio')\nplt.title('Ratio Convergence to L = 3')\nplt.legend()\nplt.grid(alpha=0.3)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "If $0<L<\\infty$, both series do the same thing. If $L=0$ and $\\sum b_n$ converges, then $\\sum a_n$ converges. If $L=\\infty$ and $\\sum b_n$ diverges, then $\\sum a_n$ diverges.",
+      "teacher_narration": "The Limit Comparison Test is more flexible. We don't need a term-by-term inequality; we just need the limit of the ratio to exist. If the limit is a positive finite number, the two series behave identically. If the limit is zero and the comparison series converges, then our series, which is much smaller, must also converge. And if the limit is infinite and the comparison series diverges, our much larger series also diverges. But be careful: when the limit is zero and the comparison series diverges, or when the limit is infinity and the comparison series converges, we cannot conclude anything.",
+      "student_prompt": "Take 10 seconds: If $\\lim a_n/b_n = 5$ and $\\sum b_n$ diverges, what does $\\sum a_n$ do?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Standard Example: Rational Function",
+      "left": {
+        "content_type": "steps",
+        "content": "Series: $\\sum_{n=1}^{\\infty} \\frac{3n^2+2n+1}{n^4-5n^3+7}$\n\n1. Leading behavior: $\\frac{3n^2}{n^4} = \\frac{3}{n^2}$.\n2. Choose $b_n = \\frac{1}{n^2}$ (convergent p-series).\n3. Compute $L = \\lim_{n\\to\\infty} \\frac{a_n}{b_n} = 3$.\n4. $0<3<\\infty$ → same fate. $\\sum b_n$ converges → $\\sum a_n$ converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of $a_n$, $b_n$, $3b_n$ showing alignment.",
+        "visual_spec": "Plot $a_n$, $b_n$, and $3b_n$ on log scale for n=1..50. Use markers: blue circles for $a_n$, red squares for $b_n$, green triangles for $3b_n$. Add legend. Title: 'Example 2: $a_n \\sim 3/n^2$'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$a_n \\sim \\frac{3}{n^2}$, $L=3$, $\\sum \\frac{1}{n^2}$ converges → $\\sum a_n$ converges.",
+      "teacher_narration": "Now a typical rational function. The highest degree terms dominate: numerator behaves like 3n squared, denominator like n to the fourth, so the whole series acts like 3 over n squared. That suggests comparing with 1 over n squared. We compute the limit of the ratio and get exactly 3. Since it's finite and nonzero, both series share the same convergence. And since 1 over n squared converges, our series converges. This is the bread and butter of the Limit Comparison Test.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Watching $a_n$ and $3b_n$ Align",
+      "left": {
+        "content_type": "text",
+        "content": "Use the slider to increase n and see how $a_n$ (blue) approaches $3\\cdot b_n$ (green dashed). Toggle the $3b_n$ line to see the pattern."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot with slider and checkbox.",
+        "visual_spec": "Create an interactive matplotlib figure. Plot $a_n = (3n^2+2n+1)/(n^4-5n^3+7)$ as blue circles, $b_n = 1/n^2$ as red squares, and $3b_n$ as green dashed line. Add a slider for n_max from 5 to 100 (initial 20). Add a checkbox to toggle visibility of the $3b_n$ line. Use log scale for y-axis. Title updates with current n_max. Write the code using matplotlib.widgets.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, CheckButtons\n\nfig, ax = plt.subplots(figsize=(8,6))\nplt.subplots_adjust(bottom=0.25)\n\nn_vals = np.arange(1, 101)\na_n = (3*n_vals**2 + 2*n_vals + 1) / (n_vals**4 - 5*n_vals**3 + 7)\nb_n = 1/n_vals**2\n\nline_a, = ax.semilogy(n_vals, a_n, 'bo-', markersize=4, label=r'$a_n$')\nline_b, = ax.semilogy(n_vals, b_n, 'rs-', markersize=4, label=r'$b_n=1/n^2$')\nline_3b, = ax.semilogy(n_vals, 3*b_n, 'g--', label=r'$3b_n$', lw=2)\nax.set_xlim(0, 100)\nax.set_ylim(1e-6, 1)\nax.set_xlabel('n')\nax.set_ylabel('Term value')\nax.set_title('$a_n$ vs $b_n$ and $3b_n$ (n_max=100)')\nax.legend(loc='upper right')\nax.grid(alpha=0.3)\n\n# Slider\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'n_max', 5, 100, valinit=100, valstep=1)\n\ndef update(val):\n    n_max = int(slider.val)\n    n_sub = n_vals[:n_max]\n    a_sub = a_n[:n_max]\n    b_sub = b_n[:n_max]\n    line_a.set_data(n_sub, a_sub)\n    line_b.set_data(n_sub, b_sub)\n    line_3b.set_data(n_sub, 3*b_sub[:n_max])\n    ax.set_xlim(0, n_max)\n    ax.set_title(f'$a_n$ vs $b_n$ and $3b_n$ (n_max={n_max})')\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\n\n# Checkbox\nax_check = plt.axes([0.02, 0.45, 0.12, 0.1])\ncheck = CheckButtons(ax_check, ['Show $3b_n$'], [True])\ndef toggle_3b(label):\n    line_3b.set_visible(not line_3b.get_visible())\n    fig.canvas.draw_idle()\n\ncheck.on_clicked(toggle_3b)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for n_max from 5 to 100",
+          "Checkbox to show/hide $3b_n$ line"
+        ]
+      },
+      "on_screen_text": "Drag the slider to increase n. Observe $a_n$ and $3b_n$ merging for large n.",
+      "teacher_narration": "This interactive plot lets you see the limit comparison in action. As you drag the slider to larger n, the blue points representing our series and the green dashed line representing 3 over n squared become indistinguishable. That's why the limit comparison test works: the ratio approaches a constant, and the two series behave the same way.",
+      "student_prompt": "Use the slider to n=50. How close is $a_n$ to $3b_n$?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Wrong Comparison Direction",
+      "left": {
+        "content_type": "steps",
+        "content": "Series: $\\sum_{n=2}^{\\infty} \\frac{1}{\\sqrt{n^2-1}}$\n\n**Wrong attempt:**\n- Try comparing with $\\frac{1}{n^2}$ (convergent p-series).\n- But $\\frac{1}{\\sqrt{n^2-1}} > \\frac{1}{n^2}$ for $n\\ge2$.\n- Since $\\frac{1}{n^2}$ converges, $\\frac{1}{\\sqrt{n^2-1}} >$ convergent → **no conclusion!**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot showing $a_n$ above $1/n^2$ (convergent) but no conclusion.",
+        "visual_spec": "Plot $a_n = 1/\\sqrt{n^2-1}$ (blue) and $b_n = 1/n^2$ (red) for n=2..30 using log scale. Add annotation: 'a_n > 1/n^2 (convergent) → inconclusive!'. Use a red 'X' mark over the Direct Comparison Test label. Title: 'Misconception: Direct Comparison Fails'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(2, 31)\na_n = 1 / np.sqrt(n**2 - 1)\nb_n = 1 / n**2\n\nplt.figure(figsize=(8,5))\nplt.plot(n, a_n, 'bo-', label=r'$a_n = 1/\\sqrt{n^2-1}$')\nplt.plot(n, b_n, 'rs-', label=r'$b_n = 1/n^2$ (convergent)')\nplt.yscale('log')\nplt.xlabel('n')\nplt.ylabel('Term value')\nplt.title('Misconception: $a_n > b_n$ (convergent) → No Conclusion!')\nplt.legend()\nplt.grid(alpha=0.3)\nplt.text(10, 0.02, 'Direct Comparison\\ngives no info!', fontsize=11,\n         bbox=dict(facecolor='yellow', edgecolor='red', boxstyle='round'))\nplt.show()",
+        "interactive_controls": [
+          "Button: Reveal correct Limit Comparison solution"
+        ]
+      },
+      "on_screen_text": "Trying to compare $1/\\sqrt{n^2-1}$ with $1/n^2$ gives $a_n > b_n$ (convergent) → Direct Comparison is inconclusive!",
+      "teacher_narration": "Here's a classic pitfall. A student sees $1/\\sqrt{n^2-1}$ and tries to compare it with $1/n^2$, which converges. But they find their series is larger, not smaller. When your series is larger than a convergent series, the Direct Comparison Test says absolutely nothing – your series could still converge or diverge. This is the moment you need a different test. Let's see how Limit Comparison saves the day.",
+      "student_prompt": "Pause and think: Which $b_n$ could we use with Limit Comparison to get a finite nonzero limit?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "pause_and_try",
+      "layout": "full_width",
+      "title": "Pause and Try: $\\sum \\frac{1}{\\sqrt{n^2-1}}$",
+      "left": {
+        "content_type": "text",
+        "content": "**Your turn!**\n\nUsing the Limit Comparison Test, determine whether $\\displaystyle \\sum_{n=2}^{\\infty} \\frac{1}{\\sqrt{n^2-1}}$ converges or diverges.\n\n*Hint: What is the leading behavior of $\\frac{1}{\\sqrt{n^2-1}}$ for large $n$?*"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause the video and try to solve using Limit Comparison Test.",
+      "teacher_narration": "Now it's your turn. Pause the video, grab a piece of paper, and apply the Limit Comparison Test to this series. Think about what $b_n$ you would choose based on the leading behavior. Then resume to see the solution.",
+      "student_prompt": "Will the series converge or diverge?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution: Limit Comparison to the Rescue",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Leading behavior: $\\frac{1

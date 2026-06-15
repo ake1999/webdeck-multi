@@ -15,7 +15,7 @@ function normalizeKey(key) {
 function parseArgs(argv) {
   const args = {
     outputDir: path.join(projectRoot, "generated", "lectures"),
-    provider: "ffmpeg_flite",
+    provider: "qwen3_tts",
     writeReport: false,
     voiceName: "slt",
   };
@@ -43,6 +43,12 @@ function parseArgs(argv) {
   return args;
 }
 
+function booleanOption(value, fallback = false) {
+  if (value == null || value === "") return fallback;
+  if (typeof value === "boolean") return value;
+  return !["0", "false", "no", "off"].includes(String(value).trim().toLowerCase());
+}
+
 function makeOptions(args) {
   return {
     voiceName: args.voiceName,
@@ -56,7 +62,7 @@ function makeOptions(args) {
     qwenDtype: args.qwenDtype || "",
     qwenSeed: args.qwenSeed,
     qwenLanguage: args.qwenLanguage || "",
-    allowProviderFallback: args.allowProviderFallback ?? true,
+    allowProviderFallback: booleanOption(args.allowProviderFallback, false),
     avatarProfile: args.avatarProfile || "",
     referenceAssets: args.referenceAssets || "",
     lecturePlan: args.lecturePlan || "",

@@ -1,0 +1,379 @@
+{
+  "lecture_meta": {
+    "title": "Formal Definition Of The Derivative",
+    "topic": "formal definition of the derivative",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate the derivative of a function at a point using the limit definition",
+      "Interpret the derivative as instantaneous rate of change and slope of the tangent line",
+      "Apply the definition to determine where a function is differentiable",
+      "Analyze edge cases where the derivative fails to exist"
+    ],
+    "prerequisite_reminder": "You should understand the concept of a limit, including one-sided limits, and basic algebraic manipulation such as factoring and rationalizing."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Instantaneous Speed: The 0/0 Problem",
+      "left": {
+        "content_type": "concept",
+        "content": "Your speedometer shows speed *right now*. But speed = distance/time. At a single instant, distance and time are both zero — you get 0/0. How does your car know how fast you're going?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A single graph of speed vs time (smooth curve). A point is highlighted at t=2, speed=20. A sequence of secant lines from t=2 to t=3, t=2.5, t=2.1, etc., appear and get closer to the tangent line at t=2. The tangent line is dashed in green. No animation needed, just a static illustration of three secant lines approaching the tangent.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "How can we measure speed at an instant? Distance = 0, time = 0 → 0/0 undefined.",
+      "teacher_narration": "Think about driving a car. Your speedometer tells you your speed right now — not your average over the last hour. But speed is distance divided by time. At a single instant, you've traveled zero distance in zero time. That gives zero divided by zero, which is undefined. So how did engineers solve this? They measure average speed over tiny intervals: one second, then 0.1 seconds, then 0.001 seconds. As the interval shrinks, the averages approach a specific number. That number is your instantaneous speed. The derivative is the mathematical way to do this.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Formal Definition of the Derivative",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$f'(a) = \\lim_{h \\to 0} \\frac{f(a+h) - f(a)}{h}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Graph of a curve y = f(x). A point (a, f(a)) is marked in red. A second point (a+h, f(a+h)) slides along the curve. The secant line through these two points is shown. As h decreases, the secant line approaches the tangent line at (a, f(a)). Show this as a series of static frames: h = 1, 0.5, 0.1, 0.01. The tangent line is dashed green. Labels: slope of secant = (f(a+h)-f(a))/h, slope of tangent = f'(a).",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Derivative = limit of average rates of change as interval shrinks to zero. $$f'(a) = \\lim_{h \\to 0} \\frac{f(a+h) - f(a)}{h}$$",
+      "teacher_narration": "The derivative formalizes the idea of instantaneous rate of change. It is the limit of average rates of change as the interval shrinks to zero. The fraction in the formula is the slope of a secant line through two points on the graph. As h approaches zero, the secant line approaches the tangent line, and its slope becomes the derivative. You cannot plug h equal to zero directly because you get zero over zero. The limit must be evaluated by algebraic simplification first.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm-Up Example: Linear Function",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example:** Find $f'(2)$ for $f(x) = 3x+1$.\n\n| Step | Calculation |\n|------|-------------|\n| 1 | $f'(2) = \\lim_{h\\to0} \\frac{f(2+h)-f(2)}{h}$ |\n| 2 | $= \\lim_{h\\to0} \\frac{[3(2+h)+1] - [3(2)+1]}{h}$ |\n| 3 | $= \\lim_{h\\to0} \\frac{6+3h+1 - 6 -1}{h} = \\lim_{h\\to0} \\frac{3h}{h}$ |\n| 4 | $= \\lim_{h\\to0} 3 = 3$ |\n\nThe derivative is constant 3. Linear functions have the same slope everywhere."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Find f'(2) for f(x)=3x+1. Step by step: substitute, simplify numerator, cancel h, evaluate limit = 3.",
+      "teacher_narration": "Let's see the definition in action with a simple linear function. We want the derivative at a equals 2. Write the definition, substitute the function into numerator, simplify. The 6 and 1 cancel, leaving 3h over h. Since h is nonzero in the limit, we cancel it and get the limit of 3, which is 3. The derivative of a linear function is its slope, constant everywhere. Now try a similar one on your own: find f prime of 1 for f of x equals 4x minus 7. You should get 4.",
+      "student_prompt": "Try it: Find $f'(1)$ for $f(x)=4x-7$ using the definition. Answer: $4$.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Alternative Notation: Derivative as a Function",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$f'(x) = \\lim_{h \\to 0} \\frac{f(x+h)-f(x)}{h}$$\n\n$$\\frac{dy}{dx} = \\lim_{\\Delta x \\to 0} \\frac{\\Delta y}{\\Delta x}$$\n\nAlso: $$f'(a) = \\lim_{x \\to a} \\frac{f(x)-f(a)}{x-a}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two graphs side by side. Left: derivative as function – label: f'(x) gives slope at any point. Right: alternative form: points (x, f(x)) and (a, f(a)) on curve, secant line between them as x approaches a.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Three notations: f'(x), dy/dx, and limit as x→a. dy/dx is NOT a fraction; it's a symbol for the limit.",
+      "teacher_narration": "We can also think of the derivative as a function that gives the slope at any point, not just at one specific point. That is f prime of x. Leibniz notation writes it as dy over dx, but remember, this is a single symbol representing the limit of a fraction, not a real fraction. Do not try to cancel the d's. There is also an alternative definition where we use x approaching a instead of h approaching 0. This form is useful when the algebra works out nicely, like when you factor a difference of squares.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example: Quadratic Function",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example:** Find $f'(x)$ for $f(x) = x^2$.\n\n| Step | Calculation |\n|------|-------------|\n| 1 | $f'(x) = \\lim_{h\\to0} \\frac{(x+h)^2 - x^2}{h}$ |\n| 2 | $= \\lim_{h\\to0} \\frac{x^2 + 2xh + h^2 - x^2}{h}$ |\n| 3 | $= \\lim_{h\\to0} \\frac{2xh + h^2}{h}$ |\n| 4 | $= \\lim_{h\\to0} \\frac{h(2x+h)}{h}$ |\n| 5 | $= \\lim_{h\\to0} (2x+h) = 2x$ |\n\nResult: $f'(x) = 2x$. Derivative of $x^2$ is $2x$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Find f'(x) for f(x)=x^2: expand, cancel x^2, factor h, cancel h, limit = 2x.",
+      "teacher_narration": "Now let's do a quadratic. We want f prime of x for f of x equals x squared. Write the definition, expand the square, cancel the x squared terms, factor h out of the numerator, cancel h with the denominator, and then take the limit as h goes to zero. That leaves us with 2x. So the derivative of x squared is 2x. Notice that the cancellation of h is valid only because we are taking a limit; the original expression is undefined at h equals zero, but after simplification, 2x plus h is defined and continuous.",
+      "student_prompt": "Now find f'(x) for $f(x) = x^2 + 3x$. (Answer: $2x + 3$)",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visualizing Secant Lines Approaching Tangent",
+      "left": {
+        "content_type": "concept",
+        "content": "Drag the slider to change $h$. Watch the secant line approach the tangent line as $h \\to 0$. The slope of the secant line approaches the derivative $f'(a)$."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "An interactive plot of f(x)=x^2. A point at x=a (default a=1) is shown with a tangent line (green dashed). A second point at x=a+h is shown. A secant line connects them (red). The slope of secant is displayed numerically. A slider allows h to vary from -2 to 2 (excluding 0). The tangent line remains fixed. The secant slope number updates.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\ndef f(x):\n    return x**2\n\na = 1.0\nfig, ax = plt.subplots(figsize=(6,4))\nplt.subplots_adjust(bottom=0.2)\nx_vals = np.linspace(-1, 3, 400)\nax.plot(x_vals, f(x_vals), 'b-', label='f(x)=x^2')\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(0, color='gray', lw=0.5)\nax.grid(True, alpha=0.3)\n\n# tangent line at x=a (slope 2a)\ntangent_slope = 2*a\ntangent_line = lambda x: f(a) + tangent_slope*(x-a)\nax.plot(x_vals, tangent_line(x_vals), 'g--', label='tangent (slope={})'.format(tangent_slope))\n\n# secant initial h=1\nh_init = 1.0\nsecant_point, = ax.plot([a, a+h_init], [f(a), f(a+h_init)], 'ro', markersize=6)\nsecant_line, = ax.plot([a, a+h_init], [f(a), f(a+h_init)], 'r-', lw=2, label='secant')\nslope_text = ax.text(0.5, 6, 'secant slope = {:.3f}'.format((f(a+h_init)-f(a))/h_init), fontsize=12, ha='center')\nax.legend(loc='upper right')\nax.set_ylim(-1, 10)\n\n# slider\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nh_slider = Slider(ax_slider, 'h', -2.0, 2.0, valinit=h_init, valstep=0.01)\n\ndef update(val):\n    h = h_slider.val\n    if h == 0:\n        h = 0.001  # avoid division by zero\n    secant_point.set_xdata([a, a+h])\n    secant_point.set_ydata([f(a), f(a+h)])\n    secant_line.set_xdata([a, a+h])\n    secant_line.set_ydata([f(a), f(a+h)])\n    slope = (f(a+h)-f(a))/h\n    slope_text.set_text('secant slope = {:.3f}'.format(slope))\n    fig.canvas.draw_idle()\n\nh_slider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for h from -2 to 2",
+          "Toggle: show tangent line (already shown)"
+        ]
+      },
+      "on_screen_text": "Drag slider to change h. Secant slope approaches tangent slope 2a as h shrinks.",
+      "teacher_narration": "Let's see the geometry in action. I've plotted f of x equals x squared. The green dashed line is the tangent at x equals 1, slope 2. The red line is the secant through the points at x equals a and x equals a plus h. Use the slider to change h. As h gets smaller, the secant line gets closer to the tangent line, and its slope approaches 2. When h is negative, the secant comes from the left side and also approaches the same tangent. This illustrates that the limit exists from both sides.",
+      "student_prompt": "Before moving the slider, predict: What happens to the secant line when h becomes negative? Does it still approach the tangent?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Misconception: Plugging h = 0 Directly",
+      "left": {
+        "content_type": "concept",
+        "content": "**Wrong approach:** To find $f'(a)$ for $f(x)=x^2$, some students set $h=0$ immediately:\n$$\\frac{(a+0)^2 - a^2}{0} = \\frac{0}{0}$$ undefined. They conclude the derivative does not exist.\n\n**Correct approach:** Cancel $h$ first in the limit expression, then evaluate.",
+        "on_screen_text": "Wrong: plug h=0 → 0/0 → derivative doesn't exist. Correct: cancel h first, then take limit."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two panels side by side. Left panel shows the wrong step: substituting h=0 leads to 0/0 and a red X. Right panel shows the correct algebraic cancellation: ( (a+h)^2 - a^2 )/h = (a^2+2ah+h^2 - a^2)/h = (2ah+h^2)/h = 2a+h, then limit h→0 = 2a. Highlight that the cancellation is allowed because h ≠ 0 in the limit process.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Plugging h=0 directly gives 0/0 – undefined. The limit requires simplifying first. Cancel h, then evaluate.",
+      "teacher_narration": "A very common mistake is to try to substitute h equals 0 directly into the difference quotient. For the function x squared, you get 0 over 0, which is undefined, and some students mistakenly think the derivative doesn't exist. But the definition of a limit does not require the expression to be defined at the limit point. We must simplify algebraically before taking the limit. Only after canceling h can we evaluate the limit. Remember: the cancellation is allowed because h gets arbitrarily close to zero but is never equal to zero during the limit process.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Derivative of a Constant Function",
+      "left": {
+        "content_type": "concept",
+        "content": "**Theorem:** If $f(x)=c$ (constant), then $f'(x)=0$ for all $x$.\n\n| Step | Derivation |\n|------|------------|\n| 1 | $f'(x) = \\lim_{h\\to0} \\frac{c - c}{h}$ |\n| 2 | $= \\lim_{h\\to0} \\frac{0}{h}$ |\n| 3 | $= \\lim_{h\\to0} 0$ (for $h\\neq0$, $0/h=0$) |\n| 4 | $= 0$ |\n\nInterpretation: A constant function doesn't change, so its rate of change is zero everywhere.",
+        "on_screen_text": "Proof that derivative of constant = 0. Numerator is always 0, so limit is 0."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Horizontal line y=c. At any point, the tangent line is the line itself, slope 0. Show secant line between two points: slope = (c-c)/(h)=0. The secant is also horizontal.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "If f(x)=c, then f(x+h)=c, numerator = 0, limit = 0. Derivative is 0 everywhere.",
+      "teacher_narration": "For those who want a quick proof: if a function is constant, its output never changes. The difference quotient numerator is always 0, and the limit of 0 over h as h approaches 0 is just 0. So the derivative of any constant function is zero. This matches intuition: if you're not moving, your speed is zero. You can skip this slide if you're comfortable with that idea.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Tricky Example: Absolute Value Function",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example:** Determine if $f(x)=|x|$ is differentiable at $x=0$.\n\n| Step | Calculation |\n|------|-------------|\n| 1 | $f'(0) = \\lim_{h\\to0} \\frac{|0+h| - |0|}{h} = \\lim_{h\\to0} \\frac{|h|}{h}$ |\n| 2 | Right-hand limit ($h\\to0^+$): $\\frac{|h|}{h} = \\frac{h}{h} = 1 \\to 1$ |\n| 3 | Left-hand limit ($h\\to0^-$): $\\frac{|h|}{h} = \\frac{-h}{h} = -1 \\to -1$ |\n| 4 | One-sided limits differ: $1 \\neq -1$ |\n| 5 | Conclusion: $f'(0)$ does not exist. |\n\nThe function is continuous at 0 but not differentiable. A sharp corner = no unique tangent.",
+        "on_screen_text": "Check differentiability of |x| at 0: one-sided limits are 1 and -1, so derivative does not exist."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Check differentiability of |x| at 0: one-sided limits are 1 and -1, so derivative does not exist.",
+      "teacher_narration": "Not all functions have derivatives everywhere. The absolute value function has a corner at x equals 0. To check differentiability, we compute the one-sided limits of the difference quotient. From the right, h is positive, so absolute value of h over h is h over h equals 1. From the left, h is negative, so absolute value of h is negative h, giving negative h over h equals negative 1. Since these limits are not equal, the two-sided limit does not exist, so the derivative does not exist at 0. The function is continuous but not differentiable. Differentiability is a stronger condition than continuity.",
+      "student_prompt": "Sketch the graph of f(x)=|x-2|. At what point is it not differentiable? (Answer: at x=2)",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Pause and Predict: Wild Function at x=0",
+      "left": {
+        "content_type": "concept",
+        "content": "Consider $$f(x) = \\begin{cases} x^2 \\sin\\left(\\frac{1}{x}\\right), & x \\neq 0 \\\\ 0, & x=0 \\end{cases}$$\n\n**Question:** Is $f$ differentiable at $x=0$? Write down your prediction and a reason.",
+        "on_screen_text": "Pause the video. Predict: Is f differentiable at 0? f(x)=x^2 sin(1/x), f(0)=0."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Graph of f(x)=x^2 sin(1/x) near 0, zooming in. Show oscillations bounded by ±x^2. As x→0, oscillations shrink to 0. The graph looks like it might have a tangent.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reveal solution (triggers slide 11)"
+        ]
+      },
+      "on_screen_text": "Pause and decide: Is f differentiable at 0? f(x)=x^2 sin(1/x). Think about the limit definition.",
+      "teacher_narration": "Here's a more challenging example. The function looks wild near zero, oscillating infinitely often. But the oscillations are multiplied by x squared, which squeezes them to zero. Your task: decide whether the derivative exists at x equals 0. Pause the video, think about the limit definition, and see if the limit of the difference quotient exists. We'll work through the solution on the next slide.",
+      "student_prompt": "Pause the video. Use the definition to determine if f'(0) exists.",
+      "youtube_pause": true,
+      "difficulty": "challenge",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Solution: Squeeze Theorem in Action",
+      "left": {
+        "content_type": "steps",
+        "content": "**Solution:** Compute $f'(0)$ using the definition.\n\n| Step | Calculation |\n|------|-------------|\n| 1 | $f'(0) = \\lim_{h\\to0} \\frac{h^2 \\sin(1/h) - 0}{h} = \\lim_{h\\to0} h \\sin(1/h)$ |\n| 2 | Bound: $-1 \\leq \\sin(1/h) \\leq 1$ |\n| 3 | Multiply by $h$ (for $h>0$): $-h \\leq h\\sin(1/h) \\leq h$ (for $h<0$, signs reverse but still squeeze) |\n| 4 | Squeeze Theorem: both $-|h|$ and $|h|$ approach 0 as $h\\to0$ |\n| 5 | So $\\lim_{h\\to0} h\\sin(1/h) = 0$ |\n| 6 | Conclusion: $f'(0)=0$ exists. |\n\nEven though oscillations are infinite, the $x^2$ factor squeezes them to zero fast enough.",
+        "on_screen_text": "f'(0) = lim h→0 h sin(1/h) = 0 by Squeeze Theorem. Derivative exists!",
+        "right": {
+          "content_type": "empty",
+          "content": null,
+          "visual_spec": null,
+          "python_code": null,
+          "interactive_controls": []
+        },
+        "teacher_narration": "Here is the solution. Using the definition, we get the limit of h times sine of 1 over h as h goes to 0. Sine is always between negative 1 and 1, so h times sine is squeezed between negative absolute h and positive absolute h. Both bounds approach 0, so by the Squeeze Theorem, the limit is 0. Therefore the derivative exists and equals 0. The function is differentiable despite its wild oscillations. The key is the x squared factor, which dominates the oscillation. This is a deeper insight into the relationship between continuity and differentiability.",
+        "student_prompt": null,
+        "youtube_pause": false,
+        "difficulty": "challenge",
+        "skip_if_time_limited": false
+      }
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Instantaneous Velocity",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example:** A ball is dropped from 100m. Height $h(t)=100-4.9t^2$. Find velocity at $t=2$ s.\n\nUse alternative definition: $v(2)=h'(2)=\\lim_{t\\to2} \\frac{h(t)-h(2)}{t-2}$\n\n| Step | Calculation |\n|------|-------------|\n| 1 | $= \\lim_{t\\to2} \\frac{(100-4.9t^2)-(100-4.9\\cdot4)}{t-2}$ |\n| 2 | $= \\lim_{t\\to2} \\frac{-4.9t^2 + 4.9\\cdot4}{t-2}$ |\n| 3 | $= \\lim_{t\\to2} \\frac{-4.9(t^2-4)}{t-2}$ |\n| 4 | $= \\lim_{t\\to2} \\frac{-4.9(t-2)(t+2)}{t-2}$ |\n| 5 | $= \\lim_{t\\to2} -4.9(t+2)$ |\n| 6 | $= -4.9(4) = -19.6$ m/s |\n\nVelocity is $-19.6$ m/s (downward).",
+        "on_screen_text": "Find instantaneous velocity at t=2 for h(t)=100-4.9t^2. Use limit definition, factor (t-2), cancel, evaluate = -19.6 m/s."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Find instantaneous velocity at t=2: h(t)=100-4.9t^2. Compute h'(2) = -19.6 m/s.",
+      "teacher_narration": "Let's connect the derivative to physics: velocity is the derivative of position. A ball is dropped from 100 meters. Its height is given by this quadratic. To find the instantaneous velocity at 2 seconds, we use the alternative definition with t approaching 2. After substitution, we factor out -4.9, factor the difference of squares, cancel the t minus 2 factor, and then evaluate the limit. The result is negative 19.6 meters per second, meaning the ball is moving downward. Notice that the velocity increases linearly with time, which matches the derivative function h'(t) = -9.8t, so at t=2 it is -19.6.",
+      "student_prompt": "Find v(0) and v(3) using the pattern. (Answers: v(0)=0, v(3)=-29.4 m/s)",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Graphical Differentiability Explorer",
+      "left": {
+        "content_type": "concept",
+        "content": "Select a function and move the point along the curve. Watch the tangent line appear or disappear depending on differentiability.",
+        "on_screen_text": "Use the explorer to see tangent lines at corners, cusps, and smooth points."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "Interactive plot with three functions: f(x)=x^2 (smooth), f(x)=|x| (corner), f(x)=x^(1/3) (vertical tangent). A slider moves point a along x-axis. Tangent line appears if derivative exists. Show slope label. For |x| at a=0, tangent disappears. For x^(1/3) at a=0, tangent is vertical (slope infinite) – optionally show a dashed vertical line.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, RadioButtons\n\ndef smooth_func(x):\n    return x**2\ndef corner_func(x):\n    return np.abs(x)\ndef cusp_func(x):\n    return np.cbrt(x)\n\nfig, ax = plt.subplots(figsize=(6,4))\nplt.subplots_adjust(bottom=0.3, left=0.1, right=0.8)\n\nfunc_dict = {'x^2 (smooth)': smooth_func, '|x| (corner)': corner_func, 'x^{1/3} (cusp)': cusp_func}\ncurrent_func = smooth_func\n\nx_vals = np.linspace(-2, 2, 400)\nline_func, = ax.plot(x_vals, smooth_func(x_vals), 'b-', label='f(x)')\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(0, color='gray', lw=0.5)\nax.grid(True, alpha=0.3)\nax.set_ylim(-2, 4)\n\na_init = 0.0\npoint, = ax.plot([a_init], [current_func(a_init)], 'ro', markersize=8)\ntangent_line = None\ntangent_slope_text = ax.text(0.5, 3.5, '', fontsize=12, ha='center')\n\n# slider for a\nax_slider = plt.axes([0.2, 0.15, 0.6, 0.03])\na_slider = Slider(ax_slider, 'a', -2.0, 2.0, valinit=a_init)\n\n# radio buttons for function\nax_radio = plt.axes([0.85, 0.2, 0.15, 0.3])\nradio = RadioButtons(ax_radio, ('x^2 (smooth)', '|x| (corner)', 'x^{1/3} (cusp)'))\n\ndef update_tangent(a, func):\n    global tangent_line\n    if tangent_line:\n        tangent_line.remove()\n    # compute derivative numerically using central difference\n    h = 1e-6\n    slope = (func(a+h) - func(a-h))/(2*h)\n    if np.isfinite(slope):\n        # plot tangent line\n        xs = np.linspace(a-1, a+1, 100)\n        tangent_ys = func(a) + slope*(xs - a)\n        tangent_line, = ax.plot(xs, tangent_ys, 'g--', lw=2)\n        tangent_slope_text.set_text('slope = {:.3f}'.format(slope))\n    else:\n        tangent_line = None\n        tangent_slope_text.set_text('derivative does not exist')\n\ndef update_all(val=None):\n    a = a_slider.val\n    func = current_func\n    point.set_xdata([a])\n    point.set_ydata([func(a)])\n    line_func.set_ydata(func(x_vals))\n    update_tangent(a, func)\n    fig.canvas.draw_idle()\n\nradio.on_clicked(lambda label: update_func_dict(label))\ndef update_func_dict(label):\n    global current_func\n    current_func = func_dict[label]\n    update_all()\n\na_slider.on_changed(update_all)\nupdate_all()\nplt.show()",
+        "interactive_controls": [
+          "Slider for point a from -2 to 2",
+          "Radio buttons to choose function: x^2, |x|, x^{1/3}"
+        ]
+      },
+      "on_screen_text": "Move point a. Tangent line appears when derivative exists. Try |x| at a=0.",
+      "teacher_narration": "This interactive tool lets you explore differentiability visually. Use the radio buttons to switch between three functions: a smooth parabola, a corner from absolute value, and a cusp from cube root. Move the slider to change the point a. For the parabola, a tangent line always appears. For the absolute value at x equals 0, the tangent disappears because the derivative does not exist. For the cube root, at x equals 0 the tangent is vertical, which is not a derivative in the usual sense. This shows that differentiability requires a unique, finite slope.",
+      "student_prompt": "Test each function at x=0. What happens? Why?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Pro Tips for Using the Derivative Definition",
+      "left": {
+        "content_type": "concept",
+        "content": "- **Factor and cancel $h$** before evaluating. If you can't cancel $h$, the derivative likely doesn't exist.\n- Use the power rule $\\frac{d}{dx}x^n = nx^{n-1}$ to check your limit work.\n- **Trap:** In the alternative definition $f'(a)=\\lim_{x\\to a}\\frac{f(x)-f(a)}{x-a}$, remember to subtract $f(a)$ not $a$.\n- The derivative is the slope of the best linear approximation. Zoom in close enough and a differentiable function looks like a straight line.",
+        "on_screen_text": "1. Cancel h first. 2. Check with power rule. 3. Don't subtract a instead of f(a). 4. Derivative = slope of best linear approximation."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A graph of a smooth function with a zoomed-in window showing it becoming linear. Label: 'Zoom in: function looks like its tangent line'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pro tips: cancel h, use power rule to verify, avoid common trap, think of derivative as linear approximation.",
+      "teacher_narration": "Here are some pro tips to help you work with the definition. First, always try to factor and cancel h before evaluating the limit. The h in the denominator is your target. If you can't cancel it, the derivative probably doesn't exist. Second, you can use the power rule as a quick check: the derivative of x to the n is n times x to the n minus 1. Third, a common trap in the alternative definition is to subtract a instead of f of a in the numerator. And finally, think of the derivative as the slope of the best straight-line approximation to the function at that point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Quick Check and Summary",
+      "left": {
+        "content_type": "concept",
+        "content": "**Three quick multiple-choice questions:**\n1. Which is the correct definition of $f'(a)$?\n   - A) $\\lim_{h\\to a}\\frac{f(a+h)-f(a)}{h}$\n   - B) $\\lim_{h\\to0}\\frac{f(a+h)-f(a)}{h}$\n   - C) $\\lim_{h\\to0}\\frac{f(a)-f(a+h)}{h}$\n   - D) $\\lim_{h\\to0}\\frac{f(a+h)-f(h)}{a}$\n\n2. If $f(x)=x^3$, then $f'(2)=$ ?\n   - A) 6\n   - B) 8\n   - C) 12\n   - D) 24\n\n3. At $x=0$, which function is NOT differentiable?\n   - A) $f(x)=x^2$\n   - B) $f(x)=|x|$\n   - C) $f(x)=x^2\\sin(1/x)$ (with $f(0)=0$)\n   - D) $f(x)=5$\n\nAnswers: 1:B, 2:C (power rule gives 3*(4)=12), 3:B (corner).",
+        "on_screen_text": "Quick Check: three MCQs. Answers: B, C, B. See reasoning below."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Quick Check: three MCQs. Answers: B, C, B.",
+      "teacher_narration": "Let's do a quick check. First question: the correct definition is B, because h approaches 0 and numerator is f(a+h)-f(a). Second: derivative of x cubed is 3x squared, so at x equals 2 it's 12. Third: absolute value is not differentiable at 0 because the one-sided limits differ. If you got these right, you're on track. If not, review the slides on the definition and the absolute value example. Today we learned that the derivative is the limit of average rates of change, how to compute it algebraically, and that some continuous functions are not differentiable. Keep practicing the limit definition, and you'll build a strong foundation for calculus.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

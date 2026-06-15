@@ -230,7 +230,7 @@ export async function buildLectureScriptArtifacts({
 export async function buildLectureAudioArtifacts({
   descriptor,
   outputRoot = defaultLectureOutputRoot(),
-  providerId = "ffmpeg_flite",
+  providerId = "qwen3_tts",
   options = {},
 }) {
   const artifactDir = buildTopicArtifactDir(outputRoot, descriptor);
@@ -284,7 +284,7 @@ export async function buildLectureAudioArtifacts({
 export async function buildLectureArtifacts({
   descriptor,
   outputRoot = defaultLectureOutputRoot(),
-  providerId = "ffmpeg_flite",
+  providerId = "qwen3_tts",
   viewport = "1920x1080",
   debugScreenshots = false,
   analysisTimeoutMs,

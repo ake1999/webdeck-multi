@@ -1,0 +1,192 @@
+{
+  "lecture_meta": {
+    "title": "Rolle's Theorem and the Mean Value Theorem",
+    "topic": "Rolle's Theorem and the Mean Value Theorem",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "State the hypotheses and conclusions of Rolle's Theorem and the Mean Value Theorem",
+      "Verify that a given function satisfies the hypotheses of these theorems on a specified interval",
+      "Calculate the value(s) of c guaranteed by the Mean Value Theorem for a given function",
+      "Apply the Mean Value Theorem to prove fundamental results about function behavior",
+      "Interpret the geometric meaning of each theorem in terms of tangent and secant lines"
+    ],
+    "prerequisite_reminder": "Continuity, differentiability, and the Extreme Value Theorem are required."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Two Big Ideas",
+      "left": {
+        "content_type": "concept",
+        "content": "Rolle's Theorem: If a smooth function starts and ends at the same height, it must have a horizontal tangent somewhere. Mean Value Theorem: At some point, instantaneous slope equals average slope over the interval."
+      },
+      "right": {
+        "content_type": "image_description",
+        "content": "Two subplots: left shows a smooth curve with equal endpoints and a horizontal tangent; right shows a curve with secant line and parallel tangent.",
+        "visual_spec": "Create a single figure with two subplots. Left subplot: plot f(x)=(x-2)^2 - 1 on [0,4], endpoints at (0,3) and (4,3), horizontal tangent at x=2. Label a, b, c. Right subplot: plot f(x)=x^3-2x on [-1,2], endpoints (-1,1) and (2,4), secant line dashed red, tangent line at c=1 parallel to secant, use colors.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Rolle: start=end height → flat spot. MVT: instantaneous slope = average slope somewhere.",
+      "teacher_narration": "Imagine driving from point A to point B. If you start and end at the same elevation, no matter how you drive, there must be a moment when you are perfectly level. That's Rolle's Theorem. If the elevations are different, there is a moment when your instantaneous slope exactly matches your average slope over the whole trip. That's the Mean Value Theorem. Both are about existence: there is always at least one such moment.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Rolle's Theorem",
+      "left": {
+        "content_type": "concept",
+        "content": "Hypotheses:\n1. f continuous on [a,b]\n2. f differentiable on (a,b)\n3. f(a)=f(b)\nConclusion: ∃ c ∈ (a,b) such that f'(c)=0"
+      },
+      "right": {
+        "content_type": "image_description",
+        "content": "Graph of a function that satisfies Rolle's Theorem with horizontal tangent at c.",
+        "visual_spec": "Plot f(x)=cos(x) on [0,2π]. Mark points a=0, b=2π, and c=π. Show horizontal tangent line at c. Use labels and axes.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Rolle's Theorem: f continuous, differentiable, f(a)=f(b) ⇒ ∃ c with f'(c)=0",
+      "teacher_narration": "The theorem has three hypotheses. Continuity ensures no gaps. Differentiability ensures no sharp corners. Equal endpoints guarantee that the function returns to its starting height. If all three hold, there must be at least one point where the tangent is horizontal. We call that point c.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Rolle's Theorem Example",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Check continuity: polynomial, continuous on [1,3]\n2. Check differentiability: f'(x)=2x-4 exists, diff on (1,3)\n3. Check f(1)=f(3): f(1)=0, f(3)=0\n4. Set f'(c)=0: 2c-4=0 ⇒ c=2\n5. c=2 ∈ (1,3) ✓"
+      },
+      "right": {
+        "content_type": "image_description",
+        "content": "Graph of parabola with endpoints at (1,0) and (3,0) and horizontal tangent at (2,-1).",
+        "visual_spec": "Plot f(x)=x^2-4x+3 on [0,4]. Mark endpoints with red dots. Mark point c=2 with green dot and horizontal tangent line. Label axes and title.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example: f(x)=x^2-4x+3 on [1,3]. f(1)=f(3)=0 ⇒ c=2.",
+      "teacher_narration": "Let's apply Rolle's Theorem to this parabola. It's a polynomial, so continuous and differentiable everywhere. And f(1) and f(3) are both zero. So the hypotheses are satisfied. We set f'(x)=2x-4 equal to zero, giving x=2, which lies in the interval. So c=2 works. Notice the tangent is horizontal exactly at the vertex.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Rolle Explorer",
+      "left": {
+        "content_type": "text",
+        "content": "Adjust the left endpoint a of a cosine interval of length 2π. See the points c where f'(c)=0."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive Rolle's Theorem visualization",
+        "visual_spec": "Interactive plot: function cos(x) on [a, a+2π] with slider. Secant line connects endpoints (equal value). Mark the two points c where derivative zero (sin(c)=0) i.e., π/2 and 3π/2. Show that as you slide a, the set of c points changes.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots()\nax.set_xlim(0, 8)\nax.set_ylim(-1.5, 1.5)\nx = np.linspace(0, 8, 1000)\nf = lambda x: np.cos(x)\nline, = ax.plot(x, f(x), 'b', label='cos(x)')\na0 = 0\nb0 = a0 + 2*np.pi\nendpoints, = ax.plot([a0, b0], [f(a0), f(b0)], 'ro', markersize=8, label='endpoints')\ncandidates = [np.pi/2, 3*np.pi/2, 5*np.pi/2]\nc_points, = ax.plot([], [], 'go', markersize=10, label='c values')\nax.legend()\nax.set_title(\"Rolle's Theorem Explorer\")\n\nax_slider = plt.axes([0.2, 0.02, 0.6, 0.03])\nslider = Slider(ax_slider, 'a', 0, np.pi, valinit=0)\n\ndef update(val):\n    a = slider.val\n    b = a + 2*np.pi\n    endpoints.set_data([a, b], [f(a), f(b)])\n    c_in_interval = [c for c in candidates if a < c < b]\n    if c_in_interval:\n        c_points.set_data(c_in_interval, [f(c) for c in c_in_interval])\n        c_points.set_visible(True)\n    else:\n        c_points.set_visible(False)\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": ["Slider for a from 0 to π"]
+      },
+      "on_screen_text": "Move the slider to see how the guaranteed points c change.",
+      "teacher_narration": "Here is an interactive demonstration of Rolle's Theorem using the cosine function. Since cosine is periodic with period 2π, any interval of length 2π has endpoints with equal value. As you move the left endpoint, you'll see that the points where the derivative is zero—where the tangent is horizontal—shift. For cosine, the derivative is -sin, which is zero at multiples of π. So depending on your interval, you may see one or two such points.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof of Rolle's Theorem",
+      "left": {
+        "content_type": "steps",
+        "content": "1. EVT → f attains max M and min m on [a,b]\n2. Case 1: M=m → f constant → f'(x)=0 ∀x\n3. Case 2: M>m → Since f(a)=f(b), at least one extremum at interior c\n4. Fermat: if c interior extremum and f diff, f'(c)=0"
+      },
+      "right": {
+        "content_type": "image_description",
+        "content": "Graph showing interior max with horizontal tangent.",
+        "visual_spec": "Plot f(x)=-(x-2)^2+4 on [0,4], endpoints (0,0) and (4,0), max at x=2. Mark endpoints, max point c=2, horizontal tangent.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof sketch: EVT ensures max/min. If not constant, interior extremum gives f'(c)=0 by Fermat.",
+      "teacher_narration": "This proof is often covered in rigorous courses. It uses the Extreme Value Theorem to guarantee a maximum or minimum. If the function is constant, the derivative is zero everywhere. Otherwise, because the endpoints have the same value, one of the extrema must happen inside the interval. At that interior extremum, Fermat's Theorem says the derivative is zero. This is the heart of the proof.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Mean Value Theorem",
+      "left": {
+        "content_type": "formula_block",
+        "content": "If f continuous on [a,b] and differentiable on (a,b), then ∃ c ∈ (a,b) such that\n\n$$ f'(c) = \\frac{f(b)-f(a)}{b-a} $$"
+      },
+      "right": {
+        "content_type": "image_description",
+        "content": "Graph with secant line and parallel tangent at c.",
+        "visual_spec": "Plot f(x)=x^3-2x on [-1,2]. Show secant line from (-1,1) to (2,4). Highlight tangent at c=1 parallel to secant. Use colors: secant dashed red, tangent dashed green. Label a,b,c.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "MVT: f continuous on [a,b], diff on (a,b) ⇒ ∃ c with f'(c) = average rate of change.",
+      "teacher_narration": "The Mean Value Theorem says that if your function is smooth, there is at least one point where the instantaneous rate of change equals the average rate over the whole interval. Geometrically, the tangent line at that point is parallel to the secant line connecting the endpoints. It's a generalization of Rolle's Theorem—if the endpoints are equal, the average rate is zero, and we get back to Rolle.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "MVT Example",
+      "left": {
+        "content_type": "steps",
+        "content": "1. f(x)=x^3-2x polynomial → cont, diff on [-1,2]\n2. f(-1)=1, f(2)=4\n3. Avg slope = (4-1)/(2-(-1)) = 1\n4. f'(x)=3x^2-2; set =1: 3c^2=3 ⇒ c=±1\n5. Only c=1 in (-1,2)"
+      },
+      "right": {
+        "content_type": "image_description",
+        "content": "Graph of cubic with secant and tangent at c=1.",
+        "visual_spec": "Same graph as slide 6, with annotation: c=1, slope=1.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example: f(x)=x^3-2x on [-1,2]. Average slope=1. c=1 works.",
+      "teacher_narration": "Let's work through a typical MVT problem. We have a cubic function. It's a polynomial, so it satisfies the hypotheses. We compute the average rate of change from the endpoints; it's 1. The derivative is 3x^2-2. Setting equal to 1 gives c equals plus or minus 1. But minus 1 is an endpoint, not in the open interval. So the only valid point is c=1. Notice the tangent line at x=1 is parallel to the secant.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive MVT Explorer",
+      "left": {
+        "content_type": "text",
+        "content": "Drag the endpoints a and b of the interval. See how the secant and the guaranteed point c change. The tangent at c is always parallel to the secant."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "MVT Explorer",
+        "visual_spec": "Interactive plot: cubic f(x)=x^3-2x on [-3,3] with sliders for a and b. Show secant line, compute c where f'(c)=avg slope, highlight that point. Checkbox to toggle tangent line.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, CheckButtons\n\nfig, ax = plt.subplots()\nax.set_xlim(-3, 3)\nax.set_ylim(-5, 5)\nx = np.linspace(-3, 3, 500)\nf = lambda x: x**3 - 2*x\nline, = ax.plot(x, f(x), 'b', label='f(x)=x^3-2x')\na0, b0 = -1, 2\nsecant, = ax.plot([a0, b0], [f(a0), f(b0)], 'r--', linewidth=2, label='secant')\ntangent, = ax.plot([], [], 'g--', linewidth=2, label='tangent')\nc_point, = ax.plot([], [], 'go', markersize=10, label='c')\nax.legend()\n\ndef compute_c(a,b):\n    if a >= b: return None\n    avg_slope = (f(b)-f(a))/(b-a)\n    val = (avg_slope+2)/3\n    if val < 0: return None\n    c1 = np.sqrt(val)\n    c2 = -np.sqrt(val)\n    candidates = []\n    if a < c1 < b: candidates.append(c1)\n    if a < c2 < b: candidates.append(c2)\n    return candidates[0] if candidates else None\n\nc_current = compute_c(a0,b0)\nif c_current:\n    c_point.set_data([c_current], [f(c_current)])\n    avg_slope = (f(b0)-f(a0))/(b0-a0)\n    x_tan = np.linspace(c_current-0.5, c_current+0.5, 10)\n    y_tan = f(c_current) + avg_slope*(x_tan-c_current)\n    tangent.set_data(x_tan, y_tan)\n\nax_slider_a = plt.axes([0.2, 0.1, 0.6, 0.03])\nax_slider_b = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider_a = Slider(ax_slider_a, 'a', -2, 2, valinit=-1)\nslider_b = Slider(ax_slider_b, 'b', -2, 2, valinit=2)\n\ndef update(val):\n    a = slider_a.val\n    b = slider_b.val\n

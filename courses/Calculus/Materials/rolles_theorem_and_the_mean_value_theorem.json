@@ -1,0 +1,400 @@
+{
+  "lecture_meta": {
+    "title": "Rolle's Theorem and the Mean Value Theorem",
+    "topic": "Rolle's Theorem and the Mean Value Theorem",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "State the hypotheses and conclusions of Rolle's Theorem and the Mean Value Theorem",
+      "Verify that a given function satisfies the hypotheses of these theorems on a specified interval",
+      "Calculate the value(s) of c guaranteed by the Mean Value Theorem for a given function",
+      "Apply the Mean Value Theorem to prove fundamental results about function behavior",
+      "Interpret the geometric meaning of each theorem in terms of tangent and secant lines"
+    ],
+    "prerequisite_reminder": "You need to be comfortable with continuity, differentiability, and the Extreme Value Theorem."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Horizontal Tangents Matter",
+      "left": {
+        "content_type": "text",
+        "content": "Imagine a road trip where you start and end at the same elevation. If the road is smooth, at some moment you must be driving perfectly level — instantaneous slope zero."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Rolle's Theorem metaphor",
+        "visual_spec": "Plot a smooth curve (e.g., y = x^3 - 12x on [-3,3]) that starts and ends at same y-value. Mark endpoints with red dots. Draw a horizontal tangent line at one interior point (green dashed). Animate a car icon moving along the curve. Show elevation label constant at endpoints. Title: 'Rolle's Theorem – Road Trip Metaphor'.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; x = np.linspace(-3,3,200); y = x**3 - 12*x; plt.plot(x,y); plt.plot([-3,3],[y[0],y[-1]],'ro'); c=0; plt.axhline(y[c], color='green', linestyle='--', xmin=(-3+3)/6, xmax=(3+3)/6); plt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Start and end at same height. Smooth road. At some moment you must be driving level.",
+      "teacher_narration": "Imagine you take a road trip from point A to point B, and you start and end at exactly the same elevation. If the road is smooth and continuous, at some moment during the trip you must be driving perfectly horizontal. That is the essence of Rolles Theorem. It says that if a function is continuous, differentiable, and has equal values at the endpoints, then somewhere in between the derivative must be zero. This idea is fundamental in calculus because it connects the global behavior of a function to its local rate of change, and it forms the basis for proving many other important results, like the Mean Value Theorem we will see shortly.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Prerequisites: Continuity & Differentiability",
+      "left": {
+        "content_type": "concept",
+        "content": "**Three conditions** for both theorems:\n- Continuous on $[a,b]$ (no breaks)\n- Differentiable on $(a,b)$ (no corners)\n- (Rolle's adds $f(a)=f(b)$)\n\nThese guarantee existence of special points."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Good vs bad functions",
+        "visual_spec": "Three subplots in a row: (a) f(x)=x^2 on [-2,2] (smooth, green check), (b) f(x)=1/(x-1) on [0,2] with vertical asymptote at x=1 (jump discontinuity, red X), (c) f(x)=|x| on [-2,2] with sharp corner at x=0 (red X). Each subplot has title indicating the condition violated. Axes ranges: (a) x from -2 to 2, y from 0 to 4; (b) x from 0 to 2, y from -10 to 10; (c) x from -2 to 2, y from 0 to 2. Use matplotlib subplots. Title: 'Hypotheses for Rolle & MVT'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Continuous? Differentiable? These are needed. For Rolle's, also f(a)=f(b).",
+      "teacher_narration": "Before we dive into the theorems, recall what continuity and differentiability mean. A function is continuous on a closed interval if its graph has no jumps or holes. It is differentiable on an open interval if the derivative exists at every interior point – no sharp corners or vertical tangents. The Extreme Value Theorem tells us continuous functions achieve max and min on closed intervals. We'll rely on all these ideas.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Rolle's Theorem",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Rolle's Theorem**\nIf $f$ is continuous on $[a,b]$, differentiable on $(a,b)$, and $f(a)=f(b)$, then there exists $c \\in (a,b)$ with $f'(c)=0$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^2-4x+3 showing horizontal tangent",
+        "visual_spec": "Plot f(x)=x^2-4x+3 on [1,3]. Mark endpoints (1,0) and (3,0) with red dots. Mark point (2,-1) with green dot (minimum). Draw horizontal dashed line through (2,-1) to show tangent. Label c=2, f'(c)=0. Axes: x from 0 to 4, y from -2 to 4.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; x=np.linspace(0,4,100); f=x**2-4*x+3; plt.plot(x,f); plt.plot([1,3],[0,0],'ro'); plt.plot(2,-1,'go'); plt.axhline(y=-1, color='green', linestyle='--', xmin=0.25, xmax=0.75); plt.text(2,-1.3,'c=2'); plt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Continuous, differentiable, f(a)=f(b) → at least one horizontal tangent inside.",
+      "teacher_narration": "Here is the formal statement of Rolles Theorem. Notice it requires three conditions: continuity on the closed interval, differentiability on the open interval, and equal function values at the endpoints. The conclusion is that there exists some number c strictly between a and b where the derivative is zero. Graphically, the tangent line at that point is horizontal. Take a moment to see the green dot on this parabola – at x equals 2, the slope is zero.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Applying Rolle's Theorem",
+      "left": {
+        "content_type": "concept",
+        "content": "**Problem:** Verify Rolle's Theorem for $f(x)=x^2-4x+3$ on $[1,3]$ and find $c$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | Check continuity | Polynomial → continuous on $[1,3]$ ✓ |\n| 2 | Check differentiability | $f'(x)=2x-4$ exists everywhere → diff. on $(1,3)$ ✓ |\n| 3 | Check $f(1)=f(3)$ | $f(1)=0$, $f(3)=0$ → $f(1)=f(3)$ ✓ |\n| 4 | Solve $f'(c)=0$ | $2c-4=0 \\Rightarrow c=2$ |\n| 5 | Verify $c$ in interval | $2\\in(1,3)$ ✓ |\n\n**Conclusion:** Rolle's Theorem is satisfied; $c=2$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Apply each hypothesis. f(x)=x²-4x+3 on [1,3]. Find c where f'(c)=0.",
+      "teacher_narration": "Let's work through a direct example. We take f(x)=x^2-4x+3 on the interval from 1 to 3. First check continuity: it's a polynomial so it's continuous everywhere. Differentiability: the derivative is 2x-4 which exists for all real numbers. Then we check the endpoint values: f(1)=0 and f(3)=0, so they're equal. Finally, set the derivative equal to zero: 2c-4=0 gives c=2, which lies between 1 and 3. Perfect.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof of Rolle's Theorem",
+      "left": {
+        "content_type": "steps",
+        "content": "**Proof outline:**\n\n1. By EVT, $f$ attains max $M$ and min $m$ on $[a,b]$.\n2. **Case 1:** $M=m$ → $f$ constant → $f'(c)=0$ for any $c$.\n3. **Case 2:** $M>m$. Since $f(a)=f(b)$, at least one extremum occurs at interior $c$.\n4. By Fermat's Theorem, $f'(c)=0$.\n\n*Required: Extreme Value Theorem and Fermat's Theorem.*"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Proof illustration",
+        "visual_spec": "Two subplots: (left) constant function f(x)=c on [a,b] with horizontal line, (right) non-constant function with interior maximum at c, showing horizontal tangent at c. Mark endpoints with red dots, mark interior extremum with green dot. Title: 'Proof of Rolle's Theorem'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Rolle's proof uses EVT and Fermat's Theorem. Cases: constant or interior extremum.",
+      "teacher_narration": "This proof is a bit more advanced, but it's a classic. We use the Extreme Value Theorem to guarantee a maximum and minimum. If the function is constant, then the derivative is zero everywhere, done. Otherwise, since the endpoints have the same value, either the maximum or the minimum must occur at some interior point. Then Fermat's Theorem says the derivative at that interior extremum is zero. That's the core logic.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Mean Value Theorem (MVT)",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Mean Value Theorem**\nIf $f$ is continuous on $[a,b]$ and differentiable on $(a,b)$, then there exists $c \\in (a,b)$ with\n\n$$f'(c) = \\frac{f(b)-f(a)}{b-a}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^3-2x with secant and tangent",
+        "visual_spec": "Plot f(x)=x^3-2x on [-1,2]. Mark endpoints (-1,1) and (2,4) with red dots. Draw secant line through endpoints (slope 1). At c=1, draw tangent line parallel to secant (same slope). Label c=1, f'(c)=1. Axes: x from -1.5 to 2.5, y from -1 to 5.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; x=np.linspace(-1.5,2.5,200); f=x**3-2*x; plt.plot(x,f); plt.plot([-1,2],[1,4],'ro'); sec_x=np.linspace(-1,2); plt.plot(sec_x, sec_x+2,'r--'); tan_x=np.linspace(0.5,1.5); plt.plot(tan_x, f(1)+(tan_x-1),'g--'); plt.plot(1,f(1),'go'); plt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Continuous, differentiable → some c where instantaneous slope equals average slope.",
+      "teacher_narration": "The Mean Value Theorem is one of the most important results in calculus. It relaxes the condition of Rolles Theorem; we no longer require equal endpoint values. Instead, it says there is some point c in the interval where the instantaneous rate of change equals the average rate of change over the whole interval. Graphically, the tangent line at c is parallel to the secant line connecting the endpoints. In this example, the secant has slope 1, and at c=1 the tangent also has slope 1.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Typical MVT Problem",
+      "left": {
+        "content_type": "concept",
+        "content": "**Problem:** Find $c$ for $f(x)=x^3-2x$ on $[-1,2]$.\n\n| Step | Action | Calculation |\n|------|--------|-------------|\n| 1 | Verify hypotheses | Polynomial → continuous on $[-1,2]$, diff. on $(-1,2)$ ✓ |\n| 2 | Compute $f(-1), f(2)$ | $f(-1)=1$, $f(2)=4$ |\n| 3 | Average rate | $\\frac{4-1}{2-(-1)} = \\frac{3}{3}=1$ |\n| 4 | Solve $f'(c)=1$ | $f'(x)=3x^2-2$, so $3c^2-2=1 \\Rightarrow c^2=1 \\Rightarrow c= \\pm 1$ |\n| 5 | Choose $c$ in $(-1,2)$ | $c=-1$ is endpoint → discard; $c=1$ is valid ✓ |\n\n**Result:** $c=1$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Find c for f(x)=x³-2x on [-1,2]. Average slope = 1. Solve f'(c)=1.",
+      "teacher_narration": "Here's a typical exam-style problem. We need to find all numbers c that satisfy the Mean Value Theorem for f(x)=x cubed minus 2x on the interval from -1 to 2. The function is a polynomial, so it's continuous and differentiable. Compute the average rate of change: f(2)-f(-1) over 2-(-1) equals 3 over 3 equals 1. Set the derivative equal to 1: 3c^2-2=1 gives c^2=1, so c equals plus or minus 1. Only c=1 lies in the open interval; c=-1 is an endpoint and is not allowed.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: When MVT Fails",
+      "left": {
+        "content_type": "concept",
+        "content": "**Common mistake:** Assuming MVT applies to $f(x)=|x-1|$ on $[0,2]$.\n\n- Continuous ✓ \n- Not differentiable at $x=1$ (corner) ✗\n- MVT does NOT apply.\n\n**Check average slope:** $\\frac{1-1}{2-0}=0$. But $f'(x)=\\pm 1$ where it exists – never 0."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of |x-1| showing corner",
+        "visual_spec": "Plot |x-1| on [0,2]. Mark corner at (1,0) with a circle. Draw secant line through endpoints (0,1) and (2,1) – horizontal line y=1. Show tangent lines: left side slope -1 (blue), right side slope +1 (red), none horizontal. Highlight that no tangent is parallel to secant.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; x=np.linspace(0,2,200); f=np.abs(x-1); plt.plot(x,f); plt.plot([0,2],[1,1],'r--'); plt.plot(1,0,'o',ms=10); plt.axhline(y=1,color='gray'); plt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "MVT requires differentiability on (a,b). A single corner breaks it.",
+      "teacher_narration": "A very common mistake is to forget to check differentiability on the entire open interval. Consider f(x)=absolute value of x-1 on the interval from 0 to 2. This function is continuous everywhere, but it has a corner at x=1. The derivative does not exist there, so the MVT does not apply. Even though the average slope is 0, the derivative is never 0 where it exists. Always check for corners, cusps, or vertical tangents inside the interval.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause & Try: Find the Point",
+      "left": {
+        "content_type": "text",
+        "content": "**Your turn:** For $f(x)=x^2$ on $[0,2]$, find the value of $c$ guaranteed by the MVT.\n\n- Compute average slope.\n- Set $f'(c)$ equal to that slope.\n- Solve for $c$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of x^2 with secant line only",
+        "visual_spec": "Plot f(x)=x^2 on [0,2] (blue). Mark endpoints (0,0) and (2,4) in red. Draw secant line through endpoints (dashed red). Do NOT show tangent yet. Label endpoints. Title: 'Find c where tangent is parallel to secant'.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; x=np.linspace(0,2,100); f=x**2; plt.plot(x,f); plt.plot([0,2],[0,4],'ro'); sec_x=np.linspace(0,2); plt.plot(sec_x, 2*sec_x,'r--'); plt.show()",
+        "interactive_controls": [
+          {
+            "type": "button",
+            "label": "Reveal Answer",
+            "action": "show_text",
+            "target": "c = 1"
+          }
+        ]
+      },
+      "on_screen_text": "f(x)=x² on [0,2]. Find c where f'(c) equals the average slope.",
+      "teacher_narration": "Pause the video now and try this yourself. For the function f(x) equals x squared on the closed interval from 0 to 2, find the value of c predicted by the Mean Value Theorem. Compute the average rate of change first, then set the derivative equal to that value and solve for c. Once you have your answer, compare it to the next slide where I'll reveal the solution.",
+      "student_prompt": "Compute average slope, then solve f'(c) = average slope.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Solution: Pause Problem",
+      "left": {
+        "content_type": "concept",
+        "content": "**Solution:**\n\n- $f(0)=0$, $f(2)=4$ → average slope $= \\frac{4-0}{2-0}=2$\n- $f'(x)=2x$ → set $2c=2 \\Rightarrow c=1$\n- $c=1$ is in $(0,2)$ ✓\n\n**Check:** At $c=1$, the tangent line slope is exactly 2, parallel to the secant."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Average slope = 2. f'(x)=2x → 2c=2 → c=1. Verified.",
+      "teacher_narration": "Here's the solution. The average slope from x=0 to x=2 is 2. The derivative of x squared is 2x. Set that equal to 2 gives x equals 1. And indeed 1 lies in the open interval from 0 to 2. At x=1, the tangent line to the parabola has slope 2, exactly parallel to the secant line we saw earlier.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3: Edge Case – Constant Function",
+      "left": {
+        "content_type": "concept",
+        "content": "**Problem:** Apply MVT to $f(x)=5$ on $[2,7]$.\n\n- Continuous and differentiable ✓\n- Average slope $= \\frac{5-5}{7-2}=0$\n- $f'(x)=0$ everywhere → any $c$ works!\n\n**Insight:** The theorem holds trivially – every point satisfies the conclusion."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Constant function: all tangents are horizontal. Average slope = 0. Any c works.",
+      "teacher_narration": "What happens when the function is constant? Take f(x)=5 on the interval from 2 to 7. It's clearly continuous and differentiable. The average rate of change is zero because the function never changes. The derivative is zero everywhere, so any point c between 2 and 7 satisfies the conclusion of the MVT. This degenerate case shows that the theorem doesn't guarantee a unique c – it just guarantees at least one.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4: Application – Proving Only One Root",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Prove $f(x)=x^3 + x - 1$ has exactly one real root.\n\n| Step | Action |\n|------|--------|\n| 1 | Show at least one root: $f(0)=-1<0$, $f(1)=1>0$ → IVT gives root in $(0,1)$ |\n| 2 | Assume two roots $a<b$ with $f(a)=f(b)=0$ |\n| 3 | Apply Rolle's Theorem to $f$ on $[a,b]$ → $\\exists c$ with $f'(c)=0$ |\n| 4 | But $f'(x)=3x^2+1 > 0$ for all $x$ → contradiction! |\n| 5 | Therefore only one root exists. |"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^3+x-1 and its derivative",
+        "visual_spec": "Two subplots: (top) f(x)=x^3+x-1 on [-1,1] showing one root near 0.7, (bottom) derivative 3x^2+1 always positive. Mark root with green dot. Show that derivative never crosses zero.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; x=np.linspace(-1,1,200); f=x**3+x-1; df=3*x**2+1; fig, (ax1,ax2)=plt.subplots(2,1); ax1.plot(x,f); ax1.axhline(0,color='gray'); root = 0.6823; ax1.plot(root,0,'go'); ax2.plot(x,df); ax2.axhline(0,color='gray'); plt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Use Rolle's to prove exactly one root. Derivative always positive → can't have two.",
+      "teacher_narration": "Here's a powerful application of Rolles Theorem. We want to prove that the cubic function x cubed plus x minus 1 has exactly one real root. First, the Intermediate Value Theorem shows there is at least one root between 0 and 1 because f(0) is negative and f(1) is positive. Now suppose there were two distinct roots. Then by Rolles Theorem, somewhere between them the derivative would have to be zero. But the derivative is 3x squared plus 1, which is always positive. This contradiction means there cannot be two roots.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proving a Constant Function",
+      "left": {
+        "content_type": "steps",
+        "content": "**Theorem:** If $f'(x)=0$ for all $x$ in an interval, then $f$ is constant on that interval.\n\n**Proof:**\n1. Take any two points $a<b$ in the interval.\n2. Apply MVT to $f$ on $[a,b]$: there exists $c$ with $f'(c)=\\frac{f(b)-f(a)}{b-a}$.\n3. Since $f'(c)=0$, we have $f(b)-f(a)=0$, so $f(b)=f(a)$.\n4. Therefore $f$ is constant."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Proof illustration",
+        "visual_spec": "Plot a constant function f(x)=k on [a,b] with horizontal line. Mark two arbitrary points a and b with red dots. Show that the secant line is horizontal (slope 0). Title: 'Proving a Constant Function'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Zero derivative everywhere → function is constant. Proof uses MVT between any two points.",
+      "teacher_narration": "This is another classic application of the Mean Value Theorem. Suppose a function has derivative zero at every point in an interval. To prove it must be constant, pick any two points a and b. The MVT tells us that somewhere between them, the derivative equals the difference quotient. Since the derivative is zero everywhere, the difference quotient must be zero, meaning f(b) equals f(a). Since a and b were arbitrary, all function values are equal, so the function is constant.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "visual_lab",
+      "layout": "full_width",
+      "title": "Interactive Lab: Rolle's Theorem Exploration",
+      "left": {
+        "content_type": "text",
+        "content": "Use the sliders to change the interval $[a,b]$ for $f(x)=x^2 - 4x + 3$. Observe that when $f(a)=f(b)$, a horizontal tangent appears at $x=2$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive Rolle's Theorem",
+        "visual_spec": "Plot f(x)=x^2-4x+3 on adjustable domain [a,b] where f(a)=f(b) is enforced by setting b = 4 - a (since vertex at x=2). Use a slider for a (range 0 to 2). Show endpoints as red dots. Display horizontal tangent line at x=2 (green dashed). Highlight the point (2, f(2)) with a green dot. Update plot when slider changes. Title: 'Rolle's Theorem Interactive'.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from matplotlib.widgets import Slider; fig, ax = plt.subplots(); plt.subplots_adjust(bottom=0.25); x = np.linspace(-0.5, 4.5, 400); f = lambda x: x**2 - 4*x + 3; l, = ax.plot(x, f(x)); ax.axhline(0, color='gray', alpha=0.3); endpoint_a, = ax.plot([], [], 'ro', ms=8); endpoint_b, = ax.plot([], [], 'ro', ms=8); tan_line, = ax.plot([], [], 'g--', lw=2); c_point, = ax.plot([], [], 'go', ms=10); ax.set_xlim(-0.5, 4.5); ax.set_ylim(-2, 4); ax_a = plt.axes([0.2, 0.1, 0.65, 0.03]); a_slider = Slider(ax=ax_a, label='a', valmin=0, valmax=2, valinit=1); def update(val): a = a_slider.val; b = 4 - a; f_a = f(a); f_b = f(b); endpoint_a.set_data([a], [f_a]); endpoint_b.set_data([b], [f_b]); c = 2; tan_x = np.linspace(c-0.5, c+0.5); tan_line.set_data(tan_x, f(c) + 0*(tan_x - c)); c_point.set_data([c], [f(c)]); fig.canvas.draw_idle(); a_slider.on_changed(update); update(1); plt.show()",
+        "interactive_controls": [
+          "Slider for a from 0 to 2",
+          "Show/hide tangent line (toggle button)"
+        ]
+      },
+      "on_screen_text": "Drag slider a. Function f(x)=x²-4x+3. When f(a)=f(b), horizontal tangent at x=2.",
+      "teacher_narration": "Now let's explore Rolles Theorem interactively. The function shown is x squared minus 4x plus 3. Use the slider to change the left endpoint a. The right endpoint b is automatically set so that f(a) equals f(b). You'll see the endpoints marked in red. No matter what a you choose, the function always has a horizontal tangent at x equals 2, shown by the green dashed line. This visual reinforces that if endpoints are equal, there must be a point with zero slope.",
+      "student_prompt": "Try moving the slider to a = 0.5. Where is the horizontal tangent?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "visual_lab",
+      "layout": "full_width",
+      "title": "Interactive Lab: MVT Exploration",
+      "left": {
+        "content_type": "text",
+        "content": "Move the point $c$ along the curve. The tangent slope changes. Find where it matches the secant slope."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive MVT: f(x)=x^2 on [0,2]",
+        "visual_spec": "Plot f(x)=x^2 on [0,2]. Mark endpoints (0,0) and (2,4) in red. Draw secant line (dashed red). Place a draggable point on the curve (c, f(c)) using a slider for c (0 to 2). Show tangent line at c (dashed green). Display slope of tangent and slope of secant numerically. When slopes are equal (within tolerance), highlight the point in green and show text 'MVT satisfied!'. Title: 'Mean Value Theorem Interactive'.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from matplotlib.widgets import Slider; fig, ax = plt.subplots(); plt.subplots_adjust(bottom=0.25); x = np.linspace(-0.5, 2.5, 400); f = lambda x: x**2; y = f(x); ax.plot(x, y); ax.plot([0, 2], [0, 4], 'ro'); sec_x = np.linspace(0, 2); ax.plot(sec_x, 2*sec_x, 'r--', label='secant'); c_init = 1; c_point, = ax.plot([], [], 'go'); tan_line, = ax.plot([], [], 'g--'); ax.set_xlim(-0.5, 2.5); ax.set_ylim(-1, 6); ax.legend(); ax_c = plt.axes([0.2, 0.1, 0.65, 0.03]); c_slider = Slider(ax=ax_c, label='c', valmin=0.01, valmax=1.99, valinit=c_init); def update(val): c = c_slider.val; f_c = f(c); c_point.set_data([c], [f_c]); tan_x = np.linspace(c-0.3, c+0.3); tan_slope = 2*c; tan_line.set_data(tan_x, f_c + tan_slope*(tan_x - c)); if abs(tan_slope - 2) < 0.05: tan_line.set_color('green'); c_point.set_markersize(12); else: tan_line.set_color('gray'); c_point.set_markersize(8); fig.canvas.draw_idle(); c_slider.on_changed(update); update(c_init); plt.show()",
+        "interactive_controls": [
+          "Slider for c from 0 to 2",
+          "Display slopes text box"
+        ]
+      },
+      "on_screen_text": "Drag the point c. Tangent slope changes. Find where it equals the secant slope (2).",
+      "teacher_narration": "This interactive lab lets you explore the Mean Value Theorem. We have the parabola f(x)=x-squared on the interval from 0 to 2. The secant line connecting the endpoints has slope 2. Drag the point c along the curve and watch the tangent line change. When the tangent slope equals the secant slope, you've found the c guaranteed by the MVT – it should be at x=1. See how the tangent line turns green when the slopes match.",
+      "student_prompt": "Drag c until the tangent turns green. What is the slope value?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary",
+      "left": {
+        "content_type": "text",
+        "content": "**Key formulas:**\n\n- **Rolle's Theorem:** $f$ continuous on $[a,b]$, diff. on $(a,b)$, $f(a)=f(b)$ ⇒ $\\exists c$ with $f'(c)=0$.\n- **Mean Value Theorem:** $f$ continuous on $[a,b]$, diff. on $(a,b)$ ⇒ $\\exists c$ with $f'(c) = \\frac{f(b)-f(a)}{b-a}$.\n\n**Applications:**\n- Prove number of roots (using Rolle's)\n- Prove constant function (using MVT)\n- Bound function changes\n\n**Key caution:** Always check differentiability on the open interval!"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Rolle's: endpoints equal → horiz. tangent. MVT: instant slope = average slope. Check diff'ability!",
+      "teacher_narration": "Let's quickly summarise what we've learned. Rolles Theorem says that if a function is continuous, differentiable, and has equal endpoints, then somewhere the derivative is zero. The Mean Value Theorem generalizes this: if the function is continuous and differentiable, then at some point the instantaneous slope equals the average slope over the interval. These theorems are not just abstract; we can use them to prove how many roots an equation has, or that a function is constant if its derivative is always zero. Always remember to check that the function is differentiable on the entire open interval – a single corner can break the theorem.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

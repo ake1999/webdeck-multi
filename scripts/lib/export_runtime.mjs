@@ -229,6 +229,7 @@ function createCdpClient(wsUrl) {
     const socket = new WebSocket(wsUrl);
     const pending = new Map();
     const listeners = new Map();
+    const subscribers = new Map();
     let messageId = 0;
 
     const cleanup = (error) => {
@@ -275,6 +276,16 @@ function createCdpClient(wsUrl) {
         close() {
           socket.close();
         },
+
+        on(eventName, handler) {
+          const bucket = subscribers.get(eventName) || [];
+          bucket.push(handler);
+          subscribers.set(eventName, bucket);
+          return () => {
+            const next = (subscribers.get(eventName) || []).filter((item) => item !== handler);
+            subscribers.set(eventName, next);
+          };
+        },
       });
     });
 
@@ -295,6 +306,11 @@ function createCdpClient(wsUrl) {
       }
 
       if (!message.method) return;
+      (subscribers.get(message.method) || []).forEach((handler) => {
+        try {
+          handler(message.params);
+        } catch {}
+      });
       const bucket = listeners.get(message.method) || [];
       const remaining = [];
 
@@ -320,6 +336,26 @@ function createCdpClient(wsUrl) {
   });
 }
 
+function runtimeValueText(value) {
+  if (value?.description) return String(value.description);
+  if (value?.value != null) return String(value.value);
+  return String(value?.type || "");
+}
+
+function runtimeExceptionText(params = {}) {
+  const details = params.exceptionDetails || {};
+  const exception = runtimeValueText(details.exception);
+  const text = [details.text, exception].filter(Boolean).join(": ");
+  const frame = details.stackTrace?.callFrames?.[0];
+  if (!frame?.url) return text || "Unknown browser exception";
+  return `${text || "Browser exception"} at ${frame.url}:${Number(frame.lineNumber || 0) + 1}`;
+}
+
+function runtimeConsoleText(params = {}) {
+  const args = (params.args || []).map(runtimeValueText).filter(Boolean).join(" ");
+  return args || params.type || "browser console message";
+}
+
 async function waitForCondition(client, expression, timeoutMs = 20000) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
@@ -333,7 +369,9 @@ async function waitForCondition(client, expression, timeoutMs = 20000) {
     await sleep(200);
   }
 
-  throw new Error(`Timed out waiting for condition: ${expression}`);
+  const errors = (client.__pageErrors || []).slice(-5);
+  const suffix = errors.length ? ` Browser errors: ${errors.join(" | ")}` : "";
+  throw new Error(`Timed out waiting for condition: ${expression}.${suffix}`);
 }
 
 async function setViewport(client, viewport) {
@@ -348,6 +386,14 @@ async function setViewport(client, viewport) {
 async function prepareClient(client, viewport) {
   await client.send("Page.enable");
   await client.send("Runtime.enable");
+  client.__pageErrors = [];
+  client.on("Runtime.exceptionThrown", (params) => {
+    client.__pageErrors.push(runtimeExceptionText(params));
+  });
+  client.on("Runtime.consoleAPICalled", (params) => {
+    if (params.type !== "error") return;
+    client.__pageErrors.push(runtimeConsoleText(params));
+  });
   await client.send("Page.setLifecycleEventsEnabled", { enabled: true });
   await setViewport(client, viewport);
 }

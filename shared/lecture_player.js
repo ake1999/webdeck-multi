@@ -382,10 +382,103 @@ function normalizeExplicitVideoSequence(sequence) {
         src,
         start_sec: Number(entry?.start_sec || 0),
         duration_sec: entry?.duration_sec == null ? null : Number(entry.duration_sec),
+        start_policy: entry?.start_policy || "",
+        display_mode: entry?.display_mode || entry?.mode || "avatar_overlay",
+        object_fit: entry?.object_fit || entry?.fit || "contain",
+        replace_avatar: entry?.replace_avatar !== false,
+        muted: entry?.muted !== false,
+        audio: entry?.audio || "",
+        audio_duration_sec: entry?.audio_duration_sec == null ? null : Number(entry.audio_duration_sec),
+        text: entry?.text || "",
+        segments: asArray(entry?.segments),
+        source: entry?.source || "",
+        source_video: entry?.source_video || "",
       };
     })
     .filter(Boolean)
     .sort((left, right) => left.order - right.order);
+}
+
+function sequenceEntryDuration(entry) {
+  const segmentEnd = asArray(entry?.segments).reduce(
+    (max, segment) => Math.max(max, Number(segment.t1 || segment.end_sec || 0)),
+    0,
+  );
+  return Math.max(
+    0,
+    Number(entry?.duration_sec || 0),
+    Number(entry?.audio_duration_sec || 0),
+    segmentEnd,
+  );
+}
+
+function sequenceExtendedDuration(baseDuration, audioDuration, sequence) {
+  let sequentialAfterAudio = 0;
+  let maxTimedEnd = Number(baseDuration || 0);
+
+  for (const entry of asArray(sequence)) {
+    const duration = sequenceEntryDuration(entry);
+    if (entry?.start_policy === "after_slide_audio") {
+      sequentialAfterAudio += duration;
+      maxTimedEnd = Math.max(maxTimedEnd, Number(audioDuration || 0) + sequentialAfterAudio);
+      continue;
+    }
+
+    const start = Number(entry?.start_sec || 0);
+    if (duration > 0 || start > 0) {
+      maxTimedEnd = Math.max(maxTimedEnd, start + duration);
+    }
+  }
+
+  return maxTimedEnd;
+}
+
+function withSequenceTiming(slide, sequence) {
+  const audioDuration = Number(slide?.speech?.audio_duration_sec || 0);
+  let afterAudioCursor = audioDuration;
+  return asArray(sequence).map((entry) => {
+    const duration = sequenceEntryDuration(entry);
+    let effectiveStart = Number(entry.start_sec || 0);
+    if (entry.start_policy === "after_slide_audio") {
+      effectiveStart = afterAudioCursor;
+      afterAudioCursor += duration;
+    }
+    return {
+      ...entry,
+      duration_sec: entry.duration_sec == null && duration > 0 ? duration : entry.duration_sec,
+      effective_start_sec: effectiveStart,
+      effective_end_sec: duration > 0 ? effectiveStart + duration : null,
+    };
+  });
+}
+
+function videoSequenceFromDemoOverlays(slide, derivedOutputRoot) {
+  const demos = asArray(slide.demo_overlays);
+  if (!demos.length) return [];
+  return normalizeExplicitVideoSequence([
+    {
+      order: 1,
+      src: `${derivedOutputRoot}/transparent.webm`,
+      display_mode: "avatar_overlay",
+      muted: true,
+      source: "derived_avatar_output",
+      skip_if_missing: true,
+    },
+    ...demos.map((demo, index) => ({
+      order: index + 2,
+      src: demo.output_video || demo.source_video,
+      source_video: demo.source_video,
+      start_policy: "after_slide_audio",
+      display_mode: demo.display?.mode || "full_slide",
+      object_fit: demo.display?.object_fit || "cover",
+      muted: false,
+      audio: demo.narration?.audio || "",
+      audio_duration_sec: demo.narration?.audio_duration_sec,
+      text: demo.narration?.text || "",
+      segments: asArray(demo.narration?.segments),
+      source: demo.source || "manual_demo_overlay",
+    })),
+  ]);
 }
 
 function normalizeAvatarVideoJob(job) {
@@ -407,7 +500,16 @@ function normalizeAvatarVideoJob(job) {
     const speechSegments = asArray(slide.speech?.segments).map(normalizedSegment);
     const lastSegmentEnd = speechSegments.reduce((max, segment) => Math.max(max, Number(segment.t1 || 0)), 0);
     const audioDuration = Number(slide.speech?.audio_duration_sec || lastSegmentEnd || 0);
-    const duration = Number(slide.duration_sec || audioDuration || lastSegmentEnd || 0);
+    const derivedOutputRoot = `${avatarOutputRoot}/${encodeURIComponent(slide.slide_id)}`;
+    const explicitVideoSequence = normalizeExplicitVideoSequence(slide.avatar?.video_sequence);
+    const demoVideoSequence = explicitVideoSequence.length
+      ? explicitVideoSequence
+      : videoSequenceFromDemoOverlays(slide, derivedOutputRoot);
+    const duration = sequenceExtendedDuration(
+      Number(slide.duration_sec || audioDuration || lastSegmentEnd || 0),
+      audioDuration,
+      demoVideoSequence,
+    );
 
     return {
       slide_id: slide.slide_id,
@@ -436,11 +538,12 @@ function normalizeAvatarVideoJob(job) {
         })),
       },
       timeline: speechSegments,
+      demo_overlays: asArray(slide.demo_overlays),
       avatar: {
         ...(slide.avatar || {}),
         placement: slide.avatar?.placement || {},
-        video_sequence: normalizeExplicitVideoSequence(slide.avatar?.video_sequence),
-        derived_output_root: `${avatarOutputRoot}/${encodeURIComponent(slide.slide_id)}`,
+        video_sequence: demoVideoSequence,
+        derived_output_root: derivedOutputRoot,
       },
       reference_resolution: referenceResolution,
       avatar_render_resolution: renderResolution,
@@ -476,7 +579,11 @@ function applyAlignmentToPlaybackManifest(playbackManifest, alignmentManifest) {
     slide.audio_file = alignedSlide.audio_file || slide.audio_file || "";
     slide.speech.audio = alignedSlide.audio_file || slide.speech.audio || "";
     slide.speech.audio_duration_sec = alignedDuration;
-    slide.duration = alignedDuration + previousPause;
+    slide.duration = sequenceExtendedDuration(
+      alignedDuration + previousPause,
+      alignedDuration,
+      normalizeExplicitVideoSequence(slide.avatar?.video_sequence),
+    );
     slide.duration_sec = slide.duration;
     slide.media.audio.compiled = slide.audio_file;
     slide.media.audio.manual = slide.audio_file;
@@ -592,6 +699,9 @@ export function createLecturePlayer({
     alignment: null,
     avatar: null,
   };
+  let activeSequenceAudio = null;
+  let activeSequenceStartSec = 0;
+  let activeElement = null;
 
   function slideOffsets() {
     return buildSlideOffsets(activeTimelineManifest);
@@ -604,6 +714,15 @@ export function createLecturePlayer({
   function slideLocalTime() {
     const slide = currentSlide();
     if (!slide) return 0;
+    const sequenceAudio = currentSequenceAudio();
+    const avatarVideo = currentAvatarVideo();
+    if (audioDoneForSlide && activeSequenceStartSec > 0 && (sequenceAudio || avatarVideo)) {
+      const sequenceTime = Math.max(
+        Number(sequenceAudio?.currentTime || 0),
+        Number(avatarVideo?.currentTime || 0),
+      );
+      return Math.min(Number(slide.duration || 0), activeSequenceStartSec + sequenceTime);
+    }
     if (postAudioPauseStartMs) {
       const elapsed = (performance.now() - postAudioPauseStartMs) / 1000;
       return Math.min(Number(slide.duration || 0), postAudioPauseBaseSec + elapsed);
@@ -618,6 +737,10 @@ export function createLecturePlayer({
 
   function currentAvatarVideo() {
     return activeAvatarVideo instanceof HTMLVideoElement ? activeAvatarVideo : null;
+  }
+
+  function currentSequenceAudio() {
+    return activeSequenceAudio instanceof HTMLAudioElement ? activeSequenceAudio : null;
   }
 
   function setStatus(text) {
@@ -636,8 +759,21 @@ export function createLecturePlayer({
 
   function clearFocus() {
     activeFocus = null;
+    if (activeElement) {
+      activeElement.classList.remove("lecture-active-element");
+      activeElement = null;
+    }
     ui.focusTarget.className = "lecture-focus-target";
     ui.focusTarget.style.opacity = "0";
+  }
+
+  function setActiveElement(slideId, elementId) {
+    if (activeElement) {
+      activeElement.classList.remove("lecture-active-element");
+      activeElement = null;
+    }
+    activeElement = document.getElementById(`${slideId}__${elementId}`);
+    if (activeElement) activeElement.classList.add("lecture-active-element");
   }
 
   function wordIndexAtTime(cue, time) {
@@ -689,6 +825,7 @@ export function createLecturePlayer({
     }
 
     activeFocus = { slideId, elementId, context };
+    setActiveElement(slideId, elementId);
     const logicalSize = deckController.getLogicalSize?.() || { width: 1280, height: 720 };
     const left = Math.max(0, box.left - (textLike ? 2 : 0));
     const top = Math.max(0, textLike
@@ -780,6 +917,12 @@ export function createLecturePlayer({
   function setAudioEnabled(enabled) {
     audioEnabled = Boolean(enabled);
     audio.muted = !audioEnabled;
+    const sequenceAudio = currentSequenceAudio();
+    if (sequenceAudio) sequenceAudio.muted = !audioEnabled;
+    const avatarVideo = currentAvatarVideo();
+    if (avatarVideo && avatarVideo.dataset.videoAudio === "enabled") {
+      avatarVideo.muted = !audioEnabled;
+    }
     setToggleButton(ui.audioBtn, audioEnabled);
     return audioEnabled;
   }
@@ -804,14 +947,30 @@ export function createLecturePlayer({
       activeAvatarVideo.removeAttribute("src");
       activeAvatarVideo.load();
     }
+    if (activeSequenceAudio) {
+      activeSequenceAudio.pause();
+      activeSequenceAudio.removeAttribute("src");
+      activeSequenceAudio.load();
+    }
     activeAvatarVideo = null;
+    activeSequenceAudio = null;
+    activeSequenceStartSec = 0;
     ui.avatarSlot.innerHTML = "";
     ui.avatarLayer.classList.remove("visible");
     ui.avatarLayer.dataset.anchor = "";
+    ui.avatarLayer.dataset.displayMode = "";
+    ui.avatarSlot.dataset.displayMode = "";
+    ui.avatarSlot.style.setProperty("--lecture-avatar-object-fit", "contain");
     loadedMedia.avatar = null;
   }
 
-  function logicalPlacementForSlide(slide) {
+  function isFullSlideVideo(candidate = {}) {
+    return ["full_slide", "slide_cover", "fullscreen_demo", "full_slide_demo"].includes(
+      String(candidate.display_mode || "").toLowerCase(),
+    );
+  }
+
+  function logicalPlacementForSlide(slide, candidate = {}) {
     const placement = slide?.avatar?.placement || {};
     const [referenceWidth, referenceHeight] = asArray(slide?.reference_resolution).length === 2
       ? slide.reference_resolution
@@ -822,6 +981,17 @@ export function createLecturePlayer({
     const logicalSize = deckController.getLogicalSize?.() || { width: 1280, height: 720 };
     const scaleX = Number(logicalSize.width || 1280) / Number(referenceWidth || 1920);
     const scaleY = Number(logicalSize.height || 720) / Number(referenceHeight || 1080);
+
+    if (isFullSlideVideo(candidate)) {
+      return {
+        left: 0,
+        top: 0,
+        width: Number(logicalSize.width || 1280),
+        height: Number(logicalSize.height || 720),
+        anchor: "full_slide",
+      };
+    }
+
     const avatarScale = Number(placement.scale || activeTimelineManifest?.render?.overlay?.reference_scale || 0.42);
     const referenceAvatarWidth = Number(placement.width || renderWidth * avatarScale);
     const referenceAvatarHeight = Number(placement.height || renderHeight * avatarScale);
@@ -852,13 +1022,17 @@ export function createLecturePlayer({
     };
   }
 
-  function applyAvatarPlacement(slide) {
-    const placement = logicalPlacementForSlide(slide);
+  function applyAvatarPlacement(slide, candidate = {}) {
+    const placement = logicalPlacementForSlide(slide, candidate);
     ui.avatarSlot.style.left = `${placement.left}px`;
     ui.avatarSlot.style.top = `${placement.top}px`;
     ui.avatarSlot.style.width = `${placement.width}px`;
     ui.avatarSlot.style.height = `${placement.height}px`;
     ui.avatarLayer.dataset.anchor = placement.anchor;
+    const displayMode = candidate.display_mode || "avatar_overlay";
+    ui.avatarLayer.dataset.displayMode = displayMode;
+    ui.avatarSlot.dataset.displayMode = displayMode;
+    ui.avatarSlot.style.setProperty("--lecture-avatar-object-fit", candidate.object_fit || "contain");
   }
 
   function applyLegacyAvatarPlacement(action) {
@@ -904,7 +1078,12 @@ export function createLecturePlayer({
       const video = document.createElement("video");
       video.className = "lecture-avatar-media";
       video.src = src;
-      video.muted = true;
+      const usesSeparateAudio = Boolean(candidate?.audio);
+      const videoAudioEnabled = candidate?.muted === false && !usesSeparateAudio;
+      video.muted = !videoAudioEnabled || !audioEnabled;
+      video.volume = clampNumber(ui.volume.value, 0, 1, 1);
+      video.dataset.videoAudio = videoAudioEnabled ? "enabled" : "muted";
+      video.dataset.displayMode = candidate?.display_mode || "avatar_overlay";
       video.loop = false;
       video.controls = false;
       video.playsInline = true;
@@ -930,13 +1109,71 @@ export function createLecturePlayer({
     });
   }
 
+  function loadSequenceAudioElement(candidate) {
+    return new Promise((resolve, reject) => {
+      const src = rootRelativeUrl(candidate?.audio || "");
+      if (!src) {
+        resolve(null);
+        return;
+      }
+
+      const sequenceAudio = new Audio();
+      const cleanup = () => {
+        sequenceAudio.removeEventListener("loadedmetadata", onLoaded);
+        sequenceAudio.removeEventListener("error", onError);
+      };
+      const onLoaded = () => {
+        cleanup();
+        resolve(sequenceAudio);
+      };
+      const onError = () => {
+        cleanup();
+        reject(new Error(`Failed to load sequence audio ${candidate.audio}`));
+      };
+
+      sequenceAudio.addEventListener("loadedmetadata", onLoaded, { once: true });
+      sequenceAudio.addEventListener("error", onError, { once: true });
+      sequenceAudio.src = src;
+      sequenceAudio.preload = "auto";
+      sequenceAudio.playbackRate = playbackRate;
+      sequenceAudio.volume = clampNumber(ui.volume.value, 0, 1, 1);
+      sequenceAudio.muted = !audioEnabled;
+      sequenceAudio.load();
+    });
+  }
+
   async function showAvatarVideo({ token, slide, candidate, onEnded, autoplay }) {
     try {
       const video = await loadVideoElement(candidate);
       if (token !== avatarToken || !avatarEnabled) return false;
 
-      applyAvatarPlacement(slide);
+      let sequenceAudio = null;
+      if (candidate?.audio) {
+        try {
+          sequenceAudio = await loadSequenceAudioElement(candidate);
+        } catch (error) {
+          mediaLogger("avatar_audio", {
+            selected_path: candidate.audio,
+            status: "missing",
+            reason: error?.message || String(error),
+          });
+        }
+      }
+      if (token !== avatarToken || !avatarEnabled) return false;
+
+      applyAvatarPlacement(slide, candidate);
       activeAvatarVideo = video;
+      activeSequenceAudio = sequenceAudio;
+      activeSequenceStartSec = Number(candidate?.effective_start_sec ?? candidate?.start_sec ?? 0);
+      const startOffset = Math.max(0, Number(candidate?.start_offset_sec || 0));
+      if (startOffset > 0) {
+        if (Number.isFinite(video.duration) && video.duration > 0) {
+          video.currentTime = Math.min(startOffset, Math.max(0, video.duration - 0.02));
+        }
+        if (sequenceAudio && Number.isFinite(sequenceAudio.duration) && sequenceAudio.duration > 0) {
+          sequenceAudio.currentTime = Math.min(startOffset, Math.max(0, sequenceAudio.duration - 0.02));
+        }
+      }
       ui.avatarSlot.innerHTML = "";
       ui.avatarSlot.appendChild(video);
       ui.avatarLayer.classList.add("visible");
@@ -944,20 +1181,47 @@ export function createLecturePlayer({
         path: candidate.src,
         kind: "webm",
         source: candidate.source || "avatar_video",
+        display_mode: candidate.display_mode || "avatar_overlay",
+        audio: candidate.audio || "",
       };
       mediaLogger("avatar", {
         selected_path: candidate.src,
         status: "loaded",
         source: candidate.source || "avatar_video",
+        display_mode: candidate.display_mode || "avatar_overlay",
       });
+      if (sequenceAudio) {
+        mediaLogger("avatar_audio", {
+          selected_path: candidate.audio,
+          status: "loaded",
+          source: candidate.source || "avatar_video",
+        });
+      }
+
+      let videoEnded = false;
+      let audioEnded = !sequenceAudio;
+      const maybeEnded = () => {
+        if (token !== avatarToken) return;
+        if (!videoEnded || !audioEnded) return;
+        if (activeSequenceAudio === sequenceAudio) {
+          activeSequenceAudio = null;
+        }
+        onEnded?.();
+      };
 
       video.addEventListener("ended", () => {
-        if (token !== avatarToken) return;
-        onEnded?.();
+        videoEnded = true;
+        if (!sequenceAudio) audioEnded = true;
+        maybeEnded();
+      }, { once: true });
+      sequenceAudio?.addEventListener("ended", () => {
+        audioEnded = true;
+        maybeEnded();
       }, { once: true });
 
       if (autoplay && playing) {
         await video.play().catch(() => {});
+        await sequenceAudio?.play().catch(() => {});
       }
       return true;
     } catch (error) {
@@ -970,18 +1234,37 @@ export function createLecturePlayer({
     }
   }
 
-  function playExplicitAvatarSequence({ token, slide, sequence, index, autoplay }) {
+  function playExplicitAvatarSequence({ token, slide, sequence, index, autoplay, localTime = 0 }) {
     if (token !== avatarToken) return;
     if (index >= sequence.length) {
       markAvatarSequenceDone();
       return;
     }
 
+    const entry = sequence[index];
+    if (entry?.start_policy === "after_slide_audio" && !audioDoneForSlide && audio.src) {
+      const resumeAfterAudio = () => {
+        if (token !== avatarToken) return;
+        playExplicitAvatarSequence({
+          token,
+          slide,
+          sequence,
+          index,
+          autoplay: true,
+          localTime: 0,
+        });
+      };
+      audio.addEventListener("ended", resumeAfterAudio, { once: true });
+      return;
+    }
+
+    const startOffset = Math.max(0, Number(localTime || 0) - Number(entry.effective_start_sec ?? entry.start_sec ?? 0));
     showAvatarVideo({
       token,
       slide,
       candidate: {
-        ...sequence[index],
+        ...entry,
+        start_offset_sec: startOffset,
         source: "explicit_sequence",
       },
       autoplay,
@@ -991,6 +1274,7 @@ export function createLecturePlayer({
         sequence,
         index: index + 1,
         autoplay: true,
+        localTime: 0,
       }),
     }).then((loaded) => {
       if (token !== avatarToken) return;
@@ -1001,6 +1285,7 @@ export function createLecturePlayer({
           sequence,
           index: index + 1,
           autoplay,
+          localTime,
         });
       }
     });
@@ -1070,15 +1355,27 @@ export function createLecturePlayer({
     avatarSequenceDone = false;
     applyAvatarPlacement(slide);
 
-    const sequence = normalizeExplicitVideoSequence(slide.avatar.video_sequence);
+    const sequence = withSequenceTiming(slide, normalizeExplicitVideoSequence(slide.avatar.video_sequence));
     if (sequence.length) {
-      const startIndex = sequence.findIndex((entry) => Number(entry.start_sec || 0) >= Number(localTime || 0));
+      const requestedTime = Number(localTime || 0);
+      const activeIndex = sequence.findIndex((entry) => {
+        const start = Number(entry.effective_start_sec ?? entry.start_sec ?? 0);
+        const end = Number(entry.effective_end_sec || start);
+        return requestedTime >= start && (!entry.effective_end_sec || requestedTime < end - 0.05);
+      });
+      const futureIndex = sequence.findIndex((entry) => Number(entry.effective_start_sec ?? entry.start_sec ?? 0) >= requestedTime);
+      const startIndex = activeIndex >= 0 ? activeIndex : futureIndex;
+      if (startIndex < 0) {
+        markAvatarSequenceDone();
+        return;
+      }
       playExplicitAvatarSequence({
         token,
         slide,
         sequence,
-        index: startIndex < 0 ? 0 : startIndex,
+        index: startIndex,
         autoplay,
+        localTime: requestedTime,
       });
       return;
     }
@@ -1237,6 +1534,15 @@ export function createLecturePlayer({
   function syncPlaybackLoop() {
     if (!playing) return;
     syncCueAtTime(false);
+    window.dispatchEvent(
+      new CustomEvent("webdeck:lecture-time", {
+        detail: {
+          slide_id: currentSlide()?.slide_id || "",
+          local_time: slideLocalTime(),
+          absolute_time: currentGlobalTime(),
+        },
+      }),
+    );
     updateProgressUi();
     rafId = window.requestAnimationFrame(syncPlaybackLoop);
   }
@@ -1586,9 +1892,10 @@ export function createLecturePlayer({
 
     const audioMeta = await resolveAndLoadSlideAudio(slide);
     const audioDuration = Number(audio.duration || slide.speech?.audio_duration_sec || slide.duration || 0);
-    const safeLocalTime = Math.max(0, Math.min(Number(localTime || 0), audioDuration || Number(slide.duration || 0)));
+    const slideDuration = Number(slide.duration || audioDuration || 0);
+    const safeLocalTime = Math.max(0, Math.min(Number(localTime || 0), slideDuration));
     if (audioMeta) {
-      audio.currentTime = safeLocalTime;
+      audio.currentTime = Math.min(safeLocalTime, Math.max(0, audioDuration - 0.02));
       audioDoneForSlide = audioDuration > 0 && safeLocalTime >= audioDuration - 0.05;
     } else {
       audioDoneForSlide = true;
@@ -1602,14 +1909,18 @@ export function createLecturePlayer({
     if (autoplay && audioMeta) {
       deckController.pause();
       playing = true;
-      await audio.play();
+      if (!audioDoneForSlide) {
+        await audio.play();
+      }
       currentAvatarVideo()?.play().catch(() => {});
+      currentSequenceAudio()?.play().catch(() => {});
       setStatus("Playing");
       revealControls();
       syncPlaybackLoop();
     } else {
       audio.pause();
       currentAvatarVideo()?.pause();
+      currentSequenceAudio()?.pause();
       playing = false;
       setStatus(audioMeta ? "Loaded" : "Missing audio");
       revealControls({ pin: !audioMeta });
@@ -1630,6 +1941,10 @@ export function createLecturePlayer({
     const avatarVideo = currentAvatarVideo();
     if (avatarVideo) {
       avatarVideo.playbackRate = playbackRate;
+    }
+    const sequenceAudio = currentSequenceAudio();
+    if (sequenceAudio) {
+      sequenceAudio.playbackRate = playbackRate;
     }
   });
 
@@ -1714,6 +2029,7 @@ export function createLecturePlayer({
     if (audio.src && audio.paused && currentSlide() && !audioDoneForSlide) {
       await audio.play();
       currentAvatarVideo()?.play().catch(() => {});
+      currentSequenceAudio()?.play().catch(() => {});
       playing = true;
       setStatus("Playing");
       revealControls();
@@ -1734,6 +2050,7 @@ export function createLecturePlayer({
     if (!audio.src && !currentAvatarVideo()) return false;
     audio.pause();
     currentAvatarVideo()?.pause();
+    currentSequenceAudio()?.pause();
     playing = false;
     stopSyncLoop();
     setStatus("Paused");
@@ -1746,6 +2063,7 @@ export function createLecturePlayer({
     if (!activeTimelineManifest) return false;
     audio.pause();
     audio.currentTime = 0;
+    currentSequenceAudio()?.pause();
     playing = false;
     stopSyncLoop();
     clearCompletionTimers();
@@ -1780,7 +2098,7 @@ export function createLecturePlayer({
   }
 
   function slideSeekLimit(slide = currentSlide()) {
-    return Number(audio.duration || slide?.speech?.audio_duration_sec || slide?.duration || 0);
+    return Number(slide?.duration || audio.duration || slide?.speech?.audio_duration_sec || 0);
   }
 
   function seekCurrentSlideMedia(localSeconds) {
@@ -1809,6 +2127,7 @@ export function createLecturePlayer({
     if (wasPlaying) {
       audio.play().catch(() => {});
       avatarVideo?.play().catch(() => {});
+      currentSequenceAudio()?.play().catch(() => {});
       stopSyncLoop();
       syncPlaybackLoop();
     }
@@ -1817,8 +2136,12 @@ export function createLecturePlayer({
 
   async function seekSlide(localSeconds) {
     if (!activeTimelineManifest) return false;
-    if (seekCurrentSlideMedia(localSeconds)) return true;
     const shouldResume = playing;
+    if (normalizeExplicitVideoSequence(currentSlide()?.avatar?.video_sequence).length) {
+      await loadSlide(currentSlideIndex, Number(localSeconds || 0), shouldResume);
+      return true;
+    }
+    if (seekCurrentSlideMedia(localSeconds)) return true;
     await loadSlide(currentSlideIndex, Number(localSeconds || 0), shouldResume);
     return true;
   }
@@ -1850,6 +2173,10 @@ export function createLecturePlayer({
     if (avatarVideo) {
       avatarVideo.playbackRate = normalized;
     }
+    const sequenceAudio = currentSequenceAudio();
+    if (sequenceAudio) {
+      sequenceAudio.playbackRate = normalized;
+    }
     return playbackRate;
   }
 
@@ -1870,6 +2197,7 @@ export function createLecturePlayer({
     const time = currentGlobalTime();
     const shouldResume = playing;
     audio.pause();
+    currentSequenceAudio()?.pause();
     stopSyncLoop();
     if (baseTimelineManifest.source_schema === "webdeck.avatar_video_job.v1") {
       activeTimelineManifest = cloneJson(baseTimelineManifest);
@@ -1892,6 +2220,7 @@ export function createLecturePlayer({
 
   function pauseAudio() {
     audio.pause();
+    currentSequenceAudio()?.pause();
     playing = false;
     stopSyncLoop();
     updateProgressUi();
@@ -1900,6 +2229,7 @@ export function createLecturePlayer({
 
   async function resumeAudio() {
     await audio.play();
+    currentSequenceAudio()?.play().catch(() => {});
     playing = true;
     stopSyncLoop();
     syncPlaybackLoop();
@@ -1909,6 +2239,7 @@ export function createLecturePlayer({
   function stopAudio() {
     audio.pause();
     audio.currentTime = 0;
+    currentSequenceAudio()?.pause();
     playing = false;
     stopSyncLoop();
     syncCueAtTime(true);
@@ -1918,6 +2249,7 @@ export function createLecturePlayer({
 
   function pauseAvatar() {
     currentAvatarVideo()?.pause();
+    currentSequenceAudio()?.pause();
     return Boolean(currentAvatarVideo());
   }
 
@@ -1925,6 +2257,7 @@ export function createLecturePlayer({
     const avatarVideo = currentAvatarVideo();
     if (!avatarVideo) return false;
     await avatarVideo.play().catch(() => {});
+    await currentSequenceAudio()?.play().catch(() => {});
     return true;
   }
 
@@ -1977,7 +2310,14 @@ export function createLecturePlayer({
     revealControls({ pin: !playing });
   });
   ui.volume.addEventListener("input", () => {
-    audio.volume = clampNumber(ui.volume.value, 0, 1, 1);
+    const nextVolume = clampNumber(ui.volume.value, 0, 1, 1);
+    audio.volume = nextVolume;
+    const sequenceAudio = currentSequenceAudio();
+    if (sequenceAudio) sequenceAudio.volume = nextVolume;
+    const avatarVideo = currentAvatarVideo();
+    if (avatarVideo && avatarVideo.dataset.videoAudio === "enabled") {
+      avatarVideo.volume = nextVolume;
+    }
     if (audio.volume > 0 && !audioEnabled) setAudioEnabled(true);
     revealControls();
   });

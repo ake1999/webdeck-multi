@@ -1,0 +1,21 @@
+{
+  "repo_root": "../..",
+  "model_name": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+  "speaker": "Aiden",
+  "language": "English",
+  "device": "cuda:0",
+  "dtype": "bfloat16",
+  "jobs_root": "generated/jobs/tts",
+  "outputs_audio_root": "generated/outputs/audio",
+  "outputs_alignment_root": "generated/outputs/alignment",
+  "status_root": "generated/status",
+  "max_jobs": 0,
+  "overwrite": false,
+  "default_instruction": "Speak clearly like Arian, an experienced Calculus 1 instructor for Arian University. Keep the voice natural, warm, confident, and visual. Do not sound robotic or like a slide reader.",
+  "pause_between_segments_ms": 120,
+  "log_level": "INFO",
+  "worker_name": "qwen_tts_worker_arian_calculus",
+  "save_debug_segment_wavs": false,
+  "test_output_root": "tools/qwen_tts_worker/test_outputs",
+  "seed": 1234
+}

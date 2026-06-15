@@ -1,0 +1,389 @@
+{
+  "lecture_meta": {
+    "title": "Functions of Several Variables",
+    "topic": "Multivariable Functions, Domains, Level Curves and Surfaces",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Determine domains and ranges for functions of two or more variables",
+      "Sketch level curves and level surfaces as geometric representations",
+      "Interpret multivariable functions in real-world contexts",
+      "Connect algebraic formulas to geometric visualizations"
+    ],
+    "prerequisite_reminder": "Familiarity with single-variable functions, graphing, and basic set notation is assumed."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From One Input to Many",
+      "left": {
+        "content_type": "text",
+        "content": "**Everyday examples:**\n- Temperature $T$ on a map depends on $(x,y)$ — $T=f(x,y)$.\n- Elevation contours on a hiking map.\n- Wind-chill index $W = f(T,v)$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Weather map with temperature color overlay",
+        "visual_spec": "Plot a 2D colormap of temperature over a rectangular region (e.g., 0≤x≤10, 0≤y≤6). Use a smooth function like T(x,y)=20 - 0.5*((x-5)^2 + (y-3)^2). Add a colorbar. Show a few labeled (x,y) points. Visually indicate that each point has a single temperature value.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nx = np.linspace(0,10,200)\ny = np.linspace(0,6,150)\nX,Y = np.meshgrid(x,y)\nT = 20 - 0.5*((X-5)**2 + (Y-3)**2)\nplt.figure(figsize=(6,5))\nplt.pcolormesh(X,Y,T, shading='auto', cmap='coolwarm')\nplt.colorbar(label='Temperature (°C)')\nplt.xlabel('x (km)')\nplt.ylabel('y (km)')\nplt.title('Temperature Map')\nplt.scatter([2,7,4],[4,2,5], color='black', s=50, zorder=5)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Temperature depends on location: $T=f(x,y)$. Each point gets one temperature — that's a function of two variables.",
+      "teacher_narration": "Welcome to multivariable calculus. So far you have studied functions that take a single number and return a single number. But real-world quantities often depend on many factors. Think of a weather map: at every point on the map, defined by its x and y coordinates, there is exactly one temperature. That is a function of two variables. We measure elevation, cost, wind chill — all depend on more than one input. Today we will learn how to describe and visualise such functions.",
+      "student_prompt": "Can you think of another quantity that depends on two or more variables? Share one example.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Function of Two Variables — Definition",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Definition:** A function $f$ of two variables assigns to each ordered pair $(x,y)$ in a set $D$ a unique real number $f(x,y)$.\n- **Domain** $D$: set of all allowed inputs.\n- **Range:** $\\{f(x,y) \\mid (x,y) \\in D \\}$.\n- **Notation:** $z = f(x,y)$.\n\n**Domain restrictions usually come from:**\n- Denominator $\\neq 0$.\n- Radicand $\\geq 0$.\n- Argument of log $> 0$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Domain shading for f(x,y)=ln(y-x^2)",
+        "visual_spec": "Plot a 2D region for the domain of f(x,y)=ln(y-x^2). Shade the region where y > x^2. Draw the parabola y=x^2 as a dashed curve. Place a point inside the shaded region and label it 'allowed input (x,y)'. Use x from -3 to 3, y from -2 to 5. Add a contour of the function if helpful.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nx = np.linspace(-3,3,400)\ny = np.linspace(-2,5,400)\nX,Y = np.meshgrid(x,y)\ncond = Y > X**2\nplt.figure(figsize=(6,5))\nplt.contourf(X,Y,cond, levels=[0.5,1], colors=['lightblue'], alpha=0.6)\nplt.plot(x, x**2, 'k--', label='y = x^2')\nplt.scatter(1,3, color='red', s=50, zorder=5, label='(1,3)')\nplt.xlabel('x')\nplt.ylabel('y')\nplt.xlim(-3,3)\nplt.ylim(-2,5)\nplt.legend()\nplt.title('Domain of f(x,y) = ln(y - x^2): y > x^2')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "A function of two variables: each input pair maps to exactly one output. Domain = allowed inputs.",
+      "teacher_narration": "Here is the formal definition. A function of two variables takes an ordered pair and returns a single number. We denote it by f of x y. The set of all possible input pairs is called the domain. Often the domain is restricted because we cannot divide by zero, take the square root of a negative number, or take the logarithm of a non-positive argument. For example, look at the function natural log of y minus x squared. The logarithm demands its argument be positive, so we require y greater than x squared. That gives us the region above the parabola. The red dot, (1,3), is inside the domain because 3 minus 1 squared equals 2, positive.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Functions of Three or More Variables",
+      "left": {
+        "content_type": "text",
+        "content": "**Definition:** A function $f$ of three variables assigns to each ordered triple $(x,y,z)$ in $D \\subseteq \\mathbb{R}^3$ a unique number $f(x,y,z)$.\n\n**General:** $f: \\mathbb{R}^n \\rightarrow \\mathbb{R}$, $z = f(x_1, x_2, \\dots, x_n)$.\n\n**Example:** Temperature on Earth depends on longitude $x$, latitude $y$, and time $t$: $T = f(x,y,t)$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Domain of f(x,y,z)=ln(z-y)+xy sin z",
+        "visual_spec": "Show a 3D scatter plot of random points in R^3 that satisfy z > y. Use a transparent half-space to indicate the region. Annotate a few points that are inside and one point that is outside (z ≤ y). Axes labeled x, y, z.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nnp.random.seed(42)\npts = np.random.uniform(-2,2,size=(100,3))\ncond = pts[:,2] > pts[:,1]\nfig = plt.figure(figsize=(6,5))\nax = fig.add_subplot(111, projection='3d')\nax.scatter(pts[cond,0], pts[cond,1], pts[cond,2], c='blue', alpha=0.5, label='inside domain')\nax.scatter(pts[~cond,0], pts[~cond,1], pts[~cond,2], c='red', marker='x', label='outside domain')\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_zlabel('z')\nax.legend()\nax.view_init(elev=20, azim=30)\nplt.title('Domain of f(x,y,z) = ln(z-y) + xy sin z')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "f(x,y,z) = ln(z−y) requires z > y. Domain: half‑space above plane z = y.",
+      "teacher_narration": "We can extend the idea to three variables – a function that takes a triple and returns a number. For example, temperature at a point on Earth depends on longitude, latitude, and time. The domain is now a region in three‑dimensional space. Consider the function natural log of z minus y plus xy sine z. The logarithm forces z minus y to be positive, so the domain is the set of points where z is greater than y. In the 3D plot, blue points satisfy that condition; red crosses do not. As the number of variables grows, the domain becomes a region in higher‑dimensional space.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Level Curves: Topographic Maps of z = f(x,y)",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Definition:** The level curves of $f(x,y)$ are curves in the $xy$-plane given by:\n$$f(x,y) = k \\quad (k \\text{ constant})$$\n\n**Properties:**\n- Each curve joins points with the same function value.\n- Level curves never intersect (otherwise a point would have two output values).\n- They are the projection of horizontal slices of $z=f(x,y)$ onto the $xy$-plane."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Level curves of f(x,y)=x^2+y^2 for k=1,2,3,4",
+        "visual_spec": "Plot a contour plot of f(x,y)=x^2+y^2 on the domain -3≤x≤3, -3≤y≤3. Show contours for k=1,2,3,4 as labeled circles. Use a color map for the function surface in the background. Add a colorbar.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nx = np.linspace(-3,3,300)\ny = np.linspace(-3,3,300)\nX,Y = np.meshgrid(x,y)\nZ = X**2 + Y**2\nplt.figure(figsize=(6,5))\ncontour = plt.contour(X,Y,Z, levels=[1,2,3,4], colors='k', linewidths=2)\nplt.clabel(contour, inline=1, fontsize=10, fmt='k=%d')\nplt.contourf(X,Y,Z, levels=20, cmap='viridis', alpha=0.5)\nplt.colorbar(label='f(x,y)')\nplt.xlabel('x')\nplt.ylabel('y')\nplt.axis('equal')\nplt.title('Level curves of f(x,y)=x^2+y^2')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Level curves: $f(x,y)=k$. They are the 2D slices of the 3D graph – like elevation contours on a map.",
+      "teacher_narration": "One of the most powerful ways to visualise a function of two variables is through its level curves. A level curve is the set of points in the xy‑plane where the function takes a constant value k. Think of them as elevation contours on a hiking map – each curve connects points of equal height. Here we have the function x squared plus y squared. Its level curves are concentric circles: for k equals one, a circle of radius one; for k equals two, radius root two, and so on. Notice that level curves never cross, because the function cannot have two different values at the same point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Level Surfaces: Constant‑Value Layers in ℝ³",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Definition:** The level surfaces of $f(x,y,z)$ are surfaces in $\\mathbb{R}^3$ given by:\n$$f(x,y,z) = k \\quad (k \\text{ constant})$$\n\n**Properties:**\n- Each point on a level surface yields the same function value.\n- Level surfaces never intersect.\n- They partition $\\mathbb{R}^3$ into layers of constant output."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Level surfaces of f(x,y,z)=x^2+y^2+z^2 for k=1,2,3",
+        "visual_spec": "In a 3D plot, draw three transparent spheres centred at the origin with radii 1, sqrt(2), sqrt(3). Use distinct colors (e.g., light red, light blue, light green). Show a color legend indicating corresponding k values. Ensure proper alpha blending for transparency.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(7,6))\nax = fig.add_subplot(111, projection='3d')\n\n# create sphere mesh\nu, v = np.mgrid[0:2*np.pi:30j, 0:np.pi:20j]\n\nfor k, color in zip([1,2,3], ['lightcoral','lightblue','lightgreen']):\n    r = np.sqrt(k)\n    x = r * np.cos(u) * np.sin(v)\n    y = r * np.sin(u) * np.sin(v)\n    z = r * np.cos(v)\n    ax.plot_surface(x, y, z, color=color, alpha=0.4, edgecolor='gray', linewidth=0.5)\n\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_zlabel('z')\nax.set_title('Level surfaces of f(x,y,z)=x²+y²+z²')\nax.view_init(elev=20, azim=40)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Level surfaces: $f(x,y,z)=k$. Concentric spheres for $f=x^2+y^2+z^2$.",
+      "teacher_narration": "For functions of three variables, the geometry becomes truly three‑dimensional. A level surface is the set of points in space where the function equals a constant. Take f of x,y,z equals x squared plus y squared plus z squared. When we set this equal to k, we get the equation of a sphere centred at the origin with radius root k. For k equal to one, we have a sphere of radius one; for k equal to two, a slightly larger sphere; for k equal to three, an even larger sphere. All points on a given sphere share the same function value. This idea will help us think about functions in higher dimensions.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "full_width",
+      "title": "Interactive: Concentric Spheres Level Surfaces",
+      "left": {
+        "content_type": "text",
+        "content": "Experiment with the level value $k$ to see how the sphere changes radius.\n\n**Controls:**\n- **Slider $k$**: range 0.1 to 9, step 0.1.\n- **Button**: reset to $k=1$.\n\n**Observations:**\n- For $k>0$, you get a sphere; for $k=0$, a single point; $k$ cannot be negative because $x^2+y^2+z^2 \\ge 0$."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "An interactive 3D plot of a sphere whose radius depends on k using matplotlib.widgets. Use slider for k, button to reset.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, Button\n\nfig = plt.figure(figsize=(7,6))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.25)\n\nu, v = np.mgrid[0:2*np.pi:30j, 0:np.pi:20j]\nk_init = 1.0\nr = np.sqrt(k_init)\n\n# create initial sphere\nx = r * np.cos(u) * np.sin(v)\ny = r * np.sin(u) * np.sin(v)\nz = r * np.cos(v)\nsurf = ax.plot_surface(x, y, z, color='lightblue', alpha=0.5, edgecolor='gray')\nax.set_xlim(-3,3)\nax.set_ylim(-3,3)\nax.set_zlim(-3,3)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_zlabel('z')\nax.set_title('Level surface: x²+y²+z² = k')\n\n# slider\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider_k = Slider(ax_slider, 'k', 0.1, 9.0, valinit=k_init, valstep=0.1)\n\ndef update(val):\n    k = slider_k.val\n    r = np.sqrt(k)\n    # remove old surface\n    global surf\n    surf.remove()\n    x = r * np.cos(u) * np.sin(v)\n    y = r * np.sin(u) * np.sin(v)\n    z = r * np.cos(v)\n    surf = ax.plot_surface(x, y, z, color='lightblue', alpha=0.5, edgecolor='gray')\n    fig.canvas.draw_idle()\n\nslider_k.on_changed(update)\n\n# reset button\nax_button = plt.axes([0.4, 0.05, 0.2, 0.04])\nbutton = Button(ax_button, 'Reset to k=1')\ndef reset(event):\n    slider_k.set_val(1.0)\nbutton.on_clicked(reset)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for k from 0.1 to 9.0",
+          "Button: Reset to k=1"
+        ]
+      },
+      "on_screen_text": "Interactive: move the slider to see how the sphere’s radius changes with $k$.",
+      "teacher_narration": "Let’s play with the level surface idea interactively. Here we have a 3D plot of the sphere x squared plus y squared plus z squared equals k, with k controlled by a slider. As you move the slider, the sphere grows or shrinks. When k is near zero, the sphere collapses to a point. Notice that k must be non‑negative because the sum of squares can never be negative. This visual tool helps reinforce the concept that each level surface corresponds to exactly one constant output value.",
+      "student_prompt": "Predict: What happens if k = 0? (Answer: the sphere becomes a single point at the origin.)",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm‑Up: Finding a Domain (Two Variables)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find the domain of $f(x,y) = \\sqrt{4 - x^2 - y^2}$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | Radicand $\\ge 0$ | $4 - x^2 - y^2 \\ge 0$ |\n| 2 | Rearrange | $x^2 + y^2 \\le 4$ |\n| 3 | Interpret | Disk of radius 2 centered at $(0,0)$ |\n| 4 | Write domain | $D = \\{ (x,y) \\mid x^2 + y^2 \\le 4 \\}$ |\n\n**Visual:** All points inside and on the circle of radius 2."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Domain: inside and on the circle $x^2+y^2=4$.",
+      "teacher_narration": "Let’s work through a simple example together. We want the domain of the square root of 4 minus x squared minus y squared. The square root requires its inside to be non‑negative. So we set 4 minus the sum of squares greater than or equal to zero, giving x squared plus y squared less than or equal to 4. This describes a disk of radius two centred at the origin. Every point inside that disk, including the boundary, is a valid input. The function is not defined for points outside the disk.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard: Level Curves of f(x,y)=x/y",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find and sketch level curves of $f(x,y)=x/y$ for $k = -2,-1,0,1,2$.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Set $f(x,y)=k$ | $x/y = k$ |\n| 2 | Solve for $x$ | $x = k y$ (lines through origin) |\n| 3 | Note restriction | $y \\neq 0$ (function undefined when $y=0$) |\n| 4 | $k=0$ | $x=0$ (y‑axis, excluding origin) |\n| 5 | $k=\\pm1$ | $x=y$ and $x=-y$ (diagonals) |\n| 6 | $k=\\pm2$ | $x=2y$ and $x=-2y$ (steeper lines) |\n\n**Caution:** The origin $(0,0)$ is excluded from all curves."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Level curves of $x/y = k$: lines through origin, but $y \\neq 0$.",
+      "teacher_narration": "Now a standard problem: level curves of f of x,y equals x over y. We set that equal to constant k, giving x equals k y. These are straight lines through the origin. But there is a critical restriction: the denominator y cannot be zero. So the entire x‑axis is excluded. For k equals zero, the equation becomes x equals zero, which is the y‑axis, but again the origin is not allowed because y would be zero there. For k equals plus or minus one, we get the diagonals; for k equals plus or minus two, steeper lines. Always remember to exclude points where the original function is undefined.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "⚠️ Misconception: Forgetting Domain Restrictions",
+      "left": {
+        "content_type": "concept",
+        "content": "**Wrong approach:** A student says the level curves of $f(x,y)=x/y$ are all lines $x=ky$ for $k\\in\\mathbb{R}$, including $y=0$.\n\n**Why it fails:** The function is not defined when $y=0$. The point $(0,0)$ would appear on $x=0$ if we ignored this, but $f(0,0)$ is undefined. Also, the line $y=0$ itself is not a level curve because it is not in the domain.\n\n**Correct approach:** Always start by finding the domain. Then draw level curves only within that domain."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Contrast: wrong vs correct level curve set",
+        "visual_spec": "Two subplots side by side. Left: 'Wrong' — shows lines x=ky for k=-2,-1,0,1,2, including the x-axis (y=0) but with a cross at origin. Right: 'Correct' — shows same lines but with y=0 axis removed and a hole at (0,0). Use different colours for each k. Add a note: 'Domain: y ≠ 0'.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig, (ax1, ax2) = plt.subplots(1,2, figsize=(10,4))\n\nk_vals = [-2,-1,0,1,2]\ncolors = ['red','orange','green','blue','purple']\nx_vals = np.linspace(-5,5,300)\n\nfor i,k in enumerate(k_vals):\n    if k == 0:\n        # line x=0\n        ax1.plot([0,0], [-5,5], color=colors[i], label=f'k={k}')\n        ax2.plot([0,0], [-5,5], color=colors[i], label=f'k={k}')\n    else:\n        y = x_vals / k if k != 0 else np.zeros_like(x_vals)\n        ax1.plot(k*y, y, color=colors[i])\n        ax2.plot(k*y, y, color=colors[i])\n\n# wrong: include y=0 line (but actually we already excluded y=0 by k definition? The problem is the line y=0 itself is not a level curve for any k because x/y undefined. So we need to show that y=0 is not present in correct plot.\n# Actually the wrong plot includes the line y=0? The student might think that when k=0 the line is x=0 (y-axis) which includes origin, but also think that the x-axis (y=0) could be a level curve for some k? Let's clarify:\n# In wrong plot, we can draw a dashed line y=0 and label 'incorrect level curve'.\nax1.plot(x_vals, np.zeros_like(x_vals), 'k--', label='wrong y=0')\nax1.set_title('Wrong: includes y=0 as level curve')\nax1.set_xlim(-5,5)\nax1.set_ylim(-5,5)\nax1.axhline(0, color='gray', lw=0.5)\nax1.axvline(0, color='gray', lw=0.5)\nax1.set_xlabel('x')\nax1.set_ylabel('y')\nax1.legend()\n\n# correct: exclude y=0 and origin\n# We already plotted lines, but we can add a hole at origin.\nax2.scatter(0,0, facecolors='none', edgecolors='red', s=100, label='hole')\nax2.set_title('Correct: hole at (0,0), no y=0')\nax2.set_xlim(-5,5)\nax2.set_ylim(-5,5)\nax2.axhline(0, color='gray', lw=0.5)\nax2.axvline(0, color='gray', lw=0.5)\nax2.set_xlabel('x')\nax2.set_ylabel('y')\nax2.legend()\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Mistake: forgetting $y\\neq0$ causes invalid level curves. Domain first, then sketch.",
+      "teacher_narration": "A common trap: when finding level curves, students often solve x over y equals k without checking where the function itself exists. They might draw the line y equals zero, thinking it corresponds to some k, but the function is never defined there. In the wrong plot, the dashed line y equals zero appears as a supposed level curve, but it is not. The correct approach is to first find the domain: y not equal to zero. Then draw only those portions of the lines where y is non‑zero. At the origin, we must show a hole because both coordinates are zero, and the function is undefined there. This careful habit will prevent many errors.",
+      "student_prompt": "On a piece of paper, draw the correct level curves for k=0,1,2 including the hole at origin.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "visual_lab",
+      "layout": "full_width",
+      "title": "Interactive: Level Curves Explorer",
+      "left": {
+        "content_type": "text",
+        "content": "Explore level curves of $f(x,y) = x^2 + 4y^2$. Use the slider to change $k$ and see the corresponding ellipse.\n\n**Controls:**\n- **Slider $k$**: 0 to 10, step 0.5.\n- **Checkbox**: show/hide the function's 3D surface.\n\n**Notice:** For $k>0$, ellipses become larger; for $k=0$, just a point at origin."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "Interactive 2D plot with contour lines. Slider changes k, checkbox toggles surface colormap in background.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, CheckButtons\n\nx = np.linspace(-3,3,400)\ny = np.linspace(-3,3,400)\nX,Y = np.meshgrid(x,y)\nZ = X**2 + 4*Y**2\n\nfig, ax = plt.subplots(figsize=(7,5))\nplt.subplots_adjust(bottom=0.25)\n\n# initial contour at k=1\ncontour = ax.contour(X,Y,Z, levels=[1], colors='k', linewidths=2)\nax.clabel(contour, inline=1, fontsize=10)\nax.set_xlim(-3,3)\nax.set_ylim(-3,3)\nax.set_aspect('equal')\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Level curves of f(x,y)=x²+4y²')\n\n# background surface (optional)\nsurf = ax.contourf(X,Y,Z, levels=20, cmap='viridis', alpha=0.4)\nshow_surf = True\n\n# slider\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider_k = Slider(ax_slider, 'k', 0.1, 10.0, valinit=1.0, valstep=0.5)\n\ndef update(val):\n    k = slider_k.val\n    ax.clear()\n    ax.contour(X,Y,Z, levels=[k], colors='k', linewidths=2)\n    ax.clabel(contour, inline=1, fontsize=10)\n    if show_surf:\n        ax.contourf(X,Y,Z, levels=20, cmap='viridis', alpha=0.4)\n    ax.set_xlim(-3,3)\n    ax.set_ylim(-3,3)\n    ax.set_aspect('equal')\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n    ax.set_title(f'Level curve: x²+4y² = {k:.1f}')\n    fig.canvas.draw_idle()\n\nslider_k.on_changed(update)\n\n# checkbox\nax_check = plt.axes([0.05, 0.05, 0.15, 0.05])\ncheck = CheckButtons(ax_check, ['Show surface'], [show_surf])\ndef toggle(label):\n    global show_surf\n    show_surf = not show_surf\n    update(slider_k.val)\ncheck.on_clicked(toggle)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for k from 0.1 to 10",
+          "Checkbox: show/hide surface"
+        ]
+      },
+      "on_screen_text": "Interactive: change $k$ to see level curves of $x^2+4y^2$ as ellipses.",
+      "teacher_narration": "Let’s explore level curves interactively. The function here is x squared plus 4 y squared. Initially we see a contour line at k equals one, which is an ellipse. Use the slider to change k: as k increases, the ellipse grows; as k approaches zero, it shrinks to a single point at the origin. The checkbox lets you toggle the background colour map, showing the function values across the plane. Notice how each level curve neatly separates higher from lower values. This tool helps you see the connection between the algebraic equation and the geometric shape.",
+      "student_prompt": "What shape do you get for k = 0? (Answer: just the origin point.)",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Tricky: Level Surfaces with Square Root Restriction",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find level surfaces of $f(x,y,z) = \\sqrt{x^2 + y^2 + z^2}$.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Set $f(x,y,z)=k$ | $\\sqrt{x^2 + y^2 + z^2} = k$ |\n| 2 | Square both sides | $x^2 + y^2 + z^2 = k^2$ |\n| 3 | Note $k \\ge 0$ | Square root output is non‑negative |\n| 4 | $k=0$ | Only $(0,0,0)$ |\n| 5 | $k>0$ | Spheres of radius $k$ |\n| 6 | $k<0$ | No level surface exists |\n\n**Watch out:** The output range restricts which $k$ are possible."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "For $f(x,y,z)=\\sqrt{x^2+y^2+z^2}$, level surfaces are spheres only for $k \\ge 0$.",
+      "teacher_narration": "Here is a trickier case. The function f is the square root of the sum of squares. When we set it equal to k, we must remember that the square root can never be negative. So k must be greater than or equal to zero. Squaring both sides gives x squared plus y squared plus z squared equals k squared. For k equals zero, only the origin works. For positive k, we get spheres of radius k, not root k. The key point: the level surface only exists if k lies in the range of the function, which is the set of non‑negative real numbers.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "visual_lab",
+      "layout": "full_width",
+      "title": "Interactive: Level Surfaces of f(x,y,z) = x²+y²+z²",
+      "left": {
+        "content_type": "text",
+        "content": "Explore how the level surface changes with k for the sum of squares function.\n\n**Controls:**\n- **Slider $k$**: 0.1 to 9.0.\n- **Toggle**: show/hide coordinate axes.\n- **Button**: reset to k=1.\n\n**Observation:** The sphere radius is $\\sqrt{k}$. For k near 0, the sphere is tiny."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "Interactive 3D sphere with slider for k, reset button, and checkbox for axes. Use similar code as slide 6 but add axes toggle.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, Button, CheckButtons\n\nfig = plt.figure(figsize=(7,6))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.3)\n\nu, v = np.mgrid[0:2*np.pi:30j, 0:np.pi:20j]\nk_init = 1.0\nr = np.sqrt(k_init)\n\nx = r * np.cos(u) * np.sin(v)\ny = r * np.sin(u) * np.sin(v)\nz = r * np.cos(v)\nsurf = ax.plot_surface(x, y, z, color='lightblue', alpha=0.5, edgecolor='gray')\nax.set_xlim(-3,3)\nax.set_ylim(-3,3)\nax.set_zlim(-3,3)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_zlabel('z')\nax.set_title('Level surface: x²+y²+z² = k')\n\n# slider\nax_slider = plt.axes([0.2, 0.15, 0.6, 0.03])\nslider_k = Slider(ax_slider, 'k', 0.1, 9.0, valinit=k_init, valstep=0.1)\n\ndef update(val):\n    k = slider_k.val\n    r = np.sqrt(k)\n    global surf\n    surf.remove()\n    x = r * np.cos(u) * np.sin(v)\n    y = r * np.sin(u) * np.sin(v)\n    z = r * np.cos(v)\n    surf = ax.plot_surface(x, y, z, color='lightblue', alpha=0.5, edgecolor='gray')\n    ax.set_title(f'Level surface: x²+y²+z² = {k:.1f}')\n    fig.canvas.draw_idle()\n\nslider_k.on_changed(update)\n\n# reset button\nax_button = plt.axes([0.4, 0.05, 0.2, 0.04])\nbutton = Button(ax_button, 'Reset k=1')\ndef reset(event):\n    slider_k.set_val(1.0)\nbutton.on_clicked(reset)\n\n# checkbox for axes\nax_check = plt.axes([0.05, 0.2, 0.15, 0.05])\ncheck = CheckButtons(ax_check, ['Show axes'], [True])\ndef toggle(label):\n    if check.get_status()[0]:\n        ax.set_xlabel('x')\n        ax.set_ylabel('y')\n        ax.set_zlabel('z')\n        ax.xaxis._axinfo['grid']['visible'] = True\n        ax.yaxis._axinfo['grid']['visible'] = True\n        ax.zaxis._axinfo['grid']['visible'] = True\n    else:\n        ax.set_xlabel('')\n        ax.set_ylabel('')\n        ax.set_zlabel('')\n        ax.xaxis._axinfo['grid']['visible'] = False\n        ax.yaxis._axinfo['grid']['visible'] = False\n        ax.zaxis._axinfo['grid']['visible'] = False\n    fig.canvas.draw_idle()\ncheck.on_clicked(toggle)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for k from 0.1 to 9.0",
+          "Button: Reset k=1",
+          "Checkbox: Show/hide axes"
+        ]
+      },
+      "on_screen_text": "Interactive 3D level surface: adjust $k$ to change sphere radius.",
+      "teacher_narration": "Now you can interact with the 3D level surface directly. Using the slider, change k and watch the sphere expand or contract. Notice the radius is the square root of k. At k equals 0.1, the sphere is almost a point. The reset button brings you back to k equals one. You can also toggle the axes labels to get a cleaner view. This kind of hands‑on exploration builds strong intuition for how level surfaces behave in three dimensions.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Edge Case: Double Cone Level Surface",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Describe the level surface $f(x,y,z)=x^2 + y^2 - z^2 = 0$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | Set equal to zero | $x^2 + y^2 - z^2 = 0$ |\n| 2 | Rearrange | $x^2 + y^2 = z^2$ |\n| 3 | $z=0$ | Only point $(0,0,0)$ |\n| 4 | $z=\\pm 1$ | Circle radius 1 at heights $\\pm 1$ |\n| 5 | $z=\\pm 2$ | Circle radius 2 at heights $\\pm 2$ |\n| 6 | Overall | Double cone opening upward and downward |\n\n**Key insight:** Cross‑sections are circles that expand linearly with $|z|$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Level surface $x^2+y^2-z^2=0$: a double cone. Cross‑section circles expand with $|z|$.",
+      "teacher_narration": "This is a more challenging edge case. The level surface for k equals zero of the function x squared plus y squared minus z squared is not a sphere but a double cone. At height z equals zero, only the origin satisfies the equation. As we move up or down, the cross‑sections are circles whose radius equals the absolute value of z. So at height z equals one, we have a circle of radius one; at height two, radius two. The resulting shape is a cone that extends both upward and downward, meeting at the origin. This shows how different functions produce very different level surfaces.",
+      "student_prompt": "What would the level surface look like if we set f(x,y,z)=x^2+y^2-z^2 = 1 instead of 0? (Answer: hyperboloid of one sheet)",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Wind‑Chill Index",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Wind‑chill index $W = f(T,v)$ gives perceived temperature based on actual temperature $T$(°F) and wind speed $v$(mph).\n\n**Part A:** Interpret $f(-15,40) = -30$.\n| Step | Interpretation |\n|------|----------------|\n| 1 | When $T = -15°F$ and $v = 40$ mph… |\n| 2 | …the perceived temperature is $-30°F$. |\n| 3 | Wind makes it feel colder than actual temperature. |\n\n**Part B:** For what $v$ is $f(-20,v) = -30$?\n| Step | Action |\n|------|--------|\n| 1 | This asks: at what wind speed does $-20°F$ feel like $-30°F$? |\n| 2 | This is finding a level curve value (fix $T$, treat $f$ as function of $v$). |\n| 3 | From wind‑chill table: $v \\approx 15$ mph (if given). |\n\n**Connection:** For fixed $T$, $W$ as function of $v$ is decreasing, so solve for $v$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Wind‑chill: $W = f(T,v)$. For fixed $T$, the level curves $W = k$ give wind speeds that feel the same.",
+      "teacher_narration": "Let's look at a real‑world application. The wind‑chill index tells us how cold it feels when wind is factored in. Part A: f of minus 15 and 40 equals minus 30 means that when the actual temperature is minus 15 and the wind is 40 miles per hour, it feels like minus 30. Part B: We are asked for which wind speed does minus 20 feel like minus 30. This is exactly a level curve problem: we fix T equals minus 20 and find v such that W equals minus 30. Using a wind‑chill table, the answer is about 15 miles per hour. This connects the abstract idea of level curves to a practical question.",
+      "student_prompt": "If the wind speed increases, does the perceived temperature increase or decrease? (Answer: decrease, because wind‑chill makes it feel colder.)",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof: Level Surfaces of $x^2+y^2+z^2$",
+      "left": {
+        "content_type": "steps",
+        "content": "**Theorem:** For $f(x,y,z)=x^2+y^2+z^2$, each level surface $f(x,y,z)=k$ (with $k>0$) is a sphere centered at the origin.\n\n**Proof:**\n| Step | Derivation | Explanation |\n|------|------------|-------------|\n| 1 | Set $f(x,y,z)=k$ | $x^2+y^2+z^2 = k$ |\n| 2 | If $k>0$, define $r=\\sqrt{k}$ | Then $x^2+y^2+z^2 = r^2$ |\n| 3 | Recall sphere equation | A sphere centered at $(0,0,0)$ with radius $r$ is $x^2+y^2+z^2 = r^2$ |\n| 4 | Conclusion | Level surface is sphere of radius $\\sqrt{k}$ |\n| 5 | $k=0$ | Only origin: degenerate sphere |\n| 6 | $k<0$ | No points because left side is always $\\ge 0$ |\n\n**Insight:** Each $k$ gives a different sphere; they are concentric."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof that level surfaces are concentric spheres – a foundational geometric fact.",
+      "teacher_narration": "For those who want a deeper understanding, here is a formal proof. Set f of x,y,z equal to k. For k positive, let r be root k, so the equation becomes x squared plus y squared plus z squared equals r squared. That is precisely the equation of a sphere centered at the origin with radius r. For k equal to zero, only the origin satisfies the equation – a sphere of radius zero. For negative k, there is no solution because the sum of squares is always non‑negative. Thus every level surface is a concentric sphere. This simple but fundamental fact appears again and again in multivariable calculus.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**What we covered:**\n- **Domain** of a multivariable function: intersection of restrictions (denominator, square root, log).\n- **Level curves** of $f(x,y)$: curves $f(x,y)=k$ in the $xy$-plane.\n- **Level surfaces** of $f(x,y,z)$: surfaces $f(x,y,z)=k$ in $\\mathbb{R}^3$.\n- **Geometric interpretation**: level curves/surfaces are constant‑value sets that never intersect.\n\n**Three facts to remember:**\n1. Domain first: always check where the function is defined.\n2. Level curves = topographic slices; level surfaces = 3D constant layers.\n3. Different $k$ values give different curves/surfaces – useful for visualisation."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary: domain, level curves, level surfaces. Always start with the domain.",
+      "teacher_narration": "Today we learned how to handle functions that depend on two or more variables. The key steps: first find the domain by checking restrictions like denominator non‑zero or radicand non‑negative. Then use level curves for two‑variable functions – they are like contour lines on a map. For three variables, we use level surfaces, which are constant‑value layers in space. Remember that level curves and surfaces never intersect because each point has a single function value. These concepts form the foundation for all of multivariable calculus. Practice with the problems provided and don't forget to always check the domain first.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

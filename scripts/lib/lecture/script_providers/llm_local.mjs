@@ -71,6 +71,60 @@ function compactLayoutElements(layoutSlide) {
   }));
 }
 
+function compactMedia(media) {
+  if (!isObject(media)) return null;
+  return {
+    id: media.id || "",
+    kind: media.kind || "",
+    widget: media.widget || "",
+    title: media.title || "",
+    caption: media.caption || "",
+    source_spec: media.sourceSpec || "",
+  };
+}
+
+function compactBlock(block) {
+  if (!isObject(block)) return null;
+  return {
+    id: block.id || "",
+    type: block.type || "",
+    title: block.title || "",
+    text: block.text || block.content || "",
+    formula: block.formula || "",
+    prompt: block.prompt || "",
+    items: asArray(block.items).map((item) => ({
+      id: item?.id || "",
+      text: typeof item === "string" ? item : item?.text || item?.say || "",
+      children: asArray(item?.children).map((child) => ({
+        id: child?.id || "",
+        text: child?.text || child?.say || "",
+      })),
+    })),
+    steps: asArray(block.steps).map((step) => ({
+      id: step?.id || "",
+      text: typeof step === "string" ? step : step?.text || step?.say || "",
+    })),
+    pairs: asArray(block.pairs).map((pair) => ({
+      label: pair?.label || "",
+      text: pair?.text || "",
+    })),
+    reveal: block.reveal ? { text: block.reveal.text || "" } : null,
+    headers: asArray(block.headers),
+    rows: asArray(block.rows).slice(0, 4),
+  };
+}
+
+function compactColumn(column) {
+  if (!isObject(column)) return null;
+  return {
+    lead: column.lead || "",
+    bullets: asArray(column.bullets).map((item) => (typeof item === "string" ? item : item?.text || item?.say || "")),
+    paragraphs: asArray(column.paragraphs).map((item) => (typeof item === "string" ? item : item?.text || item?.say || "")),
+    blocks: asArray(column.blocks).map(compactBlock).filter(Boolean),
+    media: compactMedia(column.media),
+  };
+}
+
 function compactRawSlide(rawSlide) {
   const out = {
     title: rawSlide?.title || "",
@@ -88,6 +142,12 @@ function compactRawSlide(rawSlide) {
   if (rawSlide?.question) out.question = rawSlide.question;
   if (rawSlide?.correct) out.correct = rawSlide.correct;
   if (rawSlide?.explain) out.explain = rawSlide.explain;
+  if (Array.isArray(rawSlide?.blocks)) {
+    out.blocks = rawSlide.blocks.map(compactBlock).filter(Boolean);
+  }
+  if (rawSlide?.media) out.media = compactMedia(rawSlide.media);
+  if (rawSlide?.left) out.left = compactColumn(rawSlide.left);
+  if (rawSlide?.right) out.right = compactColumn(rawSlide.right);
   return out;
 }
 
@@ -492,7 +552,19 @@ export function validateScriptContinuitySegments(segments, requestContext, promp
   return errors;
 }
 
-async function postJson(url, payload, timeoutMs) {
+async function readApiKey(options = {}) {
+  const direct = String(options.scriptApiKey || process.env.WEBDECK_SCRIPT_API_KEY || "").trim();
+  if (direct) return direct;
+  const keyFile = String(options.scriptApiKeyFile || process.env.WEBDECK_SCRIPT_API_KEY_FILE || "").trim();
+  if (!keyFile) return "";
+  return (await readFile(keyFile, "utf8")).trim();
+}
+
+function authHeaders(apiKey) {
+  return apiKey ? { authorization: `Bearer ${apiKey}` } : {};
+}
+
+async function postJson(url, payload, timeoutMs, headers = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -500,6 +572,7 @@ async function postJson(url, payload, timeoutMs) {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        ...headers,
       },
       body: JSON.stringify(payload),
       signal: controller.signal,
@@ -530,7 +603,7 @@ async function callOllama({ endpoint, model, temperature, messages, timeoutMs })
   return extractContentString(response?.message?.content || response?.response || "");
 }
 
-async function callOpenAiCompatible({ endpoint, model, temperature, messages, timeoutMs }) {
+async function callOpenAiCompatible({ endpoint, model, temperature, messages, timeoutMs, apiKey }) {
   const url = endpoint.endsWith("/chat/completions")
     ? endpoint
     : endpoint.includes("/v1")
@@ -541,7 +614,7 @@ async function callOpenAiCompatible({ endpoint, model, temperature, messages, ti
     model,
     temperature,
     messages,
-  }, timeoutMs);
+  }, timeoutMs, authHeaders(apiKey));
 
   return extractContentString(response?.choices?.[0]?.message?.content || response?.output_text || "");
 }
@@ -573,6 +646,7 @@ export async function generateLocalScriptSegments({
   const timeoutMs = Number(options.scriptTimeoutMs || 60000);
   const maxRetries = Math.max(0, Number(options.scriptMaxRetries ?? 3));
   const temperature = Number(options.scriptTemperature ?? 0.2);
+  const apiKey = endpointKind === "openai" ? await readApiKey(options) : "";
   const requestContext = buildScriptWriterRequestContext({
     descriptor,
     runtime,
@@ -605,7 +679,7 @@ export async function generateLocalScriptSegments({
     try {
       const rawText = endpointKind === "ollama"
         ? await callOllama({ endpoint, model, temperature, messages, timeoutMs })
-        : await callOpenAiCompatible({ endpoint, model, temperature, messages, timeoutMs });
+        : await callOpenAiCompatible({ endpoint, model, temperature, messages, timeoutMs, apiKey });
 
       previousRaw = rawText;
       const parsed = maybeJsonFragment(rawText);

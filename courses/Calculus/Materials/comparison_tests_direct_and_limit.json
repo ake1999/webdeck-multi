@@ -1,0 +1,348 @@
+{
+  "lecture_meta": {
+    "title": "Comparison Tests: Direct and Limit Comparison",
+    "topic": "Series Convergence Tests",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Apply the Direct Comparison Test to determine convergence or divergence by term-by-term comparison with a known benchmark series.",
+      "Calculate limits for the Limit Comparison Test and interpret the result to determine series behavior.",
+      "Choose between the Direct and Limit Comparison Tests based on the algebraic structure of the series.",
+      "Analyze series with messy algebraic expressions by identifying asymptotic behavior.",
+      "Interpret convergence or divergence when the limit in the Limit Comparison Test equals 0, a finite nonzero number, or infinity."
+    ],
+    "prerequisite_reminder": "You need to know the p-series and geometric series convergence conditions, and be comfortable with limits at infinity."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "The Big Picture: Comparing Series",
+      "left": {
+        "content_type": "text",
+        "content": "Think of comparing two series like stacking coins or watching plants grow.\n\n**Direct Comparison:** Stack A is always shorter than Stack B. If Stack B is finite, Stack A must be finite too.\n\n**Limit Comparison:** Two plants grow at rates that settle into a constant ratio. If one doesn't run away, neither does the other."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side cartoon: left shows coin stacks (one shorter, one taller with 'Converges' label); right shows two plants with height ratio arrows converging to 2:1.",
+        "visual_spec": "Create a single figure with two subplots. Left subplot: bar chart of two stacks of coins (vertical bars) for n=1 to 5, with one stack clearly shorter, label 'Converges' above the taller one. Right subplot: two growing plants (lines) with label 'Ratio → constant', and annotate with 'Limit Comparison'. Use matplotlib. Colors: coins gold, plants green and blue.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))\n\n# Left: coin stacks\nn = np.arange(1, 6)\na_n = 1 / n**2\nb_n = 1 / n\nax1.bar(n - 0.2, a_n, width=0.3, color='gold', label='$a_n$')\nax1.bar(n + 0.2, b_n, width=0.3, color='orange', label='$b_n$')\nax1.set_title('Direct Comparison')\nax1.set_ylabel('Term value')\nax1.legend()\n\n# Right: growth\nn_fine = np.linspace(1, 10, 100)\na_plant = 1 - np.exp(-n_fine/3)\nb_plant = 2 - 2*np.exp(-n_fine/3)\nax2.plot(n_fine, a_plant, 'b-', label='Series A')\nax2.plot(n_fine, b_plant, 'r--', label='Series B')\nax2.annotate('Ratio → 2', xy=(5, 1.5), fontsize=12, color='green')\nax2.set_title('Limit Comparison')\nax2.legend()\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Direct Comparison: If a smaller series fits inside a convergent one, it converges. Limit Comparison: If two series grow at a constant ratio, they share the same fate.",
+      "teacher_narration": "Welcome. Today we explore two powerful tools for deciding whether an infinite series converges or diverges. Think about stacking coins: if you have a pile that is always shorter than a pile you know is finite, your pile must also be finite. That's the direct comparison test. The limit comparison test is like watching two plants grow. Even if one is always twice as tall, if their growth rates settle into a constant ratio, they will both either flourish or both wither. We'll learn when to use each test and see how they handle tricky expressions.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Direct Comparison Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Let $0 \\leq a_n \\leq b_n$ for all large $n$.\n\n$\\bullet$ If $\\sum b_n$ converges, then $\\sum a_n$ converges.\n\n$\\bullet$ If $\\sum a_n$ diverges, then $\\sum b_n$ diverges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two sequences plotted as bars: a_n always below b_n. Highlight the region where a_n is smaller with a shaded area. Show convergence/divergence labels.",
+        "visual_spec": "Plot bar chart for n=1 to 10. Use two sets of bars: a_n (blue) and b_n (orange). Ensure a_n < b_n for all n. Add horizontal line at y=0.3 to indicate convergence threshold. Include annotation: 'If b_n series converges, a_n converges'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(1, 11)\na_n = 1 / (n**2 + 5)\nb_n = 1 / n**2\n\nplt.figure(figsize=(8, 5))\nplt.bar(n - 0.2, a_n, width=0.4, color='steelblue', label='$a_n$ (smaller)')\nplt.bar(n + 0.2, b_n, width=0.4, color='orange', label='$b_n$ (larger)')\nplt.xlabel('n')\nplt.ylabel('Term value')\nplt.title('Direct Comparison: $a_n \\\\leq b_n$')\nplt.legend()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Direct Comparison: Smaller-than-convergent converges; larger-than-divergent diverges. Inequality must go the right direction.",
+      "teacher_narration": "The direct comparison test is intuitive. If each term of your series is less than or equal to the corresponding term of a series that converges, then your series must also converge. Conversely, if each term of your series is greater than or equal to a series that diverges, then your series diverges. The tricky part is deciding which direction the inequality goes. If your series is larger than a convergent series or smaller than a divergent series, the test tells you nothing. So always check the direction carefully.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm-Up: Direct Comparison Example",
+      "left": {
+        "content_type": "steps",
+        "content": "**Series:** $\\displaystyle \\sum_{n=1}^{\\infty} \\frac{1}{n^2+5}$\n\n1. Compare: $\\frac{1}{n^2+5} < \\frac{1}{n^2}$ for all $n\\geq1$.\n\n2. $\\sum \\frac{1}{n^2}$ is a convergent p-series ($p=2>1$).\n\n3. Since it's smaller than a convergent series, the original series converges."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\frac{1}{n^2+5} < \\frac{1}{n^2}$ → converges by Direct Comparison.",
+      "teacher_narration": "Let's try a simple example. For the series 1 over n squared plus 5, notice that the denominator is larger than n squared, so the fraction is smaller than 1 over n squared. The p-series with p equals 2 converges. Because our series is term-by-term smaller, the direct comparison test immediately tells us it converges. No heavy computation needed. The key here was recognizing the inequality direction. If you ever get the inequality backwards, the test won't work.",
+      "student_prompt": "Check the inequality direction: is it always true that $n^2+5 > n^2$?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Limit Comparison Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "Let $a_n>0$, $b_n>0$ and $L = \\lim_{n\\to\\infty} \\frac{a_n}{b_n}$.\n\n- $0<L<\\infty$: both series converge or both diverge.\n- $L=0$ and $\\sum b_n$ converges $\\Rightarrow$ $\\sum a_n$ converges.\n- $L=\\infty$ and $\\sum b_n$ diverges $\\Rightarrow$ $\\sum a_n$ diverges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Line plot of a_n/b_n ratio approaching a constant L. Show horizontal line at L. Include annotations for cases L=0, finite L, L=infinity.",
+        "visual_spec": "Plot ratio a_n/b_n for n from 1 to 50, where a_n = (3n^2+2n+1)/(n^4-5n^3+7) and b_n = 1/n^2. The ratio should approach 3. Show horizontal dashed line at y=3. Add annotations explaining that 0<L<∞ means same fate. Optionally add inset for L=0 case.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(1, 51)\na_n = (3*n**2 + 2*n + 1) / (n**4 - 5*n**3 + 7)\nb_n = 1 / n**2\nratio = a_n / b_n\n\nplt.figure(figsize=(8, 5))\nplt.plot(n, ratio, 'b-', label='$a_n/b_n$')\nplt.axhline(y=3, color='red', linestyle='--', label='$L=3$')\nplt.xlabel('n')\nplt.ylabel('Ratio')\nplt.title('Limit Comparison: Ratio approaches constant')\nplt.legend()\nplt.grid(True, alpha=0.3)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Limit Comparison: If the ratio of terms approaches a finite, nonzero number, both series share the same fate.",
+      "teacher_narration": "The limit comparison test is often more flexible than direct comparison. Instead of needing an inequality that holds for every term, we only need to know the ratio of the terms as n grows large. If that ratio approaches a positive finite number, then the two series are essentially proportional for large n, so they must both converge or both diverge. There are also two one-way cases: if the ratio goes to zero and the comparison series converges, then the original series also converges. If the ratio goes to infinity and the comparison series diverges, the original also diverges. But be careful: in the other combinations, the test is inconclusive.",
+      "student_prompt": "What do you think happens if the ratio approaches 0 but the comparison series diverges?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Prediction Moment: Limit Comparison",
+      "left": {
+        "content_type": "text",
+        "content": "**Try it:** Determine the convergence of $\\displaystyle \\sum_{n=1}^{\\infty} \\frac{3n^2+2n+1}{n^4-5n^3+7}$.\n\n- What is the leading behavior?\n- Choose a $b_n$.\n- Compute the limit $L = \\lim \\frac{a_n}{b_n}$.\n- Then decide."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show the series expression and a blank box for limit result. After student clicks 'Reveal', show limit = 3 and conclusion.",
+        "visual_spec": "Display the series on the right. Add a button 'Reveal limit' that when pressed shows: $L = \\lim_{n\\to\\infty} \\frac{3n^2+2n+1}{n^4-5n^3+7} \\cdot \\frac{n^2}{1} = 3$. Then show text: 'Since 0<3<∞ and ∑1/n^2 converges, original series converges.' Use matplotlib widgets Button for reveal.",
+        "python_code": "import matplotlib.pyplot as plt\nfrom matplotlib.widgets import Button\nimport numpy as np\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.text(0.5, 0.7, r'$\\sum_{n=1}^{\\infty} \\frac{3n^2+2n+1}{n^4-5n^3+7}$', ha='center', fontsize=16, transform=ax.transAxes)\nax.text(0.5, 0.4, r'Guess $b_n = \\frac{1}{n^2}$', ha='center', fontsize=14, transform=ax.transAxes)\nax.text(0.5, 0.1, 'Press button to reveal', ha='center', fontsize=12, transform=ax.transAxes)\nax.axis('off')\n\nax_reveal = plt.axes([0.5, 0.02, 0.2, 0.075])\nbtn = Button(ax_reveal, 'Reveal limit')\nrevealed_text = ax.text(0.5, -0.1, '', ha='center', fontsize=14, transform=ax.transAxes)\n\ndef reveal(event):\n    revealed_text.set_text(r'$L = 3$ → converges')\n    fig.canvas.draw_idle()\n\nbtn.on_clicked(reveal)\nplt.show()",
+        "interactive_controls": [
+          "Button: Reveal limit"
+        ]
+      },
+      "on_screen_text": "Pause: Compute the limit $L$ and decide convergence.",
+      "teacher_narration": "Now I want you to try applying the limit comparison test. Look at this rational series. First, identify the leading terms in the numerator and denominator. Then choose a simple b_n that captures that leading behavior. Compute the limit of a_n over b_n as n goes to infinity. Once you have the limit, use the rule we just learned to decide convergence. Pause the video and try it. Then come back and see if you got the same result as I will show in a moment.",
+      "student_prompt": "Pause the video and try to compute the limit and conclusion. Then press the button to check your answer.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example: Limit Comparison",
+      "left": {
+        "content_type": "steps",
+        "content": "**Series:** $\\displaystyle \\sum_{n=1}^{\\infty} \\frac{3n^2+2n+1}{n^4-5n^3+7}$\n\n1. Leading behavior: $\\frac{3n^2}{n^4} = \\frac{3}{n^2}$ → choose $b_n = \\frac{1}{n^2}$.\n\n2. $\\sum \\frac{1}{n^2}$ converges ($p=2>1$).\n\n3. Compute $L = \\lim_{n\\to\\infty} \\frac{a_n}{b_n} = \\lim_{n\\to\\infty} \\frac{3n^2+2n+1}{n^4-5n^3+7} \\cdot \\frac{n^2}{1} = 3$.\n\n4. Since $0<3<\\infty$, both series share the same fate → converges."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$L=3$, $\\sum 1/n^2$ converges $\\Rightarrow$ original converges.",
+      "teacher_narration": "Here's the full solution. For the series 3n squared plus 2n plus 1 over n to the fourth minus 5n cubed plus 7, the highest-degree terms dominate. The leading behavior is 3 over n squared. So we compare with the convergent p-series 1 over n squared. The limit of the ratio is 3, a finite nonzero number. Therefore, by the limit comparison test, our original series also converges. Notice we never needed a direct inequality. That's the beauty of this test.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visualizing the Comparison",
+      "left": {
+        "content_type": "text",
+        "content": "The two series $a_n$ and $b_n$ become nearly proportional for large $n$. Here we see $a_n$ and $3b_n$ converge together."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot of series terms for Example 2: a_n, b_n=1/n^2, and 3b_n. Use slider to adjust n range. Toggle to show/hide 3b_n line. Observe convergence.",
+        "visual_spec": "Plot n vs term value with log scale. Three lines: a_n (blue solid), b_n (red dashed), 3b_n (green dotted). Slider for maximum n from 10 to 100. Toggle to show/hide 3b_n. Highlight that a_n and 3b_n become indistinguishable for large n.",
+        "python_code": "import matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, CheckButtons\nimport numpy as np\n\nfig, ax = plt.subplots(figsize=(8, 5))\nplt.subplots_adjust(bottom=0.25)\n\nn_vals = np.arange(1, 101)\na_n = (3*n_vals**2 + 2*n_vals + 1) / (n_vals**4 - 5*n_vals**3 + 7)\nb_n = 1 / n_vals**2\nc_n = 3 * b_n\n\nline_a, = ax.plot(n_vals, a_n, 'b-', label=r'$a_n$')\nline_b, = ax.plot(n_vals, b_n, 'r--', label=r'$b_n$')\nline_c, = ax.plot(n_vals, c_n, 'g:', label=r'$3b_n$')\nax.set_xlabel('n')\nax.set_ylabel('Term value')\nax.set_yscale('log')\nax.set_title('Limit Comparison Visualization')\nax.legend()\nax.grid(True, alpha=0.3)\n\nax_n = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_n, 'Max n', 10, 100, valinit=100, valstep=1)\n\ndef update(val):\n    n_max = int(slider.val)\n    ax.set_xlim(1, n_max)\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\n\nrax = plt.axes([0.7, 0.05, 0.2, 0.15])\ncheck = CheckButtons(rax, ['Show 3b_n'], [True])\ndef toggle(label):\n    line_c.set_visible(not line_c.get_visible())\n    fig.canvas.draw_idle()\ncheck.on_clicked(toggle)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for max n from 10 to 100",
+          "Toggle: show/hide 3b_n line"
+        ]
+      },
+      "on_screen_text": "Drag slider to see how $a_n$ and $3b_n$ converge together.",
+      "teacher_narration": "Let's look at these terms visually. The blue line is our original series a_n, the red dashed line is the comparison series 1 over n squared, and the green dotted line is 3 times that. Notice how as n increases, the blue and green lines become nearly identical on this logarithmic scale. That's exactly what the limit L equals 3 tells us: they are asymptotically proportional. Use the slider to see how quickly they converge. You can also toggle off the green line to see the direct comparison without scaling.",
+      "student_prompt": "Move the slider to different max n values and observe when the series start to behave similarly.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Wrong Inequality Direction",
+      "left": {
+        "content_type": "steps",
+        "content": "**Consider:** $\\displaystyle \\sum_{n=2}^{\\infty} \\frac{1}{\\sqrt{n^2-1}}$\n\n**Wrong approach:** $\\frac{1}{\\sqrt{n^2-1}} > \\frac{1}{n}$ and $\\sum \\frac{1}{n}$ diverges. So original diverges? — **Invalid!**\n\nWhy? Direct comparison only works if your series is *larger* than a divergent series. Here it is larger, so that direction is valid. Actually the error is that the inequality is reversed? Wait, let's check: since $\\sqrt{n^2-1} < n$, we have $\\frac{1}{\\sqrt{n^2-1}} > \\frac{1}{n}$. So indeed our series is larger than the divergent harmonic series. That DOES imply divergence by direct comparison! The mistake is thinking it's inconclusive — it's actually valid. But many students get confused and think they need to find a smaller divergent series. Let's highlight: if a_n > b_n and b_n diverges, then a_n diverges. That's correct. The real confusion often comes when a_n < b_n and b_n diverges (inconclusive). So this example actually works with direct comparison! Let me fix this slide content.\n\n**Correct:** original diverges by direct comparison because it's larger than the divergent harmonic series. But let's show limit comparison as an alternative."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show two inequalities: correct and incorrect. Use arrows to indicate direction of comparison. Highlight that 'larger than divergent' works, 'smaller than divergent' does not.",
+        "visual_spec": "Diagram: Two sequences plotted: a_n (larger) and b_n (smaller) where b_n is harmonic. Label 'a_n > b_n' and '∑b_n diverges' → '∑a_n diverges (valid)'. Then show another diagram where a_n is smaller than b_n and b_n diverges, with an 'X' and 'inconclusive'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(2, 20)\na_n = 1 / np.sqrt(n**2 - 1)\nb_n = 1 / n\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))\n\nax1.plot(n, a_n, 'b-', label='$a_n$ (ours)')\nax1.plot(n, b_n, 'r--', label='$b_n$ (harmonic)')\nax1.set_title('Valid: $a_n > b_n$, $\\sum b_n$ diverges $\\Rightarrow$ $\\sum a_n$ diverges')\nax1.legend()\n\n# For second plot, create a scenario where a_n is smaller than divergent (inconclusive)\nn2 = np.arange(1, 20)\na2 = 1 / (n2**2 + 5)\nb2 = 1 / n2\nax2.plot(n2, a2, 'b-', label='$a_n$ (smaller)')\nax2.plot(n2, b2, 'r--', label='$b_n$ (harmonic)')\nax2.set_title('Inconclusive: $a_n < b_n$, $\\sum b_n$ diverges')\nax2.legend()\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Larger-than-divergent diverges. Smaller-than-divergent is inconclusive. Know the two working directions.",
+      "teacher_narration": "A very common point of confusion is the direction of inequalities. Many students think that if their series is larger than a divergent series, the test is useless. But actually, that's one of the two valid directions: if your series is larger than a divergent series, it must also diverge. The useless direction is when your series is smaller than a divergent series — that tells you nothing. For example, 1 over n squared is smaller than the divergent harmonic series, yet it converges. So remember: the direct comparison test only gives an answer when you are smaller than a convergent series or larger than a divergent series. Any other combination is inconclusive.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Tricky Example: When Direct Comparison Fails",
+      "left": {
+        "content_type": "steps",
+        "content": "**Series:** $\\displaystyle \\sum_{n=2}^{\\infty} \\frac{1}{\\sqrt{n^2-1}}$\n\n**Approach with Limit Comparison:**\n\n1. Leading behavior: $\\frac{1}{\\sqrt{n^2-1}} \\sim \\frac{1}{n}$.\n\n2. Choose $b_n = \\frac{1}{n}$ (divergent harmonic series).\n\n3. Compute $L = \\lim_{n\\to\\infty} \\frac{1/\\sqrt{n^2-1}}{1/n} = \\lim_{n\\to\\infty} \\frac{n}{\\sqrt{n^2-1}} = 1$.\n\n4. Since $0<1<\\infty$ and $\\sum \\frac{1}{n}$ diverges, the original diverges."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Direct comparison gives the answer (larger than harmonic), but limit comparison confirms it cleanly. Both work.",
+      "teacher_narration": "The series 1 over sqrt of n squared minus 1 actually can be handled by direct comparison: it's larger than the harmonic series, so it diverges. But many students get confused because the inequality seems subtle. The limit comparison test gives a clean alternative: the leading term is 1 over n, the limit is 1, and because the harmonic series diverges, our series also diverges. When in doubt, use limit comparison. It avoids the need for finding a neat inequality.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Edge Cases: L = 0 and L = ∞",
+      "left": {
+        "content_type": "text",
+        "content": "**$L=0$:** $a_n$ is much smaller than $b_n$ for large $n$. If $\\sum b_n$ converges, then $\\sum a_n$ converges.\n\n**$L=\\infty$:** $a_n$ is much larger than $b_n$ for large $n$. If $\\sum b_n$ diverges, then $\\sum a_n$ diverges.\n\n**Inconclusive combinations:** $L=0$ with $\\sum b_n$ diverges, or $L=\\infty$ with $\\sum b_n$ converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Three graphs: ratio approaching 0, approaching a finite number, and going to infinity. Each with convergence/divergence labels for the comparison series.",
+        "visual_spec": "Create a 1x3 subplot. Left: ratio approaching 0, text 'b_n converges→ a_n converges', 'b_n diverges→ inconclusive'. Middle: ratio approaching constant, text 'same fate'. Right: ratio diverging to infinity, text 'b_n diverges→ a_n diverges', 'b_n converges→ inconclusive'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.linspace(1, 50, 100)\n\nfig, axes = plt.subplots(1, 3, figsize=(12, 4))\n\n# L=0\naxes[0].plot(n, 1/np.log(n+1), 'b-')\naxes[0].axhline(y=0, color='gray', linestyle='--')\naxes[0].set_title('$L=0$')\naxes[0].text(0.2, 0.8, 'b converges → a converges', transform=axes[0].transAxes, fontsize=8)\naxes[0].text(0.2, 0.6, 'b diverges → inconclusive', transform=axes[0].transAxes, fontsize=8, color='red')\n\n# Finite L\naxes[1].plot(n, 2 + 1/np.sqrt(n), 'b-')\naxes[1].axhline(y=2, color='gray', linestyle='--')\naxes[1].set_title('$0<L<\\infty$')\naxes[1].text(0.2, 0.8, 'Same fate', transform=axes[1].transAxes, fontsize=8)\n\n# L=∞\naxes[2].plot(n, np.log(n+1), 'b-')\naxes[2].set_title('$L=\\infty$')\naxes[2].text(0.2, 0.8, 'b diverges → a diverges', transform=axes[2].transAxes, fontsize=8)\naxes[2].text(0.2, 0.6, 'b converges → inconclusive', transform=axes[2].transAxes, fontsize=8, color='red')\n\nfor ax in axes:\n    ax.set_xlabel('n')\n    ax.grid(True, alpha=0.3)\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "L=0: a smaller than converging b → a converges. L=∞: a larger than diverging b → a diverges. Other combos are inconclusive.",
+      "teacher_narration": "The limit comparison test has two special cases. When the limit is zero, your series is much smaller than the comparison series for large n. If that comparison series converges, then your even smaller one must also converge. But if it diverges, the test cannot decide: your series might still converge because it's so much smaller. Similarly, if the limit is infinite, your series dominates the comparison. If the comparison diverges, yours must also diverge. But if the comparison converges, the test is inconclusive. Always check these combinations carefully.",
+      "student_prompt": null,
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Edge Case Example: L = 0",
+      "left": {
+        "content_type": "steps",
+        "content": "**Series:** $\\displaystyle \\sum_{n=1}^{\\infty} \\frac{\\ln n}{n^3}$\n\n1. Guess $b_n = \\frac{1}{n^2}$ (converges, $p=2>1$).\n\n2. Compute $L = \\lim_{n\\to\\infty} \\frac{\\ln n / n^3}{1/n^2} = \\lim_{n\\to\\infty} \\frac{\\ln n}{n} = 0$.\n\n3. Since $L=0$ and $\\sum b_n$ converges, $\\sum a_n$ converges.\n\n**Check:** Could we have chosen $b_n = \\frac{1}{n^3}$? Then $L = \\infty$ and $\\sum b_n$ converges → inconclusive. Choice matters!"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Bar plot of a_n (ln n / n^3) and b_n (1/n^2) for n=1 to 20. Show that a_n is much smaller. Also plot ratio ln n / n approaching 0.",
+        "visual_spec": "Two subplots: top: bar chart of a_n and b_n for n=1..20, a_n barely visible. Bottom: line plot of ln n / n approaching 0. Highlight that ratio goes to 0.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nn = np.arange(1, 21)\na_n = np.log(n) / n**3\nb_n = 1 / n**2\n\nfig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))\n\nax1.bar(n - 0.2, a_n, width=0.4, color='blue', label='$a_n$')\nax1.bar(n + 0.2, b_n, width=0.4, color='red', alpha=0.6, label='$b_n$')\nax1.set_yscale('log')\nax1.set_title('$a_n = \\\\ln n / n^3$ vs $b_n = 1/n^2$')\nax1.legend()\n\nn_fine = np.linspace(1, 100, 200)\nratio = np.log(n_fine) / n_fine\nax2.plot(n_fine, ratio, 'g-')\nax2.axhline(y=0, color='gray', linestyle='--')\nax2.set_xlabel('n')\nax2.set_ylabel('$\\\\ln n / n$')\nax2.set_title('Ratio $\\\\frac{a_n}{b_n} = \\\\ln n / n$ approaches 0')\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\frac{\\ln n}{n^3}$ is much smaller than $\\frac{1}{n^2}$. Since $\\sum \\frac{1}{n^2}$ converges, $\\sum \\frac{\\ln n}{n^3}$ converges.",
+      "teacher_narration": "Here's an example where the limit is zero. The series ln n over n cubed has a natural logarithm in the numerator. Because any power of n grows faster than ln n, the leading behavior is like 1 over n squared or something even smaller. If we compare with 1 over n squared, the limit of the ratio is zero. Since 1 over n squared converges, and our series is asymptotically much smaller, it must also converge. But notice: if we had tried comparing with 1 over n cubed, the limit would be infinity, and since 1 over n cubed converges, that case is inconclusive. So choosing the right comparison series matters.",
+      "student_prompt": "Why is $\\sum \\frac{\\ln n}{n^3}$ convergent even though $\\ln n$ grows without bound?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application Example: Radicals",
+      "left": {
+        "content_type": "steps",
+        "content": "**Series:** $\\displaystyle \\sum_{n=1}^{\\infty} \\frac{\\sqrt{n^3+2n}}{n^2+5n+1}$\n\n1. Leading behavior: $\\frac{n^{3/2}}{n^2} = \\frac{1}{n^{1/2}}$.\n\n2. Choose $b_n = \\frac{1}{\\sqrt{n}}$ (diverges, $p=1/2<1$).\n\n3. Compute $L = \\lim_{n\\to\\infty} \\frac{\\sqrt{n^3+2n}}{n^2+5n+1} \\cdot \\frac{\\sqrt{n}}{1} = 1$.\n\n4. Since $0<1<\\infty$ and $\\sum 1/\\sqrt{n}$ diverges, original diverges."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Radical example: leading term $1/\\sqrt{n}$ → diverges by limit comparison.",
+      "teacher_narration": "Let's handle a more challenging example with radicals. The series has a square root of n cubed plus 2n in the numerator and a quadratic in the denominator. By focusing on the highest powers, the numerator behaves like n to the three halves, denominator like n squared, so overall like 1 over n to the one half. That's a divergent p-series. The limit of the ratio with 1 over square root of n is 1, a finite nonzero number, so our series diverges as well. Limit comparison handled this mess cleanly without needing to manipulate inequalities.",
+      "student_prompt": "Try verifying the limit: simplify $\\frac{\\sqrt{n^3+2n}}{n^2+5n+1} \\cdot \\sqrt{n}$ and show it tends to 1.",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof Sketch: Limit Comparison Test",
+      "left": {
+        "content_type": "steps",
+        "content": "**Theorem:** If $\\lim_{n\\to\\infty} \\frac{a_n}{b_n} = L$ with $0<L<\\infty$, then $\\sum a_n$ converges iff $\\sum b_n$ converges.\n\n**Proof idea:**\n- Choose $\\epsilon = L/2$. For large $n$, $\\frac{L}{2}b_n < a_n < \\frac{3L}{2}b_n$.\n- If $\\sum b_n$ converges, then $\\sum \\frac{3L}{2}b_n$ converges, so $\\sum a_n$ converges by direct comparison.\n- If $\\sum b_n$ diverges, then $\\sum \\frac{L}{2}b_n$ diverges, so $\\sum a_n$ diverges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Inequality bands: shaded region showing a_n between (L/2)b_n and (3L/2)b_n. Animate the narrowing band as epsilon decreases.",
+        "visual_spec": "Plot a_n, (L/2)b_n, and (3L/2)b_n for n from 1 to 50. Use shades to show the band. Optionally have slider to adjust epsilon and see the band tighten.",
+        "python_code": "import matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\nimport numpy as np\n\nn = np.arange(1, 101)\na_n = (3*n**2 + 2*n + 1) / (n**4 - 5*n**3 + 7)\nb_n = 1 / n**2\nL = 3\n\nepsilon = 0.5\nlower = (L - epsilon) * b_n\nupper = (L + epsilon) * b_n\n\nfig, ax = plt.subplots(figsize=(8, 5))\nplt.subplots_adjust(bottom=0.2)\n\nax.plot(n, a_n, 'b-', label='$a_n$')\nax.plot(n, lower, 'r--', label='$(L-\\\\epsilon)b_n$')\nax.plot(n, upper, 'r--', label='$(L+\\\\epsilon)b_n$')\nax.fill_between(n, lower, upper, alpha=0.2, color='gray')\nax.set_yscale('log')\nax.legend()\n\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, '$\\\\epsilon$', 0.1, 2, valinit=0.5)\n\ndef update(val):\n    eps = slider.val\n    lower_new = (L - eps) * b_n\n    upper_new = (L + eps) * b_n\n    ax.lines[1].set_ydata(lower_new)\n    ax.lines[2].set_ydata(upper_new)\n    ax.collections[0].remove()\n    ax.fill_between(n, lower_new, upper_new, alpha=0.2, color='gray')\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for epsilon from 0.1 to 2"
+        ]
+      },
+      "on_screen_text": "Proof: For large n, $a_n$ is trapped between constant multiples of $b_n$. Direct comparison finishes.",
+      "teacher_narration": "For those who want a deeper understanding, here's the proof idea. Because the limit is a finite nonzero number L, we can make the ratio arbitrarily close to L. That means we can sandwich a_n between two constant multiples of b_n: eventually, a_n is greater than L over 2 times b_n and less than 3L over 2 times b_n. Now if the series of b_n converges, then the constant multiple 3L over 2 b_n also converges, and since a_n is smaller, it converges by direct comparison. Similarly, if b_n diverges, the smaller multiple L over 2 b_n also diverges, forcing a_n to diverge. This shows the limit comparison test is essentially a refined direct comparison after scaling.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: Comparison Tests",
+      "left": {
+        "content_type": "text",
+        "content": "**Direct Comparison Test:** $0 \\leq a_n \\leq b_n$ for all large $n$.\n- If $\\sum b_n$ converges, then $\\sum a_n$ converges.\n- If $\\sum a_n$ diverges, then $\\sum b_n$ diverges.\n\n**Limit Comparison Test:** $L = \\lim_{n\\to\\infty} \\frac{a_n}{b_n}$.\n- $0<L<\\infty$: same fate.\n- $L=0$ and $\\sum b_n$ converges $\\Rightarrow$ $\\sum a_n$ converges.\n- $L=\\infty$ and $\\sum b_n$ diverges $\\Rightarrow$ $\\sum a_n$ diverges.\n\n**When to use which?**\n- Direct: when you can easily get a clean inequality.\n- Limit: when direct inequality is messy or goes the wrong way."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Two comparison tests: Direct (inequality-based) and Limit (ratio-based). Choose based on the algebra.",
+      "teacher_narration": "Let's recap what we've learned. The direct comparison test relies on a term-by-term inequality: if your series is smaller than a convergent series, it converges; if larger than a divergent series, it diverges. The limit comparison test is more flexible: you only need to know the asymptotic ratio. If that ratio is a finite nonzero number, both series share the same fate. Special cases L equals zero or infinity give one-way implications but only when used with the right convergence or divergence of the comparison series. When you're stuck with direct comparison because the inequality goes the wrong way, switch to limit comparison. Practice these tests on various series to build intuition.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

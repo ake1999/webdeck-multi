@@ -1,0 +1,405 @@
+{
+  "lecture_meta": {
+    "title": "Partial Derivatives",
+    "topic": "partial derivatives",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate partial derivatives of functions of several variables using the constant-variable rule",
+      "Interpret partial derivatives geometrically as slopes of tangent lines to traces of a surface",
+      "Apply partial derivatives to estimate rates of change in multivariable contexts",
+      "Analyze functions by computing higher-order partial derivatives and apply Clairaut's theorem"
+    ],
+    "prerequisite_reminder": "You should already know ordinary derivatives from single-variable calculus, including the limit definition and basic differentiation rules."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Partial Derivatives?",
+      "left": {
+        "content_type": "text",
+        "content": "Baking a cake: fluffiness depends on **flour** and **sugar**.\n\nIf you change only the flour (keep sugar fixed), how does fluffiness change?\n\nThat's a **partial derivative with respect to flour**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A 2D diagram with a rectangle (cake) centered at (0,0) with width 4 and height 2. Two arrows: one from left side labeled 'flour' pointing to the cake, one from bottom labeled 'sugar' pointing to the cake. A highlighted arrow from the 'flour' label to the top of the cake with label '∂ fluffiness / ∂ flour'. Icons: a small bag (rectangle with a triangle top) for flour, a small bowl (half-circle) for sugar, a small cake (trapezoid with a rectangle base). Colors: warm brown/yellow.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: change amount of flour",
+          "Toggle: show/hide sugar arrow"
+        ]
+      },
+      "on_screen_text": "Baking analogy: fluffiness depends on flour & sugar. Change only one ingredient – that’s a partial derivative.",
+      "teacher_narration": "Imagine you're baking a cake and you want to know how the fluffiness changes when you vary the amount of flour while keeping sugar exactly constant. That rate of change is a partial derivative. In multivariable calculus, we often have functions that depend on many inputs, and we want to isolate the effect of just one of them. This lecture will show you how to compute and interpret those rates.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Formal Definition",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$f_x(a,b) = \\lim_{h\\to 0}\\frac{f(a+h,b)-f(a,b)}{h}$$\n\n$$f_y(a,b) = \\lim_{h\\to 0}\\frac{f(a,b+h)-f(a,b)}{h}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two separate 2D coordinate system diagrams (x-y plane). For f_x: a point (a,b) in the plane, a horizontal step of length h to the right to (a+h,b). Above the plane, two vertical bars representing function values f(a,b) and f(a+h,b) as heights. For f_y: a point (a,b), a vertical step of length h upward to (a,b+h). Two vertical bars for f(a,b) and f(a,b+h). Use color: x-step in blue, y-step in red. Annotate difference quotients as (f(a+h,b)-f(a,b))/h and (f(a,b+h)-f(a,b))/h.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: change h from -1 to 1",
+          "Toggle: show/hide difference quotient values"
+        ]
+      },
+      "on_screen_text": "Partial derivative with respect to x: treat y as constant and take the ordinary derivative of f with respect to x at that point.",
+      "teacher_narration": "The formal definition looks almost identical to the single-variable derivative, except that we hold one variable fixed. For the partial derivative with respect to x at the point (a,b), we consider g(x) = f(x,b). Then f_x(a,b) is just g'(a). So you already know how to do this – you just need to remember which variable to treat as constant. This limit definition is the foundation, but in practice we use the shortcut rule that follows.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Example Using the Definition",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example:** For $f(x,y)=x^2+3y$, find $f_x(1,2)$ using the definition.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | $f(1+h,2)=(1+h)^2+3(2)=1+2h+h^2+6$ | Substitute $(1+h,2)$ |\n| 2 | $f(1,2)=1^2+3(2)=1+6=7$ | Substitute $(1,2)$ |\n| 3 | $f_x(1,2)=\\lim_{h\\to0}\\frac{(7+2h+h^2)-7}{h}$ | Form difference quotient |\n| 4 | $=\\lim_{h\\to0}\\frac{2h+h^2}{h}=\\lim_{h\\to0}(2+h)=2$ | Simplify and evaluate |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Using the limit definition: compute f(1+h,2), f(1,2), simplify quotient, take limit.",
+      "teacher_narration": "Let's work through an example. We want f_x at (1,2) for f(x,y)=x^2+3y. We substitute (1+h,2) into the function, then subtract f(1,2). After simplifying, the h cancels, and we get a limit of 2. This matches what we'd get by the practical rule, which we'll see next. The key is to carefully substitute and simplify step by step.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Notation",
+      "left": {
+        "content_type": "concept",
+        "content": "$$f_x = \\frac{\\partial f}{\\partial x} = \\frac{\\partial}{\\partial x}f = D_1 f$$\n$$f_y = \\frac{\\partial f}{\\partial y} = \\frac{\\partial}{\\partial y}f = D_2 f$$\n\nThe symbol $\\partial$ is called **del** – always use it for partial derivatives."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show the standard partial derivative notation with a curly '∂' symbol. Maybe side-by-side comparison: ordinary derivative d/dx (straight d) vs partial ∂/∂x (curly d). Highlight the difference.",
+        "python_code": null,
+        "interactive_controls": [
+          "Toggle: show/hide comparison with ordinary derivative"
+        ]
+      },
+      "on_screen_text": "Common notations: f_x, ∂f/∂x, D_1 f. The curly ∂ separates partial from ordinary derivatives.",
+      "teacher_narration": "There are several ways to write a partial derivative. I'll mostly use f_x for clarity. The crucial symbol is the curly d, ∂. It's not a Greek letter – it's a special symbol that tells you this is a partial derivative. Don't confuse it with the ordinary d. For example, if you see df/dx, that's an ordinary derivative – it assumes f only depends on x. The subscript notation f_x is also very common and convenient.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Practical Rule",
+      "left": {
+        "content_type": "concept",
+        "content": "**To find $f_x$:** treat $y$ as a constant, differentiate with respect to $x$.\n\n**To find $f_y$:** treat $x$ as a constant, differentiate with respect to $y$.\n\n**Example:** $f(x,y)=x^3y^2$\n\n$f_x = 3x^2 \\cdot y^2$\n$f_y = x^3 \\cdot 2y$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "On a simple 2D grid, show the function f(x,y)=x^3y^2. Highlight the term y^2 as constant (like a number) when differentiating w.r.t. x. Use color: x in blue, y in red. Show a 'constant' label on y^2.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: change exponent of x from 1 to 4",
+          "Toggle: show/hide constant labels"
+        ]
+      },
+      "on_screen_text": "Treat other variables as constants. Differentiate normally. Example: f(x,y)=x^3y^2 gives f_x=3x^2y^2, f_y=2x^3y.",
+      "teacher_narration": "Here's the practical shortcut: when you need the partial derivative with respect to x, pretend that y is just a constant like 5 or pi. Then differentiate x normally. That's it. For f(x,y)=x^3y^2, holding y constant means y^2 is just a coefficient. So f_x is 3x^2 times y^2. Similarly, f_y treats x^3 as constant, giving x^3 times 2y. This rule makes computing partial derivatives fast and straightforward.",
+      "student_prompt": null,
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Geometric Interpretation",
+      "left": {
+        "content_type": "text",
+        "content": "$f_x(a,b)$ is the slope of the tangent line to the trace $z=f(x,b)$ at $x=a$.\n\nSimilarly, $f_y(a,b)$ is the slope along the trace $z=f(a,y)$.\n\nUse the controls to explore."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "3D surface plot of f(x,y)=x^2+y^2 with point (a,b) highlighted. Show the trace curves in y=b plane (red) and x=a plane (blue). Draw tangent lines at the point with correct slopes. Include interactive sliders for a and b (range -2 to 2). Also a toggle to show/hide trace curves and tangent lines. Use mpl_toolkits.mplot3d. Annotate slope values. For ipywidgets or matplotlib widgets.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, CheckButtons\n\n# Function\ndef f(x,y):\n    return x**2 + y**2\n\n# Initial point\na0, b0 = 1.0, 1.0\n\n# Create grid\nx = np.linspace(-2, 2, 30)\ny = np.linspace(-2, 2, 30)\nX, Y = np.meshgrid(x, y)\nZ = f(X, Y)\n\n# Figure\nfig = plt.figure(figsize=(12, 6))\nax = fig.add_subplot(111, projection='3d')\nax.plot_surface(X, Y, Z, alpha=0.6, cmap='viridis')\n\n# Trace lines and tangent lines (init)\nx_trace = np.linspace(-2, 2, 100)\ny_trace = np.full_like(x_trace, b0)\nz_trace = f(x_trace, y_trace)\nline_trace_x, = ax.plot(x_trace, y_trace, z_trace, 'r-', linewidth=2, label='Trace y=b')\n\ny_trace2 = np.linspace(-2, 2, 100)\nx_trace2 = np.full_like(y_trace2, a0)\nz_trace2 = f(x_trace2, y_trace2)\nline_trace_y, = ax.plot(x_trace2, y_trace2, z_trace2, 'b-', linewidth=2, label='Trace x=a')\n\n# Tangent line for f_x\nh = 0.5\nfx = 2*a0  # partial derivative\nx_tan = np.array([a0-h, a0+h])\ny_tan = np.array([b0, b0])\nz_tan = f(a0,b0) + fx * (x_tan - a0)\ntan_line_x, = ax.plot(x_tan, y_tan, z_tan, 'g-', linewidth=3, label='Tangent (x)')\n\n# Tangent line for f_y\nfy = 2*b0\ny_tan2 = np.array([b0-h, b0+h])\nx_tan2 = np.array([a0, a0])\nz_tan2 = f(a0,b0) + fy * (y_tan2 - b0)\ntan_line_y, = ax.plot(x_tan2, y_tan2, z_tan2, 'm-', linewidth=3, label='Tangent (y)')\n\n# Point\npoint, = ax.plot([a0], [b0], [f(a0,b0)], 'ko', markersize=8)\n\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_zlabel('z')\nax.set_title('Partial Derivatives: Tangent Lines to Traces')\nax.legend()\n\n# Sliders for a and b\naxcolor = 'lightgoldenrodyellow'\nax_a = plt.axes([0.2, 0.05, 0.4, 0.03], facecolor=axcolor)\nax_b = plt.axes([0.2, 0.01, 0.4, 0.03], facecolor=axcolor)\ns_a = Slider(ax_a, 'a', -2, 2, valinit=a0)\ns_b = Slider(ax_b, 'b', -2, 2, valinit=b0)\n\ndef update(val):\n    a = s_a.val\n    b = s_b.val\n    # Update trace x\n    y_trace = np.full_like(x_trace, b)\n    z_trace = f(x_trace, y_trace)\n    line_trace_x.set_data(x_trace, y_trace)\n    line_trace_x.set_3d_properties(z_trace)\n    # Update trace y\n    x_trace2 = np.full_like(y_trace2, a)\n    z_trace2 = f(x_trace2, y_trace2)\n    line_trace_y.set_data(x_trace2, y_trace2)\n    line_trace_y.set_3d_properties(z_trace2)\n    # Update tangent x\n    fx = 2*a\n    x_tan = np.array([a-h, a+h])\n    y_tan = np.array([b, b])\n    z_tan = f(a,b) + fx * (x_tan - a)\n    tan_line_x.set_data(x_tan, y_tan)\n    tan_line_x.set_3d_properties(z_tan)\n    # Update tangent y\n    fy = 2*b\n    y_tan2 = np.array([b-h, b+h])\n    x_tan2 = np.array([a, a])\n    z_tan2 = f(a,b) + fy * (y_tan2 - b)\n    tan_line_y.set_data(x_tan2, y_tan2)\n    tan_line_y.set_3d_properties(z_tan2)\n    # Update point\n    point.set_data([a], [b])\n    point.set_3d_properties([f(a,b)])\n    fig.canvas.draw_idle()\n\ns_a.on_changed(update)\ns_b.on_changed(update)\n\n# Check buttons for show/hide traces and tangents\nrax = plt.axes([0.7, 0.05, 0.2, 0.15])\ncheck = CheckButtons(rax, ['Trace x', 'Trace y', 'Tangent x', 'Tangent y'], [True, True, True, True])\ndef toggle(label):\n    if label == 'Trace x':\n        line_trace_x.set_visible(not line_trace_x.get_visible())\n    elif label == 'Trace y':\n        line_trace_y.set_visible(not line_trace_y.get_visible())\n    elif label == 'Tangent x':\n        tan_line_x.set_visible(not tan_line_x.get_visible())\n    elif label == 'Tangent y':\n        tan_line_y.set_visible(not tan_line_y.get_visible())\n    fig.canvas.draw_idle()\ncheck.on_clicked(toggle)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for a from -2 to 2",
+          "Slider for b from -2 to 2",
+          "Checkboxes: show/hide trace curves and tangent lines"
+        ]
+      },
+      "on_screen_text": "Move the sliders to see how f_x and f_y change. Toggle visibility of traces and tangent lines.",
+      "teacher_narration": "Visualizing partial derivatives is powerful. The surface z = x²+y² is plotted. At any point (a,b), the trace y=b is a parabola on the surface. The slope of its tangent line is exactly f_x(a,b). Similarly, the trace x=a gives f_y. Use the sliders to move the point – notice how the slopes change. The traces and tangent lines update automatically.",
+      "student_prompt": "Adjust the sliders to a=0.5, b=1.5. What is the value of f_x? Check the tangent line slope.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Try It Yourself",
+      "left": {
+        "content_type": "text",
+        "content": "Find $f_x(1,2)$ and $f_y(1,2)$ for $f(x,y)=x^2y + \\ln(y)$.\n\nPause the video, compute your answer, then resume to check."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A simple blank space with a question mark icon. Or a small schematic of a hand holding a pencil over paper. Minimal.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Find f_x(1,2) and f_y(1,2) for f(x,y)=x^2y + ln(y). Pause and try.",
+      "teacher_narration": "Before I show the solution, try this on your own. Pause the video now. Compute both partial derivatives at (1,2) for f(x,y)=x²y + ln(y). Remember: treat y constant when differentiating with respect to x, and x constant for y. I'll come back with the answer. This is a good check of your understanding.",
+      "student_prompt": null,
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Solution: Pause Example",
+      "left": {
+        "content_type": "steps",
+        "content": "**Solution:**\n\n- $f_x = \\frac{\\partial}{\\partial x}(x^2y + \\ln y) = 2xy + 0 = 2xy$\n- $f_y = \\frac{\\partial}{\\partial y}(x^2y + \\ln y) = x^2 + \\frac{1}{y}$\n\nEvaluate at $(1,2)$:\n\n- $f_x(1,2) = 2 \\cdot 1 \\cdot 2 = 4$\n- $f_y(1,2) = 1^2 + \\frac{1}{2} = 1.5$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "f_x=2xy, so f_x(1,2)=4. f_y=x²+1/y, so f_y(1,2)=1.5.",
+      "teacher_narration": "Here's the solution. The partial with respect to x treats y as constant, so the derivative of x²y is 2xy, and ln y disappears. That gives 2xy, and at (1,2) it's 4. For y, treat x constant: derivative of x²y is x², derivative of ln y is 1/y. At (1,2), that's 1 plus 0.5 equals 1.5. How did you do?",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Forgetting to Treat Other Variables as Constants",
+      "left": {
+        "content_type": "concept",
+        "content": "**Wrong:** $\\frac{\\partial}{\\partial x} (x^2 y) = 2x + y$\n\n**Correct:** $\\frac{\\partial}{\\partial x} (x^2 y) = 2x \\cdot y$\n\n**Why:** When taking the partial derivative with respect to x, treat y as a constant coefficient. Do not differentiate y with respect to x."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show the expression x^2 y. Highlight y in red with a label 'constant'. Show the derivative as 2x * y. Use a red X on the wrong answer and a green check on the correct answer.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Common mistake: forgetting to treat other variables as constants. y is constant when differentiating with respect to x.",
+      "teacher_narration": "A very common mistake is to forget that other variables are treated as constants. For example, when finding the partial derivative of x^2 y with respect to x, some students incorrectly write 2x + y, as if they were differentiating a product in single-variable calculus. But y is a constant here, so the correct derivative is 2x times y. Always ask yourself: which variable is the variable? The rest are constants.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm-Up Example",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example:** Find $f_x(2,1)$ and $f_y(2,1)$ for $f(x,y)=x^3 + x^2y^3 - 2y^2$.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | $f_x = 3x^2 + 2xy^3 - 0$ | Treat y constant |\n| 2 | $f_x(2,1) = 3(4) + 2(2)(1) = 12+4=16$ | Substitute |\n| 3 | $f_y = 0 + 3x^2y^2 - 4y$ | Treat x constant |\n| 4 | $f_y(2,1) = 3(4)(1) - 4(1) = 12-4=8$ | Substitute |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Warm-up: f_x=3x²+2xy³ → f_x(2,1)=16. f_y=3x²y²-4y → f_y(2,1)=8.",
+      "teacher_narration": "Let's try a warm-up. f(x,y)=x³ + x²y³ - 2y². For f_x, hold y constant. The term x²y³ treats y³ as a constant coefficient, so derivative is 2xy³. The -2y² term vanishes. At (2,1), f_x=16. For f_y, hold x constant: x³ vanishes, x²y³ gives 3x²y², and -2y² gives -4y. At (2,1), f_y=8. Straightforward.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example: Product Rule",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example:** $z = e^{xy}\\sin(x^2y)$\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | $\\frac{\\partial z}{\\partial x} = e^{xy}\\cdot \\cos(x^2y)\\cdot 2xy + \\sin(x^2y)\\cdot ye^{xy}$ | Product rule & chain rule |\n| 2 | $= ye^{xy}\\big[2x\\cos(x^2y) + \\sin(x^2y)\\big]$ | Factor |\n| 3 | $\\frac{\\partial z}{\\partial y} = e^{xy}\\cdot \\cos(x^2y)\\cdot x^2 + \\sin(x^2y)\\cdot xe^{xy}$ | Product rule (y derivative of e^{xy} is xe^{xy}) |\n| 4 | $= xe^{xy}\\big[x\\cos(x^2y) + \\sin(x^2y)\\big]$ | Factor |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Standard: use product rule and chain rule. Derivatives of e^{xy} involve chain rule in each variable.",
+      "teacher_narration": "This example ties everything together: product rule, chain rule, and factorisation. For the x derivative, treat y constant. The first term is e^{xy} times the derivative of sin(x²y) – that brings down 2xy cos(x²y). Then we add sin(x²y) times the derivative of e^{xy}, which is y e^{xy}. After factoring, we get y e^{xy} times the bracket. Similarly for y: the derivative of e^{xy} brings down x, and the derivative of sin(x²y) brings down x² cos(x²y). Factor out x e^{xy}.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Heat Index",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Heat index $I(T,H)$ depends on temperature $T$ and humidity $H$.\n\nGiven $I_T(96,70)\\approx 3.75$ and $I_H(96,70)\\approx 0.9$.\n\nEstimate the change in heat index if $T$ rises to $98°F$ and $H$ drops to $65\\%$.\n\n| Step | Calculation |\n|------|-------------|\n| 1 | $\\Delta I \\approx I_T \\Delta T + I_H \\Delta H$ |\n| 2 | $\\Delta T = 2, \\Delta H = -5$ |\n| 3 | $\\Delta I \\approx 3.75(2) + 0.9(-5) = 7.5 - 4.5 = 3$°F |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "ΔI ≈ I_T ΔT + I_H ΔH. At (96,70): I_T≈3.75, I_H≈0.9. With ΔT=2, ΔH=-5, ΔI≈3°F.",
+      "teacher_narration": "Here's a real application: the heat index tells you how hot it feels. If temperature rises 2°F while humidity drops 5%, we can estimate the change using partial derivatives. The change is approximately the partial with respect to T times the change in T, plus the partial with respect to H times the change in H. Plugging in: 3.75×2 plus 0.9×(-5) gives 7.5 minus 4.5, a net increase of about 3°F. This is the beginning of linear approximation – a very powerful idea.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Higher-Order Partial Derivatives",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$f_{xx} = \\frac{\\partial^2 f}{\\partial x^2}, \\quad f_{yy} = \\frac{\\partial^2 f}{\\partial y^2}$$\n$$f_{xy} = \\frac{\\partial}{\\partial y}\\left(\\frac{\\partial f}{\\partial x}\\right) = \\frac{\\partial^2 f}{\\partial y\\partial x}$$\n$$f_{yx} = \\frac{\\partial}{\\partial x}\\left(\\frac{\\partial f}{\\partial y}\\right) = \\frac{\\partial^2 f}{\\partial x\\partial y}$$\n\n**Clairaut's Theorem:** If $f_{xy}$ and $f_{yx}$ are continuous, then $f_{xy}=f_{yx}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show a small 2x2 grid of mixed partials: order of differentiation indicated by arrows (x then y vs y then x). At the center, 'equality under continuity'. Use check mark for equality.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Second-order partials: f_xx, f_yy, f_xy, f_yx. Under continuity, mixed partials are equal (Clairaut).",
+      "teacher_narration": "We can take partials of partials. The notation f_xy means differentiate first with respect to x, then with respect to y. Order matters, but Clairaut's theorem gives us a nice reprieve: if both mixed partials are continuous near the point, they are equal. This often saves us work. For most nice functions, you can compute mixed partials in whichever order is easier.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Verify Clairaut",
+      "left": {
+        "content_type": "text",
+        "content": "Use the slider to check that $f_{xy}=f_{yx}$ for $f(x,y)=x^3y^2+2x$.\n\nSwitch the viewing mode to see the equality hold at various points."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "Display two side-by-side plots: numerical values of f_xy and f_yx as functions of a and b. Slider for (a,b). Show that both mixed partials produce the same number: 6x^2y. Include a toggle to show difference (which should be zero). Use matplotlib widgets.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\n# Define function and derivatives\ndef f(x,y):\n    return x**3 * y**2 + 2*x\ndef f_xy(x,y):\n    return 6 * x**2 * y\ndef f_yx(x,y):\n    return 6 * x**2 * y\n\na0, b0 = 1.0, 1.0\n\nfig, ax = plt.subplots(figsize=(10, 4))\nplt.subplots_adjust(bottom=0.25)\n\nax.axis('off')\ntext = ax.text(0.5, 0.5, '', fontsize=16, ha='center', va='center', transform=ax.transAxes)\ndef update(val):\n    a = s_a.val\n    b = s_b.val\n    xy = f_xy(a,b)\n    yx = f_yx(a,b)\n    diff = np.abs(xy - yx)\n    txt = f'At (a,b) = ({a:.2f}, {b:.2f})\\nf_xy = {xy:.4f}, f_yx = {yx:.4f}\\nDifference = {diff:.6f}'\n    if diff < 1e-12:\n        txt += '\\nClairaut verified: f_xy = f_yx'\n    else:\n        txt += '\\nDifference detected (should be zero)'\n    text.set_text(txt)\n    fig.canvas.draw_idle()\n\nax_a = plt.axes([0.2, 0.1, 0.4, 0.03])\nax_b = plt.axes([0.2, 0.05, 0.4, 0.03])\ns_a = Slider(ax_a, 'a', -2, 2, valinit=a0)\ns_b = Slider(ax_b, 'b', -2, 2, valinit=b0)\ns_a.on_changed(update)\ns_b.on_changed(update)\n\n# Reset button\nax_reset = plt.axes([0.7, 0.1, 0.1, 0.03])\nbutton = Button(ax_reset, 'Reset')\ndef reset(event):\n    s_a.reset()\n    s_b.reset()\nbutton.on_clicked(reset)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for a from -2 to 2",
+          "Slider for b from -2 to 2",
+          "Button: Reset to (1,1)"
+        ]
+      },
+      "on_screen_text": "Change a and b. Observe that f_xy always equals f_yx for this function.",
+      "teacher_narration": "Let's verify Clairaut's theorem for f(x,y)=x³y²+2x. The two mixed partials are both 6x²y. Use the sliders to change the point; you'll always see the same value for f_xy and f_yx. The difference is zero. This theorem holds because the function is smooth – its second partials are continuous everywhere.",
+      "student_prompt": "Move sliders to a=1.5, b=0.8. What are f_xy and f_yx?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Partial Derivatives ≠ Differentiability",
+      "left": {
+        "content_type": "text",
+        "content": "**Example:** $f(x,y)=\\begin{cases}\\frac{xy}{x^2+y^2}, & (x,y)\\neq(0,0) \\\\ 0, & (x,y)=(0,0)\\end{cases}$\n\nUsing the limit definition:\n- $f_x(0,0) = \\lim_{h\\to0}\\frac{f(h,0)-0}{h} = \\lim_{h\\to0}\\frac{0}{h}=0$\n- $f_y(0,0)=0$ similarly.\n\nYet $f$ is **not** differentiable at $(0,0)$ – there is no tangent plane.\n\n**Moral:** Partial derivatives can exist without differentiability."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot of the function near (0,0) using a surface plot. Show that the surface is not flat near the origin – it has a 'crease' or oscillatory behavior. Highlight that partial derivatives along axes are zero, but approaching along other directions gives different slopes.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "f(x,y)=xy/(x²+y²) at (0,0) has partial derivatives 0, but is not differentiable. A cautionary tale.",
+      "teacher_narration": "This is a deep point. For the function f(x,y)=xy/(x²+y²), with f(0,0)=0, the partial derivatives at (0,0) exist and are zero. But the function is not differentiable – it is not even continuous at (0,0). For example, approaching along the line y=x gives a limit of 1/2, not 0. So the function has a discontinuity at the origin, which means it cannot have a tangent plane. This shows that existence of partial derivatives alone does not guarantee differentiability.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary & What's Next",
+      "left": {
+        "content_type": "concept",
+        "content": "**Key takeaways:**\n\n| Concept | Key fact |\n|---------|----------|\n| **Definition** | $f_x(a,b) = \\lim_{h\\to0}\\frac{f(a+h,b)-f(a,b)}{h}$ |\n| **Practical rule** | Treat other variables as constants |\n| **Geometric meaning** | Slope of tangent line to trace |\n| **Higher-order** | $f_{xy}=f_{yx}$ under continuity (Clairaut) |\n| **Caveat** | Partial derivatives exist ≠ differentiability |\n\n**Next lecture:** Linearization and the tangent plane."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Partial derivatives: definition, practical rule, geometry, higher-order, caveats. Next: tangent planes.",
+      "teacher_narration": "Let's summarize. Partial derivatives measure the rate of change along one coordinate direction while holding others fixed. You can compute them by treating other variables as constants. Geometrically, they are slopes of tangent lines to the surface traces. Higher-order partials are straightforward, and Clairaut's theorem often simplifies mixed partials. But remember: partial derivatives existing alone does not guarantee a function is differentiable. In the next lecture, we'll use partial derivatives to build the tangent plane and linear approximations.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

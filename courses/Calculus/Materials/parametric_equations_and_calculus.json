@@ -1,0 +1,451 @@
+{
+  "lecture_meta": {
+    "title": "Parametric Equations and Calculus",
+    "topic": "Parametric Equations and Calculus",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate derivatives of parametric curves using the chain rule to find tangent slopes.",
+      "Apply integration techniques to compute arc length of parametric curves.",
+      "Analyze parametric curves for horizontal and vertical tangents, concavity, and critical points.",
+      "Compute areas bounded by parametric curves using parametric integration formulas.",
+      "Interpret parametric representations as particle motion, connecting velocity vectors to geometric properties."
+    ],
+    "prerequisite_reminder": "You need the chain rule and basic differentiation/integration; we will extend them to parametric equations."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "The Drone Analogy",
+      "left": {
+        "content_type": "text",
+        "content": "Instead of a function $y=f(x)$ forcing left-to-right motion, parametric equations give two separate tracking screens: $x(t)$ and $y(t)$. The slope $\\frac{dy}{dx}$ becomes a **velocity ratio**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animation: drone path with time ticks, showing x(t) and y(t) curves separately below.",
+        "visual_spec": "Two subplots: top shows a parametric curve (e.g., x=cos t, y=sin t for t in [0,2π]) with a moving point. Bottom shows separate x(t) and y(t) vs t plots. Animate point moving along parametric curve. Use bold colors: curve in blue, point in red. Add arrows showing velocity components at current point. Timestamps every 1 second.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.animation import FuncAnimation\n\nt = np.linspace(0, 2*np.pi, 200)\nx = np.cos(t)\ny = np.sin(t)\n\nfig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6, 8))\nax1.plot(x, y, 'b', lw=2)\npoint, = ax1.plot([], [], 'ro', ms=8)\narrow_x, = ax1.plot([], [], 'r-', lw=1)\narrow_y, = ax1.plot([], [], 'g-', lw=1)\nax1.set_xlim(-1.5, 1.5)\nax1.set_ylim(-1.5, 1.5)\nax1.set_aspect('equal')\nax1.set_title('Parametric curve with velocity components')\n\nax2.plot(t, x, 'r-', label='x(t)')\nax2.plot(t, y, 'g-', label='y(t)')\nline_v, = ax2.plot([], [], 'ko')\nax2.set_xlim(0, 2*np.pi)\nax2.set_ylim(-1.5, 1.5)\nax2.legend()\nax2.set_title('Separate graphs')\n\ndef animate(i):\n    point.set_data([x[i]], [y[i]])\n    vx = -np.sin(t[i])\n    vy = np.cos(t[i])\n    arrow_x.set_data([x[i], x[i]+vx*0.3], [y[i], y[i]+vy*0.3])\n    arrow_y.set_data([x[i], x[i]+vx*0.3], [y[i], y[i]+vy*0.3])\n    line_v.set_data([t[i]], [x[i], y[i]])\n    return point, arrow_x, arrow_y, line_v\n\nani = FuncAnimation(fig, animate, frames=len(t), interval=50, blit=True)\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": [
+          "Slider for t from 0 to 2π",
+          "Toggle: show/hide velocity components"
+        ]
+      },
+      "on_screen_text": "Parametric equations: $x(t), y(t)$. Slope = vertical velocity / horizontal velocity.",
+      "teacher_narration": "Imagine you are tracking a drone. A regular function forces the drone to fly strictly left to right. But parametric equations give you two screens: one shows east-west position over time, the other shows north-south. The slope of the flight path is simply the ratio of its upward speed to its forward speed. When the drone goes straight up, forward speed is zero: we get a vertical tangent. When it flies level, upward speed is zero: a horizontal tangent.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Derivative: Slope of Tangent",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\frac{dy}{dx} = \\frac{dy/dt}{dx/dt}, \\quad \\text{provided } \\frac{dx}{dt} \\neq 0$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Static plot: parametric curve x=t^2, y=t^3-3t with tangent line at t=2.",
+        "visual_spec": "Plot the parametric curve for t in [-3,3]: x=t^2, y=t^3-3t. Use blue curve. Mark point at t=2 (x=4, y=2). Draw tangent line with slope 9/4 passing through that point. Show horizontal dashed line at y=2 and vertical at x=4. Label axes x and y. Add text box showing slope value. Use matplotlib.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for t from -3 to 3",
+          "Toggle: show/hide tangent line"
+        ]
+      },
+      "on_screen_text": "Slope = ratio of derivatives. Example: $x=t^2$, $y=t^3-3t$ yields $\\frac{dy}{dx}=\\frac{3t^2-3}{2t}$.",
+      "teacher_narration": "Here is our first and most important formula. To find the slope of a parametric curve, we do not differentiate y with respect to x directly. Instead, we take the derivative of y with respect to t and divide by the derivative of x with respect to t. For example, if x equals t squared and y equals t cubed minus 3t, then at t=2 we get a slope of 9 over 4. The visual shows the curve and the tangent line at that point. Notice how the tangent line exactly matches the direction of motion.",
+      "student_prompt": "Before moving on, try finding the slope when t=1 for the same curve. What do you get?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Explore: Tangent Line Dynamics",
+      "left": {
+        "content_type": "text",
+        "content": "Use the slider to change parameter $t$. Observe how the tangent line changes. Notice when slope becomes zero (horizontal) or infinite (vertical)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot: parametric curve x=cos t, y=sin t (circle) with tangent line controlled by t slider.",
+        "visual_spec": "Plot unit circle for t in [0,2π]. Add a slider for t from 0 to 2π. On the circle, plot the point at the current t and draw the tangent line (computed via dy/dx = -cot t). Show both the slope value and angle relative to horizontal. Use matplotlib.widgets.Slider. Update on slider change. Include a button to reset to t=0.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\nt_vals = np.linspace(0, 2*np.pi, 400)\nx_vals = np.cos(t_vals)\ny_vals = np.sin(t_vals)\n\nfig, ax = plt.subplots()\nplt.subplots_adjust(bottom=0.25)\nax.plot(x_vals, y_vals, 'b', lw=2)\nax.set_xlim(-1.5, 1.5)\nax.set_ylim(-1.5, 1.5)\nax.set_aspect('equal')\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(0, color='gray', lw=0.5)\nax.set_title('Tangent line on parametric curve')\n\npoint, = ax.plot([], [], 'ro', ms=8)\ntangent_line, = ax.plot([], [], 'r-', lw=2)\nslope_text = ax.text(0.05, 0.95, '', transform=ax.transAxes, va='top', fontsize=10)\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nt_slider = Slider(ax_slider, 't', 0.0, 2*np.pi, valinit=0.0)\n\ndef update(val):\n    t = t_slider.val\n    x = np.cos(t)\n    y = np.sin(t)\n    point.set_data([x], [y])\n    # tangent direction: dx = -sin t, dy = cos t\n    dx = -np.sin(t)\n    dy = np.cos(t)\n    # extend line\n    s = 0.5\n    x_line = [x - s*dx, x + s*dx]\n    y_line = [y - s*dy, y + s*dy]\n    tangent_line.set_data(x_line, y_line)\n    if dx != 0:\n        slope = dy/dx\n        slope_text.set_text(f'slope = {slope:.3f}')\n    else:\n        slope_text.set_text('vertical tangent')\n    fig.canvas.draw_idle()\n\nt_slider.on_changed(update)\n\nreset_ax = plt.axes([0.8, 0.025, 0.1, 0.04])\nbutton = Button(reset_ax, 'Reset', hovercolor='0.975')\ndef reset(event):\n    t_slider.reset()\nbutton.on_clicked(reset)\n\nupdate(0)\nplt.show()",
+        "interactive_controls": [
+          "Slider for t from 0 to 2π",
+          "Reset button"
+        ]
+      },
+      "on_screen_text": "Move the slider to see how the tangent line evolves. Watch for horizontal or vertical tangents.",
+      "teacher_narration": "Now you can explore how the tangent line changes as you move along the curve. For the unit circle, the slope formula gives minus cotangent of t. Slide the parameter and watch the line rotate. Notice when the slope becomes zero, the line is horizontal – that happens at t equals 0 and pi. When the slope is undefined, the line is vertical – at t equals pi over 2 and 3 pi over 2. This interactive tool helps you build intuition for the ratio formula.",
+      "student_prompt": "Set t to pi/4. What is the slope? Does the tangent line match your expectation?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "misconception",
+      "layout": "full_width",
+      "title": "Common Mistake: Second Derivative",
+      "left": {
+        "content_type": "text",
+        "content": "A common error is thinking $\\frac{d^2y}{dx^2} = \\frac{d^2y/dt^2}{d^2x/dt^2}$. This is **wrong** because derivatives do not divide that way.\n\nCorrect formula: $\\frac{d^2y}{dx^2} = \\frac{d}{dt}\\left(\\frac{dy}{dx}\\right) \\Big/ \\frac{dx}{dt}$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Wrong: $\\frac{d^2y}{dt^2} / \\frac{d^2x}{dt^2}$ is not $\\frac{d^2y}{dx^2}$.",
+      "teacher_narration": "Many students try to compute the second derivative by taking second derivatives of x and y separately and dividing them. That is not correct. The second derivative is found by first computing the slope function, then differentiating it with respect to t, and finally dividing by dx over dt. Let me show you why the wrong formula fails. Suppose x equals t squared and y equals t cubed. Then the wrong formula gives 6t over 2, which is 3t, but the correct answer from our formula is actually 3 over 4t. So the wrong formula is off by a factor involving the first derivative. Always use the chain-rule approach.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Practice: First Derivative (Warm-Up)",
+      "left": {
+        "content_type": "text",
+        "content": "**Example 1:** Find $\\frac{dy}{dx}$ for $x = t^2+4t$, $y = 2-t$ at $t = 1$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | $dx/dt$ | $2t+4$ |\n| 2 | $dy/dt$ | $-1$ |\n| 3 | Ratio | $\\frac{-1}{2t+4}$ |\n| 4 | Evaluate at $t=1$ | $-\\frac{1}{6}$ |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Step-by-step: differentiate x and y separately, then divide. At t=1 slope = -1/6.",
+      "teacher_narration": "Let's work through a warm-up example. We are given x equals t squared plus 4t and y equals 2 minus t. First, differentiate x with respect to t: we get 2t plus 4. Next, differentiate y: we get negative 1. The derivative dy over dx is simply dy over dt divided by dx over dt, which gives negative 1 over 2t plus 4. At t equals 1, that becomes negative 1 over 6. So the slope of the tangent line at that point is negative one-sixth. Simple and direct.",
+      "student_prompt": "Try this yourself: for the same curve, find the slope at t = 0. Answer should be -1/4.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Practice: Second Derivative (Standard)",
+      "left": {
+        "content_type": "text",
+        "content": "**Example 2:** Find $\\frac{d^2y}{dx^2}$ for $x = t + \\sin t$, $y = t - \\cos t$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | $dx/dt$, $dy/dt$ | $1+\\cos t$, $1+\\sin t$ |\n| 2 | First derivative | $\\frac{1+\\sin t}{1+\\cos t}$ |\n| 3 | Differentiate that w.r.t $t$ | $\\frac{1+\\cos t+\\sin t}{(1+\\cos t)^2}$ |\n| 4 | Divide by $dx/dt$ | $\\frac{1+\\cos t+\\sin t}{(1+\\cos t)^3}$ |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Second derivative = derivative of first derivative, divided by dx/dt.",
+      "teacher_narration": "Now a standard problem on second derivatives. We have x equals t plus sine t, and y equals t minus cosine t. First derivatives: dx over dt is 1 plus cosine t, dy over dt is 1 plus sine t. The first derivative dy over dx is the ratio. Next we need to differentiate that ratio with respect to t. Apply the quotient rule. After simplifying using the identity cosine squared plus sine squared equals 1, we get numerator 1 plus cosine t plus sine t over denominator 1 plus cosine t squared. Finally, divide by dx over dt gives the second derivative as 1 plus cosine t plus sine t over 1 plus cosine t cubed. This matches the pattern: differentiate the slope function, then divide by the derivative of x.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Arc Length Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$L = \\int_{\\alpha}^{\\beta} \\sqrt{\\left(\\frac{dx}{dt}\\right)^2 + \\left(\\frac{dy}{dt}\\right)^2} \\, dt$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Static: parametric curve with many small line segments approximating arc length; show speed vector components.",
+        "visual_spec": "Plot a parametric curve (e.g., x=5 cos t, y=3 sin t for t in [0,2π]). Overlay a few small chord segments in red to illustrate summing lengths. Show one zoomed segment with dx and dy labeled. Add axis labels. Use matplotlib.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for number of segments n from 4 to 100",
+          "Toggle: show/hide chord segments"
+        ]
+      },
+      "on_screen_text": "Arc length = integral of speed (magnitude of velocity). Speed = $\\sqrt{(dx/dt)^2 + (dy/dt)^2}$.",
+      "teacher_narration": "To find the length of a parametric curve, we integrate the speed of the particle along the curve. That speed is the magnitude of the velocity vector, which is the square root of the sum of the squares of the derivatives. Imagine breaking the curve into tiny segments; each segment's length is approximately speed times a tiny change in t. Adding them up gives the integral. The visual shows the curve and a few approximating chords, highlighting that the exact length is the limit of these sums.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Arc Length Approximation",
+      "left": {
+        "content_type": "text",
+        "content": "Adjust the number of segments $n$ to see how the polygonal approximation approaches the true arc length. The exact length for this ellipse is about 25.53."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive: ellipse x=5cos t, y=3sin t; slider for n segments from 4 to 100; show polygonal approximation and computed length; display exact length for comparison.",
+        "visual_spec": "Plot the ellipse (blue curve). Overlay n chord segments in red. Display computed polygonal length and exact length numeric. Slider n from 4 to 100 with step 2. Use matplotlib.widgets. Include a text box showing both lengths.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nt_vals = np.linspace(0, 2*np.pi, 400)\nx_exact = 5*np.cos(t_vals)\ny_exact = 3*np.sin(t_vals)\n\ndef ellipse_arc_length_exact():\n    # Use numerical integration for 'exact'\n    from scipy.integrate import quad\n    def integrand(t):\n        dx = -5*np.sin(t)\n        dy = 3*np.cos(t)\n        return np.sqrt(dx**2 + dy**2)\n    L, _ = quad(integrand, 0, 2*np.pi)\n    return L\n\nL_exact = ellipse_arc_length_exact()\n\nfig, ax = plt.subplots()\nplt.subplots_adjust(bottom=0.25)\nax.plot(x_exact, y_exact, 'b', lw=2, label='Exact curve')\nax.set_xlim(-6, 6)\nax.set_ylim(-4, 4)\nax.set_aspect('equal')\nax.legend()\nax.set_title('Arc Length Approximation')\n\npolygon, = ax.plot([], [], 'r-', lw=1, label='Polygon')\nlength_text = ax.text(0.05, 0.95, '', transform=ax.transAxes, va='top', fontsize=12)\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nn_slider = Slider(ax_slider, 'n segments', 4, 100, valinit=4, valstep=2)\n\ndef update(val):\n    n = int(n_slider.val)\n    t_poly = np.linspace(0, 2*np.pi, n+1)\n    x_poly = 5*np.cos(t_poly)\n    y_poly = 3*np.sin(t_poly)\n    polygon.set_data(x_poly, y_poly)\n    # compute poly length\n    dx = np.diff(x_poly)\n    dy = np.diff(y_poly)\n    L_poly = np.sum(np.sqrt(dx**2 + dy**2))\n    length_text.set_text(f'Poly length: {L_poly:.3f}\\nExact: {L_exact:.3f}')\n    fig.canvas.draw_idle()\n\nn_slider.on_changed(update)\nupdate(4)\nplt.show()",
+        "interactive_controls": [
+          "Slider for number of segments n from 4 to 100 (even steps)",
+          "Display of polygon length and exact length"
+        ]
+      },
+      "on_screen_text": "Slide n to see polygon approach the ellipse. Watch the length converge.",
+      "teacher_narration": "Here you can see how the arc length integral works. We approximate the ellipse by a polygon with n straight segments. As you increase n, the polygon length gets closer to the exact arc length, which for this ellipse is about 25.53. The slider lets you control n from 4 to 100. Notice that even with 50 segments the approximation is very close. This visual demonstrates that the integral formula is just the limit of summing up many tiny straight-line distances.",
+      "student_prompt": "Try n=100. How close is the polygonal length to the exact value?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Practice: Arc Length (Tricky)",
+      "left": {
+        "content_type": "text",
+        "content": "**Example 3:** Find length of $x=t^2$, $y=t^3$ from $t=0$ to $t=1$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | $dx/dt$, $dy/dt$ | $2t$, $3t^2$ |\n| 2 | Speed | $\\sqrt{4t^2+9t^4}=t\\sqrt{4+9t^2}$ |\n| 3 | Set up integral | $\\int_0^1 t\\sqrt{4+9t^2}\\,dt$ |\n| 4 | $u=4+9t^2$, $du=18t\\,dt$ | $\\frac{1}{18}\\int_4^{13}\\sqrt{u}\\,du$ |\n| 5 | Integrate | $\\frac{1}{18}\\cdot\\frac{2}{3}u^{3/2}\\big|_4^{13}$ |\n| 6 | Evaluate | $\\frac{1}{27}(13^{3/2}-8)$ |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Tricky because you must factor t out of the square root before substitution. Final answer: (13√13 - 8)/27.",
+      "teacher_narration": "This example is a bit tricky because the speed expression contains t squared and t to the fourth. We factor out t squared from the square root, leaving t times the square root of 4 plus 9t squared. Then we use the substitution u equals 4 plus 9t squared. The du absorbs one t. After integrating, we get 1 over 27 times 13 to the 3 halves minus 8. The key skill is recognizing when factoring simplifies the integral. Always look for a factor that matches the derivative of the inner function.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Area Under a Parametric Curve",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$A = \\int_{\\alpha}^{\\beta} y(t) \\, x'(t) \\, dt$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Static: parametric curve with shaded area between curve and x-axis; show vertical strips whose height is y and width is dx = x'(t) dt.",
+        "visual_spec": "Plot a parametric curve (e.g., x=t^2, y=t from t=0 to t=2). Shade the area under the curve from t=0 to t=2. Overlay a few vertical strips in light gray. Mark a representative strip with height y(t) and width dx. Label axes. Use matplotlib with fill_between between curve and y=0.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for t from 0 to 2",
+          "Toggle: show/hide vertical strips"
+        ]
+      },
+      "on_screen_text": "Area = integral of y times x'(t) dt. Sign matters: if curve goes right→left, area becomes negative.",
+      "teacher_narration": "To compute the area under a parametric curve, we use the formula: the integral of y times the derivative of x with respect to t, integrated over the parameter interval. Think of it as: area equals the sum of vertical strips whose height is y of t and whose width is x prime of t times dt. But be careful: if the curve is traced from right to left, then x prime is negative, giving a negative area. In that case you either take absolute value or adjust the limits. The visual shows the area under a simple parabolic curve.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Practice: Area (Edge Case)",
+      "left": {
+        "content_type": "text",
+        "content": "**Example 4:** Find area under $x = t^2$, $y = t$ from $t=0$ to $t=2$.\n\n- $x'(t) = 2t$\n- $A = \\int_0^2 (t)(2t)\\,dt = \\int_0^2 2t^2\\,dt = \\left[\\frac{2}{3}t^3\\right]_0^2 = \\frac{16}{3}$\n\nNow consider $x = \\cos t$, $y = \\sin t$ from $t=0$ to $t=\\pi/2$ (quarter circle). $x'(t) = -\\sin t$, so $A = \\int_0^{\\pi/2} \\sin t (-\\sin t)\\,dt = -\\int_0^{\\pi/2} \\sin^2 t\\,dt = -\\frac{\\pi}{4}$. The negative sign indicates the curve runs from right to left. The actual area is positive $\\pi/4$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Edge case: when curve goes right-to-left, area integral gives negative. Take absolute value or swap limits.",
+      "teacher_narration": "Here we have two examples. The first is straightforward: the area under the curve x equals t squared, y equals t from t=0 to 2 is 16 over 3. But the second example reveals an edge case. For the quarter circle from t=0 to pi over 2, the derivative of x is negative sine t, so the integrand becomes negative. The integral gives negative pi over 4. But the geometric area should be positive pi over 4. The negative appears because the curve starts at x=1 and goes leftwards to x=0. To get the actual area, we can take the absolute value or integrate from t=pi/2 to 0 instead.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Surface Area of Revolution",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$S = \\int_{\\alpha}^{\\beta} 2\\pi y(t) \\, \\sqrt{\\left(\\frac{dx}{dt}\\right)^2 + \\left(\\frac{dy}{dt}\\right)^2} \\, dt$$ \n(rotation about x-axis, $y(t) \\ge 0$)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Static: parametric curve rotated about x-axis; show a thin band of radius y and width ds; label circumference 2πy and ds.",
+        "visual_spec": "Plot the curve (e.g., x=t, y=t^2 from t=0 to 2) and its shadow revolution surface (wireframe). Highlight a small band at some t: radius y, width ds. Use 3D axes with mpl_toolkits.mplot3d. Show surface semi-transparent. Add labels for y and ds.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Surface area = integral of circumference $2\\pi y$ times arc length differential $ds$.",
+      "teacher_narration": "If we rotate a parametric curve about the x-axis, we get a surface. The area of that surface is found by integrating the circumference of each circular cross-section, which is 2 pi times the y-coordinate, multiplied by the infinitesimal arc length ds. The formula combines the arc length integrand with an extra factor of 2 pi y. Note that this formula works when y is nonnegative for the entire interval; if the curve dips below the axis, you must use absolute value or split the integral. The visual shows the 3D surface and the thin band that is being summed.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Practice: Surface Area (Application)",
+      "left": {
+        "content_type": "text",
+        "content": "**Example 5:** A vase is formed by rotating $x = t$, $y = t^2$ from $t=0$ to $t=2$ about the x-axis. Find surface area.\n\n- $dx/dt=1$, $dy/dt=2t$ → speed $\\sqrt{1+4t^2}$\n- $S = \\int_0^2 2\\pi t^2 \\sqrt{1+4t^2}\\,dt$\n- Substitution: $u=1+4t^2$, $du=8t\\,dt$, $t^2=(u-1)/4$, $t\\,dt=du/8$\n- $S = 2\\pi \\int_1^{17} \\frac{u-1}{4} \\sqrt{u} \\cdot \\frac{du}{8} = \\frac{\\pi}{16} \\int_1^{17} (u^{3/2} - u^{1/2})\\,du$\n- $S = \\frac{\\pi}{16} \\left[ \\frac{2}{5}u^{5/2} - \\frac{2}{3}u^{3/2} \\right]_1^{17}$\n- Final expression: $\\frac{\\pi}{16}\\left(\\frac{2}{5}(17^{5/2}-1) - \\frac{2}{3}(17^{3/2}-1)\\right)$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Real-world application: manufacturers need this to know how much glaze to use.",
+      "teacher_narration": "Here is a real-world application. Imagine a vase obtained by rotating the curve x equals t, y equals t squared about the x-axis from t=0 to 2. To find its surface area, we set up the integral with y equals t squared and speed root 1 plus 4t squared. The integration requires a substitution: let u equal 1 plus 4t squared. After careful algebra, we get an expression involving 17 to the 5 halves and 17 to the 3 halves. This is not a simple number, but it is what a manufacturer would compute to determine the amount of glaze or paint needed to coat the vase.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "misconception",
+      "layout": "full_width",
+      "title": "Common Mistake: Forgetting to Check $dx/dt = 0$",
+      "left": {
+        "content_type": "text",
+        "content": "When finding slope, we assume $dx/dt \\neq 0$. If $dx/dt = 0$ and $dy/dt \\neq 0$, the tangent is **vertical**. If both are zero, the curve may have a cusp or self-intersection; the formula fails and we need limits.\n\n**Example:** $x = t^3$, $y = t^2$ at $t=0$. Both derivatives zero, but curve has a cusp. The slope from the ratio $dy/dx = 2t/(3t^2) = 2/(3t)$ is undefined at t=0, which correctly indicates the cusp."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "If $dx/dt=0$, tangent is vertical (if $dy/dt\\neq0$). If both zero, check for cusp.",
+      "teacher_narration": "A common oversight is forgetting the condition that the denominator dx over dt must be nonzero. If dx over dt equals zero but dy over dt does not, the tangent line is vertical. But if both derivatives are zero simultaneously, we have an indeterminate form. The curve might have a cusp, a corner, or a self-intersection. For example, consider x equals t cubed, y equals t squared at t equals 0. Both derivatives vanish. The ratio formula gives 2 over 3t, which blows up, indicating a cusp. So always check the derivatives before applying the formula.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof of Slope Formula",
+      "left": {
+        "content_type": "text",
+        "content": "**Theorem:** For $x=f(t)$, $y=g(t)$ with $f'(t)\\neq0$, $\\frac{dy}{dx} = \\frac{g'(t)}{f'(t)}$.\n\n**Proof sketch:** If $f'(t_0)\\neq0$, by the Inverse Function Theorem, $t=f^{-1}(x)$ locally. Then $y=g(f^{-1}(x))$. Chain rule gives $\\frac{dy}{dx} = g'(f^{-1}(x)) \\cdot \\frac{1}{f'(f^{-1}(x))} = \\frac{g'(t)}{f'(t)}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: mapping from t to x and then to y; show composition.",
+        "visual_spec": "Draw a diagram with three regions: t-parameter line, x-axis, y-axis. Show arrows: from t to x via f, from t to y via g. Then show the composite y = g(f^{-1}(x)). Use LaTeX annotations. Include boxes for functions.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof uses the Inverse Function Theorem and chain rule. Optional depth.",
+      "teacher_narration": "For those who want a rigorous proof, here it is. The derivative of x with respect to t is nonzero, so we can invert the function locally: express t as a function of x. Then y becomes a composition of g and the inverse of f. Applying the chain rule gives the derivative of y with respect to x as g prime of t divided by f prime of t. This is why we need the denominator to be nonzero. Feel free to pause and study this diagram. It connects the parametric slope formula to the implicit function theorem and the chain rule.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "pause_and_try",
+      "layout": "full_width",
+      "title": "Quick Self-Check",
+      "left": {
+        "content_type": "text",
+        "content": "**Question:** For the parametric curve $x = 3 + 2\\cos t$, $y = 1 + 2\\sin t$ from $t = \\pi/2$ to $t = 3\\pi/2$, find:\n- (a) The slope of the tangent line at $t = \\pi$.\n- (b) The arc length from $t=\\pi/2$ to $t=3\\pi/2$.\n\nPause the video and try these on your own. We'll go through the answer on the next slide."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Try it now. Find slope at t=π and arc length over half the circle.",
+      "teacher_narration": "I want you to pause the video and attempt these two questions. The curve is a circle of radius 2, centered at (3,1). First, compute the derivatives, then the slope at the specified t. Second, set up the arc length integral. Remember that the speed is constant for a circle. Give it a try, then resume to check your answers.",
+      "student_prompt": "Pause and try: (a) slope at t=π? (b) arc length from t=π/2 to 3π/2?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 17,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Solution to Self-Check",
+      "left": {
+        "content_type": "text",
+        "content": "**Answers:**\n- (a) $dx/dt = -2\\sin t$, $dy/dt = 2\\cos t$. At $t=\\pi$: $dx/dt=0$, $dy/dt=-2$. Tangent is vertical. Slope undefined (vertical line).\n- (b) Speed = $\\sqrt{(-2\\sin t)^2 + (2\\cos t)^2} = 2$. Arc length = $\\int_{\\pi/2}^{3\\pi/2} 2\\,dt = 2\\pi$. This is half the circumference of a circle radius 2: $\\frac{1}{2} \\cdot 2\\pi \\cdot 2 = 2\\pi$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "At t=π: vertical tangent. Arc length = 2π (half circle circumference).",
+      "teacher_narration": "Here are the answers. For part (a), at t equals pi, the derivative of x is zero and derivative of y is negative 2, so the tangent is vertical. The slope is undefined. For part (b), the speed simplifies to 2 because it's a circle of radius 2. Integrating from pi over 2 to 3 pi over 2 gives 2 pi, which matches half the circumference of a full circle with radius 2, which is 2 pi. So both answers are consistent. Did you get them?",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 18,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Formulas:**\n- Slope: $\\displaystyle \\frac{dy}{dx} = \\frac{dy/dt}{dx/dt}$ (provided $dx/dt\\neq0$)\n- Second derivative: $\\displaystyle \\frac{d^2y}{dx^2} = \\frac{d}{dt}\\left(\\frac{dy}{dx}\\right) \\Big/ \\frac{dx}{dt}$\n- Arc length: $L = \\int \\sqrt{(dx/dt)^2 + (dy/dt)^2}\\,dt$\n- Area under curve: $A = \\int y(t)\\,x'(t)\\,dt$ (watch sign)\n- Surface area (rotation about x-axis): $S = \\int 2\\pi y(t)\\,\\sqrt{(dx/dt)^2+(dy/dt)^2}\\,dt$\n\n**Common mistakes:** Never compute $dy/dx$ directly; never use $d^2y/dt^2 / d^2x/dt^2$ for second derivative; always check $dx/dt\\neq0$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Five formulas for parametric calculus. Pay attention to conditions and sign.",
+      "teacher_narration": "Let's review what we've learned. We have five key formulas: the slope, the second derivative, arc length, area, and surface area. The central idea is to treat derivatives as ratios of velocities and to integrate the speed for length. Remember the common pitfalls: never directly differentiate y with respect to x, never use the wrong second derivative formula, and always check if dx over dt is zero. With these tools, you can analyze any parametric curve. Practice the problems in the description to solidify your understanding.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

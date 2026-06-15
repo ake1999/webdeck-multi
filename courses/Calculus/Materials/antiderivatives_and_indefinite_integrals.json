@@ -1,0 +1,378 @@
+{
+  "lecture_meta": {
+    "title": "Antiderivatives and Indefinite Integrals",
+    "topic": "Antiderivatives and Indefinite Integrals",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate antiderivatives using the power rule and standard formulas",
+      "Interpret the indefinite integral as a family of functions",
+      "Apply constant multiple and sum rules to integrate expressions",
+      "Solve initial value problems to find specific functions"
+    ],
+    "prerequisite_reminder": "You should know how to differentiate polynomial, trigonometric, exponential, and logarithmic functions."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Speedometer to Road Trip",
+      "left": {
+        "content_type": "text",
+        "content": "If I hand you a speedometer reading at every moment, can you reconstruct the entire road trip? You'd know the shape of the journey, but not where you started. That missing starting point is the constant of integration."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animation of a car moving along a road, with a speed vs. time graph below and a family of position curves above",
+        "visual_spec": "Plot two panels: top panel shows a family of position curves (parabolas with different vertical shifts), bottom panel shows the shared velocity curve (linear). Animate a car moving along one position curve while the velocity graph highlights the corresponding point. Use a slider to shift the position curve up/down (changing initial displacement). The student should see that all curves have the same shape and the same derivative (velocity).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nt = np.linspace(0, 10, 500)\nv = 2*t + 3  # linear velocity\n\ndef position(t, C):\n    return t**2 + 3*t + C\n\nfig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6), sharex=True)\nplt.subplots_adjust(bottom=0.25)\n\nC_init = 0\nline1, = ax1.plot(t, position(t, C_init), 'b-', label='Position')\nax1.set_ylabel('Position (m)')\nax1.set_ylim(-20, 100)\nax1.grid(True)\nax1.legend()\n\nline2, = ax2.plot(t, v, 'r-', label='Velocity')\nax2.set_xlabel('Time (s)')\nax2.set_ylabel('Velocity (m/s)')\nax2.grid(True)\nax2.legend()\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'Initial displacement C', -30, 30, valinit=C_init)\n\ndef update(val):\n    C = slider.val\n    line1.set_ydata(position(t, C))\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for initial displacement C from -30 to 30"
+        ]
+      },
+      "on_screen_text": "A speedometer gives velocity. Antidifferentiation recovers position — up to a constant shift.",
+      "teacher_narration": "Imagine you're given the speedometer reading of a car at every instant. Can you reconstruct the whole road trip? You can determine the shape of the journey, but you won't know where the car started. That missing starting point, a constant vertical shift, is exactly the constant of integration. In the animation, moving the slider shifts the position curve up or down, but the velocity curve never changes. That's the central idea of indefinite integrals: they give a whole family of functions, all related by a constant.",
+      "student_prompt": "Predict: If you shift the position curve upward by 5 units, what happens to the velocity curve?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definition of Indefinite Integral",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\int f(x)\\,dx = F(x) + C \\quad \\text{where} \\quad F'(x) = f(x)$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Slope field of f(x)=x^2 with a family of antiderivative curves",
+        "visual_spec": "Plot a slope field for f(x)=x^2 over x in [-3,3], y in [-5,5]. Overlay four antiderivative curves F(x)=x^3/3+C for C=-2,0,2,4 in different colors. Include a legend. Optionally add a slider that changes C and highlights the corresponding antiderivative curve. The student should notice that all curves have the same slope at any given x.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nx = np.linspace(-3, 3, 20)\ny = np.linspace(-5, 5, 20)\nX, Y = np.meshgrid(x, y)\nU = np.ones_like(X)\nV = X**2\nM = np.hypot(U, V)\nU = U/M\nV = V/M\n\nfig, ax = plt.subplots(figsize=(8,6))\nplt.subplots_adjust(bottom=0.2)\nax.quiver(X, Y, U, V, alpha=0.6, width=0.003)\n\ndef F(x, C):\n    return x**3/3 + C\n\nC_vals = [-2, 0, 2, 4]\ncolors = ['red', 'green', 'blue', 'purple']\nx_plot = np.linspace(-3, 3, 400)\nfor C, col in zip(C_vals, colors):\n    ax.plot(x_plot, F(x_plot, C), color=col, label=f'C = {C}')\nax.set_xlim(-3, 3)\nax.set_ylim(-5, 5)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Slope field of f(x)=x² and antiderivatives')\nax.grid(True, alpha=0.3)\nax.legend()\n\n# Add slider to explore more C values\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'C', -5, 5, valinit=0)\nline, = ax.plot([], [], 'orange', lw=3, label='Selected C')\ndef update(val):\n    line.set_data(x_plot, F(x_plot, slider.val))\n    fig.canvas.draw_idle()\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for C from -5 to 5"
+        ]
+      },
+      "on_screen_text": "The indefinite integral is the family of ALL functions whose derivative equals f(x).",
+      "teacher_narration": "Formally, we write the indefinite integral of f of x as the antiderivative F(x) plus an arbitrary constant C. This constant represents the infinite family of functions that all have the same derivative — they're just shifted vertically. Look at the slope field on the right: tiny line segments show the slope at each point. Any curve following these slopes is an antiderivative. Notice that the curves are all identical in shape; they only differ by a vertical shift. And crucially, the derivative of each is exactly the same.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Power Rule for Integration",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\int x^n\\,dx = \\frac{x^{n+1}}{n+1} + C, \\quad n \\neq -1$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of y=x^3 and its antiderivative y=x^4/4, with verification animation",
+        "visual_spec": "Plot f(x)=x^3 (dashed) and F(x)=x^4/4 (solid) on the same axes from x=-2 to 2. Label both. Add a text annotation showing the derivative of F equals f. Optionally include a slider to change the exponent n (integer from 1 to 4) and update the plots accordingly, along with the formula.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8,6))\nplt.subplots_adjust(bottom=0.25)\n\nx = np.linspace(-2, 2, 400)\nn_init = 3\nf = lambda x, n: x**n\nF = lambda x, n: x**(n+1)/(n+1)\n\nline_f, = ax.plot(x, f(x, n_init), 'r--', label='f(x)')\nline_F, = ax.plot(x, F(x, n_init), 'b-', label='F(x) antiderivative')\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(0, color='gray', lw=0.5)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_ylim(-4, 4)\nax.grid(True, alpha=0.3)\nax.legend()\n\ntext = ax.text(0.5, 3, f'n = {n_init}', fontsize=12)\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'Exponent n', 1, 4, valinit=n_init, valstep=1)\n\ndef update(val):\n    n = int(slider.val)\n    line_f.set_ydata(f(x, n))\n    line_F.set_ydata(F(x, n))\n    text.set_text(f'n = {n}')\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for exponent n from 1 to 4 (integer step)"
+        ]
+      },
+      "on_screen_text": "To integrate a power: increase exponent by 1, then divide by the new exponent.",
+      "teacher_narration": "The power rule for integration is the reverse of the power rule for differentiation. If the derivative of x to the n plus 1 over n plus 1 is x to the n, then conversely, the antiderivative of x to the n must be x to the n plus 1 over n plus 1. But remember: n cannot be negative one, because we'd be dividing by zero. We'll handle that special case later. In the animation, slide the exponent and watch how both the function and its antiderivative change. Check that the derivative of the blue curve always matches the red dashed curve.",
+      "student_prompt": "Before moving the slider, predict: For n=2, what is the antiderivative formula?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Constant Multiple and Sum Rules",
+      "left": {
+        "content_type": "text",
+        "content": "$$\\int c\\,f(x)\\,dx = c\\int f(x)\\,dx$$\n\n$$\\int [f(x) \\pm g(x)]\\,dx = \\int f(x)\\,dx \\pm \\int g(x)\\,dx$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Illustration of the sum rule: area under f+g equals sum of areas under f and g.",
+        "visual_spec": "Plot two functions f(x)=x^2, g(x)=2x, and their sum h(x)=x^2+2x over x in [-1,3]. Shade the area under each from x=0 to x=2. Show three separate shaded regions (for f, g, and f+g). Add labels. The visual demonstrates that the integral of the sum equals the sum of the integrals.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(-1, 3, 400)\nf = x**2\ng = 2*x\nh = f + g\n\nfig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 10), sharex=True)\n\nax1.plot(x, f, 'b-', label='f(x)=x²')\nax1.fill_between(x, f, where=(x>=0)&(x<=2), alpha=0.3, color='blue')\nax1.set_ylabel('y')\nax1.set_title('f(x)')\nax1.grid(True, alpha=0.3)\nax1.legend()\n\nax2.plot(x, g, 'r-', label='g(x)=2x')\nax2.fill_between(x, g, where=(x>=0)&(x<=2), alpha=0.3, color='red')\nax2.set_ylabel('y')\nax2.set_title('g(x)')\nax2.grid(True, alpha=0.3)\nax2.legend()\n\nax3.plot(x, h, 'g-', label='f(x)+g(x)')\nax3.fill_between(x, h, where=(x>=0)&(x<=2), alpha=0.3, color='green')\nax3.set_xlabel('x')\nax3.set_ylabel('y')\nax3.set_title('f(x)+g(x)')\nax3.grid(True, alpha=0.3)\nax3.legend()\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Constants factor out, sums break apart. But no product or quotient rule for integrals.",
+      "teacher_narration": "Just like with derivatives, constants pull out in front of the integral, and the integral of a sum is the sum of the integrals. This makes integrating polynomials straightforward: handle each term separately. But a major difference from differentiation is that there is no product rule or quotient rule for integration. You can't just integrate a product by taking the product of the integrals. We'll need special techniques for products later.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Warm-Up — Direct Power Rule",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\int x^7\\,dx$\n\n| Step | Action |\n|------|--------|\n| 1 | Identify $n=7$ |\n| 2 | Apply power rule: $\\frac{x^{8}}{8} + C$ |\n| 3 | Simplify: $\\frac{x^{8}}{8} + C$ |\n\n**Check:** $\\frac{d}{dx}\\left(\\frac{x^{8}}{8} + C\\right) = x^7$ ✓"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Integrate x^7 using the power rule.",
+      "teacher_narration": "Let's start with a simple application of the power rule. The integrand is x to the seventh. We increase the exponent by one to get x to the eighth, then divide by the new exponent, eight. Add the constant of integration. To verify, differentiate your answer: the derivative of x to the eighth over eight is x to the seventh, and the derivative of a constant is zero. So we get back the original function.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Standard — Polynomial with Sum Rule",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\int (3x^2 - 4x + 7)\\,dx$\n\n| Step | Action |\n|------|--------|\n| 1 | Split sum: $\\int 3x^2\\,dx - \\int 4x\\,dx + \\int 7\\,dx$ |\n| 2 | Factor constants: $3\\int x^2\\,dx - 4\\int x\\,dx + 7\\int 1\\,dx$ |\n| 3 | Integrate each: $3\\left(\\frac{x^3}{3}\\right) - 4\\left(\\frac{x^2}{2}\\right) + 7x + C$ |\n| 4 | Simplify: $x^3 - 2x^2 + 7x + C$ |\n\n**Check:** $\\frac{d}{dx}(x^3 - 2x^2 + 7x + C) = 3x^2 - 4x + 7$ ✓"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Integrate a polynomial term-by-term using the sum rule and constant multiple rule.",
+      "teacher_narration": "Now we integrate a polynomial. Use the sum rule to split into three separate integrals. Then factor out the constants: three, negative four, and seven. Now integrate each using the power rule. The antiderivative of x squared is x cubed over three, multiplied by three gives just x cubed. For negative four x, the antiderivative of x is x squared over two, times negative four gives negative two x squared. The constant seven integrates to seven x. Don't forget the plus C.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3: Tricky — Negative Exponents",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\int \\frac{1}{x^3}\\,dx$\n\n| Step | Action |\n|------|--------|\n| 1 | Rewrite: $\\int x^{-3}\\,dx$ |\n| 2 | Apply power rule: $\\frac{x^{-2}}{-2} + C$ |\n| 3 | Simplify: $-\\frac{1}{2x^2} + C$ |\n\n**Common mistake:** Writing $\\frac{x^{-2}}{2} + C$ (missing sign).",
+        "warning": "When n+1 is negative, dividing by n+1 gives a negative coefficient. Watch your signs!"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Integrate 1/x^3 as a negative power. Watch the sign carefully.",
+      "teacher_narration": "Tricky: we can write one over x cubed as x to the negative three. Then apply the power rule: increase exponent by one to get negative two, divide by negative two. That gives negative x to the negative two over two, or negative one over two x squared. The most common mistake here is forgetting the negative sign from dividing by a negative number. Always check by differentiating your answer.",
+      "student_prompt": "Before looking at the answer, try integrating 1/x^4 yourself.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause and Try: Predict the Integral of 1/x",
+      "left": {
+        "content_type": "text",
+        "content": "What do you think $\\int \\frac{1}{x}\\,dx$ is? Try using the power rule. What happens?",
+        "hint": "Power rule fails because n = -1 leads to division by zero. There is a special formula."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Blank graph with a question mark, waiting for student reflection.",
+        "visual_spec": "Simple plot of the function 1/x over positive and negative x, with axes labeled. No solution shown. This is a pause slide for prediction.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "What is ∫ (1/x) dx? The power rule fails here.",
+      "teacher_narration": "Pause for a moment. Try to integrate one over x using the power rule. What goes wrong? Notice that if n equals negative one, then n plus one is zero, and we cannot divide by zero. So the power rule does not apply. There is a special antiderivative for this function. Think back to derivatives: what function gives one over x when differentiated? We'll reveal the answer on the next slide.",
+      "student_prompt": "Write down your guess for ∫ (1/x) dx before continuing.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 4: Edge Case — Integral of 1/x",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\int \\frac{1}{x}\\,dx$\n\n**Solution:** $\\ln|x| + C$\n\n**Why?** $\\frac{d}{dx}\\ln|x| = \\frac{1}{x}$ for $x \\neq 0$.\n- For $x>0$: $\\frac{d}{dx}\\ln x = \\frac{1}{x}$\n- For $x<0$: $\\frac{d}{dx}\\ln(-x) = \\frac{1}{x}$\n\nAbsolute value is needed because the domain of 1/x excludes zero.",
+        "note": "This is the only exception to the power rule. Memorize it!"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∫ (1/x) dx = ln|x| + C. The power rule fails for n=-1.",
+      "teacher_narration": "The antiderivative of one over x is the natural logarithm of the absolute value of x, plus C. Why the absolute value? Because the derivative of ln x for positive x is one over x, and the derivative of ln of negative x for negative x is also one over x. So the absolute value covers both cases. This is a critical formula to memorize: it's the one exception to the power rule.",
+      "student_prompt": "Verify by differentiating ln|x| for x>0 and x<0.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 5: Application — Initial Value Problem",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** A particle moves with velocity $v(t) = 3t^2 - 2t + 1$ m/s. At $t=0$, position $s(0)=4$ m. Find $s(t)$.\n\n| Step | Action |\n|------|--------|\n| 1 | $s(t) = \\int v(t)\\,dt$ |\n| 2 | Integrate: $s(t) = t^3 - t^2 + t + C$ |\n| 3 | Use $s(0)=4$: $0 - 0 + 0 + C = 4$ |\n| 4 | So $C=4$, $s(t) = t^3 - t^2 + t + 4$ |\n\n**Crucial:** The constant is no longer arbitrary; it's determined by the initial condition.",
+        "note": "This bridges indefinite integrals (family) and definite integrals (specific value)."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Given velocity and initial position, find position. The constant becomes specific.",
+      "teacher_narration": "This is a classic physics application. Position is the antiderivative of velocity. Integrate the velocity function to get t cubed minus t squared plus t plus C. But we need a specific position function. We use the initial condition: at time zero, position is four meters. Plugging in t equals zero gives C equals four. So the position function is t cubed minus t squared plus t plus four. Notice that the constant is no longer arbitrary — it's fixed by the initial condition.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Forgetting +C or Misusing Power Rule",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong:** $\\int x^2\\,dx = \\frac{x^3}{3}$ (missing $+C$) \n\n**Wrong:** $\\int \\frac{1}{x}\\,dx = \\frac{x^0}{0}$ (division by zero, meaningless)\n\n**Correct:** $\\int x^2\\,dx = \\frac{x^3}{3} + C$\n\n**Correct:** $\\int \\frac{1}{x}\\,dx = \\ln|x| + C$",
+        "explanation": "The $+C$ is not optional; it represents the entire family of antiderivatives. For $1/x$, the power rule simply doesn't apply; you must use the logarithm formula."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph showing two antiderivatives of x^2: one with C=0, the other with C=2. Highlight that both have the same derivative but different values.",
+        "visual_spec": "Plot the curves y = x^3/3 and y = x^3/3 + 2 over x in [-2,2]. Also show the derivative f(x)=x^2 as a dashed line. Label that both curves have the same slope at each x but differ by a constant. This visually reinforces why the +C is necessary.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(-2, 2, 400)\nf = x**2\nF1 = x**3/3\nF2 = x**3/3 + 2\n\nplt.figure(figsize=(8,6))\nplt.plot(x, F1, 'b-', label='F(x)=x³/3 (C=0)')\nplt.plot(x, F2, 'r-', label='F(x)=x³/3+2 (C=2)')\nplt.plot(x, f, 'g--', alpha=0.7, label='f(x)=x² (derivative)')\nplt.xlabel('x')\nplt.ylabel('y')\nplt.title('Two Antiderivatives of x²: Missing +C loses the red curve')\nplt.grid(True, alpha=0.3)\nplt.legend()\nplt.axhline(0, color='gray', lw=0.5)\nplt.axvline(0, color='gray', lw=0.5)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Forgetting +C loses infinitely many solutions. For 1/x, power rule gives division by zero.",
+      "teacher_narration": "Two common errors to avoid. First: never forget the plus C. If you do, you're only giving one particular antiderivative instead of the whole family. In the graph, if you forget plus C, you'd only get the blue curve, but the red curve is equally valid. Second: don't try to force the power rule on one over x. It leads to division by zero, which is meaningless. That function has its own special rule with natural log.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Explore the Family of Antiderivatives",
+      "left": {
+        "content_type": "text",
+        "content": "Adjust the constant C and exponent n to see how the antiderivative family changes. The derivative (slope) stays the same at each x.",
+        "instructions": "Use the sliders to change C (vertical shift) and n (power). Observe that the slope at any x is determined by n and x, not by C."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot showing f(x)=x^n and its antiderivative family F(x)=x^{n+1}/(n+1)+C, with sliders for C and n.",
+        "visual_spec": "Plot both f(x) (dashed) and F(x) (solid) for n from -3 to 4 (excluding -1). Two sliders: one for C (range -5 to 5), one for n (range -3 to 4 step 0.5, but skip -1 with validation). When n=-1, display a warning and show the 1/x case separately. Also show the derivative check: the slope of F at a point equals f at that point, visualized by a tangent line at a movable x position.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8,6))\nplt.subplots_adjust(bottom=0.3)\n\nx = np.linspace(-3, 3, 400)\nn_init = 2\nC_init = 1\n\nf = lambda x, n: x**n\nF = lambda x, n, C: (x**(n+1))/(n+1) + C if n != -1 else np.log(np.abs(x)) + C\n\n# Handle n=-1 separately for F (log domain issues)\ndef safe_F(x, n, C):\n    if n == -1:\n        return np.where(x != 0, np.log(np.abs(x)) + C, np.nan)\n    else:\n        return (x**(n+1))/(n+1) + C\n\nline_f, = ax.plot(x, f(x, n_init), 'r--', label='f(x)=x^n', lw=2)\nline_F, = ax.plot(x, safe_F(x, n_init, C_init), 'b-', label='F(x)+C', lw=2)\nax.set_ylim(-5, 5)\nax.axhline(0, color='gray')\nax.axvline(0, color='gray')\nax.grid(True, alpha=0.3)\nax.legend()\n\n# Slider for n\nax_n = plt.axes([0.2, 0.15, 0.6, 0.03])\nslider_n = Slider(ax_n, 'n', -3, 4, valinit=n_init, valstep=0.5)\n\n# Slider for C\nax_C = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider_C = Slider(ax_C, 'C', -5, 5, valinit=C_init)\n\ndef update(val):\n    n = slider_n.val\n    C = slider_C.val\n    # Update f\n    line_f.set_ydata(f(x, n))\n    # Update F: if n=-1, show log; else power rule\n    line_F.set_ydata(safe_F(x, n, C))\n    ax.set_title(f'n = {n:.1f}, C = {C:.1f}')\n    fig.canvas.draw_idle()\n\nslider_n.on_changed(update)\nslider_C.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for exponent n from -3 to 4 (step 0.5, with validation for n=-1)",
+          "Slider for constant C from -5 to 5"
+        ]
+      },
+      "on_screen_text": "Explore how changing C shifts the antiderivative vertically, while n changes the shape.",
+      "teacher_narration": "Here you can experiment with the power rule. Use the slider for n to change the exponent. Watch how the function and its antiderivative change shape. When n is negative one, notice the function becomes one over x and the antiderivative switches to log. The second slider adjusts C, shifting the antiderivative vertically. This confirms that the constant does not affect the derivative: the slope of F at any x depends only on n and x, not on C.",
+      "student_prompt": "Try setting n=3. Then move the C slider. Does the slope of F change at any x?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Why Antiderivatives Differ by a Constant",
+      "left": {
+        "content_type": "text",
+        "content": "**Theorem:** If $F'(x)=G'(x)$ for all $x$ in an interval, then $F(x)=G(x)+C$.\n\n*Proof:* Let $H(x)=F(x)-G(x)$. Then $H'(x)=0$, so $H$ is constant.\n\n**Why $H'=0$ implies $H$ constant?**\nBy the Mean Value Theorem, for any $a<b$, there exists $c$ in $(a,b)$ such that $H'(c)=\\frac{H(b)-H(a)}{b-a}$. Since $H'(c)=0$, we get $H(b)=H(a)$. So $H$ is constant."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graphical illustration of two curves that differ by a constant, showing their horizontal tangent lines (zero difference derivative).",
+        "visual_spec": "Plot two functions that are vertical shifts of each other, e.g., sin(x) and sin(x)+1. At a point, show the difference H(x) = constant, and note that its derivative is zero. Use an animation to emphasize that the vertical gap is fixed.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 4*np.pi, 400)\nF = np.sin(x)\nG = np.sin(x) + 2\nH = G - F  # constant = 2\n\nplt.figure(figsize=(8,6))\nplt.plot(x, F, 'b-', label='F(x) = sin(x)')\nplt.plot(x, G, 'r-', label='G(x) = sin(x) + 2')\nplt.plot(x, H, 'g--', label='H(x) = G(x)-F(x) = 2')\nplt.xlabel('x')\nplt.ylabel('y')\nplt.title('Two functions differing by a constant: their difference is constant')\nplt.grid(True, alpha=0.3)\nplt.legend()\n# Add horizontal line at y=2 for clarity\nplt.axhline(y=2, color='green', alpha=0.5)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "If two functions have the same derivative, they differ by a constant.",
+      "teacher_narration": "This is the theoretical justification for the plus C. Suppose F and G are both antiderivatives of the same function f. Then their difference H has derivative f minus f equals zero. By the Mean Value Theorem, a function whose derivative is everywhere zero must be constant. Therefore F and G differ by a constant. This is why the indefinite integral includes an additive constant.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Quick Check: MCQ — Test Your Understanding",
+      "left": {
+        "content_type": "text",
+        "content": "**Q1:** Which is $\\int (4x^3 - 6x^2 + 2)\\,dx$ ?\n\nA) $x^4 - 2x^3 + 2x + C$\nB) $12x^2 - 12x + C$\nC) $x^4 - 2x^3 + 2x$\nD) $4x^4 - 6x^3 + 2x + C$\n\n---\n\n**Q2:** What is $\\int \\sqrt{x}\\,dx$ ?\n\nA) $\\frac{2}{3}x^{3/2} + C$\nB) $\\frac{1}{2\\sqrt{x}} + C$\nC) $\\frac{3}{2}x^{3/2} + C$\nD) $\\frac{2}{3}x^{2/3} + C$\n\n---\n\n**Q3:** If $F'(x)=\\frac{1}{x}$ and $F(1)=3$, then $F(x)=$ ?\n\nA) $\\ln x + 3$\nB) $\\ln|x| + 3$\nC) $\\ln|x| - 3$\nD) $\\ln|x| + 2$\n\n*Answers: Q1:A, Q2:A, Q3:B*"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Three multiple-choice questions to check your understanding.",
+      "teacher_narration": "Pause the video and try these three quick questions. For Q1, integrate term by term: 4x^3 gives x^4, -6x^2 gives -2x^3, 2 gives 2x, plus C. That's option A. Option C is missing the constant. For Q2, rewrite sqrt(x) as x to the 1/2, apply the power rule to get two-thirds x to the 3/2. For Q3, the antiderivative of 1/x is ln|x| plus C. Use the condition F(1)=3: ln(1) is 0, so C=3, giving ln|x|+3.",
+      "student_prompt": "Try to answer all three before revealing the answers.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "1. **Indefinite integral as family:** $\\int f(x)\\,dx = F(x)+C$.\n2. **Power rule:** $\\int x^n\\,dx = \\frac{x^{n+1}}{n+1}+C$ for $n\\neq -1$.\n3. **Exception:** $\\int \\frac{1}{x}\\,dx = \\ln|x|+C$.\n4. **Linearity:** Constants factor out, sums split.\n5. **Initial value problems:** Use $F(a)=b$ to find $C$.\n6. **Verify by differentiation.**"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary of key ideas: indefinite integral as antiderivative family, power rule, exception, linearity, and initial conditions.",
+      "teacher_narration": "Let's recap. The indefinite integral is the family of all antiderivatives, written with a plus C. The power rule works for all powers except negative one, where we use natural log. Integration is linear: constants can be pulled out, sums can be split. Given an initial condition, we can determine the specific constant. Always check your answer by differentiating. These tools form the foundation for all of integral calculus.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

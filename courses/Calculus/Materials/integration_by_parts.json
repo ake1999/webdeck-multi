@@ -1,0 +1,338 @@
+{
+  "lecture_meta": {
+    "title": "Integration By Parts",
+    "topic": "Integration Techniques",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Apply the integration by parts formula to compute integrals of products",
+      "Select appropriate $u$ and $dv$ using the LIATE rule",
+      "Perform iterative integration by parts for polynomial-exponential combinations",
+      "Solve integrals that reappear after repeated application",
+      "Evaluate definite integrals using integration by parts with limits"
+    ],
+    "prerequisite_reminder": "You need the product rule for differentiation: $(fg)' = f'g + fg'$."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Product Rule to Integration by Parts",
+      "left": {
+        "content_type": "concept",
+        "content": "Differentiation: $(fg)' = f'g + fg'$\n\nIntegration by parts reverses this: $\\int u\\,dv = uv - \\int v\\,du$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Product rule to IBP arrow diagram",
+        "visual_spec": "Two connected boxes. Box1: 'Product Rule: (fg)' = f'g + fg'' with right arrow labeled 'integrate' pointing to Box2: 'Integration by Parts: ∫ u dv = uv - ∫ v du'. Box2 also has a left arrow labeled 'differentiate'. Use colors: green for Box1, blue for Box2, arrows in black.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Product rule → Integration by Parts. Reverse process.",
+      "teacher_narration": "Integration by parts is essentially the product rule for derivatives in reverse. If you understand how to differentiate a product, you already have the foundation for this technique. The formula on the right shows how we trade one integral for another. Our goal is to choose u and dv so the new integral is simpler. Think of it as undoing a derivative: just as the product rule breaks a product into a sum, integration by parts reassembles that sum into a product minus another integral. This reversal is powerful because it lets us transform a difficult integral into an easier one, provided we make the right choice for u and dv.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Core Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\int u\\,dv = uv - \\int v\\,du$$\n\n**Definite:** $$\\int_a^b u\\,dv = \\left.uv\\right|_a^b - \\int_a^b v\\,du$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Area interpretation of IBP",
+        "visual_spec": "Plot of u vs v coordinate plane. Shaded rectangle from origin to (v, u) representing uv. Under the curve v = something? Actually simpler: show two shaded areas: a rectangle uv, and under the curve of v du. Label axes 'u' and 'v'. Use colors: uv area in blue, ∫v du area in red. Formula: uv = area of rectangle = blue + red → ∫ u dv = uv - ∫ v du.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Integration by Parts: ∫ u dv = uv - ∫ v du",
+      "teacher_narration": "The formula treats the integral of u dv as the product uv minus the integral of v du. This is only useful if the new integral is easier than the original. A common mistake is to pick u and dv badly, making the new integral harder. Remember, we're trading one differentiation for another: we differentiate u and integrate dv. The key insight is that we want u to become simpler when differentiated, and dv to remain manageable when integrated. For example, if u is a polynomial, its degree drops, which simplifies the integral. If u is a logarithm, it becomes an algebraic function, which is easier to work with.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Choosing $u$ and $dv$: LIATE",
+      "left": {
+        "content_type": "concept",
+        "content": "**LIATE priority** – choose $u$ as the earliest function type:\n\n- **L**ogarithmic ($\\ln x$)\n- **I**nverse trig ($\\arcsin x$)\n- **A**lgebraic ($x^n$)\n- **T**rigonometric ($\\sin x$)\n- **E**xponential ($e^x$)\n\nFunctions early in LIATE simplify when differentiated."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "LIATE pyramid diagram",
+        "visual_spec": "A 5-layer pyramid, top to bottom: L (ln x icon), I (arcsin x icon), A (x^2 icon), T (sin x icon), E (e^x icon). Each level labeled. Arrow from top to bottom: 'Differentiate u: gets simpler' and arrow from bottom to top: 'Integrate dv: stays manageable'. Colors: L red, I orange, A yellow, T green, E blue.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "LIATE: choose u earliest in list. L > I > A > T > E.",
+      "teacher_narration": "LIATE is a mnemonic to choose u. Pick u as the function type that appears first in LIATE. Why? Differentiating logarithms gives algebraic functions, inverse trig gives rational functions, algebraic powers drop by one, trig cycles, and exponentials never simplify. So you want u to be a function that gets simpler when differentiated. For example, if you have ln x times x^2, choose u = ln x because L comes before A. Differentiating ln x gives 1/x, which is algebraic and simpler. The remaining dv = x^2 dx integrates to x^3/3, which is manageable. This strategy ensures the new integral is easier than the original.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Warm-up – $\\int x e^x\\,dx$",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | Choose $u$, $dv$ | $u = x$, $dv = e^x\\,dx$ |\n| 2 | $du$, $v$ | $du = dx$, $v = e^x$ |\n| 3 | Apply formula | $x e^x - \\int e^x\\,dx$ |\n| 4 | Integrate | $x e^x - e^x + C$ |\n\n**Answer:** $\\boxed{x e^x - e^x + C}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∫ x e^x dx = x e^x - e^x + C",
+      "teacher_narration": "Here we have an algebraic x and an exponential e^x. According to LIATE, algebraic comes before exponential, so u = x and dv = e^x dx. Differentiating x gives 1, which is simpler. Integrating e^x gives e^x, which is easy. The formula leaves us with a simple e^x integral. Always check your answer by differentiating. Notice how the polynomial degree dropped from 1 to 0, making the integral trivial. This is the hallmark of a good u choice: the new integral is simpler than the original.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "pause_and_try",
+      "layout": "full_width",
+      "title": "Example 2: Standard – $\\int \\ln x\\,dx$",
+      "left": {
+        "content_type": "steps",
+        "content": "Before looking at the solution, think: Which $u$ and $dv$ would you choose?\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | Choose $u$, $dv$ | $u = \\ln x$, $dv = dx$ |\n| 2 | $du$, $v$ | $du = \\frac{1}{x}dx$, $v = x$ |\n| 3 | Apply formula | $x\\ln x - \\int x\\cdot\\frac{1}{x}\\,dx$ |\n| 4 | Simplify | $x\\ln x - \\int 1\\,dx$ |\n| 5 | Integrate | $x\\ln x - x + C$ |\n\n**Answer:** $\\boxed{x\\ln x - x + C}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": [
+          {
+            "type": "button",
+            "label": "Show Solution",
+            "action": "reveal_solution"
+          }
+        ]
+      },
+      "on_screen_text": "∫ ln x dx = x ln x - x + C",
+      "teacher_narration": "At first glance this doesn't look like a product, but we can write it as ∫ (ln x)·1 dx. LIATE puts logarithmic first, so u = ln x and dv = dx. Differentiating ln x gives 1/x, a simple algebraic function. The new integral is ∫ x·(1/x) dx = ∫ 1 dx, which is trivial. This is a classic trick you'll see often. The key is to recognize that any function can be multiplied by 1 to create a product, allowing integration by parts to be applied even when there is no obvious product.",
+      "student_prompt": "Pause the video and try to choose u and dv for ∫ ln x dx using LIATE.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3: Tricky – $\\int x^2 e^x\\,dx$",
+      "left": {
+        "content_type": "steps",
+        "content": "**First application:** $u=x^2$, $dv=e^x dx$ → $du=2x dx$, $v=e^x$ → $x^2 e^x - \\int 2x e^x dx$\n\n**Second application:** $\\int x e^x dx = x e^x - e^x + C_1$\n\n**Combine:** $x^2 e^x - 2(x e^x - e^x + C_1) = e^x(x^2 - 2x + 2) + C$\n\n**Answer:** $\\boxed{e^x (x^2 - 2x + 2) + C}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∫ x^2 e^x dx = e^x(x^2 - 2x + 2) + C",
+      "teacher_narration": "Every time we apply integration by parts to a polynomial times exponential, the polynomial's degree drops by one. We can repeat until it becomes a constant. Here, x^2 becomes 2x after one application, then x becomes 1 after the second. The final answer is e^x times a quadratic. Be careful to multiply the second result by the factor of 2 from the first step. This iterative process is systematic: keep applying integration by parts until the polynomial term vanishes, then combine all the terms. The tabular method, which we'll see later, streamlines this process.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 4: Edge Case – Circular Integration",
+      "left": {
+        "content_type": "steps",
+        "content": "**Evaluate:** $\\int e^x \\sin x\\,dx$\n\n1. $u=e^x$, $dv=\\sin x dx$ → $du=e^x dx$, $v=-\\cos x$ → $-e^x\\cos x + \\int e^x\\cos x dx$\n2. Again $u=e^x$, $dv=\\cos x dx$ → $du=e^x dx$, $v=\\sin x$ → $e^x\\sin x - \\int e^x\\sin x dx$\n3. Let $I = \\int e^x\\sin x dx$. Then $I = -e^x\\cos x + e^x\\sin x - I + C_1$\n4. Solve: $2I = e^x(\\sin x - \\cos x) + C_1$ → $I = \\frac{1}{2}e^x(\\sin x - \\cos x) + C$\n\n**Answer:** $\\boxed{\\frac{1}{2}e^x(\\sin x - \\cos x) + C}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": [
+          {
+            "type": "button",
+            "label": "Show Solution",
+            "action": "reveal_solution"
+          }
+        ]
+      },
+      "on_screen_text": "∫ e^x sin x dx = ½ e^x (sin x - cos x) + C",
+      "teacher_narration": "After two applications, the original integral reappears. Don't panic. Treat it like an algebraic equation: set I = integral, combine like terms, and solve for I. This works whenever you have a product of an exponential and a sine or cosine. The key is to always pick u = e^x in both steps, so the pattern repeats exactly. This technique is called circular integration because the integral cycles back to itself. It's a powerful method for integrals that don't simplify directly but instead return to the original form, allowing you to solve for the unknown integral algebraically.",
+      "student_prompt": "Pause and predict what happens after two applications of integration by parts on ∫ e^x sin x dx.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 5: Application – Definite Integral (Tabular Method)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Evaluate:** $\\int_0^{\\pi/2} x^2 \\cos x\\,dx$\n\n**Tabular setup:**\n| Sign | Differentiate $u$ | Integrate $dv$ |\n|------|-------------------|----------------|\n| $+$ | $x^2$ | $\\cos x$ |\n| $-$ | $2x$ | $\\sin x$ |\n| $+$ | $2$ | $-\\cos x$ |\n| $-$ | $0$ | $-\\sin x$ |\n\n**Antiderivative:** $x^2\\sin x + 2x\\cos x - 2\\sin x$\n\n**Evaluate:** $\\left[x^2\\sin x + 2x\\cos x - 2\\sin x\\right]_0^{\\pi/2} = \\left(\\frac{\\pi^2}{4} - 2\\right) - 0 = \\boxed{\\frac{\\pi^2}{4} - 2}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "∫₀^{π/2} x² cos x dx = π²/4 - 2",
+      "teacher_narration": "The tabular method is a fast way to handle multiple applications. You systematically differentiate the polynomial until it reaches zero, integrate the other function, and alternate signs. Then multiply diagonally and sum. For definite integrals, evaluate the antiderivative at the limits. This is much cleaner than repeated integration by parts. The tabular method works best when one function is a polynomial that eventually becomes zero after repeated differentiation. It organizes the steps neatly, reducing the chance of sign errors or missed terms.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Visual: $\\int_0^b x e^x\\,dx$",
+      "left": {
+        "content_type": "text",
+        "content": "Explore how integration by parts splits the area into $uv$ (blue) and $-\\int v\\,du$ (red).\n\n- Use the slider to change $b$.\n- Observe the components."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive plot for ∫₀^b x e^x dx",
+        "visual_spec": "Plot of f(x)=x e^x from 0 to b. Shaded area under curve in light grey. Overlay: blue rectangle from 0 to b in height u(b)=b? Actually represent uv term: u=x, dv=e^x dx, so uv = x*e^x evaluated at b? Simpler: show the two components: area under curve ∫ x e^x dx = (b e^b - e^b + 1). The uv term at upper limit is b e^b, at lower limit 0. The -∫v du term is -∫₀^b e^x dx = -(e^b-1). So total = b e^b - e^b +1. Visual: bar chart of uv (blue) and -∫v du (red) stacking to total. Slider for b from 0.5 to 5. Show numerical values.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8,6))\nplt.subplots_adjust(bottom=0.25)\n\nb_init = 2\nx = np.linspace(0, 6, 400)\ny = x * np.exp(x)\n\nax.plot(x, y, 'k-', label='f(x)=x e^x')\n\n# Initial shading for b_init\nb = b_init\nx_shade = x[x <= b]\ny_shade = y[x <= b]\nax.fill_between(x_shade, 0, y_shade, alpha=0.3, color='gray', label='area under curve')\n\n# uv term: rectangle from 0 to b with height b? Actually uv evaluated at b is b*e^b, at 0 is 0.\n# We'll show a rectangle of width b and height b*e^b? Not intuitive. Better: show bars.\n# We'll plot two vertical bars components.\n\nuv_val = b * np.exp(b)\nminus_int_vdu = -(np.exp(b) - 1)\ncomponents = [uv_val, minus_int_vdu]\nlabels = ['uv term', '-∫ v du']\ncolors = ['blue', 'red']\n\nbar_ax = ax.inset_axes([0.02, 0.02, 0.3, 0.3])  # smaller bar chart\nbar_ax.bar(labels, components, color=colors, alpha=0.7)\nbar_ax.set_ylabel('Value')\nbar_ax.set_title('Components')\n\nax.set_xlim(0, 6)\nax.set_ylim(0, 300)\nax.set_xlabel('x')\nax.set_ylabel('f(x)')\nax.legend()\n\n# Slider\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'b', 0.5, 5.0, valinit=b_init)\n\ndef update(val):\n    b = slider.val\n    # update shaded area\n    ax.collections.clear()\n    x_shade = x[x <= b]\n    y_shade = y[x <= b]\n    ax.fill_between(x_shade, 0, y_shade, alpha=0.3, color='gray')\n    # update bar chart\n    uv_val = b * np.exp(b)\n    minus_int_vdu = -(np.exp(b) - 1)\n    components = [uv_val, minus_int_vdu]\n    bar_ax.clear()\n    bar_ax.bar(labels, components, color=colors, alpha=0.7)\n    bar_ax.set_ylabel('Value')\n    bar_ax.set_title('Components')\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for b from 0.5 to 5",
+          "Button: reset to b=2"
+        ]
+      },
+      "on_screen_text": "Drag the slider to see how uv and -∫vdu combine.",
+      "teacher_narration": "This interactive graph shows how integration by parts breaks the area under x e^x into two pieces: the blue uv term and the red negative integral of v du. As you increase b, notice how both components grow, but their sum always equals the area. This visual helps you understand why the formula works. The uv term represents the product of the functions at the upper limit, while the -∫v du term accounts for the accumulation of the integral of v du. Together, they reconstruct the original integral, demonstrating the geometric intuition behind the algebraic formula.",
+      "student_prompt": "Experiment with the slider. At which b does the uv term equal the -∫v du term?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Wrong $u$ Choice",
+      "left": {
+        "content_type": "steps",
+        "content": "**Wrong approach for $\\int x^2 e^x\\,dx$:**\n\n- Choose $u = e^x$, $dv = x^2 dx$\n- $du = e^x dx$, $v = \\frac{x^3}{3}$\n- Result: $\\frac{x^3}{3}e^x - \\int \\frac{x^3}{3} e^x dx$\n\nNow the polynomial degree increased! This makes the integral harder."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Comparison of correct vs wrong choice",
+        "visual_spec": "Two flowcharts: left flowchart shows wrong choice leading to x^3/3 e^x - ∫ (x^3/3) e^x dx, with increasing degree; right flowchart shows correct choice leading to x^2 e^x - ∫ 2x e^x dx, with decreasing degree. Highlight the polynomial degree changes: wrong: degree 2 → 3; correct: degree 2 → 1. Red X on wrong, green check on correct.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Wrong: u = e^x leads to higher degree polynomial. Correct: u = x^2 lowers degree.",
+      "teacher_narration": "Students often pick the exponential as u because they think it's 'harder'. But exponentials never simplify when differentiated. According to LIATE, algebraic comes before exponential, so u should be the polynomial. If you choose incorrectly, the polynomial degree goes up, making the integral worse. Always check that your new integral is simpler, not harder. The wrong choice leads to a cubic term, which is more complicated than the original quadratic. The correct choice reduces the degree, making the integral progressively easier. This is a common pitfall, so always verify your u choice by checking whether the new integral is simpler.",
+      "student_prompt": "Pause and decide: which u choice makes ∫ x^2 e^x dx easier?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Practice Problem Ladder",
+      "left": {
+        "content_type": "text",
+        "content": "**Easy:** $\\int x \\cos x\\,dx$\n\n**Medium:** $\\int t^2 \\ln t\\,dt$\n\n**Hard:** $\\int e^{2x} \\sin(3x)\\,dx$\n\n**Challenge:** $\\int_0^1 x^3 e^x\\,dx$\n\nTry each before clicking reveal."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reveal answer for easy (hidden text 'x sin x + cos x + C')",
+          "Button: reveal answer for medium (hidden text '(t^3/3) ln t - t^3/9 + C')",
+          "Button: reveal answer for hard (hidden text '(e^(2x)/13)(2 sin 3x - 3 cos 3x) + C')",
+          "Button: reveal answer for challenge (hidden text '6 - 2e')"
+        ]
+      },
+      "on_screen_text": "Practice: Easy → Medium → Hard → Challenge. Click to reveal answers.",
+      "teacher_narration": "Now you try some on your own. Start with the easy one: ∫ x cos x dx. Use LIATE to choose u and dv. Then move to the medium, which involves a logarithm. The hard one uses circular integration. The challenge applies tabular method. Click the buttons to check your answers after you attempt each. These problems are designed to build your skills progressively. The easy problem reinforces basic LIATE application, the medium introduces a logarithmic u, the hard tests circular integration, and the challenge combines tabular method with definite integrals. Work through each at your own pace.",
+      "student_prompt": "Work through each problem at your own pace, then reveal the answer.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof of the Formula",
+      "left": {
+        "content_type": "steps",
+        "content": "**Proof:**\n\n1. Let $u$ and $v$ be differentiable functions.\n2. Product rule: $\\frac{d}{dx}(uv) = u\\frac{dv}{dx} + v\\frac{du}{dx}$\n3. Multiply by $dx$: $d(uv) = u\\,dv + v\\,du$\n4. Integrate both sides: $\\int d(uv) = \\int u\\,dv + \\int v\\,du$\n5. By FTC: $uv = \\int u\\,dv + \\int v\\,du$\n6. Rearranged: $\\int u\\,dv = uv - \\int v\\,du$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof: Product rule → integrate → rearrange.",
+      "teacher_narration": "For those curious, here is the formal derivation. Start with the product rule, treat the derivative as a differential, integrate both sides, and rearrange. The integral of a total differential gives back the function by the Fundamental Theorem of Calculus. This proof is short, but it shows why the formula always holds. The key step is recognizing that the differential d(uv) integrates to uv, which is a direct consequence of the FTC. This derivation also highlights that integration by parts is not a new rule but a rearrangement of the product rule, making it a natural extension of differentiation.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: Integration by Parts",
+      "left": {
+        "content_type": "concept",
+        "content": "**Formula:** $\\int u\\,dv = uv - \\int v\\,du$\n\n**Choosing $u$:** LIATE (Log, InvTrig, Alg, Trig, Exp)\n\n**Key strategies:**\n- Iterative for $\\int x^n e^{ax} dx$\n- Circular for $\\int e^{ax}\\sin(bx) dx$\n- Tabular method for efficient multiple applications\n\n**Always check:** New integral should be simpler."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Mind map of IBP strategies",
+        "visual_spec": "Central node 'Integration by Parts' with branches: 'LIATE rule', 'Iterative (polynomial × exp)', 'Circular (e^sin/cos)', 'Tabular method', 'Definite integrals'. Each branch with a small icon. Use colors for each branch.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Formula: ∫ u dv = uv - ∫ v du. LIATE. Check new integral is simpler.",
+      "teacher_narration": "Today we learned integration by parts, the reverse of the product rule. The key is picking u and dv wisely using LIATE. You saw four example types: direct application, iterative, circular, and tabular for definite integrals. Remember, if your new integral looks worse, try swapping u and dv. Keep practicing, and this technique will become second nature. The summary mind map on the right organizes these strategies visually, helping you recall which approach to use for different integral forms. With practice, you'll quickly identify the best method for any product integral.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

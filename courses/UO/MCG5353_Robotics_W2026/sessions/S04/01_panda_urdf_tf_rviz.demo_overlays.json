@@ -1,0 +1,83 @@
+{
+  "schema_version": "webdeck.demo_overlays.v1",
+  "notes": [
+    "Example only: replace source_video paths with your recorded silent demos.",
+    "Each demo stays inside the current slide; it is not a new slide.",
+    "The avatar-video job builder schedules an end-only laptop/screen motion before switching to the full-slide demo."
+  ],
+  "slides": [
+    {
+      "slide_id": "launch_panda",
+      "demos": [
+        {
+          "demo_id": "launch_panda_terminal_rviz",
+          "order": 1,
+          "title": "Launch Panda and confirm RViz opens",
+          "bridge_to_demo": "Let me show this once on the machine so the command, the windows, and the RViz result connect to the diagram.",
+          "source_video": "courses/UO/MCG5353_Robotics_W2026/sessions/S04/media/demos/launch_panda_terminal_rviz_silent.mp4",
+          "display_mode": "full_slide",
+          "object_fit": "cover",
+          "narration": {
+            "text": "Let me show this on the actual desktop. I start from a sourced terminal, run the Panda launch file, then wait for Joint State Publisher and RViz to appear. The important check is that the robot model appears and the fixed frame is set to panda link zero.",
+            "segments": [
+              {
+                "t0": 0.0,
+                "t1": 4.5,
+                "description": "Terminal is open in the ROS workspace and the launch command is entered.",
+                "text": "Here I am in a sourced terminal, and I run the Panda display launch command."
+              },
+              {
+                "t0": 4.5,
+                "t1": 11.0,
+                "description": "Joint State Publisher GUI and RViz begin opening.",
+                "text": "When the windows appear, that tells us the launch file started the visualization tools we expected."
+              },
+              {
+                "t0": 11.0,
+                "t1": 18.0,
+                "description": "RViz shows the Panda model and the fixed frame is checked.",
+                "text": "Now I check the fixed frame and confirm that Panda is visible, which means the robot description and TF chain are working together."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "slide_id": "rviz_setup_fixed_frame",
+      "demos": [
+        {
+          "demo_id": "rviz_fixed_frame_robot_model",
+          "order": 1,
+          "title": "Set RViz fixed frame and inspect RobotModel",
+          "bridge_to_demo": "Now I will switch to RViz and show the exact fixed-frame setting, because this is where many first TF problems appear.",
+          "source_video": "courses/UO/MCG5353_Robotics_W2026/sessions/S04/media/demos/rviz_fixed_frame_robot_model_silent.mp4",
+          "display_mode": "full_slide",
+          "object_fit": "cover",
+          "narration": {
+            "segments": [
+              {
+                "t0": 0.0,
+                "t1": 3.5,
+                "description": "RViz is open and the fixed frame field is visible.",
+                "text": "Here the first thing I check is the fixed frame, because RViz needs one stable reference frame for the whole scene."
+              },
+              {
+                "t0": 3.5,
+                "t1": 8.5,
+                "description": "Fixed frame is set to panda_link0.",
+                "text": "For this Panda setup, panda link zero is the natural base frame to use."
+              },
+              {
+                "t0": 8.5,
+                "t1": 14.0,
+                "description": "RobotModel display is selected and the model is visible.",
+                "text": "Once the RobotModel display is visible, I know RViz is receiving the model and the transforms it needs."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

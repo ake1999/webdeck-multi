@@ -1,0 +1,400 @@
+{
+  "lecture_meta": {
+    "title": "The Chain Rule",
+    "topic": "The Chain Rule",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate derivatives of composite functions using the chain rule",
+      "Apply the chain rule to differentiate functions involving nested compositions",
+      "Analyze complex derivative problems by systematically identifying outer and inner functions",
+      "Interpret the chain rule as a rate of change composition"
+    ],
+    "prerequisite_reminder": "You should already know the power rule, basic trigonometric derivatives, and product and quotient rules."
+  },
+  "slides": [
+    {
+      "slide_number": 0,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why the Chain Rule?",
+      "left": {
+        "content_type": "text",
+        "content": "Imagine a factory with two machines: one squares numbers, the other takes sine. How fast does the final product change when raw material changes? The chain rule answers this. More concretely: How fast does the area of a circle change when its radius changes? The area A = πr² depends on r, and r depends on time t. The chain rule tells us dA/dt = (dA/dr)·(dr/dt)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Factory animation",
+        "visual_spec": "Show a diagram: box labeled 'g(x)=x²' with input x and output u, arrow to box labeled 'f(u)=sin(u)' with output y. Below, show rate labels: dx/dt, du/dx, dy/du. Arrows connecting them to show multiplication.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Chain rule: multiply the rates of change along the chain.",
+      "teacher_narration": "Think of a factory with two machines. The first machine squares the input, the second machine applies sine to the result. If you want to know how fast the final output changes when you change the raw material, you multiply the rate of change of the first machine by the rate of change of the second. This is the core idea of the chain rule.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 1,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Chain Rule Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\frac{d}{dx} \\bigl[ f(g(x)) \\bigr] = f'(g(x)) \\cdot g'(x)$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Nested function diagram",
+        "visual_spec": "Draw three vertical layers: bottom: x, middle: g(x), top: f(g(x)). Show arrows from x to g(x) labeled 'g'(x)', from g(x) to f(g(x)) labeled 'f'(g(x))'. Result at top: product.",
+        "python_code": null,
+        "interactive_controls": [
+          "Toggle: show/hide step labels"
+        ]
+      },
+      "on_screen_text": "Derivative of a composition = derivative of outer (at inner) × derivative of inner.",
+      "teacher_narration": "The chain rule formalizes the factory idea. If we have a composite function f composed with g, the derivative is the derivative of the outer function evaluated at the inner function, multiplied by the derivative of the inner function. For example, for sin(x²), outer is sin, inner is x². So we get cos(x²) times 2x. This formula is the key to handling any composition.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Leibniz Notation",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\frac{dy}{dx} = \\frac{dy}{du} \\cdot \\frac{du}{dx}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Dependency chain",
+        "visual_spec": "Show x → u → y with arrows. Under each arrow write du/dx and dy/du. Text below: 'Multiply the rates'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "If y depends on u and u on x, then dy/dx = (dy/du)·(du/dx).",
+      "teacher_narration": "Leibniz notation makes the chain rule look like fractions, which is very intuitive. If y is a function of u, and u is a function of x, then the derivative of y with respect to x is the product of the derivative y with respect to u times the derivative u with respect to x. This emphasizes that we are chaining rates.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm-Up Example",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | Identify outer $f(u)=u^3$, inner $g(x)=5x-2$ | |\n| 2 | $f'(u)=3u^2$ | |\n| 3 | $g'(x)=5$ | |\n| 4 | Apply chain rule | $h'(x)=3(5x-2)^2 \\cdot 5$ |\n| 5 | Simplify | $h'(x)=15(5x-2)^2$ |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Differentiate $h(x)=(5x-2)^3$",
+      "teacher_narration": "Let's start with a simple warm-up. The function (5x-2)³. The outer function is something cubed, the inner is 5x-2. Differentiate the outer: 3 times the inner squared, then multiply by the derivative of the inner, which is 5. That gives 15 times (5x-2) squared. This is a straightforward application of the chain rule, and it shows how the derivative of a power of a linear function works. Notice that the exponent decreases by one, and we multiply by the original exponent and the coefficient of the inner function.",
+      "student_prompt": "Try: $h(x)=(2x+1)^4$; answer: $8(2x+1)^3$",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | Identify layers: $\\sin$, $e$, $2x$ | |\n| 2 | Derivative of $\\sin$: $\\cos(e^{2x})$ | |\n| 3 | Derivative of $e^{2x}$: $e^{2x}\\cdot 2$ | |\n| 4 | Multiply: $\\cos(e^{2x})\\cdot e^{2x}\\cdot 2$ | |\n| 5 | Final: $2e^{2x}\\cos(e^{2x})$ | |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Differentiate $y = \\sin(e^{2x})$",
+      "teacher_narration": "Now a slightly more layered example: sin of e to the 2x. Work from the outside. Derivative of sine is cosine, leaving the inner function e^(2x) untouched. Then we need the derivative of e^(2x), which is e^(2x) times the derivative of 2x, which is 2. Multiply them all together to get 2e^(2x) cos(e^(2x)). This example shows how the chain rule applies to a composition of three functions: sine, exponential, and linear. Each layer contributes a factor, and we multiply them all together. The key is to work systematically from the outermost function inward, never forgetting any layer.",
+      "student_prompt": "Now try $y = \\cos(e^{x})$; answer: $-e^{x}\\sin(e^{x})$",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Try This",
+      "left": {
+        "content_type": "text",
+        "content": "Differentiate $h(x) = \\cos(x^3)$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Placeholder",
+        "visual_spec": "Show a question mark inside a box. Text: 'Write your answer, then press play.' Dimensions: 400x300 pixels. Background: light gray (#f0f0f0). Box border: 2px solid #333. Question mark in bold 48pt font. No animation.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: Show Answer"
+        ]
+      },
+      "on_screen_text": "Differentiate $\\cos(x^3)$",
+      "teacher_narration": "Pause the video now and try to differentiate cos of x cubed. Use the chain rule. Remember to identify the outer function cosine and the inner function x cubed. Write down your answer, then press play to see the solution. This is a good test of your understanding because it combines a trigonometric outer function with a power inner function. Take your time and check that you have multiplied by the derivative of the inner function.",
+      "student_prompt": null,
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Solution: $\\cos(x^3)$",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | Outer: $f(u)=\\cos u$, inner: $g(x)=x^3$ | |\n| 2 | $f'(u) = -\\sin u$ | |\n| 3 | $g'(x) = 3x^2$ | |\n| 4 | $h'(x) = -\\sin(x^3) \\cdot 3x^2$ | |\n| 5 | Simplify: $h'(x) = -3x^2\\sin(x^3)$ | |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$h'(x) = -3x^2 \\sin(x^3)$",
+      "teacher_narration": "Here's the solution. The outer function is cosine, its derivative is negative sine. The inner function is x cubed, derivative 3x squared. Multiply them to get negative 3x squared times sine of x cubed. Check your answer against this. If you got it right, you are on the right track. If not, review the steps: identify the outer and inner functions, differentiate each, and multiply. The most common mistake here is forgetting the factor 3x², so make sure you included it.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Tricky Example",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | Rewrite: $f(x) = (\\tan(x^2+1))^{1/2}$ | |\n| 2 | Outer: $u^{1/2}$, Inner: $\\tan(x^2+1)$ | |\n| 3 | Derivative of outer: $\\frac{1}{2}u^{-1/2}$ | |\n| 4 | Derivative of inner: $\\sec^2(x^2+1)\\cdot 2x$ | |\n| 5 | Multiply: $\\frac{1}{2}(\\tan(x^2+1))^{-1/2}\\cdot \\sec^2(x^2+1)\\cdot 2x$ | |\n| 6 | Simplify: $\\frac{x\\sec^2(x^2+1)}{\\sqrt{\\tan(x^2+1)}}$ | |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Differentiate $f(x) = \\sqrt{\\tan(x^2+1)}$",
+      "teacher_narration": "This one is trickier because it has three layers: square root, tangent, and x squared plus one. Rewrite the square root as a power of one half. Then differentiate outward: one half times the tangent raised to negative one half, times the derivative of tangent, which is secant squared, times the derivative of x squared plus one, which is 2x. Simplify to get x secant squared over square root of tangent.",
+      "student_prompt": "How many times did we use the chain rule? (Answer: 3)",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake – Forgetting the Inner Derivative",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong:** $\\frac{d}{dx}\\sin(x^2) = \\cos(x^2)$ \n**Why wrong:** Forgets to multiply by $g'(x)=2x$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Highlight the missing factor",
+        "visual_spec": "Show left side: cos(x²) with a red X. Then show correct: cos(x²) · 2x with green check. Animate arrow showing the missing 2x factor.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reveal correct step"
+        ]
+      },
+      "on_screen_text": "Derivative of sin(x²) is NOT just cos(x²). Multiply by 2x.",
+      "teacher_narration": "One of the most common mistakes is forgetting the derivative of the inner function. Students see sin(x²) and immediately write cos(x²), but that's incomplete. The chain rule requires us to multiply by g prime of x, which in this case is 2x. Always check: did you include the factor from the inner derivative? This mistake is so common that it has its own name: the 'chain rule error.' To avoid it, always pause after differentiating the outer function and ask yourself: what is the inner function, and what is its derivative? Then multiply by that derivative.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Chain Rule Visualizer",
+      "left": {
+        "content_type": "text",
+        "content": "Explore how the composition $h(x)=f(g(x))$ changes with $x$. Adjust sliders to change $x$ and the inner exponent."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive plot with sliders",
+        "visual_spec": null,
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\n# Default functions\ndef g(x, n):\n    return x**n\ndef f(u):\n    return np.sin(u)\ndef h(x, n):\n    return f(g(x, n))\n\nx_vals = np.linspace(-2, 2, 400)\nn0 = 2\n\nfig, ax = plt.subplots(figsize=(8,5))\nplt.subplots_adjust(bottom=0.35)\n\n# Plot composition\nline, = ax.plot(x_vals, h(x_vals, n0), 'g-', lw=2, label='h(x)=sin(x^n)')\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(0, color='gray', lw=0.5)\nax.set_xlim(-2, 2)\nax.set_ylim(-1.5, 1.5)\nax.set_xlabel('x')\nax.set_ylabel('h(x)')\nax.legend(loc='upper right')\nax.grid(True, alpha=0.3)\n\n# Slider for x (marker point)\nax_x = plt.axes([0.2, 0.2, 0.6, 0.03])\nslider_x = Slider(ax_x, 'x', -2, 2, valinit=0)\n\n# Slider for n\nax_n = plt.axes([0.2, 0.15, 0.6, 0.03])\nslider_n = Slider(ax_n, 'n (inner exponent)', 1, 4, valinit=n0, valstep=1)\n\n# Toggle for tangent line\nax_toggle = plt.axes([0.2, 0.05, 0.15, 0.04])\nbutton_toggle = Button(ax_toggle, 'Show Tangent')\nshow_tangent = False\ntangent_line, = ax.plot([], [], 'r--', lw=1.5)\n\ndef update(val):\n    x0 = slider_x.val\n    n = int(slider_n.val)\n    line.set_ydata(h(x_vals, n))\n    # Update tangent if visible\n    if show_tangent:\n        # Compute derivative at x0: h'(x) = cos(x^n) * n*x^(n-1)\n        if x0 != 0:\n            slope = np.cos(x0**n) * n * x0**(n-1)\n            intercept = h(x0, n) - slope * x0\n            x_tan = np.linspace(x0-0.5, x0+0.5, 100)\n            y_tan = slope * x_tan + intercept\n            tangent_line.set_data(x_tan, y_tan)\n        else:\n            tangent_line.set_data([], [])\n    fig.canvas.draw_idle()\n\nslider_x.on_changed(update)\nslider_n.on_changed(update)\n\ndef toggle_tangent(event):\n    global show_tangent\n    show_tangent = not show_tangent\n    if show_tangent:\n        button_toggle.label.set_text('Hide Tangent')\n    else:\n        button_toggle.label.set_text('Show Tangent')\n    update(None)\n\nbutton_toggle.on_clicked(toggle_tangent)\n\nplt.show()\n# Note: This code uses matplotlib.widgets which may require %matplotlib widget in Jupyter.",
+        "interactive_controls": [
+          "Slider for x from -2 to 2",
+          "Slider for n from 1 to 4 (inner exponent)",
+          "Button: Show/Hide tangent line"
+        ]
+      },
+      "on_screen_text": "Use sliders to see how h(x)=sin(x^n) and its tangent change.",
+      "teacher_narration": "Let's now explore the chain rule interactively. This visualization shows the composition sin(x^n) where you can adjust the exponent n and the point x. The green curve is the composite function. Use the sliders to change x and the inner exponent. Toggle the tangent line to see the slope at that point. Notice how the slope changes with both x and n, illustrating the chain rule in action.",
+      "student_prompt": "Set n=2 and move x. What do you notice about the slope near x=0?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Apply the Chain Rule",
+      "left": {
+        "content_type": "text",
+        "content": "Differentiate $k(x) = (3x+1)^4$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Placeholder with timer",
+        "visual_spec": "Show a countdown from 10 to 0, then a 'Show Answer' button placeholder.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: Show Answer"
+        ]
+      },
+      "on_screen_text": "Try it: $k(x) = (3x+1)^4$",
+      "teacher_narration": "Here's another chance to practice before I reveal the answer. Pause the video, differentiate (3x+1) raised to the fourth power. Identify the outer and inner functions, apply the chain rule, and simplify. When you're ready, press play to check your answer. This problem is similar to the warm-up but with a different coefficient. It will help reinforce the pattern: derivative of a power of a linear function is the exponent times the power decreased by one, times the coefficient of the inner function.",
+      "student_prompt": null,
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Solution: $(3x+1)^4$",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | Outer: $f(u)=u^4$, Inner: $g(x)=3x+1$ | |\n| 2 | $f'(u)=4u^3$ | |\n| 3 | $g'(x)=3$ | |\n| 4 | $k'(x)=4(3x+1)^3 \\cdot 3$ | |\n| 5 | Simplify: $k'(x)=12(3x+1)^3$ | |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$k'(x)=12(3x+1)^3$",
+      "teacher_narration": "The answer is 12 times (3x+1) cubed. Outer derivative: 4 times the inner cubed. Inner derivative: 3. Multiply to get 12. If you got that, great! If not, review the steps and try again. Notice the pattern: the derivative of (ax+b)^n is n*a*(ax+b)^(n-1). This is a useful shortcut for linear inner functions, but always remember it comes from the chain rule.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Edge Case Example",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | $h(x)=f(g(x))$, $f(u)=u^3$, $g(0)=0$ | |\n| 2 | $g'(0)=\\lim_{h\\to0}\\frac{h^2\\sin(1/h)-0}{h}=0$ | squeeze theorem |\n| 3 | $f'(0)=3\\cdot0^2=0$ | |\n| 4 | $h'(0)=f'(g(0))\\cdot g'(0)=0\\cdot0=0$ | chain rule holds |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Edge: $g(x)=x^2\\sin(1/x)$ for $x\\neq0$, $g(0)=0$. Find $h'(0)$ for $h(x)=[g(x)]^3$.",
+      "teacher_narration": "This edge case shows that the chain rule works even when the inner function is weird. Here g of x is x squared times sine of 1 over x for non-zero x, and 0 at 0. Using the squeeze theorem, we find g prime of 0 is 0. Then f prime of g of 0 is f prime of 0, which is also 0. So h prime of 0 is 0, consistent with the chain rule.",
+      "student_prompt": "Check by directly differentiating $h(x)=x^6\\sin^3(1/x)$ and taking the limit.",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Exponential Composition",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Result |\n|------|--------|--------|\n| 1 | $h(x)=e^{\\cos(3x)}$ | |\n| 2 | Derivative of $e^u$: $e^u$ evaluated at $u=\\cos(3x)$ gives $e^{\\cos(3x)}$ | keep inner |\n| 3 | Derivative of $\\cos(3x)$: $-\\sin(3x)\\cdot3$ | |\n| 4 | $h'(x)=e^{\\cos(3x)}\\cdot(-\\sin(3x))\\cdot3$ | |\n| 5 | Simplify: $-3e^{\\cos(3x)}\\sin(3x)$ | |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Differentiate $h(x)=e^{\\cos(3x)}$",
+      "teacher_narration": "This example combines exponential, trigonometric, and linear functions. The outer is e to the something. Its derivative is itself times the derivative of the exponent. The exponent is cosine of 3x. Derivative of cosine is negative sine of 3x times the derivative of 3x, which is 3. Multiply everything to get negative 3 times e to the cos 3x times sin 3x.",
+      "student_prompt": "Try $h(x)=e^{\\sin(2x)}$; answer: $2e^{\\sin(2x)}\\cos(2x)$",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof Sketch",
+      "left": {
+        "content_type": "text",
+        "content": "$$h'(x)=\\lim_{h\\to0}\\frac{f(g(x+h))-f(g(x))}{h}$$\nLet $\\Delta u=g(x+h)-g(x)$. Then:\n$$h'(x)=\\lim_{h\\to0}\\frac{f(u+\\Delta u)-f(u)}{\\Delta u}\\cdot\\frac{\\Delta u}{h}$$\nAs $h\\to0$, $\\Delta u\\to0$, so first limit $\\to f'(u)$, second $\\to g'(x)$. Hence $h'(x)=f'(g(x))g'(x)$.\n\n**Note:** This proof assumes $\\Delta u \\neq 0$ for small $h$. If $\\Delta u = 0$, the expression is undefined; the standard fix uses a separate case or Carathéodory's lemma to handle that situation rigorously."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Limit diagram",
+        "visual_spec": "Show a graph with x-axis, g(x) curve, f(g(x)) curve. Animate a small h moving, showing Δu and the secant slopes approaching the derivatives.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider: h from -0.1 to 0.1 showing secant line approaching tangent"
+        ]
+      },
+      "on_screen_text": "Proof of the chain rule using the limit definition.",
+      "teacher_narration": "For those interested in the theory, here's a lightweight proof. We start with the definition of the derivative for the composition. By introducing the change in the inner function, we can rewrite the difference quotient as a product of two rates. As h approaches zero, the inner change goes to zero, and the two factors approach the derivatives of f and g respectively. This yields the chain rule. However, this proof assumes Δu is never zero for small h, which may not hold. A rigorous proof handles that case separately or uses Carathéodory's lemma.",
+      "student_prompt": "Why can't we assume Δu ≠ 0? How is that case handled?",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary & Key Points",
+      "left": {
+        "content_type": "text",
+        "content": "**Chain Rule:** $\\frac{d}{dx}f(g(x)) = f'(g(x))\\,g'(x)$\n**Leibniz:** $\\frac{dy}{dx}=\\frac{dy}{du}\\frac{du}{dx}$\n**Generalized Power Rule:** $\\frac{d}{dx}[g(x)]^n = n[g(x)]^{n-1}g'(x)$\n\n**Tips:**\n- Work from the outside in.\n- Always multiply by the derivative of the inner function.\n- For multiple layers, apply chain rule repeatedly."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary: Chain rule formula, Leibniz form, generalized power rule, and three tips.",
+      "teacher_narration": "Today we learned the chain rule, a fundamental tool for differentiating compositions. We saw it in both prime notation and Leibniz notation. The generalized power rule is a handy special case. Remember: work from the outside in, always include the derivative of the inner function, and apply the rule repeatedly for nested compositions. Practice with the examples to build confidence.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

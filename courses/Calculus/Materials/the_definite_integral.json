@@ -1,0 +1,354 @@
+{
+  "lecture_meta": {
+    "title": "The Definite Integral",
+    "topic": "Definite Integral",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate definite integrals using Riemann sums and the Fundamental Theorem of Calculus",
+      "Interpret the definite integral as net area and accumulated change",
+      "Apply the substitution rule to evaluate definite integrals with transformed limits",
+      "Analyze the relationship between the definite integral and antiderivatives",
+      "Evaluate definite integrals in applied contexts including area and accumulation problems"
+    ],
+    "prerequisite_reminder": "You should already know antiderivatives (indefinite integrals) and the basic limit concept."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Changing Rates to Net Change",
+      "left": {
+        "content_type": "concept",
+        "content": "Water flows into a reservoir at a rate that varies hour by hour. How do we find the total change in water level from dawn to dusk when the rate isn’t constant?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Reservoir animation: water level rises and falls over 24 hours, with an inflow rate curve shown below.",
+        "visual_spec": "Animate a reservoir silhouette (blue rectangle) whose height changes according to a sinusoidal rate function r(t)=10+2 sin(t) over [0,24]. Below, plot r(t) with shaded area under curve. Use a slider for time to show cumulative volume. Axes: time (hours), rate (gallons per hour). Highlight that total change = area under rate curve.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\nfig, (ax1, ax2) = plt.subplots(2,1, gridspec_kw={'height_ratios':[1,2]})\nfig.subplots_adjust(bottom=0.25)\nt = np.linspace(0,24,500)\nr = 10 + 2*np.sin(t)\nV = np.cumsum(r)*(t[1]-t[0])\nax2.plot(t, r, 'b-', lw=2)\nax2.set_xlim(0,24)\nax2.set_ylim(5,15)\nax2.set_xlabel('Time (h)')\nax2.set_ylabel('Rate (gal/h)')\nax2.fill(t[0:0], r[0:0], alpha=0.3, color='blue')\nax1.set_xlim(0,24)\nax1.set_ylim(0,2)\nax1.bar(0, 0, width=24, color='blue', alpha=0.5)\nax1.set_ylabel('Water Level (ft)')\nax1.text(12, 1, 'Reservoir', ha='center')\n# Slider\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'Time (h)', 0, 24, valinit=0)\ndef update(val):\n    idx = int(val/t[1])\n    ax2.collections.clear()\n    ax2.fill(t[:idx], r[:idx], alpha=0.3, color='blue')\n    ax1.cla()\n    height = V[idx]\n    ax1.bar(12, height, width=24, color='blue', alpha=0.5)\n    ax1.set_xlim(0,24)\n    ax1.set_ylim(0, max(V))\n    ax1.set_ylabel('Water Level (ft)')\n    ax1.text(12, height/2, f'{height:.1f} ft', ha='center')\n    fig.canvas.draw_idle()\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for time from 0 to 24 hours"
+        ]
+      },
+      "on_screen_text": "A varying rate creates a total change found by adding up all the small contributions — that’s the definite integral.",
+      "teacher_narration": "Imagine you are tracking the water level in a reservoir over a full day. The rate of inflow changes every hour — sometimes it rains, sometimes water is released. You can’t just multiply one rate by the total time because the rate isn’t constant. The definite integral solves this by adding up all the tiny changes over each moment, giving you the net accumulation. This is the central idea we will explore today: the area under a rate curve equals the total change.",
+      "student_prompt": "Think of a real-world situation where a quantity changes at a non-constant rate. How would you find the total change?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definition: The Definite Integral",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\n\\int_a^b f(x)\\,dx = \\lim_{n\\to\\infty} \\sum_{i=1}^n f(x_i^*)\\,\\Delta x\n$$\n\n$\\Delta x = \\frac{b-a}{n}$, $x_i^*$ is any sample point in the $i$th subinterval."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animated Riemann sum with interactive slider for number of rectangles n.",
+        "visual_spec": "Plot the function f(x)=2x+1 over [1,3]. Show n rectangles using right endpoints. As n increases via a slider (1 to 50), the rectangles better approximate the area. Overlay the exact area value (10). Label axes: x, y. Highlight the sample points on the curve. Include a radio button to switch between left, right, and midpoint endpoints. Show the computed sum and error compared to exact area.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, RadioButtons\n\nfig, ax = plt.subplots(figsize=(8,4))\nplt.subplots_adjust(bottom=0.25)\nax.set_xlim(0.5,3.5)\nax.set_ylim(0,8)\nx_vals = np.linspace(1,3,400)\ny_vals = 2*x_vals+1\nax.plot(x_vals, y_vals, 'k-', lw=2, label='f(x)=2x+1')\nexact_area = 10\nax.axhline(0, color='gray')\nn_init = 4\na, b = 1, 3\ndx = (b-a)/n_init\nx_rect = np.linspace(a+dx, b, n_init)\nrects = ax.bar(x_rect, 2*x_rect+1, width=dx, align='edge', edgecolor='black', alpha=0.5, color='steelblue')\nsum_text = ax.text(0.5, 7.5, f'Sum = {np.sum(2*x_rect+1)*dx:.2f}', fontsize=10, transform=ax.transData)\n\ndef update_sum(n_val, endpoint='right'):\n    n = int(n_val)\n    dx = (b-a)/n\n    if endpoint == 'right':\n        xs = np.linspace(a+dx, b, n)\n    elif endpoint == 'left':\n        xs = np.linspace(a, b-dx, n)\n    else:\n        xs = np.linspace(a+dx/2, b-dx/2, n)\n    heights = 2*xs+1\n    ax.clear()\n    ax.plot(x_vals, y_vals, 'k-', lw=2)\n    ax.bar(xs, heights, width=dx, align='edge', edgecolor='black', alpha=0.5, color='steelblue')\n    ax.set_xlim(0.5,3.5)\n    ax.set_ylim(0,8)\n    ax.axhline(0, color='gray')\n    s = np.sum(heights)*dx\n    ax.text(0.5, 7.5, f'Sum = {s:.3f}, Error = {abs(s-exact_area):.3f}', fontsize=10)\n    fig.canvas.draw_idle()\n\nax_n = plt.axes([0.2, 0.05, 0.5, 0.03])\nslider_n = Slider(ax_n, 'n', 1, 50, valinit=n_init, valstep=1)\nslider_n.on_changed(lambda v: update_sum(v, 'right'))\n\nrax = plt.axes([0.01, 0.7, 0.1, 0.2])\nradio = RadioButtons(rax, ('right','left','midpoint'))\ndef radio_func(label):\n    update_sum(slider_n.val, label)\nradio.on_clicked(radio_func)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for number of rectangles n from 1 to 50",
+          "Radio buttons for endpoint choice: left, right, midpoint"
+        ]
+      },
+      "on_screen_text": "The definite integral is the limit of Riemann sums as the number of rectangles approaches infinity.",
+      "teacher_narration": "The symbol ∫ is an elongated S for 'sum'. The definite integral adds up infinitely many, infinitely thin rectangles under the curve. The width of each rectangle is Δx, and the height is the function value at some sample point. As the number of rectangles grows, the sum approaches the exact area. Here on the right you can see this approximation in action; use the slider to increase n and watch the sum converge to the exact value of 10.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm‑Up: Riemann Sum Computation",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | $\\Delta x = \\frac{3-1}{n} = \\frac{2}{n}$ | Width of each subinterval |\n| 2 | $x_i = 1 + i\\Delta x = 1 + \\frac{2i}{n}$ | Right endpoint of $i$th subinterval |\n| 3 | $f(x_i) = 2(1+\\frac{2i}{n}) + 1 = 3 + \\frac{4i}{n}$ | Evaluate function at right endpoints |\n| 4 | $\\sum_{i=1}^n f(x_i)\\Delta x = \\sum_{i=1}^n \\left(3 + \\frac{4i}{n}\\right)\\frac{2}{n} = \\frac{6}{n}\\sum_{i=1}^n 1 + \\frac{8}{n^2}\\sum_{i=1}^n i$ | Split the sum |\n| 5 | $= \\frac{6}{n}\\cdot n + \\frac{8}{n^2}\\cdot\\frac{n(n+1)}{2} = 6 + 4\\cdot\\frac{n+1}{n}$ | Use $\\sum 1 = n$ and $\\sum i = n(n+1)/2$ |\n| 6 | $\\int_1^3 (2x+1)\\,dx = \\lim_{n\\to\\infty}\\left(6 + 4\\cdot\\frac{n+1}{n}\\right) = 6 + 4 = 10$ | Take limit as $n\\to\\infty$ |\n\n**Result**: $\\int_1^3 (2x+1)\\,dx = 10$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Using the definition: compute $\\int_1^3 (2x+1)\\,dx$ via Riemann sum with right endpoints.",
+      "teacher_narration": "Let's work through a concrete Riemann sum. We want the exact area under f(x)=2x+1 from x=1 to 3. We choose right endpoints for convenience. Notice how the n cancels in the limit — that's the power of the definition. After taking the limit, we get 10, which matches what we'll soon find using the Fundamental Theorem. Pause the video if you want to try the algebra yourself before seeing the final limit.",
+      "student_prompt": "Before looking at the final limit, try computing the sum of the first 4 rectangles using right endpoints. Compare to 10.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visualizing Riemann Sums",
+      "left": {
+        "content_type": "text",
+        "content": "As the number of rectangles increases, the Riemann sum approaches the true area. With $n=4$ rectangles the sum is $9$; with $n=10$ it's $9.6$; with $n=50$ it's $9.92$. The exact value is $10$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive animation of Riemann sums showing convergence to exact area.",
+        "visual_spec": "Same as slide 2 interactive but with added display of exact area line and numerical error. Use the function f(x)=2x+1 from x=1 to 3. Show both the accumulated rectangle area and the true area (10) as a horizontal dashed line on a secondary y-axis. The slider controls n. A text box shows current sum, exact area, and error.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, (ax1, ax2) = plt.subplots(2,1, gridspec_kw={'height_ratios':[3,1]}, figsize=(7,6))\nplt.subplots_adjust(bottom=0.2)\nax1.set_xlim(0.5,3.5)\nax1.set_ylim(0,8)\nx_vals = np.linspace(1,3,400)\ny_vals = 2*x_vals+1\nax1.plot(x_vals, y_vals, 'k-', lw=2)\nexact_area = 10\nax1.axhline(0, color='gray')\nn_init = 4\na, b = 1, 3\ndx = (b-a)/n_init\nx_rect = np.linspace(a+dx, b, n_init)\nrects = ax1.bar(x_rect, 2*x_rect+1, width=dx, align='edge', edgecolor='black', alpha=0.5, color='steelblue')\nsum_text = ax2.text(0.5, 0.5, '', fontsize=12, transform=ax2.transAxes)\nax2.set_ylim(0,1)\nax2.axis('off')\nax1.set_ylabel('y')\nax1.set_xlabel('x')\n\ndef update(n_val):\n    n = int(n_val)\n    dx = (b-a)/n\n    xs = np.linspace(a+dx, b, n)\n    heights = 2*xs+1\n    ax1.cla()\n    ax1.plot(x_vals, y_vals, 'k-', lw=2)\n    ax1.bar(xs, heights, width=dx, align='edge', edgecolor='black', alpha=0.5, color='steelblue')\n    ax1.set_xlim(0.5,3.5)\n    ax1.set_ylim(0,8)\n    ax1.axhline(0, color='gray')\n    sum_approx = np.sum(heights)*dx\n    ax1.set_title(f'n={n}, Sum={sum_approx:.3f}, Exact={exact_area:.3f}, Error={abs(sum_approx-exact_area):.3f}')\n    ax1.set_ylabel('y')\n    ax1.set_xlabel('x')\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider_n = Slider(ax_slider, 'n', 1, 50, valinit=n_init, valstep=1)\nslider_n.on_changed(update)\nupdate(n_init)\nplt.show()",
+        "interactive_controls": [
+          "Slider for n from 1 to 50"
+        ]
+      },
+      "on_screen_text": "Watch the sum converge to 10 as n increases. Try n=10, 20, 50.",
+      "teacher_narration": "Here you can see the approximation improving right before your eyes. With only 4 rectangles, the sum is 9, which is 1 unit off. At n=10, it's 9.6. At n=50, it's 9.92 — very close to the exact area of 10. The rectangles follow the curve more faithfully as n grows. This visual tool helps you internalise that the definite integral is truly a limit of finite sums.",
+      "student_prompt": "Set n to 4, then 10, then 50. How does the error change? Does it get smaller each time?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Fundamental Theorem of Calculus – Part 1",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\n\\frac{d}{dx}\\int_a^x f(t)\\,dt = f(x)\n$$\n\n> If $F(x) = \\int_a^x f(t)\\,dt$, then $F'(x) = f(x)$.\n\n**Chain rule extension**: If upper limit is $g(x)$, then derivative is $f(g(x))\\cdot g'(x)$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animated accumulation function A(x) with tangent line showing its derivative equals f(x).",
+        "visual_spec": "Plot f(t)=2t+1 from t=1 to 3. Show the accumulation function A(x)=∫_1^x f(t)dt as a shaded area. As a slider moves x from 1 to 3, the shaded area grows. Simultaneously, in a lower panel, plot A(x) vs x and show its tangent line with slope equal to f(x). Highlight that the slope of the tangent matches the height of the original function at that x.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, (ax1, ax2) = plt.subplots(2,1, figsize=(7,6))\nplt.subplots_adjust(bottom=0.25)\nx_vals = np.linspace(1,3,400)\ny_vals = 2*x_vals+1\nax1.plot(x_vals, y_vals, 'b-', lw=2)\nax1.set_xlim(1,3)\nax1.set_ylim(0,8)\nax1.set_ylabel('f(t)')\nax1.set_xlabel('t')\nax1.axhline(0, color='gray')\n# Accumulation function\nxs = np.linspace(1,3,200)\nA = (xs**2 + xs) - (1**2+1)  # from antiderivative\nax2.plot(xs, A, 'r-', lw=2)\nax2.set_xlim(1,3)\nax2.set_ylim(0,12)\nax2.set_ylabel('A(x)')\nax2.set_xlabel('x')\nax2.axhline(0, color='gray')\n# initial shaded region\nx0 = 1\nshade = ax1.fill_between(x_vals, 0, y_vals, where=(x_vals<=x0), color='lightblue', alpha=0.5)\npoint, = ax1.plot(x0, 2*x0+1, 'ro') \ntan_line, = ax2.plot([], [], 'g--', lw=2)\npoint2, = ax2.plot(x0, A[np.searchsorted(xs, x0)], 'ro')\n# slider\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider_x = Slider(ax_slider, 'x', 1, 3, valinit=1)\ndef update(val):\n    x0 = val\n    ax1.collections.clear()\n    shade = ax1.fill_between(x_vals, 0, y_vals, where=(x_vals<=x0), color='lightblue', alpha=0.5)\n    point.set_data([x0], [2*x0+1])\n    # update second plot\n    idx = np.searchsorted(xs, x0)\n    A0 = A[idx]\n    slope = 2*x0+1\n    tangent_x = np.linspace(x0-0.2, x0+0.2, 10)\n    tangent_y = A0 + slope*(tangent_x - x0)\n    tan_line.set_data(tangent_x, tangent_y)\n    point2.set_data([x0], [A0])\n    ax2.set_title(f'x={x0:.2f}, A(x)={A0:.2f}, A\\'(x)={slope:.2f}')\n    fig.canvas.draw_idle()\nslider_x.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for x from 1 to 3"
+        ]
+      },
+      "on_screen_text": "The derivative of the accumulation function recovers the original integrand. Integration and differentiation are inverses.",
+      "teacher_narration": "The First Fundamental Theorem tells us that if we define a function A(x) as the integral from a constant to x, then the derivative of A is just the original function f. In the visual, as you move the slider, the accumulated area changes, and the slope of the tangent line to A(x) equals the height f(x). This is the inverse relationship: integrate then differentiate, and you're back where you started.",
+      "student_prompt": "Move the slider to x=2. What is the slope of the tangent line on the lower graph? How does it relate to f(2)?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Fundamental Theorem of Calculus – Part 2",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\n\\int_a^b f(x)\\,dx = F(b) - F(a)\n$$\n\nwhere $F$ is any antiderivative of $f$ (i.e., $F' = f$). \n\n**Note:** The constant of integration $+C$ cancels out, so you can ignore it when evaluating definite integrals."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing area under f between a and b, with F(b) and F(a) labelled on an antiderivative graph.",
+        "visual_spec": "Two panels side by side. Left: the original function f(x) = 2x+1 from x=1 to 3, with shaded area. Right: its antiderivative F(x)=x^2+x, with points at x=1 and x=3. Annotate the difference F(3)-F(1) with a bracket. Show that this difference equals the shaded area. Use arrows to connect the two panels.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\n\nfig, (ax1, ax2) = plt.subplots(1,2, figsize=(10,4))\nx = np.linspace(1,3,400)\nf = 2*x+1\nF = x**2 + x\nax1.plot(x, f, 'b-', lw=2)\nax1.fill_between(x, 0, f, alpha=0.3, color='blue', label='Area = ?')\nax1.set_xlim(1,3)\nax1.set_ylim(0,8)\nax1.set_xlabel('x')\nax1.set_ylabel('f(x)')\nax1.set_title('f(x)=2x+1')\nax1.legend()\nax2.plot(x, F, 'r-', lw=2)\nax2.plot([1,1], [0, F[0]], 'k--')\nax2.plot([3,3], [0, F[-1]], 'k--')\nax2.scatter([1,3], [F[0], F[-1]], color='red', zorder=5)\nax2.annotate(f'F(1)={F[0]:.0f}', xy=(1, F[0]), xytext=(1.1, F[0]-2), arrowprops=dict(arrowstyle='->'))\nax2.annotate(f'F(3)={F[-1]:.0f}', xy=(3, F[-1]), xytext=(2.5, F[-1]+2), arrowprops=dict(arrowstyle='->'))\nax2.annotate('F(3)-F(1)=10', xy=(2, (F[0]+F[-1])/2), ha='center', fontsize=12, fontweight='bold')\nax2.set_xlim(1,3)\nax2.set_ylim(0,14)\nax2.set_xlabel('x')\nax2.set_ylabel('F(x)')\nax2.set_title('Antiderivative F(x)=x²+x')\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Evaluate a definite integral by computing F(b) - F(a). No +C needed.",
+      "teacher_narration": "The Second Fundamental Theorem gives us the practical method: to evaluate a definite integral, find any antiderivative F, compute its value at the upper limit, subtract its value at the lower limit. The constant of integration cancels out, so we can safely omit it. In the diagram, the area under f from 1 to 3 is exactly F(3) minus F(1), which equals 10. This is a huge shortcut over Riemann sums.",
+      "student_prompt": "Why does the constant of integration cancel? Try evaluating an antiderivative with a +C and see what happens.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example using FTC2",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example**: Evaluate $\\int_0^2 (x^3 - 2x)\\,dx$ using FTC2.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | $F(x) = \\frac{x^4}{4} - x^2$ | Antiderivative: $\\frac{x^4}{4}$ from $x^3$, $-x^2$ from $-2x$ |\n| 2 | $F(2) = \\frac{16}{4} - 4 = 0$ | Upper limit value |\n| 3 | $F(0) = 0 - 0 = 0$ | Lower limit value |\n| 4 | $\\int_0^2 (x^3-2x)\\,dx = F(2)-F(0) = 0-0 = 0$ | Net area is zero; positive and negative parts cancel |\n\n**Key insight**: The integrand is odd about $x=1$ on $[0,2]$, so the area above and below the x‑axis cancel."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\int_0^2 (x^3-2x)\\,dx = 0$. Positive and negative areas cancel exactly.",
+      "teacher_narration": "Here's a nice application of FTC2. The integral of x³ minus 2x from 0 to 2 gives zero. Why? Because the area above the x-axis between 0 and about 1.4 equals the area below it from 1.4 to 2. Graphically, the function is symmetric about the point x=1, so the net signed area is zero. This cancellation is a key phenomenon — the definite integral always gives net area, not total area.",
+      "student_prompt": "Sketch the graph of f(x)=x³-2x on [0,2]. Verify that the area above equals the area below.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Forgetting to Change Limits in Substitution",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach**: When using $u = \\sin x$ in $\\int_0^{\\pi/2} \\sin x \\cos x \\,dx$, a student writes:\n\n$$\\int_0^{\\pi/2} u\\,du = \\left[\\frac{u^2}{2}\\right]_0^{\\pi/2} = \\frac{1}{2}\\left(\\frac{\\pi}{2}\\right)^2$$\n\n**This is wrong!** Why? The limits are still in $x$, but the integral is now in $u$. You must transform the limits: $x = 0 \\rightarrow u = \\sin 0 = 0$, $x = \\pi/2 \\rightarrow u = 1$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animated diagram showing correct and incorrect limits on u-axis.",
+        "visual_spec": "Show two number lines side by side: one for x from 0 to π/2, one for u from 0 to 1. Arrows connect x=0 to u=0 and x=π/2 to u=1. Overlay a red cross over the wrong limits (π/2) on the u-axis, and a green check over the correct limits (0 and 1). Add a animated rectangle that fills the area under u from 0 to 1.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\nfrom matplotlib.patches import FancyBboxPatch\n\nfig, (ax1, ax2) = plt.subplots(1,2, figsize=(8,4))\nax1.set_xlim(-0.5, 2.5)\nax1.set_ylim(-0.2, 1.2)\nax1.axhline(0, color='gray')\nax1.scatter([0, np.pi/2], [0,0], color='black', zorder=5)\nax1.text(0, -0.05, '0', ha='center')\nax1.text(np.pi/2, -0.05, 'π/2', ha='center')\nax1.set_title('x-axis')\nax1.axis('off')\nax2.set_xlim(-0.5, 2.5)\nax2.set_ylim(-0.2, 1.2)\nax2.axhline(0, color='gray')\nax2.scatter([0,1], [0,0], color='green', s=100, zorder=5)\nax2.scatter([np.pi/2], [0], color='red', s=100, zorder=5)\nax2.text(0, -0.05, '0 (correct)', ha='center', color='green')\nax2.text(1, -0.05, '1 (correct)', ha='center', color='green')\nax2.text(np.pi/2, -0.05, 'π/2 (wrong!)', ha='center', color='red')\nax2.set_title('u-axis')\nax2.annotate('', xy=(np.pi/2, 0), xytext=(1,0), arrowprops=dict(arrowstyle='->', color='red', lw=2))\nax1.annotate('', xy=(np.pi/2,0.05), xytext=(np.pi/2,0.3), fontsize=12, fontweight='bold', ha='center')\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Always change the limits when substituting in a definite integral — never keep the old limits!",
+      "teacher_narration": "One of the most common errors in definite integrals occurs during substitution. A student correctly lets u equal sine of x and writes du equals cosine x dx. But then they forget to change the limits. They still use the x-limits 0 and π/2 for the u integral. That gives a completely wrong answer. The correct limits after substitution are u from sin 0 equals 0 to sin π/2 equals 1. Always write down the new limits immediately after the substitution.",
+      "student_prompt": "What would you get if you incorrectly used the old limits? Why is it obviously wrong?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Tricky Example: Substitution with Limit Change",
+      "left": {
+        "content_type": "steps",
+        "content": "**Evaluate** $\\int_0^{\\pi/2} \\sin x \\cos x \\,dx$\n\n1. Let $u = \\sin x \\Rightarrow du = \\cos x\\,dx$\n2. New limits: $x=0 \\rightarrow u=0$, $x=\\pi/2 \\rightarrow u=1$\n3. Integral becomes $\\int_0^1 u\\,du = \\left[\\frac{u^2}{2}\\right]_0^1 = \\frac12$\n\n**Answer**: $\\frac{1}{2}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of sin x cos x from 0 to π/2 with shaded area and annotation of the u-substitution mapping.",
+        "visual_spec": "Plot f(x)=sin(x)cos(x) over [0,π/2]. Shade the area under the curve. Display the transformation: left panel shows f(x) with x-axis, right panel shows g(u)=u with u-axis from 0 to 1. Draw a curved arrow from the left graph to the right, labelled 'u=sin x'. Highlight that the area under u from 0 to 1 equals 0.5.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\n\nfig, (ax1, ax2) = plt.subplots(1,2, figsize=(10,4))\nx = np.linspace(0, np.pi/2, 400)\nf = np.sin(x)*np.cos(x)\nax1.plot(x, f, 'b-', lw=2)\nax1.fill_between(x, 0, f, alpha=0.3, color='blue')\nax1.set_xlim(0, np.pi/2)\nax1.set_ylim(0, 0.6)\nax1.set_xlabel('x')\nax1.set_ylabel('sin x cos x')\nax1.set_title('Original integral')\nu_vals = np.linspace(0,1,400)\ng = u_vals\nax2.plot(u_vals, g, 'r-', lw=2)\nax2.fill_between(u_vals, 0, g, alpha=0.3, color='red')\nax2.set_xlim(0,1)\nax2.set_ylim(0,1)\nax2.set_xlabel('u')\nax2.set_ylabel('u')\nax2.set_title('Integral after u-sub')\nax2.text(0.5, 2.5, 'Area = 0.5', transform=ax2.transData, fontsize=12, ha='center')\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\int_0^{\\pi/2} \\sin x \\cos x\\,dx = \\frac12$  (after transforming limits).",
+      "teacher_narration": "Now let's apply the correct substitution. We set u equal to sine x. Then du equals cosine x dx, and the limits change accordingly: 0 becomes sine of 0 equals 0, and π/2 becomes sine of π/2 equals 1. The integral simplifies to the integral of u du from 0 to 1, which is 1/2. Notice how the substitution turned a product into a simple power — that's the power of the method.",
+      "student_prompt": "Suppose you used u = cos x instead. Would you get the same answer? Try it and check.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Symmetry: Even and Odd Functions",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Even function**: $f(-x)=f(x)$\n$$\n\\int_{-a}^a f(x)\\,dx = 2\\int_0^a f(x)\\,dx\n$$\n\n**Odd function**: $f(-x)=-f(x)$\n$$\n\\int_{-a}^a f(x)\\,dx = 0\n$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive graph toggling between even function (x^4) and odd function (x^3) showing symmetry properties.",
+        "visual_spec": "Plot two functions on the same axes: f(x)=x^4 (even) and g(x)=x^3 (odd) over [-2,2]. Include radio buttons to select which function to view. Show the area under the even function as two equal halves in different colors, and for the odd function show the left and right areas with opposite signs to illustrate cancellation. Display the net integral value below.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\nfrom matplotlib.widgets import RadioButtons\n\nfig, ax = plt.subplots(figsize=(7,4))\nplt.subplots_adjust(bottom=0.2)\nax.set_xlim(-2.5, 2.5)\nax.set_ylim(-5, 20)\nax.axhline(0, color='gray')\nax.axvline(0, color='gray')\nx = np.linspace(-2,2,400)\n# even function\ny_even = x**4\n# odd function\ny_odd = x**3\nline_even, = ax.plot(x, y_even, 'b-', lw=2, label='x^4 (even)')\nfill_even = ax.fill_between(x, 0, y_even, alpha=0.3, color='blue', label='Area = 2∫₀² x⁴ dx')\nfill_odd_left = ax.fill_between(x, 0, y_odd, where=(x<0), alpha=0.3, color='red')\nfill_odd_right = ax.fill_between(x, 0, y_odd, where=(x>=0), alpha=0.3, color='red')\nline_odd, = ax.plot(x, y_odd, 'g-', lw=2, label='x^3 (odd)', visible=False)\nfill_odd_left.set_visible(False)\nfill_odd_right.set_visible(False)\nline_even.set_visible(True)\nfill_even.set_visible(True)\narea_text = ax.text(0, 18, 'Even: ∫ x⁴ dx = 2∫₀² x⁴ dx = 12.8', ha='center', fontsize=10)\n\nrax = plt.axes([0.01, 0.7, 0.15, 0.2])\nradio = RadioButtons(rax, ('Even', 'Odd'))\ndef switch(label):\n    if label == 'Even':\n        line_even.set_visible(True)\n        fill_even.set_visible(True)\n        line_odd.set_visible(False)\n        fill_odd_left.set_visible(False)\n        fill_odd_right.set_visible(False)\n        area_text.set_text('Even: ∫ x⁴ dx = 2∫₀² x⁴ dx = 12.8')\n    else:\n        line_even.set_visible(False)\n        fill_even.set_visible(False)\n        line_odd.set_visible(True)\n        fill_odd_left.set_visible(True)\n        fill_odd_right.set_visible(True)\n        area_text.set_text('Odd: ∫ x³ dx = 0 (areas cancel)')\n    fig.canvas.draw_idle()\nradio.on_clicked(switch)\nax.legend(loc='upper left')\nplt.show()",
+        "interactive_controls": [
+          "Radio buttons to switch between even and odd function display"
+        ]
+      },
+      "on_screen_text": "Even → double the right half; Odd → zero over symmetric interval.",
+      "teacher_narration": "Symmetry can save you a lot of work. If a function is even, meaning f of negative x equals f of x, then the integral from negative a to a is just twice the integral from 0 to a. If a function is odd, meaning f of negative x equals negative f of x, then the integral over a symmetric interval is zero. The graph on the right lets you toggle between the two cases. Notice that the odd function's areas cancel perfectly.",
+      "student_prompt": "Is sin(x) even or odd? What about cos(x)? Use the symmetry rules to predict ∫_{-π}^{π} sin(x) dx.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example: Even Function Integral",
+      "left": {
+        "content_type": "steps",
+        "content": "**Evaluate** $\\int_{-2}^2 x^4\\,dx$ using symmetry.\n\n1. $f(x)=x^4$ is even: $f(-x)=f(x)$.\n2. $\\int_{-2}^2 x^4\\,dx = 2\\int_0^2 x^4\\,dx$\n3. Antiderivative: $F(x)=\\frac{x^5}{5}$\n4. $2\\left[\\frac{x^5}{5}\\right]_0^2 = 2\\cdot\\frac{32}{5} = \\frac{64}{5}$\n\n**Check**: Direct FTC2 gives same result: $\\frac{32}{5} - (-\\frac{32}{5}) = \\frac{64}{5}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of x^4 from -2 to 2 with two halves colored differently and the total area displayed.",
+        "visual_spec": "Plot f(x)=x^4 over [-2,2]. Fill the area from 0 to 2 in one color (e.g., blue) and from -2 to 0 in a second color (e.g., light blue) to show they are equal. Annotate each half area as 32/5. Display total = 64/5. Include a dashed vertical line at x=0.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\n\nx = np.linspace(-2,2,400)\ny = x**4\nfig, ax = plt.subplots(figsize=(7,4))\nax.plot(x, y, 'b-', lw=2)\nax.fill_between(x, 0, y, where=(x>=0), alpha=0.3, color='blue', label='Right half')\nax.fill_between(x, 0, y, where=(x<0), alpha=0.3, color='cyan', label='Left half')\nax.axvline(0, color='gray', linestyle='--')\nax.set_xlim(-2.5,2.5)\nax.set_ylim(0,20)\nax.set_xlabel('x')\nax.set_ylabel('x⁴')\nax.text(1, 10, '32/5', fontsize=12, ha='center')\nax.text(-1, 10, '32/5', fontsize=12, ha='center')\nax.text(0, 18, 'Total = 64/5', fontsize=12, ha='center', fontweight='bold')\nax.legend()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\int_{-2}^2 x^4\\,dx = \\frac{64}{5}$ (use even symmetry to compute only one half).",
+      "teacher_narration": "Here we see the symmetry shortcut in action. The function x to the fourth is even, so the integral from -2 to 2 is twice the integral from 0 to 2. Computing half the interval gives 32/5, so the full integral is 64/5. This is much easier than evaluating from -2 to 2 directly. Always check for symmetry before diving into the computation.",
+      "student_prompt": "Use the odd rule to evaluate ∫_{-3}^{3} x^5 dx without any integration.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Application: Accumulated Water Volume",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem**: Water flows into a tank at rate $r(t)=10+2\\sin t$ gal/hour for $0\\le t\\le 4$. Find total volume in first 4 hours.\n\n1. Volume = $\\int_0^4 r(t)\\,dt = \\int_0^4 (10+2\\sin t)\\,dt$\n2. Antiderivative: $10t - 2\\cos t$\n3. Evaluate: $[10t - 2\\cos t]_0^4 = (40 - 2\\cos 4) - (0 - 2\\cos 0)$\n4. $= 40 - 2\\cos 4 + 2 = 42 - 2\\cos 4$\n5. Approx: $\\cos 4 \\approx -0.653$, so volume $\\approx 43.306$ gallons."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of r(t) with shaded area under curve from 0 to 4, and annotation of approximate total.",
+        "visual_spec": "Plot r(t)=10+2 sin(t) over [0,4]. Shade the area under the curve from 0 to 4. Display the approximate area value 43.3. Add a horizontal line at y=10 for reference. Annotate that the area equals volume. Include a label 'Volume ≈ 43.3 gal'.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\n\nt = np.linspace(0,4,500)\nr = 10 + 2*np.sin(t)\nfig, ax = plt.subplots(figsize=(7,4))\nax.plot(t, r, 'b-', lw=2)\nax.fill_between(t, 0, r, alpha=0.3, color='blue')\nax.axhline(10, color='gray', linestyle='--', alpha=0.5)\nax.set_xlim(0,4)\nax.set_ylim(0,14)\nax.set_xlabel('Time (h)')\nax.set_ylabel('Rate (gal/h)')\nax.text(2, 2, 'Volume ≈ 43.3 gal', fontsize=12, ha='center', \n        bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))\nax.set_title('Flow rate into tank')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Total volume = ∫₀⁴ (10+2 sin t) dt ≈ 43.3 gallons.",
+      "teacher_narration": "Let's see a real use of the definite integral: accumulation. The rate of water flow into a tank is given by r of t equals 10 plus 2 sine t gallons per hour. To find the total volume added in the first 4 hours, we integrate the rate from 0 to 4. The antiderivative is 10t minus 2 cosine t. Evaluating gives 42 minus 2 times cosine of 4. Cosine of 4 radians is approximately -0.653, so the total is about 43.3 gallons. The area under the rate curve represents the accumulated volume.",
+      "student_prompt": "If the tank initially had 50 gallons, how much is in the tank after 4 hours? (Hint: initial + accumulated change.)",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof: FTC1 from the Definition",
+      "left": {
+        "content_type": "text",
+        "content": "**Proof sketch**: Let $F(x)=\\int_a^x f(t)\\,dt$. Then\n\n$$\nF'(x) = \\lim_{h\\to0}\\frac{F(x+h)-F(x)}{h} = \\lim_{h\\to0}\\frac{1}{h}\\int_x^{x+h} f(t)\\,dt.\n$$\n\nBy the Mean Value Theorem for integrals, there exists $c\\in[x,x+h]$ such that $\\int_x^{x+h} f(t)\\,dt = f(c)\\cdot h$. Hence $F'(x) = \\lim_{h\\to0} f(c) = f(x)$ (since $c\\to x$)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive diagram showing the incremental area as h shrinks, with a slider to control h, and the secant line converging to tangent.",
+        "visual_spec": "Plot f(t)=2t+1. Show the accumulation function F(x) (integral from a to x). Place two vertical lines at x and x+h to show a thin strip. As a slider decreases h from 1 to 0.01, the strip becomes thinner, and the secant line between (x, F(x)) and (x+h, F(x+h)) approaches the tangent line at x. Display the slope values.",
+        "python_code": "import numpy as np, matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, (ax1, ax2) = plt.subplots(2,1, figsize=(7,7))\nplt.subplots_adjust(bottom=0.25)\nx_vals = np.linspace(1,3,400)\ny_vals = 2*x_vals+1\nax1.plot(x_vals, y_vals, 'b-', lw=2)\nax1.set_xlim(1,3)\nax1.set_ylim(0,8)\nax1.set_ylabel('f(t)')\nax1.axhline(0, color='gray')\n# accumulation function\nxs = np.linspace(1,3,400)\nF = (xs**2 + xs) - 2  # antiderivative F(x)=x^2+x-2\nax2.plot(xs, F, 'r-', lw=2)\nax2.set_xlim(1,3)\nax2.set_ylim(0,12)\nax2.set_ylabel('F(x)')\nax2.axhline(0, color='gray')\n\n# initial values\nx0 = 1.5\nh_init = 0.5\nstrip = ax1.fill_between([x0, x0+h_init], 0, [2*point+1 for point in [x0, x0+h_init]], alpha=0.3, color='yellow')\npoint1, = ax1.plot(x0, 2*x0+1, 'ro')\npoint2, = ax1.plot(x0+h_init, 2*(x0+h_init)+1, 'ro')\nF0 = F[np.searchsorted(xs, x0)]\nFh = F[np.searchsorted(xs, x0+h_init)]\nsecant, = ax2.plot([x0, x0+h_init], [F0, Fh], 'g--', lw=2)\npointF1, = ax2.plot(x0, F0, 'ro')\npointF2, = ax2.plot(x0+h_init, Fh, 'ro')\nslope_text = ax2.text(0.5, 0.9, 'Slope = ' + str( (Fh-F0)/h_init ), transform=ax2.transAxes, fontsize=10)\n\nslider_ax = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider_h = Slider(slider_ax, 'h', 0.01, 1, valinit=h_init)\n\ndef update(val):\n    h = val\n    ax1.collections.clear()\n    strip = ax1.fill_between([x0, x0+h], 0, [2*point+1 for point in [x0, x0+h]], alpha=0.3, color='yellow')\n    point1.set_data([x0], [2*x0+1])\n    point2.set_data([x0+h], [2*(x0+h)+1])\n    # accumulation\n    idx0 = np.searchsorted(xs, x0)\n    idxh = np.searchsorted(xs, x0+h)\n    F0 = F[idx0]\n    Fh = F[idxh]\n    secant.set_data([x0, x0+h], [F0, Fh])\n    pointF1.set_data([x0], [F0])\n    pointF2.set_data([x0+h], [Fh])\n    slope = (Fh - F0)/h\n    slope_text.set_text(f'Slope = {slope:.3f}')\n    fig.canvas.draw_idle()\n\nslider_h.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for h from 0.01 to 1"
+        ]
+      },
+      "on_screen_text": "The difference quotient of F becomes f(x) as h → 0. This proves FTC1.",
+      "teacher_narration": "For the curious: here's why FTC1 is true. The derivative of F at x is the limit of [F(x+h)-F(x)] over h. That difference is the integral of f from x to x+h divided by h. By the Mean Value Theorem for integrals, that average value equals f of some point c in the interval. As h goes to zero, c is forced to x, so the limit is f(x). Use the slider to see how the secant slope approaches the exact derivative as h shrinks.",
+      "student_prompt": "What happens to the secant line when h becomes very small? How does the slope change?",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary",
+      "left": {
+        "content_type": "text",
+        "content": "**Key takeaways from this lecture:**\n\n**1. Definite integral as net area:** $\\int_a^b f(x)\\,dx$ = limit of Riemann sums.\n\n**2. FTC Part 1:** $\\frac{d}{dx}\\int_a^x f(t)\\,dt = f(x)$ (differentiation undoes integration).\n\n**3. FTC Part 2:** $\\int_a^b f(x)\\,dx = F(b)-F(a)$ (evaluation shortcut).\n\n**4. Substitution rule:** Change limits when changing variable.\n\n**5. Symmetry:** Even → double; Odd → zero.\n\n**6. Application:** Integral of rate = accumulated change.\n\n**Revisit objectives:** Can you now calculate definite integrals using Riemann sums and FTC? Interpret them as net area? Apply substitution correctly?"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Definite integral = limit of sums → FTC shortcuts → substitution → symmetry → applications.",
+      "teacher_narration": "Let's recap what we've covered. We started with the definition of the definite integral as the limit of Riemann sums. Then we introduced the Fundamental Theorem, which gives us practical ways to evaluate integrals using antiderivatives. We learned the substitution rule, remembering always to change the limits. Symmetry can simplify calculations, and we saw an application in accumulation. Review your notes and try the extra problems on the course page.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

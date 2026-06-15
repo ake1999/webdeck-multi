@@ -66,6 +66,8 @@ function makeOptions(args) {
     scriptProvider: args.scriptProvider,
     scriptModel: args.scriptModel || "",
     scriptEndpoint: args.scriptEndpoint || "",
+    scriptApiKey: args.scriptApiKey || "",
+    scriptApiKeyFile: args.scriptApiKeyFile || "",
     scriptPromptVersion: args.scriptPromptVersion || "script_writer_v2",
     scriptTemperature: Number(args.scriptTemperature ?? 0.2),
     scriptMaxRetries: Number(args.scriptMaxRetries ?? 2),

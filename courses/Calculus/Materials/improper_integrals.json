@@ -1,0 +1,331 @@
+{
+  "lecture_meta": {
+    "title": "Improper Integrals: Infinite Area or Finite?",
+    "topic": "Improper Integrals",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Define Type I and Type II improper integrals",
+      "Evaluate improper integrals using limits",
+      "Apply the p-integral test for convergence",
+      "Use the comparison test for convergence",
+      "Identify and handle interior singularities"
+    ],
+    "prerequisite_reminder": "You should know definite integrals, limits, and basic integration techniques (power rule, substitution)."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Can Infinity Have Finite Area?",
+      "left": {
+        "content_type": "text",
+        "content": "Which area is finite?\n\n1. Under $y = \\frac{1}{x^2}$ from $1$ to $\\infty$?\n2. Under $y = \\frac{1}{x}$ from $1$ to $\\infty$?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two shaded regions side-by-side: left shows 1/x^2 area from 1 to 10 (finite, label area=1), right shows 1/x area from 1 to 10 (grows unbounded, label area infinite). Use different colors. Static image.",
+        "visual_spec": "Two subplots: left shows graph of 1/x^2 from 1 to infinity, shading under curve, area labeled 'Area = 1'. Right shows graph of 1/x from 1 to infinity, shading under curve, area labeled 'Area → ∞'. Both x-axis from 1 to 10, y-axis from 0 to 2.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Which area is finite? Under 1/x² or under 1/x?",
+      "teacher_narration": "Here's a surprising fact: an infinitely long region can have a finite area. For example, the area under 1 over x squared from 1 to infinity is exactly 1. But the area under 1 over x from 1 to infinity is infinite. Why? The key is how fast the function approaches zero. Today we'll learn how to decide when an improper integral converges or diverges.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Type I: Infinite Intervals",
+      "left": {
+        "content_type": "concept",
+        "content": "$$\\int_a^\\infty f(x)\\,dx = \\lim_{t \\to \\infty} \\int_a^t f(x)\\,dx$$\n\nReplace the infinite bound with a limit."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animate upper limit t increasing, shading area under y=e^{-x} from 0 to t. Slider for t from 1 to 10. Show numeric area value that approaches 1.",
+        "visual_spec": "Plot y=e^{-x} from 0 to 10. Shaded area from 0 to t. Slider for t (1 to 10). Display area value updating. When t=10, area ≈ 0.99995. Color: blue shading, black curve.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8, 5))\nplt.subplots_adjust(bottom=0.25)\nx = np.linspace(0, 10, 500)\ny = np.exp(-x)\nline, = ax.plot(x, y, 'k', lw=2)\nax.set_xlim(0, 10)\nax.set_ylim(0, 1.2)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Area under e^{-x} from 0 to t')\n\n# initial t=1\nt_init = 1\nx_fill = np.linspace(0, t_init, 100)\ny_fill = np.exp(-x_fill)\nfill = ax.fill_between(x_fill, y_fill, alpha=0.3, color='blue')\narea_text = ax.text(0.5, 0.9, f'Area = {np.trapz(y_fill, x_fill):.5f}', fontsize=12)\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 't', 1, 10, valinit=t_init)\n\ndef update(val):\n    t = slider.val\n    x_fill = np.linspace(0, t, 100)\n    y_fill = np.exp(-x_fill)\n    area = np.trapz(y_fill, x_fill)\n    fill.set_verts([np.column_stack([x_fill, y_fill])])\n    area_text.set_text(f'Area = {area:.5f}')\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for t from 1 to 10"
+        ]
+      },
+      "on_screen_text": "$$\\int_a^\\infty f(x)\\,dx = \\lim_{t\\to\\infty} \\int_a^t f(x)\\,dx$$",
+      "teacher_narration": "When we write an integral to infinity, we really mean a limit. We integrate to a finite upper limit t, then let t go to infinity. If the limit exists and is finite, the integral converges. Otherwise it diverges. Let's see this visually with e to the minus x. As t increases, the shaded area accumulates and approaches a finite number, which is the value of the improper integral. This visual helps us understand that even though the interval is infinite, the total area can be finite if the function decays quickly enough.",
+      "student_prompt": "Predict: As t increases, does the shaded area approach a finite number or grow without bound?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Warm-Up — 1/x²",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Work | Explanation |\n|------|------|-------------|\n| 1 | $\\int_1^\\infty \\frac{1}{x^2}\\,dx = \\lim_{t\\to\\infty} \\int_1^t x^{-2}\\,dx$ | Convert to limit |\n| 2 | $= \\lim_{t\\to\\infty} \\left[-x^{-1}\\right]_1^t$ | Integrate: $\\int x^{-2}dx = -x^{-1}$ |\n| 3 | $= \\lim_{t\\to\\infty} \\left(-\\frac{1}{t} + 1\\right)$ | Evaluate bounds |\n| 4 | $= 1$ | Limit exists → converges |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Evaluate $\\int_1^\\infty \\frac{1}{x^2}\\,dx$",
+      "teacher_narration": "Let's work through our first example. We start by rewriting as a limit, use the power rule to find the antiderivative, evaluate at the bounds, and then take the limit. As t goes to infinity, 1/t goes to 0, so we get 1. The integral converges to 1. This is a classic example that shows how an infinite region can have a finite area, and it sets the stage for the p-integral test which generalizes this result.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The p-Integral Test",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\int_1^\\infty \\frac{1}{x^p}\\,dx \\begin{cases} \\text{converges if } p > 1 \\\\ \\text{diverges if } p \\le 1 \\end{cases}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot 1/x^p for p=0.5,1,1.5,2. Radio buttons to select p. Show shaded area and label converge/diverge.",
+        "visual_spec": "Graph of 1/x^p from 1 to 5 (or 10). Axes: x 0 to 5, y 0 to 3. Four radio buttons for p values. For each p, shade area under curve and display 'Converges' or 'Diverges' based on p-test. Color: curve in black, shade in light red if diverges, light green if converges.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import RadioButtons\n\nfig, ax = plt.subplots(figsize=(8, 5))\nplt.subplots_adjust(bottom=0.25, left=0.1)\nx = np.linspace(1, 5, 400)\n\n# initial p=2\np_init = 2\ny_initial = x**(-p_init)\nline, = ax.plot(x, y_initial, 'k', lw=2)\nfill = ax.fill_between(x, y_initial, alpha=0.3, color='green')\nax.set_xlim(0, 5)\nax.set_ylim(0, 3)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('p-integral test')\n\n# text for status\nstatus_text = ax.text(0.5, 0.9, 'Converges', transform=ax.transAxes, fontsize=12, ha='center')\n\n# radio buttons\nrax = plt.axes([0.75, 0.3, 0.15, 0.4])\nradio = RadioButtons(rax, ('0.5', '1', '1.5', '2'))\n\ndef update(label):\n    p = float(label)\n    y = x**(-p)\n    line.set_ydata(y)\n    ax.collections.clear()\n    if p > 1:\n        color = 'green'\n        status_text.set_text('Converges')\n    else:\n        color = 'red'\n        status_text.set_text('Diverges')\n    fill = ax.fill_between(x, y, alpha=0.3, color=color)\n    fig.canvas.draw_idle()\n\nradio.on_clicked(update)\nplt.show()",
+        "interactive_controls": [
+          "Radio: p = 0.5, 1, 1.5, 2"
+        ]
+      },
+      "on_screen_text": "For $\\int_1^\\infty 1/x^p dx$: converges if $p>1$, diverges if $p \\le 1$",
+      "teacher_narration": "The function 1 over x to the p is the benchmark for improper integrals. If p is greater than 1, the function decays fast enough for the area to be finite. If p is 1 or less, the area is infinite. Remember this test — it's your best friend. The radio buttons let you see how the shape of the curve changes with p and whether the area converges or diverges.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof of p-Test",
+      "left": {
+        "content_type": "steps",
+        "content": "**Proof for $\\int_1^\\infty x^{-p}\\,dx$:**\n- $p=1$: $\\int_1^t \\frac{1}{x}\\,dx = \\ln t \\to \\infty$ → diverges\n- $p \\neq 1$: $\\int_1^t x^{-p}\\,dx = \\frac{t^{1-p} - 1}{1-p}$\n  - If $p>1$, $1-p<0$ → $t^{1-p}\\to0$, limit = $1/(p-1)$\n  - If $p<1$, $1-p>0$ → $t^{1-p}\\to\\infty$, diverges"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animation showing limit behavior: for p>1 area approaches finite value; for p<1 area grows unbounded. Slider for p from 0.5 to 2.",
+        "visual_spec": "Plot 1/x^p from 1 to 10. Shading area under curve. Slider for p (0.5 to 2). Display numeric area value. For p>1 area converges to finite number, for p<=1 area diverges. Color: green for converging, red for diverging.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8, 5))\nplt.subplots_adjust(bottom=0.25)\nx = np.linspace(1, 10, 400)\n\np_init = 1.5\ny = x**(-p_init)\nline, = ax.plot(x, y, 'k', lw=2)\nfill = ax.fill_between(x, y, alpha=0.3, color='green')\nax.set_xlim(0, 10)\nax.set_ylim(0, 2)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('p-integral: area as t→∞')\n\narea_text = ax.text(0.05, 0.9, f'Area = {np.trapz(y, x):.3f}', transform=ax.transAxes, fontsize=12)\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'p', 0.5, 2.0, valinit=p_init)\n\ndef update(val):\n    p = slider.val\n    y = x**(-p)\n    line.set_ydata(y)\n    ax.collections.clear()\n    area = np.trapz(y, x)\n    color = 'green' if p > 1 else 'red'\n    fill = ax.fill_between(x, y, alpha=0.3, color=color)\n    area_text.set_text(f'Area ≈ {area:.3f} (p={p:.1f})')\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for p from 0.5 to 2"
+        ]
+      },
+      "on_screen_text": "Proof: antiderivative is $(t^{1-p}-1)/(1-p)$; limit depends on sign of $1-p$.",
+      "teacher_narration": "This slide shows the formal proof. The antiderivative is the same for all p except 1. The key is the exponent 1-p. When p is greater than 1, 1-p is negative, so t to a negative power goes to 0. When p is less than 1, t to a positive power goes to infinity. And p equals 1 gives the natural logarithm, which also diverges.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Standard — Type II (1/√x)",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Work | Explanation |\n|------|------|-------------|\n| 1 | $\\int_0^1 \\frac{1}{\\sqrt{x}}\\,dx = \\lim_{t \\to 0^+} \\int_t^1 x^{-1/2}\\,dx$ | Asymptote at 0 |\n| 2 | $= \\lim_{t \\to 0^+} \\left[2x^{1/2}\\right]_t^1$ | Integrate: $\\int x^{-1/2}dx = 2x^{1/2}$ |\n| 3 | $= \\lim_{t \\to 0^+} (2 - 2\\sqrt{t})$ | Evaluate bounds |\n| 4 | $= 2$ | Limit exists → converges |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Evaluate $\\int_0^1 \\frac{1}{\\sqrt{x}}\\,dx$",
+      "teacher_narration": "Now an example where the function is unbounded at the left endpoint. We approach from the right, integrate from t to 1, then let t go to 0. The antiderivative is 2 root x. At x=1 we get 2, at x=t we get 2 root t, which goes to 0. So the integral converges to 2. This is a Type II improper integral, and the key is to handle the singularity by taking a limit as we approach it.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Interior Singularity",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:**\n$$\\int_{-1}^2 \\frac{1}{x^2}\\,dx = \\left[-\\frac{1}{x}\\right]_{-1}^2 = -\\frac{1}{2} - 1 = -\\frac{3}{2}$$\n\n**Why it's wrong:** The function has a vertical asymptote at $x=0$, which is inside the interval. The FTC does not apply."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of 1/x^2 showing vertical asymptote at x=0. Highlight the singularity. Show the wrong area calculation as shaded region that ignores the infinite area. Animate the area accumulation from both sides showing infinite value.",
+        "visual_spec": "Plot 1/x^2 from -1 to 2 with asymptote at 0. Shade region from -1 to 2 in red to indicate infinite area. Add text 'Asymptote at x=0' and 'Area is infinite'. Use dashed vertical line at x=0.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(8, 5))\nx = np.linspace(-1, 2, 800)\n# Avoid singular point\nx_left = np.linspace(-1, -0.01, 200)\nx_right = np.linspace(0.01, 2, 300)\ny_left = 1/x_left**2\ny_right = 1/x_right**2\nax.plot(x_left, y_left, 'b', lw=2)\nax.plot(x_right, y_right, 'b', lw=2)\nax.set_xlim(-1.5, 2.5)\nax.set_ylim(0, 10)\nax.axvline(0, color='red', linestyle='--', lw=2, label='Asymptote at x=0')\nax.fill_between(x_left, y_left, alpha=0.3, color='red')\nax.fill_between(x_right, y_right, alpha=0.3, color='red')\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Area is infinite (diverges)')\nax.legend()\nplt.show()",
+        "interactive_controls": [
+          "Button: show correct split"
+        ]
+      },
+      "on_screen_text": "Never apply FTC without checking for singularities inside the interval.",
+      "teacher_narration": "A common mistake is to treat this as a regular definite integral. But there is a vertical asymptote at x equals 0 inside the interval. The Fundamental Theorem of Calculus does not apply when the function is unbounded on the interval. You must split the integral at the singularity and check each part separately. This is a critical point: always check for interior singularities before applying the FTC.",
+      "student_prompt": "What goes wrong if you integrate directly?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3: Tricky — Correct Method",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Work | Explanation |\n|------|------|-------------|\n| 1 | $\\int_{-1}^2 \\frac{1}{x^2}\\,dx = \\int_{-1}^0 + \\int_0^2$ | Split at singularity |\n| 2 | $\\int_0^2 \\frac{1}{x^2}\\,dx = \\lim_{t \\to 0^+} \\left[-\\frac{1}{x}\\right]_t^2$ | Evaluate right piece |\n| 3 | $= \\lim_{t \\to 0^+} \\left(-\\frac{1}{2} + \\frac{1}{t}\\right) = +\\infty$ | Diverges |\n| 4 | Since one part diverges, the whole integral diverges. | Conclusion |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Correct: $\\int_{-1}^2 1/x^2\\,dx$ diverges (right piece diverges).",
+      "teacher_narration": "We split at x=0 into two integrals. The part from 0 to 2 diverges because near 0, 1 over x squared behaves like 1 over x to the power 2, which is greater than 1. The p-test for Type II says diverges if p is greater than or equal to 1. Since one part diverges, the whole integral diverges. This shows the correct method: split at the singularity and evaluate each part separately.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Example 4: Edge Case — 1/(x ln x)",
+      "left": {
+        "content_type": "text",
+        "content": "Investigate:\n\n$$\\int_2^\\infty \\frac{1}{x \\ln x}\\,dx$$\n\nAnd more generally:\n\n$$\\int_2^\\infty \\frac{1}{x (\\ln x)^p}\\,dx$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of 1/(x ln x) and area accumulation. Slider for p in 1/(x (ln x)^p) to see convergence when p>1.",
+        "visual_spec": "Plot 1/(x (ln x)^p) from 2 to 10. Shading area. Slider for p from 0.5 to 2. Display area value and convergence/divergence label. For p>1 area converges (label green), for p<=1 diverges (label red).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8, 5))\nplt.subplots_adjust(bottom=0.25)\nx = np.linspace(2, 10, 400)\n\np_init = 1.0\ny = 1/(x * (np.log(x))**p_init)\nline, = ax.plot(x, y, 'k', lw=2)\nfill = ax.fill_between(x, y, alpha=0.3, color='red')\nax.set_xlim(0, 10)\nax.set_ylim(0, 0.5)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Area under 1/(x (ln x)^p)')\n\nstatus_text = ax.text(0.05, 0.9, '', transform=ax.transAxes, fontsize=12)\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'p', 0.5, 2.0, valinit=p_init)\n\ndef update(val):\n    p = slider.val\n    y = 1/(x * (np.log(x))**p)\n    line.set_ydata(y)\n    ax.collections.clear()\n    area = np.trapz(y, x)\n    if p > 1:\n        color = 'green'\n        status_text.set_text(f'Converges (area ≈ {area:.3f})')\n    else:\n        color = 'red'\n        status_text.set_text(f'Diverges (area grows, here ≈ {area:.3f})')\n    fill = ax.fill_between(x, y, alpha=0.3, color=color)\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\nupdate(p_init)\nplt.show()",
+        "interactive_controls": [
+          "Slider for p from 0.5 to 2"
+        ]
+      },
+      "on_screen_text": "Does $\\int_2^\\infty \\frac{dx}{x\\ln x}$ converge? Try p=1.",
+      "teacher_narration": "This integral is on the boundary. It decays faster than 1/x but not fast enough. Using substitution u equals ln x, we get the integral of 1/u du, which diverges like ln(ln t). This reveals a whole family: 1 over x times ln x to the p converges only if p is greater than 1. The slider lets you explore how the area changes with p.",
+      "student_prompt": "Predict: Does the integral converge when p=1?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Comparison Test",
+      "left": {
+        "content_type": "text",
+        "content": "If $0 \\le f(x) \\le g(x)$ for $x \\ge a$, then:\n\n- $\\int_a^\\infty g$ converges $\\Rightarrow$ $\\int_a^\\infty f$ converges\n- $\\int_a^\\infty f$ diverges $\\Rightarrow$ $\\int_a^\\infty g$ diverges"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot two functions f (smaller) and g (larger) with shading. Show that area under f is less than area under g.",
+        "visual_spec": "Graph of f(x)=1/(x^2+e^{-x}) (blue) and g(x)=1/x^2 (red) from 1 to 5. Shade both areas. Label f as 'smaller function' and g as 'larger function'. Since area under g converges (p=2), area under f must converge.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(8, 5))\nx = np.linspace(1, 5, 400)\nf = 1/(x**2 + np.exp(-x))\ng = 1/(x**2)\nax.plot(x, f, 'b', lw=2, label='f(x) = 1/(x^2+e^{-x})')\nax.plot(x, g, 'r', lw=2, label='g(x) = 1/x^2')\nax.fill_between(x, f, alpha=0.3, color='blue', label='Area under f')\nax.fill_between(x, g, alpha=0.1, color='red', label='Area under g')\nax.set_xlim(0, 5)\nax.set_ylim(0, 1)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.legend()\nax.set_title('Comparison Test: f ≤ g, so if ∫g converges then ∫f converges')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Comparison Test: smaller under convergent ceiling converges; larger above divergent floor diverges.",
+      "teacher_narration": "When you can't integrate directly, compare your function to a known benchmark. If your function is smaller than something that converges, it must also converge. If it's larger than something that diverges, it must diverge. Be careful: the theorem only works in these two directions. The visual shows how the area under f is less than the area under g, so if g converges, f must also converge.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 5: Application of Comparison",
+      "left": {
+        "content_type": "steps",
+        "content": "| Step | Work | Explanation |\n|------|------|-------------|\n| 1 | For $x \\ge 1$, $e^{-x}>0$, so $x^2+e^{-x} > x^2$ | Denominator larger |\n| 2 | $\\frac{1}{x^2+e^{-x}} < \\frac{1}{x^2}$ | Smaller function |\n| 3 | $\\int_1^\\infty \\frac{1}{x^2}\\,dx$ converges (p=2>1) | p-test |\n| 4 | By comparison, $\\int_1^\\infty \\frac{1}{x^2+e^{-x}}\\,dx$ converges | Smaller under convergent ceiling |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Does $\\int_1^\\infty \\frac{1}{x^2+e^{-x}}\\,dx$ converge?",
+      "teacher_narration": "We compare to 1 over x squared. Since e to the minus x is positive, the denominator is larger than x squared, so the fraction is smaller. The p-test tells us that 1 over x squared converges, so by the comparison test, our integral also converges. This is a typical application: find a simpler function that bounds yours and use the p-test or another known result.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Quick Check: Test Yourself",
+      "left": {
+        "content_type": "text",
+        "content": "1. Which integral converges?\n   A. $\\int_1^\\infty \\frac{1}{\\sqrt{x}}\\,dx$\n   B. $\\int_1^\\infty \\frac{1}{x^{3/2}}\\,dx$\n   C. $\\int_1^\\infty \\frac{1}{x}\\,dx$\n\n2. Value of $\\int_0^1 \\frac{1}{x^{1/3}}\\,dx$?\n   A. Diverges   B. $\\frac{3}{2}$   C. $3$\n\n3. True/False: $\\int_{-2}^3 \\frac{1}{x^2}\\,dx$ converges."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Display the three questions. Radio buttons for answers. Button to reveal correct answers.",
+        "visual_spec": "A static display of the three multiple-choice questions. No animation needed. For interactive, use radio buttons and a reveal button.",
+        "python_code": "import ipywidgets as widgets\nfrom IPython.display import display\n\nq1 = widgets.RadioButtons(\n    options=['A', 'B', 'C'],\n    value='B',\n    description='Q1:'\n)\nq2 = widgets.RadioButtons(\n    options=['Diverges', '3/2', '3'],\n    value='3/2',\n    description='Q2:'\n)\nq3 = widgets.RadioButtons(\n    options=['True', 'False'],\n    value='False',\n    description='Q3:'\n)\nbutton = widgets.Button(description='Check Answers')\noutput = widgets.Output()\n\ndef on_button_clicked(b):\n    with output:\n        output.clear_output()\n        print('Q1: B - converges (p=1.5>1)')\n        print('Q2: 3/2 - converges (p=1/3<1)')\n        print('Q3: False - diverges (asymptote at x=0)')\n\nbutton.on_click(on_button_clicked)\ndisplay(q1, q2, q3, button, output)",
+        "interactive_controls": [
+          "Radio buttons for each question",
+          "Button: check answers"
+        ]
+      },
+      "on_screen_text": "Pause and try these questions.",
+      "teacher_narration": "Take a moment to try these three questions. Pause the video if you need more time. We'll go through the answers: For question 1, only B converges because p=1.5 > 1. For question 2, p=1/3 < 1 so converges to 3/2. For question 3, there's a singularity at 0, so it diverges. These questions test your understanding of the p-test and the importance of checking for interior singularities.",
+      "student_prompt": "Pause and try these questions.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary & Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Three-step process:**\n1. Identify Type I (infinite bound) or Type II (unbounded integrand)\n2. Convert to a limit\n3. Evaluate the limit\n\n**p-test:** $\\int_1^\\infty 1/x^p\\,dx$ converges if $p>1$; $\\int_0^1 1/x^p\\,dx$ converges if $p<1$\n\n**Comparison test:** $0 \\le f \\le g$; if $\\int g$ converges then $\\int f$ converges; if $\\int f$ diverges then $\\int g$ diverges\n\n**Always check for interior singularities!**"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary: convert to limit, evaluate, check convergence. Use p-test and comparison test.",
+      "teacher_narration": "Today we learned that improper integrals are limits of definite integrals. Type I with infinite intervals and Type II with unbounded integrands. The p-test tells us when 1 over x to the p converges. Always check for interior singularities. The comparison test helps when direct integration is hard. Practice these ideas to build intuition. Remember the three-step process: identify the type, convert to a limit, and evaluate the limit.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

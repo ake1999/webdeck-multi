@@ -1,0 +1,376 @@
+{
+  "lecture_meta": {
+    "title": "Area Between Curves",
+    "topic": "Definite Integrals – Area Between Curves",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate the area of a region bounded by two or more curves using definite integration",
+      "Determine whether to integrate with respect to x or y for computational efficiency",
+      "Set up integrals for regions bounded by curves that intersect at multiple points",
+      "Analyze problems requiring splitting the region into multiple integrals",
+      "Apply the area-between-curves technique to real-world geometric problems"
+    ],
+    "prerequisite_reminder": "Understand that the definite integral ∫_a^b f(x)dx gives the signed area between y=f(x) and the x-axis."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Walls to Calculus",
+      "left": {
+        "content_type": "text",
+        "content": "Imagine painting a room with a wavy ceiling and a wavy floor. The paint covers the wall between them—not the ceiling, not the floor. The amount you need is the **difference** between the two curves at every point, summed up. This is exactly how we find the area between two curves: take the top function minus the bottom function, integrate over the region."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Room wall analogy diagram",
+        "visual_spec": "Two wavy curves (ceiling and floor) with vertical hatching between them, labeled 'wall area = top – bottom'. Axes: x (horizontal), y (vertical). Color: ceiling blue, floor green, wall area light yellow. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reveal next step"
+        ]
+      },
+      "on_screen_text": "Area between curves = ∫ (top – bottom) dx",
+      "teacher_narration": "Think of a room where the ceiling is one curve and the floor is another. When you paint the wall, you don't paint the ceiling area or the floor area – you paint only the space between them. At each horizontal position, the height of the wall is the vertical distance from floor to ceiling. The definite integral lets us add up all those tiny vertical strips to get the total area. That’s the core idea we’ll explore today.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Vertical Slices – Integrating with Respect to x",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$A = \\int_a^b \\left[ f_{\\text{top}}(x) - f_{\\text{bottom}}(x) \\right] \\, dx$$\n\n- $f_{\\text{top}}(x)$: upper curve\n- $f_{\\text{bottom}}(x)$: lower curve\n- $a,b$: left and right intersection points (or given bounds)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Vertical slices diagram",
+        "visual_spec": "Plot of two curves: f(x)=x (top, blue) and g(x)=x^2 (bottom, red) on [0,1]. Shade region between them. Show a single vertical slice at x=0.6 with an arrow indicating height = f(x)-g(x). Label axes x,y. Add legend. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50"
+        ]
+      },
+      "on_screen_text": "Vertical slices: height = top – bottom, width = dx",
+      "teacher_narration": "For vertical slices, we think of the region as being built from thin vertical rectangles. At each x, the rectangle's height is the difference between the top function and the bottom function. We multiply that height by a tiny width dx, and then integrate from the leftmost boundary to the rightmost one. The result is the exact area. This approach works well when the region is easily described as a function of x, and the boundaries are vertical lines or intersection points.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Try It – Warm-Up",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Find the area between $y = x^2$ and $y = x$ from $x=0$ to $x=1$.\n\n1. Which function is on top?\n2. Set up the integral.\n3. Evaluate it.\n\nPause the video and try this yourself before we solve it."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Curves plot without shading",
+        "visual_spec": "Plot of y=x (blue, solid) and y=x^2 (red, dashed) on [0,1] with no shading. Axes: x from 0 to 1, y from 0 to 1. Label curves. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reveal next step"
+        ]
+      },
+      "on_screen_text": "Pause – set up the area integral for y=x and y=x^2 from 0 to 1",
+      "teacher_narration": "Here's a simple pair of curves. Take a moment to identify which one is above the other on the interval from 0 to 1. Then write down the integral that gives the area between them. Once you have it, evaluate it. Pause the video now, and when you're ready, continue to see the solution. This warm-up will build your confidence for more complex problems.",
+      "student_prompt": "Set up and evaluate the integral for the area between y=x^2 and y=x from 0 to 1.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution – Warm-Up Example",
+      "left": {
+        "content_type": "steps",
+        "content": "1. On $[0,1]$, $x \\geq x^2$ → top = $x$, bottom = $x^2$.\n2. $A = \\int_0^1 (x - x^2)\\,dx$\n3. $\\left[\\frac{x^2}{2} - \\frac{x^3}{3}\\right]_0^1$\n4. $\\frac{1}{2} - \\frac{1}{3} = \\frac{1}{6}$\n\nArea = $\\frac{1}{6}$ square units."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Shaded area with label",
+        "visual_spec": "Plot of y=x (blue) and y=x^2 (red) on [0,1]. Shade region between them in green. Add text annotation: 'Area = 1/6' at (0.5,0.3). Axes x,y. Legend. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50"
+        ]
+      },
+      "on_screen_text": "A = ∫_0^1 (x – x^2) dx = 1/6",
+      "teacher_narration": "Since the line y=x is above the parabola on this interval, we subtract the lower function from the upper function. The integral is straightforward. The antiderivative comes from the power rule, and evaluating from 0 to 1 gives exactly one sixth. That's the total area between these two curves on the interval. Notice how the definite integral efficiently sums all the vertical slices.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Horizontal Slices – Integrating with Respect to y",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$A = \\int_c^d \\left[ g_{\\text{right}}(y) - g_{\\text{left}}(y) \\right] \\, dy$$\n\n- $g_{\\text{right}}(y)$: curve on the right\n- $g_{\\text{left}}(y)$: curve on the left\n- $c,d$: lower and upper y-values of intersection"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Horizontal slicing diagram",
+        "visual_spec": "Plot of two curves that are functions of y: x = y^2 (left) and x = y+2 (right) on y ∈ [-1,2]. Shade region between them. Show a horizontal slice at a specific y, with arrow indicating width = (right – left). Axes x,y. Legend. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Horizontal slices: width = right – left, height = dy",
+      "teacher_narration": "Sometimes it's easier to describe the curves as functions of y. In that case, we slice horizontally instead of vertically. The height of each slice is dy, and the width is the distance between the rightmost curve and the leftmost curve. We integrate from the bottom y-coordinate to the top y-coordinate. This method is especially useful when the region is bounded by curves that are easier to express as x = g(y).",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 2 – Standard Problem",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find area enclosed by $y = x^2$ and $y = 2x - x^2$.**\n\n1. Intersections: $x^2 = 2x - x^2 \\Rightarrow 2x^2 - 2x = 0 \\Rightarrow x=0,1$.\n2. Test $x=0.5$: $x^2=0.25$, $2x-x^2=0.75$ → top = $2x-x^2$.\n3. $A = \\int_0^1 [(2x-x^2) - x^2]\\,dx = \\int_0^1 (2x-2x^2)\\,dx$\n4. $\\left[x^2 - \\frac{2x^3}{3}\\right]_0^1 = 1 - \\frac{2}{3} = \\frac{1}{3}$\n\nArea = $\\frac{1}{3}$ sq units."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Shaded region with label",
+        "visual_spec": "Plot both parabolas on [0,1]. Shade region between them. Label curves. Add text 'Area = 1/3' at (0.5,0.4). Axes x,y. Legend. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "A = ∫_0^1 (2x – 2x^2) dx = 1/3",
+      "teacher_narration": "First we find where the curves intersect by setting them equal. That gives x=0 and x=1. Then we test a point in between to decide which curve is on top. Here the downward-opening parabola is above the upward-opening one. We set up the integral, integrate term by term, and evaluate to get one third. This problem reinforces the standard procedure for vertical slices.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake – Forgetting to Split Regions",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** For curves that cross, some students write $\\int |f-g|\\,dx$ without splitting. But if the top curve changes, a single integral of (top–bottom) will **fail** because you use the wrong ordering in parts of the interval.\n\n**Correct:** Always split the integral at each intersection point.\n\nExample: $y=\\sin x$ and $y=\\cos x$ on $[0,\\pi]$ cross at $x=\\pi/4$. The top curve switches."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Wrong vs correct shading",
+        "visual_spec": "Two subplots side by side. Left: wrong approach – shading uses same function order (e.g., sin – cos) over entire [0,π], leading to negative area in [π/4,π] (shown as red hatching). Right: correct approach – split at π/4, shading in green with clear top/bottom labels. Axes x,y. Legend. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Must split integrals where the top/bottom relationship changes",
+      "teacher_narration": "A very common error for exams: when two curves cross, you cannot just integrate top minus bottom from start to end. At the crossing, the top and bottom swap. If you don't split the integral, the parts after the crossing will give negative area, which cancels the positive area and produces a wrong result. Always find all intersection points and break the integral into separate pieces.",
+      "student_prompt": "Why does the simple integral (top – bottom) fail if curves cross inside the region?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Try It – Crossing Curves",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Find the area between $y = \\sin x$ and $y = \\cos x$ on $[0, \\pi]$.\n\n1. Where do they intersect?\n2. How many subintervals do you need?\n3. Set up the integrals.\n\nPause and try before seeing the solution."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Curves without shading",
+        "visual_spec": "Plot of sin(x) (blue) and cos(x) (red) on [0,π]. Mark intersection point at (π/4, √2/2) with a dot. No shading. Axes x,y. Legend.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause – set up area integrals for sin x and cos x on [0,π]",
+      "teacher_narration": "This is a classic problem where the curves cross. Look at the graph: identify where sin and cos intersect on the interval. Then decide how many separate integrals you need. Write down the expression for the total area. Pause now and work through it, then we'll check the answer together. This will help you master the splitting technique.",
+      "student_prompt": "Set up the area integral(s) for y=sin x and y=cos x from 0 to π.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution – Crossing Curves Example",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Intersection: $\\sin x = \\cos x \\Rightarrow x=\\pi/4$.\n2. On $[0,\\pi/4]$: $\\cos x \\geq \\sin x$ → top=cos, bottom=sin.\n   On $[\\pi/4,\\pi]$: $\\sin x \\geq \\cos x$ → top=sin, bottom=cos.\n3. $A = \\int_0^{\\pi/4} (\\cos x - \\sin x)\\,dx + \\int_{\\pi/4}^{\\pi} (\\sin x - \\cos x)\\,dx$\n4. Evaluate: $[\\sin x+\\cos x]_0^{\\pi/4} + [-\\cos x-\\sin x]_{\\pi/4}^{\\pi}$\n   = $(\\sqrt{2}-1)+(1+\\sqrt{2}) = 2\\sqrt{2}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Shaded split region",
+        "visual_spec": "Plot of sin and cos on [0,π]. Shade region between them using two different colors for the two subintervals. Label each integral. Mark intersection with dashed vertical line. Axes x,y. Legend. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "A = 2√2 ≈ 2.828 square units",
+      "teacher_narration": "We split at the intersection point π/4. On the first part, cosine is above sine; on the second part, sine is above cosine. After integrating and carefully applying the antiderivatives, the total area comes out to 2√2, which is roughly 2.828 square units. Notice how the absolute value approach would give the same result here, but splitting is safer and more intuitive.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Lab – Vertical Slices Approximation",
+      "left": {
+        "content_type": "text",
+        "content": "Explore how Riemann sums approximate the area between $y=x$ and $y=x^2$ on $[0,1]$. The slider controls the number of vertical rectangles. Observe the convergence to the exact area $1/6$."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive vertical slices visual",
+        "visual_spec": "Interactive plot with slider 'Number of rectangles' ranging from 1 to 50. Display the region shaded, each rectangle drawn. Show numerical approximation and exact value (1/6) for comparison. Use matplotlib and matplotlib.widgets.Slider.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8,5))\nplt.subplots_adjust(bottom=0.2)\n\nx_vals = np.linspace(0,1,400)\nf_vals = x_vals\ng_vals = x_vals**2\nexact = 1/6\n\ndef update(n):\n    ax.clear()\n    ax.plot(x_vals, f_vals, 'b', label='y=x')\n    ax.plot(x_vals, g_vals, 'r', label='y=x^2')\n    dx = 1/n\n    approx = 0\n    for i in range(n):\n        x_left = i*dx\n        height = (x_left - x_left**2)\n        approx += height*dx\n        ax.bar(x_left, height, width=dx, align='edge', alpha=0.3, color='green')\n    ax.set_xlim(0,1)\n    ax.set_ylim(0,1)\n    ax.set_title(f'Approx = {approx:.4f}, Exact = {exact:.4f}')\n    ax.legend()\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'n', 1, 50, valinit=5, valstep=1)\nslider.on_changed(update)\nupdate(5)\nplt.show()",
+        "interactive_controls": [
+          "Slider for n from 1 to 50"
+        ]
+      },
+      "on_screen_text": "Riemann sum approximation – drag slider to see convergence",
+      "teacher_narration": "This interactive tool shows how we can approximate the area using rectangles. As you increase the number of rectangles, the approximation gets closer to the exact area of one sixth. Notice that the error decreases as the rectangles become thinner. This is the foundation of the definite integral.",
+      "student_prompt": "Slide the slider from 1 to 50. How does the approximation change? How many rectangles are needed to get within 0.01 of the exact area?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Lab – Crossing Curves & Splitting",
+      "left": {
+        "content_type": "text",
+        "content": "See the effect of splitting the integral for $y=\\sin x$ and $y=\\cos x$ on $[0,\\pi]$. Toggle between a single (incorrect) integral and the correct split integral."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive split toggle visual",
+        "visual_spec": "Plot of sin and cos. Two radio buttons: 'Wrong: single integral (top minus bottom)' and 'Correct: split at π/4'. When wrong selected, shade region using same function order everywhere (show negative area in red). When correct selected, shade with proper split in green. Display computed area.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import RadioButtons\n\nfig, ax = plt.subplots(figsize=(8,5))\nplt.subplots_adjust(bottom=0.2)\n\nx_vals = np.linspace(0, np.pi, 400)\nsin_vals = np.sin(x_vals)\ncos_vals = np.cos(x_vals)\nix = np.pi/4\n\ndef draw(mode):\n    ax.clear()\n    ax.plot(x_vals, sin_vals, 'b', label='sin x')\n    ax.plot(x_vals, cos_vals, 'r', label='cos x')\n    ax.axvline(ix, color='gray', linestyle='--')\n    ax.set_xlim(0, np.pi)\n    ax.set_ylim(-1.2, 1.2)\n    ax.legend()\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n    if mode == 'Wrong':\n        # Wrong: use sin - cos everywhere => negative after π/4\n        mask = np.where(sin_vals >= cos_vals, cos_vals, sin_vals)  # not used, just for example\n        # Actually we want to show wrong shading: Fill between using sin - cos but clipped?\n        # Simpler: fill between curves but use same order\n        ax.fill_between(x_vals, cos_vals, sin_vals, where=(sin_vals >= cos_vals), color='green', alpha=0.3, label='positive area')\n        ax.fill_between(x_vals, cos_vals, sin_vals, where=(sin_vals < cos_vals), color='red', alpha=0.3, label='negative area')\n        ax.set_title('Wrong: single integral (gives net area)')\n    else:\n        # Correct split\n        mid = int(np.where(x_vals >= ix)[0][0])\n        ax.fill_between(x_vals[:mid], cos_vals[:mid], sin_vals[:mid], color='green', alpha=0.3, label='area part 1')\n        ax.fill_between(x_vals[mid-1:], sin_vals[mid-1:], cos_vals[mid-1:], color='orange', alpha=0.3, label='area part 2')\n        ax.set_title('Correct: split at π/4')\n\nrax = plt.axes([0.7, 0.05, 0.25, 0.15])\nradio = RadioButtons(rax, ('Wrong', 'Correct'))\nradio.on_clicked(draw)\ndraw('Wrong')\nplt.show()",
+        "interactive_controls": [
+          "Radio: Wrong / Correct"
+        ]
+      },
+      "on_screen_text": "Toggle between wrong and correct approach – notice the red negative area",
+      "teacher_narration": "Here you can see why splitting is necessary. When we choose the wrong approach, the region after the intersection gets shaded in red because the integral treats that part as negative area. The total net signed area is very different from the true geometric area. Switching to the correct split shows how the two parts combine to give the right area.",
+      "student_prompt": "Toggle to 'Wrong' – what happens to the computed area? Why does the integral give a smaller value?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 3 – Edge Case (Integrate w.r.t. y)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find area between $x = y^2$ and $x = y+2$.**\n\n1. Curves are functions of $y$ → integrate w.r.t. $y$.\n2. Intersection: $y^2 = y+2 \\Rightarrow y=-1,2$.\n3. Right curve: $x=y+2$; Left curve: $x=y^2$.\n4. $A = \\int_{-1}^2 [(y+2) - y^2]\\,dy$\n5. $\\left[\\frac{y^2}{2}+2y-\\frac{y^3}{3}\\right]_{-1}^2 = \\frac{9}{2}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Shaded region horizontal slices",
+        "visual_spec": "Plot of x=y^2 (left) and x=y+2 (right) on y ∈ [-1,2]. Shade area between them. Add horizontal slice example. Axes x,y. Label curves. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "A = ∫_{-1}^{2} (y+2 – y^2) dy = 9/2 = 4.5 square units",
+      "teacher_narration": "When the given equations are solved for x in terms of y, it's natural to integrate with respect to y. The right curve minus the left curve gives the width of each horizontal slice. The bounds come from the y-values of the intersection points. This is much cleaner than rewriting as functions of x, which would require two separate curves.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4 – Application (Park Area)",
+      "left": {
+        "content_type": "steps",
+        "content": "**A park is bounded by $y=12-x^2$ and $y=x^2-6$.**\n\n1. Intersections: $12-x^2 = x^2-6 \\Rightarrow x=\\pm3$.\n2. Top: $12-x^2$, Bottom: $x^2-6$.\n3. $A = \\int_{-3}^3 [(12-x^2)-(x^2-6)]\\,dx = \\int_{-3}^3 (18-2x^2)\\,dx$\n4. Symmetry: $A=2\\int_0^3 (18-2x^2)\\,dx$\n5. $2[18x - \\frac{2x^3}{3}]_0^3 = 2[54-18] = 72$.\n\nArea = 72 square units."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Park bounded by parabolas",
+        "visual_spec": "Plot of two parabolas on [-4,4]. Shade region between them. Label curves. Mark intersection points at x=-3 and x=3. Axes x,y. Legend. No interactive controls.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "A = 72 square units (using symmetry)",
+      "teacher_narration": "This example shows an application to a real geometric shape – a park. The region is symmetric about the y-axis, so we can double the integral from 0 to 3 instead of negative to positive. That simplifies the arithmetic. Always look for symmetry to reduce work. The final area is 72 square units. This technique is especially useful for symmetric regions.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof of the Area Formula",
+      "left": {
+        "content_type": "concept",
+        "content": "**Theorem:** If $f$ and $g$ are continuous on $[a,b]$ with $f(x) \\geq g(x)$ for all $x \\in [a,b]$, then the area of the region bounded by $y=f(x)$, $y=g(x)$, $x=a$, and $x=b$ is $A = \\int_a^b [f(x)-g(x)]\\,dx$.\n\n**Proof sketch:**\n1. Partition $[a,b]$ into $n$ subintervals of width $\\Delta x = (b-a)/n$.\n2. On the $i$th subinterval, choose sample point $x_i^*$.\n3. Height of rectangle = $f(x_i^*) - g(x_i^*)$, area = $[f(x_i^*) - g(x_i^*)]\\Delta x$.\n4. Total approximate area = $\\sum_{i=1}^n [f(x_i^*) - g(x_i^*)]\\Delta x$.\n5. Take limit $n\\to\\infty$: $A = \\lim_{n\\to\\infty}\\sum [f-g]\\Delta x = \\int_a^b [f(x)-g(x)]\\,dx$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Area = ∫ upper – lower follows from Riemann sum definition",
+      "teacher_narration": "For those interested in a more rigorous justification, we can derive the formula from the definition of the definite integral. We approximate the region with thin rectangles whose height is the difference between the functions, then let the width approach zero. The Riemann sum becomes the integral we use. This solidifies why the formula works. The key condition is that f and g are continuous on [a,b].",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary – Area Between Curves",
+      "left": {
+        "content_type": "text",
+        "content": "**Key formulas:**\n- Vertical slices: $A = \\int_a^b (f_{\\text{top}} - f_{\\text{bottom}})\\,dx$\n- Horizontal slices: $A = \\int_c^d (g_{\\text{right}} - g_{\\text{left}})\\,dy$\n- Multiple regions: split integrals at intersection points.\n\n**Strategies:**\n- Always find intersection points first.\n- Test which function is on top.\n- Look for symmetry to simplify.\n- Choose the integration variable that makes algebra easiest."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Two formulas, multiple strategies – practice to build intuition",
+      "teacher_narration": "Today we've seen that finding the area between curves is essentially a subtraction problem: top minus bottom for vertical slices, or right minus left for horizontal slices. The key steps are identifying intersection points, determining which curve is on top, and splitting the integral if necessary. Don't forget the option to integrate with respect to y when that simplifies the equations. Practice with the provided examples to build confidence.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

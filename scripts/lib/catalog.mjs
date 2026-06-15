@@ -3,7 +3,7 @@ import path from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { projectRoot } from "./export_runtime.mjs";
 
-const VALID_SLIDE_TYPES = new Set(["title", "bullets", "text", "two-col", "mcq"]);
+const VALID_SLIDE_TYPES = new Set(["title", "bullets", "text", "two-col", "mcq", "visual_lab"]);
 
 function escapeHtml(value) {
   return String(value)

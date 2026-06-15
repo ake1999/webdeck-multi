@@ -1,0 +1,396 @@
+{
+  "lecture_meta": {
+    "title": "Critical Points and Extrema on an Interval",
+    "topic": "Critical Points and Extrema on an Interval",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Identify critical numbers by solving f′(x)=0 and checking where f′(x) does not exist",
+      "Apply the Closed Interval Method to determine absolute maximum and minimum values",
+      "Distinguish between local and absolute extrema and their relationships to critical points",
+      "Solve real-world optimization problems using critical point analysis"
+    ],
+    "prerequisite_reminder": "Assume students know how to compute derivatives using power, product, and chain rules, and recognize continuity on closed intervals."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Critical Points Matter",
+      "left": {
+        "content_type": "text",
+        "content": "A farmer has 1200 m of fencing and wants to enclose a rectangular pasture along a river. No fence is needed along the river. What dimensions give the largest area?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of a rectangle with one side along a river. Label width = x (perpendicular to river), length = y (parallel to river). Show that only three sides need fencing: 2x + y = 1200.",
+        "visual_spec": "Draw a horizontal axis as the river. Above it, a rectangle with dashed line along river side. Label sides: left and right as x, top as y. Show equation 2x+y=1200 below. Use muted blue for river, green for fence, gray for pasture.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "A farmer has 1200 m of fencing for a rectangular pasture along a river. Maximize area.",
+      "teacher_narration": "Start with a real problem: a farmer with 1200 meters of fence wants to make a rectangular pen along a river. We don't fence the river side. The question: what width and length give the biggest area? To answer this, we need to understand critical points and how to find absolute extrema on an interval. This problem will appear again as our final example.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Critical Numbers Defined",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$c\\text{ is a critical number of }f\\iff f'(c)=0\\text{ or }f'(c)\\text{ DNE}$$"
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive graph showing a function, a movable point c, and the tangent line at c. The derivative value and sign are displayed.",
+        "visual_spec": "Plot f(x)=x^3-3x on [-2,2]. Include a dot at x=c with tangent line. Above the plot, display 'f'(c) = ...' and 'Sign: +, -, or 0'. Use a slider to move c. Highlight points where f'(c)=0 (horizontal tangents) and where f'(c) DNE (cusp, vertical tangent) by showing the function graph with those points marked. For demonstration, add a corner point at x=0 of f(x)=|x| to show DNE.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots()\nplt.subplots_adjust(bottom=0.2)\nx_vals = np.linspace(-2, 2, 400)\nf = lambda x: x**3 - 3x\ny_vals = f(x_vals)\nax.plot(x_vals, y_vals, 'b-', label='f(x)')\nax.axhline(0, color='gray', lw=0.5)\nax.axvline(0, color='gray', lw=0.5)\n\n# initial point\nc0 = 1\ndot, = ax.plot(c0, f(c0), 'ro', markersize=8)\ntangent_x = np.linspace(c0-0.5, c0+0.5, 100)\ntangent_y = f(c0) + (3*c0**2 - 3)*(tangent_x - c0)\ntangent_line, = ax.plot(tangent_x, tangent_y, 'g--')\nderivative_text = ax.text(0.05, 0.95, '', transform=ax.transAxes, verticalalignment='top')\n\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'c', -2, 2, valinit=c0)\n\ndef update(val):\n    c = slider.val\n    dot.set_data([c], [f(c)])\n    df = 3*c**2 - 3\n    tangent_line.set_data(np.linspace(c-0.5, c+0.5, 100), f(c) + df*(np.linspace(c-0.5, c+0.5, 100)-c))\n    sign = '+' if df > 0 else ('-' if df < 0 else '0')\n    derivative_text.set_text(f\"f'({c:.2f}) = {df:.2f}  Sign: {sign}\")\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\n# Add a second function to show DNE? Not in same plot for simplicity.\nplt.legend()\nplt.show()",
+        "interactive_controls": [
+          "Slider for c from -2 to 2 step 0.01",
+          "Shows tangent line and derivative sign"
+        ]
+      },
+      "on_screen_text": "f'(c)=0 or f'(c) DNE defines a critical number.",
+      "teacher_narration": "A critical number is any x where the derivative equals zero or does not exist. Why? Because local maxima and minima can only occur where the tangent is horizontal or at a sharp corner, cusp, or vertical tangent. This visual lets you drag point c along the graph and see the tangent line and derivative value. Notice when the derivative is zero, the tangent is horizontal. When it doesn't exist, you might see a break or corner. We'll see both types in examples.",
+      "student_prompt": "Move the slider to find where f'(c)=0. What are the critical numbers?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Fermat's Theorem",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\text{If }f\\text{ has a local extremum at }c\\text{ (not an endpoint) and }f'(c)\\text{ exists, then }f'(c)=0.$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of a function with a local max and a local min. At each, the tangent line is horizontal. Below, a bullet: 'Interior local extremum → critical number, but not vice versa.'",
+        "visual_spec": "Plot f(x)=x^3-3x on [-2,2] again. Mark the local max at x=-1 and local min at x=1 with horizontal tangent lines. Add annotations: 'Local max f'=0', 'Local min f'=0'. Include a note: 'Converse false (e.g., x=0 for f(x)=x^3)'. Use red for tangents.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Every interior local extremum is a critical number. But not every critical number is an extremum.",
+      "teacher_narration": "Fermat's theorem gives a one-way implication: if a function has a local maximum or minimum at an interior point c and the derivative exists there, then the derivative must be zero. That means all local extrema are critical numbers. But the opposite is not true—not every critical number gives a local extremum. Think of the graph of x cubed at zero: derivative zero but no peak or valley. This is why we need tests to classify critical points.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up: Finding Critical Numbers",
+      "left": {
+        "content_type": "steps",
+        "content": "Find critical numbers of f(x) = 2x³ − 9x² + 12x + 5.\n\n1. f′(x) = 6x² − 18x + 12\n2. Set = 0: 6x² − 18x + 12 = 0\n3. Divide by 6: x² − 3x + 2 = 0\n4. Factor: (x−1)(x−2)=0\n5. Critical numbers: x = 1, x = 2"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of the polynomial f(x) = 2x³ − 9x² + 12x + 5 on [0,3]. Mark points at x=1 and x=2 with horizontal tangent lines. Show the derivative graph f'(x) below? Or just the function with tangents.",
+        "visual_spec": "Plot f(x)=2x^3-9x^2+12x+5 from x=0 to 3. At x=1 and x=2, draw red dashed horizontal tangents. Label points: (1, f(1)=10) and (2, f(2)=9). Include a small box showing derivative expression f'(x)=6x^2-18x+12 and factors.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 3, 400)\nf = 2*x**3 - 9*x**2 + 12*x + 5\nplt.figure()\nplt.plot(x, f, 'b-', label='f(x)')\n# tangents\nfor c in [1,2]:\n    fc = f[np.argmin(np.abs(x-c))]\n    plt.plot([c-0.4, c+0.4], [fc + (6*c**2-18*c+12)*(-0.4), fc + (6*c**2-18*c+12)*0.4], 'r--', lw=2)\n    plt.plot(c, fc, 'ro')\nplt.axhline(0, color='gray')\nplt.xlabel('x')\nplt.ylabel('f(x)')\nplt.title('Critical Numbers of f(x)=2x³-9x²+12x+5')\nplt.legend()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Polynomial: f'(x)=6x²−18x+12 = 6(x−1)(x−2). Critical numbers at x=1,2.",
+      "teacher_narration": "Let's start with a simple polynomial. The derivative is a quadratic. Setting it to zero gives two critical numbers. Since polynomials have derivatives everywhere, we only check where the derivative is zero. Notice how the tangent lines at x=1 and x=2 are horizontal. These are candidates for local extrema. We'll check later whether they are actually maxima or minima.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Standard Example: x³",
+      "left": {
+        "content_type": "steps",
+        "content": "f(x) = x³\n\n1. f′(x) = 3x²\n2. Set = 0: 3x² = 0 → x = 0 (critical number)\n3. Test values around 0:\n   f(−1) = −1, f(0)=0, f(1)=1\n4. Conclusion: x=0 is NOT a local extremum (inflection point)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x³ on [-1.5,1.5]. Show horizontal tangent at x=0. Highlight that function increases through the point: no peak or valley.",
+        "visual_spec": "Plot f(x)=x^3 as a solid line. At x=0, draw a horizontal dashed tangent. Add arrows showing function increases from negative to positive. Below the graph, a small sign chart for f': (-) left of 0, 0 at 0, (+) right of 0, indicating inflection.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(-1.5, 1.5, 300)\nf = x**3\nplt.figure()\nplt.plot(x, f, 'b-', label='f(x)=x³')\nplt.axhline(0, color='gray', lw=0.5)\nplt.plot(0, 0, 'ro', markersize=8)\n# tangent\nplt.plot([-0.5,0.5], [0,0], 'r--', lw=2, label='f\\'(0)=0')\nplt.legend()\nplt.xlabel('x')\nplt.ylabel('f(x)')\nplt.title('f(x)=x³: Critical but not extremum')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Derivative zero at x=0, but function increases through it. Not all critical points are extrema.",
+      "teacher_narration": "Here's a classic counterexample. The function x cubed has derivative 3x squared, zero at x=0. So zero is a critical number. But if you look at the graph, the function is increasing as it passes through zero—it goes from negative to positive without forming a hill or valley. The horizontal tangent is there, but it's an inflection point, not a local maximum or minimum. This illustrates Fermat's theorem: every local extremum is a critical number, but not every critical number is an extremum.",
+      "student_prompt": "Is x=0 a local maximum, local minimum, or neither for f(x)=x³?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Every Critical Point is an Extremum",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong:** 'f'(c)=0 means f has a local max or min at c.'\n\n**Truth:** A critical point is only a *candidate*. It could be a max, min, or neither. Always use the First Derivative Test or Second Derivative Test to decide."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show the graph of f(x)=x³ again with a red 'X' through the idea that every critical point is an extremum. Include a small table: critical point x=0, f'(0)=0, is it extremum? No.",
+        "visual_spec": "Reuse the x^3 graph but add a large red 'X' over the words 'critical point = extremum'. Next to it, a list: 'Critical point: x=0, f'(0)=0, Test: f(-1)=-1, f(0)=0, f(1)=1 → no extremum.'",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(-1.5, 1.5, 300)\nf = x**3\nplt.figure()\nplt.plot(x, f, 'b-', label='f(x)=x³')\nplt.plot(0, 0, 'ro', markersize=8)\nplt.axhline(0, color='gray')\n# Add a text annotation\nplt.text(0.5, 1.2, 'Common Mistake: f'(0)=0 → extrema?', fontsize=12, color='red')\nplt.text(0.5, 0.8, 'No! Inflection point.', fontsize=12, color='green')\nplt.title('Misconception: Every Critical Point is an Extremum')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Critical number ≠ extremum. Test each candidate with sign of derivative.",
+      "teacher_narration": "A very common mistake is to assume that whenever the derivative is zero, you've automatically found a max or min. It's not true! The derivative being zero only tells you the tangent is horizontal. You still need to check whether the function changes direction at that point. The graph of x cubed shows that the function continues increasing on both sides. So remember: critical points are suspects, not convicts. We need additional tests—like the first derivative test—to decide.",
+      "student_prompt": "What test could you use to decide if a critical point is a local extremum?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Closed Interval Method – Interactive",
+      "left": {
+        "content_type": "steps",
+        "content": "To find absolute max/min of continuous f on [a,b]:\n1. Find critical numbers in (a,b)\n2. Evaluate f at critical numbers and endpoints a, b\n3. Largest value = absolute max, smallest = absolute min"
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive plot of f(x)=x^3-3x^2+1 on adjustable interval [a,b]. Sliders adjust a and b. Critical points (x=0 and x=2) are highlighted. Button shows the absolute max/min values.",
+        "visual_spec": "Plot f(x)=x^3-3x^2+1 from x=-2 to 5. Include sliders for interval endpoints a and b. Mark the critical points at x=0 and x=2 with vertical dashed lines. On button click, display the absolute max and min values from the candidate set: f(a), f(b), f(0), f(2). Update as a and b change.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\nfig, ax = plt.subplots()\nplt.subplots_adjust(bottom=0.3)\n\nx_full = np.linspace(-2, 5, 500)\nf = lambda x: x**3 - 3*x**2 + 1\ny_full = f(x_full)\nax.plot(x_full, y_full, 'b-', lw=2, alpha=0.5)\n# critical points\nax.axvline(0, color='gray', linestyle=':', lw=1, label='Critical x=0')\nax.axvline(2, color='gray', linestyle=':', lw=1, label='Critical x=2')\nax.plot(0, f(0), 'ko')\nax.plot(2, f(2), 'ko')\nax.set_xlim(-2,5)\nax.set_ylim(-5,20)\nax.set_xlabel('x')\nax.set_ylabel('f(x)')\nax.legend(loc='upper left')\n\n# initial interval [0,3] for demo\na_init, b_init = 0, 3\na_line = ax.axvline(a_init, color='red', lw=2, linestyle='--', label='a')\nb_line = ax.axvline(b_init, color='green', lw=2, linestyle='--', label='b')\n# display values\ntext_box = ax.text(0.02, 0.95, '', transform=ax.transAxes, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.8))\n\nax_slider_a = plt.axes([0.15, 0.2, 0.65, 0.03])\nax_slider_b = plt.axes([0.15, 0.15, 0.65, 0.03])\nslider_a = Slider(ax_slider_a, 'a', -2, 4, valinit=a_init)\nslider_b = Slider(ax_slider_b, 'b', -1, 5, valinit=b_init)\n\ndef update(val):\n    a = slider_a.val\n    b = slider_b.val\n    a_line.set_xdata([a, a])\n    b_line.set_xdata([b, b])\n    # compute candidates\n    candidates = [f(a), f(b)]\n    for c in [0,2]:\n        if a < c < b:\n            candidates.append(f(c))\n    if candidates:\n        maxv = max(candidates)\n        minv = min(candidates)\n        text_box.set_text(f'Max: {maxv:.2f}\\nMin: {minv:.2f}')\n    fig.canvas.draw_idle()\n\nslider_a.on_changed(update)\nslider_b.on_changed(update)\n\n# Button to show absolute extrema\nax_button = plt.axes([0.4, 0.05, 0.2, 0.06])\nbutton = Button(ax_button, 'Update Extrema')\ndef on_button_click(event):\n    update(None)\nbutton.on_clicked(on_button_click)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider a: -2 to 4 step 0.1",
+          "Slider b: -1 to 5 step 0.1",
+          "Button: Update Extrema"
+        ]
+      },
+      "on_screen_text": "Absolute extrema on [a,b] are at critical points or endpoints.",
+      "teacher_narration": "The closed interval method is straightforward: for a continuous function on a closed interval, the absolute maximum and minimum must occur either at critical points inside the interval or at the endpoints. You simply list all candidates, plug them into the original function, and pick the largest and smallest values. In this interactive lab, you can adjust the interval endpoints a and b. The function shown is f(x)=x³−3x²+1, which has critical points at x=0 and x=2. Move the sliders to see how the absolute max and min change.",
+      "student_prompt": "Use the sliders to set a=-1 and b=4. What are the absolute max and min?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Try It: Absolute Extrema of |x−2|",
+      "left": {
+        "content_type": "text",
+        "content": "Find the absolute maximum and minimum values of f(x)=|x−2| on the closed interval [0,4]."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=|x-2| on [0,4]. Show the V-shaped graph with corner at x=2. Mark endpoints 0 and 4.",
+        "visual_spec": "Plot f(x)=|x-2| from x=0 to 4. Use a solid line. Highlight the corner at (2,0). Mark points (0,2) and (4,2) with open circles. Label the axes.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0,4,300)\nf = np.abs(x-2)\nplt.figure()\nplt.plot(x, f, 'b-', lw=2)\nplt.plot([0,4],[2,2], 'ko', markersize=6, label='Endpoints')\nplt.plot(2,0, 'ro', markersize=8, label='Critical point (corner)')\nplt.axhline(0, color='gray')\nplt.legend()\nplt.xlabel('x')\nplt.ylabel('|x-2|')\nplt.title('Pause and find absolute extrema of |x-2| on [0,4]')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "f(x)=|x-2| on [0,4]. Find absolute max and min.",
+      "teacher_narration": "Okay, I want you to pause the video now and try this problem yourself. The function is f(x)=|x−2| on the interval from 0 to 4. Write down the candidate points: critical numbers and endpoints. Then compute the function values. After you have your answer, resume the video and I'll show you the solution.",
+      "student_prompt": "Pause the video. Find the absolute max and min of f(x)=|x-2| on [0,4].",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution: |x−2| on [0,4]",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Critical numbers: f'(x) DNE at x=2 (corner). So critical point x=2.\n2. Evaluate:\n   f(0)=2, f(2)=0, f(4)=2\n3. Absolute max = 2 (at x=0 and x=4)\n   Absolute min = 0 (at x=2)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Same graph as previous slide but add annotations showing values: f(0)=2, f(2)=0, f(4)=2. Indicate max and min.",
+        "visual_spec": "On the graph, label each candidate point with its coordinates. Use red text for max: 'max: (0,2)' and 'max: (4,2)'. Use green text for min: 'min: (2,0)'. Add a box showing the candidate list.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0,4,300)\nf = np.abs(x-2)\nplt.figure()\nplt.plot(x, f, 'b-', lw=2)\nplt.plot([0,4],[2,2], 'ro', markersize=8)\nplt.plot(2,0, 'go', markersize=8)\nplt.text(0.2,2.1, 'f(0)=2 (max)', fontsize=11, color='red')\nplt.text(3.2,2.1, 'f(4)=2 (max)', fontsize=11, color='red')\nplt.text(1.7,0.3, 'f(2)=0 (min)', fontsize=11, color='green')\nplt.axhline(0, color='gray')\nplt.title('Solution: Absolute max=2, min=0')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Absolute max 2 at x=0 and 4; absolute min 0 at x=2.",
+      "teacher_narration": "Here's the solution. The absolute value function has a corner at x=2, where the derivative does not exist, so that's a critical number. We also check the endpoints x=0 and x=4. Evaluating gives f(0)=2, f(2)=0, f(4)=2. The smallest value is 0 at the critical point, and the largest value is 2 at both endpoints. Notice that the maximum occurs at endpoints, not at the critical point. That's why we always include endpoints.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Try It: Critical Numbers with DNE",
+      "left": {
+        "content_type": "text",
+        "content": "Find the critical numbers of f(x)=x^{2/3}(6-x)^{1/3}."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^{2/3}(6-x)^{1/3} on [0,6]. Show the curve shape with vertical tangents at x=0 and x=6, and horizontal tangent at x=4.",
+        "visual_spec": "Plot the function from x=0 to 6. The graph should increase from 0 to a peak near x=4 then decrease to 0. At x=0 and x=6, the graph appears to have vertical tangents (steep). At x=4, a horizontal tangent. Use different colors to indicate types.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0,6,400)\nf = x**(2/3) * (6-x)**(1/3)\nplt.figure()\nplt.plot(x, f, 'b-', lw=2)\nplt.axhline(0, color='gray')\nplt.plot(4, f[np.argmin(np.abs(x-4))], 'ro', markersize=8, label='f'(4)=0')\nplt.plot(0, 0, 'go', markersize=8, label='f'(0) DNE (vertical)')\nplt.plot(6, 0, 'go', markersize=8, label='f'(6) DNE (vertical)')\nplt.legend()\nplt.xlabel('x')\nplt.ylabel('f(x)')\nplt.title('Pause: Find critical numbers of f(x)=x^{2/3}(6-x)^{1/3}')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "f(x)=x^{2/3}(6-x)^{1/3}. Find all critical numbers.",
+      "teacher_narration": "Now try a more challenging one. This function has both a derivative that equals zero at one point and derivative that does not exist at two other points. The derivative is quite messy, but you can find it using product and chain rules. Pause the video, compute f'(x), and identify all x where it's zero or undefined. After you've found them, resume and I'll walk through the solution.",
+      "student_prompt": "Pause the video. Compute f'(x) and find all critical numbers.",
+      "youtube_pause": true,
+      "difficulty": "challenge",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Solution: Critical Numbers of f(x)=x^{2/3}(6-x)^{1/3}",
+      "left": {
+        "content_type": "steps",
+        "content": "Compute f'(x) = \\frac{4-x}{3 x^{1/3}(6-x)^{2/3}}.\n\nSet numerator=0 → x=4.\nDenominator=0 → x=0 and x=6 (points where f'(x) DNE).\n\nAll three are critical numbers:\nx=0 (vertical tangent),\nx=4 (horizontal tangent),\nx=6 (vertical tangent)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show the derivative expression and highlight the three critical points on the graph.",
+        "visual_spec": "Display the derivative f'(x) formula in a box. On the graph, mark x=0,4,6 with labels: 'f' DNE (vertical)', 'f'=0 (horizontal)', 'f' DNE (vertical)'. Use different markers.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Critical numbers: x=0,4,6. f'(4)=0; f'(0) and f'(6) DNE.",
+      "teacher_narration": "After simplifying the derivative, we get f'(x) = (4−x) / [3 x^{1/3} (6−x)^{2/3}]. The derivative equals zero when the numerator is zero, so x=4. The derivative does not exist when the denominator is zero, which happens at x=0 and x=6. So all three are critical numbers. At x=4, the tangent is horizontal. At x=0 and x=6, the graph has vertical tangents. This example shows that we must always check both conditions for critical numbers.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Try It: Farmer's Fence Optimization",
+      "left": {
+        "content_type": "text",
+        "content": "A farmer has 1200 m of fencing and wants to enclose a rectangular field along a river (no fence on river side). Maximize area A = x(1200−2x)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of rectangle with river, labeling width x and length y = 1200-2x.",
+        "visual_spec": "Same as slide 1 diagram but with labeling: river at bottom, left and right sides x, top side y=1200-2x. Include area formula A = x(1200-2x). Show domain: 0 < x < 600.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Maximize A(x)=x(1200−2x) for 0 < x < 600. Find x and y.",
+      "teacher_narration": "This is the problem from the beginning of the lecture. We have 1200 m of fence for three sides. Let x be the width perpendicular to the river, so the length parallel to the river is 1200 minus 2x. The area function A(x) equals x times 1200 minus 2x. We need to find x that gives the maximum area. Pause the video, find the critical point of A, then evaluate to get the maximum area. Also think about the domain and whether endpoints could give larger area.",
+      "student_prompt": "Pause the video. Find the width x that maximizes the area and state the dimensions.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution: Farmer's Fence",
+      "left": {
+        "content_type": "steps",
+        "content": "1. A(x)=1200x−2x², domain (0,600)\n2. A'(x)=1200−4x=0 → x=300\n3. Endpoints: A→0 as x→0⁺ or x→600⁻\n4. A(300)=300×600=180,000 m²\n5. Optimal: width 300 m, length 600 m"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of A(x)=1200x-2x^2 on [0,600]. Mark maximum point (300, 180,000). Show the parabola opening downward.",
+        "visual_spec": "Plot the quadratic function. Show vertex at x=300. Label coordinates. Indicate that at x=0 and x=600, area is zero.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 600, 400)\nA = 1200*x - 2*x**2\nplt.figure()\nplt.plot(x, A, 'b-', lw=2)\nplt.plot(300, 180000, 'ro', markersize=8, label='Max area')\nplt.text(300, 180000, ' (300, 180000)', fontsize=11)\nplt.xlabel('Width x (m)')\nplt.ylabel('Area (m²)')\nplt.title('Area function A(x)=1200x-2x²')\nplt.legend()\nplt.grid(True)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Maximum area 180,000 m² at width 300 m, length 600 m.",
+      "teacher_narration": "The area function is a downward-opening parabola, so its only critical point is the vertex. A'(x)=1200−4x=0 gives x=300. The endpoints give area approaching zero, so the maximum is at the critical point. The optimal dimensions are width 300 meters and length 600 meters, giving an area of 180,000 square meters. This is a typical optimization problem: we used the constraint to write area in terms of one variable, found the critical number, and checked endpoints to confirm maximum.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Lab: Explore the Fence Problem",
+      "left": {
+        "content_type": "text",
+        "content": "Use the slider to change width x. The area and the rectangle diagram update. Find the width that gives the maximum area."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive plot with slider for width x. Left panel: rectangle diagram updating. Right panel: area curve with point tracking.",
+        "visual_spec": "Two subplots: top shows rectangle with river (dimensions change with x), bottom shows area curve A(x) with a moving point. Slider for x from 0 to 600. Display current area value. A button to show optimal point.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\nfrom matplotlib.patches import Rectangle\n\nfig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6, 8))\nplt.subplots_adjust(bottom=0.2, hspace=0.4)\n\n# Rectangle diagram\nx_init = 300\ny_init = 1200 - 2*x_init\nrect = Rectangle((0,0), x_init, y_init, linewidth=2, edgecolor='black', facecolor='lightgreen', alpha=0.5)\nax1.add_patch(rect)\nax1.set_xlim(0, 700)\nax1.set_ylim(0, 700)\nax1.set_aspect('equal')\nax1.set_title('Pasture Layout')\nax1.text(x_init/2, -30, f'Width x={x_init} m', ha='center')\nax1.text(x_init/2, y_init+20, f'Length y={y_init} m', ha='center')\n\n# Area curve\nx_vals = np.linspace(0, 600, 400)\nA_vals = 1200*x_vals - 2*x_vals**2\nax2.plot(x_vals, A_vals, 'b-', lw=2)\npoint, = ax2.plot(x_init, 1200*x_init - 2*x_init**2, 'ro', markersize=8)\nax2.set_xlabel('Width x (m)')\nax2.set_ylabel('Area (m²)')\nax2.set_title('Area vs Width')\nax2.grid(True)\n\n# Slider\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'Width x', 0, 600, valinit=x_init)\n\ndef update(val):\n    x = slider.val\n    y = 1200 - 2*x\n    rect.set_width(x)\n    rect.set_height(y)\n    ax1.cla()\n    ax1.add_patch(rect)\n    ax1.set_xlim(0, 700)\n    ax1.set_ylim(0, 700)\n    ax1.set_aspect('equal')\n    ax1.set_title('Pasture Layout')\n    ax1.text(x/2, -30, f'Width x={x:.0f} m', ha='center')\n    ax1.text(x/2, y+20, f'Length y={y:.0f} m', ha='center')\n    area = 1200*x - 2*x**2\n    point.set_data([x], [area])\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\n\n# Button to show optimum\nax_button = plt.axes([0.4, 0.1, 0.2, 0.06])\nbutton = Button(ax_button, 'Show Optimum')\ndef show_opt(event):\n    slider.set_val(300)\nbutton.on_clicked(show_opt)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for width x from 0 to 600 step 1",
+          "Button: Show Optimum (sets x=300)"
+        ]
+      },
+      "on_screen_text": "Drag the slider to find the width that gives the largest area.",
+      "teacher_narration": "Now you can explore the fence problem interactively. Drag the slider for width x, and watch how the rectangle changes and the point moves along the area curve. You'll see that area increases up to a maximum and then decreases. Use the 'Show Optimum' button to jump to the optimal width of 300 meters. This lab reinforces how the critical number we found algebraically corresponds to the peak of the parabola.",
+      "student_prompt": "Move the slider to approximately what width gives the maximum area? Then click 'Show Optimum' to check.",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof of Fermat's Theorem",
+      "left": {
+        "content_type": "steps",
+        "content": "Assume f has local max at c, f'(c) exists.\n\nFor h>0 small, f(c+h) ≤ f(c) ⇒ (f(c+h)-f(c))/h ≤ 0.\nTake limit h→0⁺: f'(c) ≤ 0.\n\nFor h<0 small, f(c+h) ≤ f(c) ⇒ (f(c+h)-f(c))/h ≥ 0 (because h negative).\nTake limit h→0⁻: f'(c) ≥ 0.\n\nSince f'(c) exists, the one-sided limits equal f'(c). Thus f'(c) ≤ 0 and f'(c) ≥ 0 ⇒ f'(c)=0."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing local maximum, secant lines from left and right approaching horizontal.",
+        "visual_spec": "Graph of a local max at x=c. Draw two secant lines: one from left approaching c (h negative) with slope positive, one from right (h positive) with slope negative. Show that the limits force derivative to be zero.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof: one-sided limits of difference quotient give f'(c) ≤ 0 and f'(c) ≥ 0, so f'(c)=0.",
+      "teacher_narration": "Here's a compact proof of Fermat's theorem for those who want the theoretical foundation. If f has a local maximum at c, then near c the function values are less than or equal to f(c). For a small positive h, the difference quotient is non-positive because numerator is ≤0 and denominator is positive. So the right-hand derivative is ≤0. For negative h, the quotient is non-negative, so the left-hand derivative is ≥0. Since the derivative exists, both one-sided limits equal f'(c), so f'(c) must be both ≤0 and ≥0, hence zero. The proof for a minimum is symmetric.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary and Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Critical numbers:** f'(c)=0 or DNE.\n**Closed Interval Method:** Evaluate f at critical numbers in (a,b) and at a,b. Largest = absolute max, smallest = absolute min.\n**Remember:** Critical numbers are candidates, not guarantees. Always check endpoints for absolute extrema."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A concise reference card with the three key formulas: critical number definition, closed interval method steps, and Fermat's theorem.",
+        "visual_spec": "Create a visual summary: three boxes:\n1. 'Critical number: f'(c)=0 or DNE'\n2. 'Closed Interval Method: candidates = {critical numbers in (a,b)} ∪ {a,b}'\n3. 'Fermat: interior local extremum ⇒ critical number (but not converse)'.\nAlso include tips: 'Don't forget endpoints!', 'Not all critical points are extrema.'",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Critical numbers → candidates. Closed Interval Method → absolute extrema.",
+      "teacher_narration": "Let's recap. Critical numbers are points where the derivative is zero or undefined. They are the only possible locations for interior local extrema, but they don't guarantee one. To find absolute extrema on a closed interval, we use the closed interval method: list all critical numbers inside the interval and include the endpoints, evaluate the function at each, and pick the largest and smallest. Always remember to check endpoints—many students forget. This lecture's examples covered polynomials, absolute value, and a function with vertical tangents. The application showed how critical points solve real-world optimization problems.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

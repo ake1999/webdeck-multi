@@ -15,7 +15,7 @@ function parseArgs(argv) {
   const args = {
     outputDir: path.join(projectRoot, "generated", "lectures"),
     viewport: "1920x1080",
-    provider: "ffmpeg_flite",
+    provider: "qwen3_tts",
     scriptProvider: process.env.WEBDECK_SCRIPT_PROVIDER || (process.env.CI ? "deterministic" : "auto"),
     scriptModel: process.env.WEBDECK_SCRIPT_MODEL || "",
     scriptEndpoint: process.env.WEBDECK_SCRIPT_ENDPOINT || process.env.OLLAMA_HOST || "http://127.0.0.1:11434",
@@ -53,6 +53,12 @@ function parseArgs(argv) {
   }
 
   return args;
+}
+
+function booleanOption(value, fallback = false) {
+  if (value == null || value === "") return fallback;
+  if (typeof value === "boolean") return value;
+  return !["0", "false", "no", "off"].includes(String(value).trim().toLowerCase());
 }
 
 async function main() {
@@ -96,6 +102,8 @@ async function main() {
           scriptProvider: args.scriptProvider,
           scriptModel: args.scriptModel || "",
           scriptEndpoint: args.scriptEndpoint || "",
+          scriptApiKey: args.scriptApiKey || "",
+          scriptApiKeyFile: args.scriptApiKeyFile || "",
           scriptPromptVersion: args.scriptPromptVersion || "script_writer_v2",
           scriptTemperature: Number(args.scriptTemperature ?? 0.2),
           scriptMaxRetries: Number(args.scriptMaxRetries ?? 2),
@@ -116,7 +124,7 @@ async function main() {
           qwenDtype: args.qwenDtype || "",
           qwenSeed: args.qwenSeed,
           qwenLanguage: args.qwenLanguage || "",
-          allowProviderFallback: args.allowProviderFallback ?? true,
+          allowProviderFallback: booleanOption(args.allowProviderFallback, false),
         },
       });
       console.log(`  artifacts: ${build.output_dir}`);

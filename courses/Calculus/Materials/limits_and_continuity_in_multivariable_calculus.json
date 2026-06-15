@@ -1,0 +1,395 @@
+{
+  "lecture_meta": {
+    "title": "Limits and Continuity in Multivariable Calculus",
+    "topic": "Multivariable Limits & Continuity",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate limits using direct substitution, limit laws, and the Squeeze Theorem",
+      "Interpret the epsilon-delta definition for functions of two variables",
+      "Determine when a limit does not exist by testing multiple paths",
+      "Analyze continuity of multivariable functions including piecewise definitions"
+    ],
+    "prerequisite_reminder": "You should be comfortable with single-variable limits including the Squeeze Theorem and epsilon-delta definition."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "The Infinite Path Problem",
+      "left": {
+        "content_type": "text",
+        "content": "In single-variable calculus, a limit approaches from two directions. Here, infinitely many paths in the plane approach a point. For the limit to exist, **all** paths must give the same value."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D surface of f(x,y) = xy/(x²+y²) near (0,0). Show two curves: one along y=0 (flat line) and one along y=x (parabola-like) approaching different heights.",
+        "visual_spec": "Plot the surface f(x,y) = xy/(x^2+y^2) on domain x∈[-2,2], y∈[-2,2] (avoid origin near). Add two parametric curves: γ1(t)=(t,0) and γ2(t)=(t,t). Color surface coolwarm, curves red and blue. Show that along γ1 the function stays 0, along γ2 it approaches 0.5. Include a legend and labels.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from mpl_toolkits.mplot3d import Axes3D; fig = plt.figure(); ax = fig.add_subplot(111, projection='3d'); x = np.linspace(-2,2,150); y = np.linspace(-2,2,150); X,Y = np.meshgrid(x,y); Z = X*Y/(X**2+Y**2+1e-10); Z[np.abs(X)<1e-6] = np.nan; Z[np.abs(Y)<1e-6] = np.nan; ax.plot_surface(X,Y,Z, cmap='coolwarm', alpha=0.7); t = np.linspace(-2,2,100); ax.plot(t, np.zeros_like(t), np.zeros_like(t), color='red', lw=3, label='y=0 (limit 0)'); ax.plot(t, t, t**2/(2*t**2+1e-10), color='blue', lw=3, label='y=x (limit 0.5)'); ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z'); ax.set_title('Different paths → different limits'); ax.legend(); plt.show()",
+        "interactive_controls": [
+          "Slider: path slope m from -5 to 5 updates the second curve y=mx"
+        ]
+      },
+      "on_screen_text": "Infinitely many paths. Limit exists only if all converge to same value.",
+      "teacher_narration": "Welcome. In single-variable calculus, you only had to worry about approaching a point from the left or the right. Here, as you approach a point in the plane, you have infinitely many directions to come from: along lines, curves, any path you can draw. For the limit to exist, the function must approach the same number no matter which path you take. Look at this surface: along the red path the function stays at zero, but along the blue path it climbs to one half. This means the limit at the origin does not exist. Throughout this lesson, we'll build tools to handle this new challenge.",
+      "student_prompt": "What do you think the limit is along the curve y = x²? Try to guess before we move on.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definition of a Limit (Intuitive)",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\lim_{(x,y)\\to (a,b)} f(x,y) = L$$\nmeans: as $(x,y)$ gets arbitrarily close to $(a,b)$ along *any* path in the domain, $f(x,y)$ gets arbitrarily close to $L$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: plane with point (a,b) and a set of paths (lines, curves) converging to it. Labels showing function values approaching L.",
+        "visual_spec": "Draw a 2D coordinate plane with point (a,b) marked red. Draw 5 different paths (straight lines from different directions, a spiral, a parabola) all ending at (a,b). For each path show a small arrow indicating direction. Put text labels: 'along each path, f→L'. Use matplotlib with arrows and dashed curves.",
+        "python_code": "import matplotlib.pyplot as plt; fig, ax = plt.subplots(); ax.scatter(0,0, color='red', s=100, label='(a,b)'); t = np.linspace(0,1,100); # paths: ax.plot(t,0.5*t, label='line 1'); ax.plot(-t,0.8*t, label='line 2'); ax.plot(0.3*t, -t, label='line 3'); ax.plot(t*np.cos(t*10), t*np.sin(t*10), label='spiral'); ax.plot(t, t**2, label='parabola'); ax.set_xlim(-1,1); ax.set_ylim(-1,1); ax.legend(); ax.set_aspect('equal'); plt.show()",
+        "interactive_controls": [
+          "Button: highlight a random path and show its limit value"
+        ]
+      },
+      "on_screen_text": "The limit L must be the same along every possible path approaching (a,b).",
+      "teacher_narration": "Let's formalize the intuition. The notation lim as (x,y) approaches (a,b) of f(x,y) equals L means that no matter which way you travel toward the point (a,b)—whether along a straight line, a parabola, or a spiral—the function values get closer and closer to a single number L. This is the fundamental idea. In the diagram, each colored path represents a different direction, and they all must lead to the same destination L. If even one path gives a different limit, the overall limit does not exist.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Epsilon-Delta: The Rigorous Definition",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\forall \\varepsilon > 0, \\exists \\delta > 0 \\text{ such that }\\\\ 0 < \\sqrt{(x-a)^2+(y-b)^2} < \\delta \\;\\Longrightarrow\\; |f(x,y)-L| < \\varepsilon$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive 3D surface with slider for epsilon. Show δ-disk in domain and ε-band around L.",
+        "visual_spec": "3D plot of f(x,y)=x^2+y^2 on [-2,2]^2. Plot surface. Add horizontal plane at z = L+ε and L-ε (orange) for the epsilon band. In the xy-plane, draw a δ-disk (blue circle) centered at (a,b). Use sliders for ε (range 0.1 to 1.0) and δ (range 0.1 to 1.0). When ε changes, recompute δ so that all points inside δ-disk map into ε-band (for this function, δ = sqrt(ε) because f is x^2+y^2 and L=0). Animate: highlight the disk and band. User can adjust ε and see the required δ update automatically.",
+        "python_code": "import matplotlib.pyplot as plt; from mpl_toolkits.mplot3d import Axes3D; from matplotlib.widgets import Slider; import numpy as np; fig = plt.figure(figsize=(10,8)); ax = fig.add_subplot(111, projection='3d'); x = np.linspace(-2,2,200); y = np.linspace(-2,2,200); X,Y = np.meshgrid(x,y); Z = X**2+Y**2; surf = ax.plot_surface(X,Y,Z, alpha=0.5, cmap='viridis'); epsilon = 0.5; z_band = epsilon*np.ones_like(X); band = ax.plot_surface(X,Y,z_band, alpha=0.2, color='orange'); delta = np.sqrt(epsilon); theta = np.linspace(0,2*np.pi,100); x_disk = delta*np.cos(theta); y_disk = delta*np.sin(theta); z_disk = np.zeros_like(x_disk); disk_line, = ax.plot(x_disk, y_disk, z_disk, 'b-', lw=2); ax.set_xlim(-2,2); ax.set_ylim(-2,2); ax.set_zlim(0,4); ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z = f(x,y)'); ax_slider = plt.axes([0.2, 0.02, 0.6, 0.03]); slider = Slider(ax_slider, 'epsilon', 0.1, 1.0, valinit=0.5); def update(val): global epsilon; epsilon = val; z_band = epsilon*np.ones_like(X); band.remove(); band = ax.plot_surface(X,Y,z_band, alpha=0.2, color='orange'); delta = np.sqrt(epsilon); x_disk = delta*np.cos(theta); y_disk = delta*np.sin(theta); disk_line.set_data(x_disk, y_disk); disk_line.set_3d_properties(np.zeros_like(x_disk)); fig.canvas.draw_idle(); slider.on_changed(update); plt.show()",
+        "interactive_controls": [
+          "Slider: epsilon from 0.1 to 1.0",
+          "Slider: delta from 0.1 to 1.0 (manual override)"
+        ]
+      },
+      "on_screen_text": "For any epsilon, we can find a delta such that all points within delta of (a,b) map to values within epsilon of L.",
+      "teacher_narration": "The formal definition goes like this: for any desired closeness epsilon (how close you want the function values to be to the limit), we need to find a delta (a radius around the point in the domain) such that every point within that delta—except the point itself—gives a function value within epsilon of L. In this interactive demo, you control epsilon. As you increase epsilon, the orange band gets thicker, and the required delta—computed here as the square root of epsilon—grows. Try it yourself and see how the blue disk expands to guarantee all those points land inside the epsilon band.",
+      "student_prompt": "What happens to delta if you cut epsilon in half? Does it shrink by half or less?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Limit Laws for Multivariable Functions",
+      "left": {
+        "content_type": "formula_block",
+        "content": "If $\\lim f$ and $\\lim g$ exist, then:\n- $\\lim (f\\pm g) = \\lim f \\pm \\lim g$\n- $\\lim (f\\cdot g) = \\lim f \\cdot \\lim g$\n- $\\lim \\frac{f}{g} = \\frac{\\lim f}{\\lim g}$ (if $\\lim g \\neq 0$)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Simple diagram showing combination arrows: two inputs (f,g) into operations (+,×,÷) outputting a combined limit.",
+        "visual_spec": "Create a flowchart using matplotlib patches: two rounded boxes labeled 'lim f = A' and 'lim g = B' with arrows pointing to three operation boxes: 'sum', 'product', 'quotient', each outputting 'A+B', 'AB', 'A/B' respectively. Use black text on white background.",
+        "python_code": "import matplotlib.pyplot as plt; import matplotlib.patches as mpatches; fig, ax = plt.subplots(figsize=(6,4)); ax.axis('off'); # draw boxes: b1 = mpatches.FancyBboxPatch((0.1,0.7), 0.3,0.2, boxstyle='round', edgecolor='black', facecolor='lightblue'); ax.add_patch(b1); ax.text(0.25,0.8, 'lim f = A', ha='center'); b2 = mpatches.FancyBboxPatch((0.1,0.1), 0.3,0.2, boxstyle='round', edgecolor='black', facecolor='lightgreen'); ax.add_patch(b2); ax.text(0.25,0.2, 'lim g = B', ha='center'); # arrows: ax.annotate('', xy=(0.5,0.8), xytext=(0.4,0.8), arrowprops=dict(arrowstyle='->')); ax.annotate('', xy=(0.5,0.2), xytext=(0.4,0.2), arrowprops=dict(arrowstyle='->')); # operation boxes: ops = ['A+B','A·B','A/B']; colors=['#ff9999','#99ff99','#9999ff']; for i,op in enumerate(ops): y = 0.35 + i*0.2; rect = mpatches.FancyBboxPatch((0.55, y-0.08), 0.3,0.16, boxstyle='round', edgecolor='black', facecolor=colors[i]); ax.add_patch(rect); ax.text(0.7, y, op, ha='center'); ax.plot([0.4,0.55], [0.8,0.35+0.2*0], 'k-'); ax.plot([0.4,0.55], [0.2,0.35+0.2*1], 'k-'); ax.plot([0.4,0.55], [0.2,0.35+0.2*2], 'k-'); plt.show()",
+        "interactive_controls": [
+          "Button: click to show an example calculation for each law"
+        ]
+      },
+      "on_screen_text": "All the familiar limit laws from single-variable calculus extend naturally to two (or more) variables.",
+      "teacher_narration": "Good news: the limit laws you already know for single-variable functions work exactly the same way here, provided the individual limits exist. The limit of a sum is the sum of the limits, the limit of a product is the product of the limits, and for quotients, we just need the denominator's limit to be nonzero. This means we can break complicated multivariable limits into simpler pieces, compute each part, and combine the results. Let's see a quick example of how to use these laws.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up Example: Direct Substitution",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\lim_{(x,y)\\to (2,3)} (x^2 + 2xy - y)$\n\n1. Recognize polynomial → continuous on $\\mathbb{R}^2$\n2. Direct substitution: $x=2, y=3$\n3. Compute: $2^2 + 2(2)(3) - 3 = 4 + 12 - 3 = 13$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Simple 2D coordinate plot with point (2,3) marked and the function value 13 displayed. Maybe a contour plot of the polynomial.",
+        "visual_spec": "Generate a contour plot of f(x,y)=x^2+2xy-y on x∈[0,4], y∈[1,5]. Mark the point (2,3) with a red dot and label '13'. Use contour levels that show increasing value toward that point. Add colorbar.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; x = np.linspace(0,4,100); y = np.linspace(1,5,100); X,Y = np.meshgrid(x,y); Z = X**2 + 2*X*Y - Y; fig,ax = plt.subplots(); cf = ax.contourf(X,Y,Z, levels=20, cmap='viridis'); ax.scatter(2,3, color='red', s=100, label='(2,3)'); ax.annotate('13', xy=(2,3), xytext=(2.5,3.5), arrowprops=dict(arrowstyle='->')); ax.set_xlabel('x'); ax.set_ylabel('y'); plt.colorbar(cf); ax.legend(); plt.show()",
+        "interactive_controls": [
+          "Slider: change the point (a,b) and see the computed limit update"
+        ]
+      },
+      "on_screen_text": "Polynomials are continuous everywhere. Direct substitution works when the function is continuous at the point.",
+      "teacher_narration": "Let's start with the simplest case. We want the limit of this polynomial as (x,y) approaches (2,3). Since polynomials are continuous everywhere, we can simply plug in the coordinates. That gives 4 plus 12 minus 3 equals 13. No need for epsilon-delta or path analysis here. This is your warm-up: whenever you see a polynomial or a rational function where the denominator is not zero at the point, just substitute. The limit equals the function value at that point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Standard Example: Showing a Limit Does Not Exist",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Show $\\lim_{(x,y)\\to(0,0)}\\frac{xy}{x^2+y^2}$ DNE.\n\n- Along $y=0$: $\\frac{x\\cdot0}{x^2+0}=0$\n- Along $y=x$: $\\frac{x^2}{x^2+x^2} = \\frac{1}{2}$\n- Two different values → limit DNE"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D surface plot of f(x,y)=xy/(x^2+y^2) near origin with two lines y=0 and y=x highlighted, showing different heights.",
+        "visual_spec": "Same plot as slide 1, but now also show the path y=2x etc. Use a slider to change the slope m of the second line y=mx and show the resulting limit value m/(1+m^2). Highlight the surface and the curve.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from mpl_toolkits.mplot3d import Axes3D; from matplotlib.widgets import Slider; fig = plt.figure(); ax = fig.add_subplot(111, projection='3d'); x = np.linspace(-2,2,150); y = np.linspace(-2,2,150); X,Y = np.meshgrid(x,y); Z = X*Y/(X**2+Y**2+1e-10); Z[np.abs(X)<1e-6] = np.nan; Z[np.abs(Y)<1e-6] = np.nan; surf = ax.plot_surface(X,Y,Z, cmap='coolwarm', alpha=0.7); m = 1; t = np.linspace(-2,2,100); line, = ax.plot(t, m*t, m*t**2/((1+m**2)*t**2+1e-10), 'r-', lw=3); ax.set_xlim(-2,2); ax.set_ylim(-2,2); ax.set_zlim(-1,1); ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z'); ax_slider = plt.axes([0.2,0.02,0.6,0.03]); slider = Slider(ax_slider, 'slope m', -5, 5, valinit=1); def update(val): m = slider.val; t = np.linspace(-2,2,100); line.set_data(t, m*t); line.set_3d_properties(m*t**2/((1+m**2)*t**2+1e-10)); fig.canvas.draw_idle(); slider.on_changed(update); plt.show()",
+        "interactive_controls": [
+          "Slider: slope m from -5 to 5"
+        ]
+      },
+      "on_screen_text": "If two different paths give different limits, the overall limit does not exist.",
+      "teacher_narration": "Now for a classic example. We want the limit of f(x,y) equals xy over x-squared plus y-squared as we approach the origin. Let's test paths. Along the x-axis, y equals 0, the function is 0, so the limit along that path is 0. Along the line y equals x, the function simplifies to x-squared over 2x-squared, which approaches one half. Since we found two paths that give different limits, the overall limit cannot exist. Use the slider to explore other line paths—you'll see that the limit depends on the slope, confirming the limit DNE. This is the standard technique to disprove a limit: find two paths with different results.",
+      "student_prompt": "Try y = x^2. What limit do you get along that parabola?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Two Paths Are Not Enough to Prove Existence",
+      "left": {
+        "content_type": "text",
+        "content": "**Common mistake:** Showing the limit is 0 along both the x-axis and y-axis does *not* prove the limit is 0. You must check *all* paths—including curves."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side: left shows a function where axes give 0 but curve gives 1 (like xy/(x^2+y^2) from previous slide). Right shows a different function where axes give 0 and curve also gives 0 (e.g., x^2y/(x^2+y^2)). Compare.",
+        "visual_spec": "Two 3D subplots. Left: f(x,y)=xy/(x^2+y^2) with paths y=0, x=0 giving 0, but y=x gives 0.5. Right: f(x,y)=x^2y/(x^2+y^2) with paths y=0, x=0, y=x all giving 0. Mark the origin. Use colors to distinguish paths.",
+        "python_code": "import matplotlib.pyplot as plt; from mpl_toolkits.mplot3d import Axes3D; fig = plt.figure(figsize=(12,5)); # left ax1 = fig.add_subplot(121, projection='3d'); x = np.linspace(-1,1,100); y = np.linspace(-1,1,100); X,Y = np.meshgrid(x,y); Z1 = X*Y/(X**2+Y**2+1e-10); Z1[np.abs(X)<1e-6]=np.nan; Z1[np.abs(Y)<1e-6]=np.nan; ax1.plot_surface(X,Y,Z1, alpha=0.5, cmap='coolwarm'); t = np.linspace(-1,1,50); ax1.plot(t, np.zeros_like(t), np.zeros_like(t), 'r-', lw=2); ax1.plot(np.zeros_like(t), t, np.zeros_like(t), 'b-', lw=2); ax1.plot(t, t, t**2/(2*t**2+1e-10), 'g-', lw=2); ax1.set_title('Limit DNE: paths differ'); ax1.set_zlim(-1,1); # right ax2 = fig.add_subplot(122, projection='3d'); Z2 = X**2*Y/(X**2+Y**2+1e-10); Z2[np.abs(X)<1e-6]=np.nan; Z2[np.abs(Y)<1e-6]=np.nan; ax2.plot_surface(X,Y,Z2, alpha=0.5, cmap='coolwarm'); ax2.plot(t, np.zeros_like(t), np.zeros_like(t), 'r-', lw=2); ax2.plot(np.zeros_like(t), t, np.zeros_like(t), 'b-', lw=2); ax2.plot(t, t, t**3/(2*t**2+1e-10), 'g-', lw=2); ax2.set_title('Limit exists (0): all paths match'); ax2.set_zlim(-0.5,0.5); plt.tight_layout(); plt.show()",
+        "interactive_controls": [
+          "Button: toggle between the two functions to compare path behavior"
+        ]
+      },
+      "on_screen_text": "Testing only linear paths is never enough to prove a limit exists. You must consider all possible curves.",
+      "teacher_narration": "Here's a trap many students fall into. You check the x-axis, limit zero. Check the y-axis, limit zero. So you think the limit is zero. But as we just saw with xy over x-squared plus y-squared, the limit along y equals x is not zero. So the limit does not exist. On the right, I've shown a different function, x-squared y over x-squared plus y-squared. Here, all three paths give zero. Does that prove the limit is zero? Not yet—but in this case, it actually is zero. How can we be sure? We need a more powerful tool, like the Squeeze Theorem, which is coming next. Remember: disproving a limit requires only one counterexample path; proving a limit requires a universal argument.",
+      "student_prompt": "Can you think of a curve that might give a different limit for the function on the right? Try y = x^3.",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Squeeze Theorem for Multivariable Functions",
+      "left": {
+        "content_type": "formula_block",
+        "content": "If $g(x,y) \\leq f(x,y) \\leq h(x,y)$ near $(a,b)$ and $\\lim g = \\lim h = L$, then $\\lim f = L$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "2D sketch: three curves (g, f, h) all converging to same point L as x→a. Classic squeeze diagram adapted to 2D.",
+        "visual_spec": "2D plot with x-axis as distance from (a,b) along a radial direction, y-axis as function value. Draw three curves: lower bound g (blue), f (red), upper bound h (green). All three meet at the same point on the y-axis, representing the limit. Use a shaded region between g and h to show the squeeze.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; r = np.linspace(0,2,100); L = 0; g = -r**2; h = r**2; f = r*np.sin(1/r) # example that squeezes; fig, ax = plt.subplots(); ax.plot(r, g, 'b-', label='g(r) = -r^2'); ax.plot(r, h, 'g-', label='h(r) = r^2'); ax.fill_between(r, g, h, alpha=0.2, color='gray'); ax.plot(r, f, 'r--', label='f(r) = r sin(1/r)'); ax.set_xlabel('distance from (a,b)'); ax.set_ylabel('function value'); ax.axhline(L, color='black', linestyle=':'); ax.legend(); plt.show()",
+        "interactive_controls": [
+          "Slider: adjust the squeeze bounds and see the effect on f"
+        ]
+      },
+      "on_screen_text": "If you can trap a function between two others that both approach the same limit, then your function must also approach that limit.",
+      "teacher_narration": "The Squeeze Theorem is your best friend when direct substitution gives an indeterminate form like 0 over 0, and you can't easily use limit laws. The idea is simple: if you can find a lower bound g and an upper bound h that both approach the same number L near your point, and your function f is sandwiched between them, then f must also approach L. In single-variable calculus, you used this with sine of one over x. In multivariable, the same principle works. The key is to find bounds that are easy to evaluate and that both go to the same limit.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Squeeze Theorem Interactive Lab",
+      "left": {
+        "content_type": "text",
+        "content": "**Example:** $\\displaystyle \\lim_{(x,y)\\to(0,0)} \\frac{x^3}{x^2+y^2}$\n\nBound: $\\left|\\frac{x^3}{x^2+y^2}\\right| = |x|\\cdot\\frac{x^2}{x^2+y^2} \\leq |x|$\n\nSince $|x|\\to 0$, the squeeze gives limit = 0."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D plot of f(x,y)=x^3/(x^2+y^2) with bounding surfaces: z=|x| and z=-|x|. Interactive slider to view different angles or zoom.",
+        "visual_spec": "Plot f(x,y)=x^3/(x^2+y^2+1e-10) on domain [-1,1]x[-1,1]. Add surfaces z=|x| (upper bound, transparent green) and z=-|x| (lower bound, transparent blue). Highlight that the function lies between them. Include a slider to rotate the view.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from mpl_toolkits.mplot3d import Axes3D; from matplotlib.widgets import Slider; fig = plt.figure(); ax = fig.add_subplot(111, projection='3d'); x = np.linspace(-1,1,100); y = np.linspace(-1,1,100); X,Y = np.meshgrid(x,y); Z = X**3/(X**2+Y**2+1e-10); Z_upper = np.abs(X); Z_lower = -np.abs(X); surf_f = ax.plot_surface(X,Y,Z, cmap='coolwarm', alpha=0.7); surf_u = ax.plot_surface(X,Y,Z_upper, alpha=0.2, color='green'); surf_l = ax.plot_surface(X,Y,Z_lower, alpha=0.2, color='blue'); ax.set_zlim(-1,1); ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z'); # slider for rotation angle ax_angle = plt.axes([0.2,0.02,0.6,0.03]); slider_angle = Slider(ax_angle, 'view angle', 0, 360, valinit=30); def update(angle): ax.view_init(elev=20, azim=angle); fig.canvas.draw_idle(); slider_angle.on_changed(update); plt.show()",
+        "interactive_controls": [
+          "Slider: view angle (azimuth) from 0 to 360",
+          "Toggle: show/hide bounding surfaces"
+        ]
+      },
+      "on_screen_text": "The function is trapped between -|x| and |x|, both of which go to 0. Therefore the limit is 0.",
+      "teacher_narration": "Let's apply the Squeeze Theorem to a concrete function: x-cubed over x-squared plus y-squared. We notice that x-squared over x-squared plus y-squared is always between 0 and 1. So the absolute value of our function is at most the absolute value of x. And as x goes to 0, the bound goes to 0. Hence the limit is 0. In the 3D visualization, you can see the function surface in color, squeezed between the green upper bound and the blue lower bound. Both bounds approach zero at the origin, forcing the function to do the same. Rotate the view to see this from any angle.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Tricky Example: Piecewise Continuity",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Is $f(x,y)=\\begin{cases} \\frac{x^2y}{x^2+y^2}, & (x,y)\\neq(0,0) \\\\ 0, & (x,y)=(0,0) \\end{cases}$ continuous at $(0,0)$?\n\n1. Compute limit at $(0,0)$ via squeeze: $\\left|\\frac{x^2y}{x^2+y^2}\\right|\\leq |y|$\n2. $\\lim |y| = 0$, so $\\lim f = 0$\n3. $f(0,0)=0$, so limit equals value → continuous."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D plot of the piecewise function with the hole at origin filled seamlessly.",
+        "visual_spec": "Plot f(x,y)=x^2y/(x^2+y^2) for (x,y)≠(0,0) with a hole, and add a red dot at (0,0,0). Show that the surface approaches that dot nicely.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from mpl_toolkits.mplot3d import Axes3D; fig = plt.figure(); ax = fig.add_subplot(111, projection='3d'); x = np.linspace(-1,1,150); y = np.linspace(-1,1,150); X,Y = np.meshgrid(x,y); Z = X**2*Y/(X**2+Y**2+1e-10); near_center = (np.sqrt(X**2+Y**2)<0.1); Z[near_center] = np.nan; surf = ax.plot_surface(X,Y,Z, cmap='coolwarm', alpha=0.8); ax.scatter(0,0,0, color='red', s=100, label='f(0,0)=0'); ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z'); ax.set_title('Piecewise function – continuous at origin'); ax.legend(); plt.show()",
+        "interactive_controls": [
+          "Button: toggle the hole to see the surface fill in"
+        ]
+      },
+      "on_screen_text": "To check continuity: does the limit equal the function value at the point? If yes, the function is continuous there.",
+      "teacher_narration": "Now for a more subtle example. This function is defined piecewise: at the origin it's zero, elsewhere it's x-squared y over x-squared plus y-squared. To check continuity at the origin, we need to see if the limit as we approach the origin equals zero. Using the Squeeze Theorem, we bound the absolute value by the absolute value of y, which goes to zero. So the limit is indeed zero, matching the defined value. The function is continuous at the origin. In the 3D plot, you can see that the surface smoothly meets the red dot at zero. This example shows that even with piecewise definitions, continuity can be established with a simple squeeze estimate.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Application: Using Limit Laws",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\lim_{(x,y)\\to(1,2)} \\frac{x^2y + 3x}{x+1}$\n\n1. Denominator limit: $\\lim (x+1)=2 \\neq 0$ → quotient law works.\n2. Numerator limit: $\\lim (x^2y) = 1^2\\cdot2=2$, $\\lim 3x=3$, sum=5.\n3. Quotient: $\\frac{5}{2}=2.5$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Contour plot of the rational function near (1,2) showing smooth behavior.",
+        "visual_spec": "Contour plot of f(x,y)=(x^2y+3x)/(x+1) on domain [0,2]x[1,3]. Mark point (1,2) with label '2.5'. Use contour colors to show value around that point.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; x = np.linspace(0,2,100); y = np.linspace(1,3,100); X,Y = np.meshgrid(x,y); Z = (X**2*Y + 3*X)/(X+1); fig,ax = plt.subplots(); cf = ax.contourf(X,Y,Z, levels=20, cmap='plasma'); ax.scatter(1,2, color='red', s=100); ax.annotate('2.5', xy=(1,2), xytext=(1.2,2.2), arrowprops=dict(arrowstyle='->')); ax.set_xlabel('x'); ax.set_ylabel('y'); plt.colorbar(cf); plt.show()",
+        "interactive_controls": [
+          "Slider: change the point (a,b) and see the computed limit update"
+        ]
+      },
+      "on_screen_text": "When the denominator's limit is nonzero, use quotient law to combine limits of numerator and denominator.",
+      "teacher_narration": "Here's a practical application where we combine several limit laws. We want the limit of a rational function as (x,y) approaches (1,2). First check the denominator: the limit of x plus 1 as x goes to 1 is 2, which is not zero. So we can apply the quotient law. Next, compute the numerator limit: use sum and product laws. The limit of x-squared y is 1 squared times 2 equals 2, and the limit of 3x is 3. So the numerator limit is 5. The quotient gives 5 over 2, or 2.5. Since all individual limits exist and denominator is nonzero, the limit exists and equals 2.5. This is typical of many practical limit calculations: just break it down law by law.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof: Different Paths ⇒ Limit DNE",
+      "left": {
+        "content_type": "steps",
+        "content": "**Theorem:** If along two paths the limits differ, then the overall limit does not exist.\n\nAssume $\\lim f = L$ exists. Then for any $\\varepsilon>0$, $\\exists \\delta$ s.t. within $\\delta$ of $(a,b)$, $|f-L|<\\varepsilon$.\n\nPath 1: $\\lim_{path1} f = L_1$ → $\\exists \\delta_1$ s.t. along path1, $|f-L_1|<\\varepsilon$.\nPath 2: $\\lim_{path2} f = L_2$ → $\\exists \\delta_2$ s.t. along path2, $|f-L_2|<\\varepsilon$.\n\nTake $\\delta = \\min(\\delta_1,\\delta_2)$, $\\varepsilon = |L_1-L_2|/3$.\nChoose points on each path within $\\delta$.\n\nThen $|L_1-L_2| \\leq |L_1-f|+|f-L_2| < 2\\varepsilon$ and also $|L_1-L_2| \\leq |L_1-L|+|L-L_2| < 2\\varepsilon$, but $2\\varepsilon = \\frac{2}{3}|L_1-L_2| < |L_1-L_2|$, contradiction. Hence no single $L$ can satisfy all paths."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": [
+          "Button: step through the proof line by line"
+        ]
+      },
+      "on_screen_text": "A rigorous proof that path divergence implies no limit. Understand the logic, but don't memorize every detail.",
+      "teacher_narration": "For those who want a deeper understanding: here's the full proof that if two paths give different limits, the overall limit cannot exist. The idea is a contradiction argument. Suppose the overall limit L exists. Then we can get very close to L along any path near the point. But if path 1 goes to a different number L1, and we pick a point very close to the origin along path 1, the function must be both close to L and close to L1, forcing L and L1 to be close. By choosing epsilon as one third of the distance between L1 and L2, we derive a contradiction. This is the formal justification for the path test we've been using. Key takeaway: trying all paths is necessary because a single path can't guarantee existence.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause and Predict: Does This Limit Exist?",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\lim_{(x,y)\\to(0,0)} \\frac{x^2 y^2}{x^4 + y^4}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show only the graph of the function, but with a question mark. No analysis yet.",
+        "visual_spec": "3D plot of f(x,y)=x^2*y^2/(x^4+y^4) on [-1,1]^2. Use a colormap but do not highlight any paths. Show the surface only. Add a text overlay 'Does the limit exist?'",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from mpl_toolkits.mplot3d import Axes3D; fig = plt.figure(); ax = fig.add_subplot(111, projection='3d'); x = np.linspace(-1,1,150); y = np.linspace(-1,1,150); X,Y = np.meshgrid(x,y); Z = X**2*Y**2/(X**4+Y**4+1e-10); surf = ax.plot_surface(X,Y,Z, cmap='viridis', alpha=0.8); ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z'); ax.set_title('Does the limit exist?'); plt.show()",
+        "interactive_controls": [
+          "Button: reveal answer (shows path analysis)"
+        ]
+      },
+      "on_screen_text": "Before we analyze, take a moment to predict: does this limit exist at (0,0)?",
+      "teacher_narration": "Now here's a challenge for you. Look at this function: x-squared y-squared over x to the fourth plus y to the fourth. The graph looks smooth at first glance. But does this limit exist as we approach the origin? Pause the video now, think about what paths you'd test, and make a prediction. We'll come back and analyze it together.",
+      "student_prompt": "Test the path y = x and the path y = 0. What do you get? What about y = x^2?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Answer: Limit Does Not Exist",
+      "left": {
+        "content_type": "steps",
+        "content": "**Path analysis:**\n- Along $y=0$: $\\frac{x^2\\cdot0}{x^4+0}=0$\n- Along $x=0$: $0$\n- Along $y=x$: $\\frac{x^4}{x^4+x^4} = \\frac{1}{2}$\n- Along $y=x^2$: $\\frac{x^2\\cdot x^4}{x^4+x^8} \\approx \\frac{x^6}{x^4}=x^2\\to 0$ (as $x\\to0$)\n\nDifferent paths give 0 and 1/2 → limit DNE."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D plot with highlighted paths showing that y=x gives height 0.5 while y=0 gives 0.",
+        "visual_spec": "Same plot as before, now add three curves: y=0 (red), x=0 (blue), y=x (green). Show that the green curve reaches 0.5 at the origin, while red and blue go to 0. Add text annotation showing the values.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from mpl_toolkits.mplot3d import Axes3D; fig = plt.figure(); ax = fig.add_subplot(111, projection='3d'); x = np.linspace(-1,1,150); y = np.linspace(-1,1,150); X,Y = np.meshgrid(x,y); Z = X**2*Y**2/(X**4+Y**4+1e-10); surf = ax.plot_surface(X,Y,Z, cmap='viridis', alpha=0.6); t = np.linspace(-1,1,100); ax.plot(t, np.zeros_like(t), np.zeros_like(t), 'r-', lw=3, label='y=0: 0'); ax.plot(np.zeros_like(t), t, np.zeros_like(t), 'b-', lw=3, label='x=0: 0'); ax.plot(t, t, t**4/(2*t**4+1e-10), 'g-', lw=3, label='y=x: 0.5'); ax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z'); ax.legend(); ax.set_title('Limit DNE'); plt.show()",
+        "interactive_controls": [
+          "Button: toggle path labels on/off"
+        ]
+      },
+      "on_screen_text": "Even though many paths give 0, the path y = x gives 1/2, so the limit does not exist.",
+      "teacher_narration": "Here's the analysis. Along the x-axis and y-axis, the function is zero. Along the parabola y equals x-squared, the function also tends to zero because higher powers in the numerator make it small. However, along the line y equals x, the function simplifies to one half. Since we have found at least one path that gives a different limit, the overall limit does not exist. This example is a caution: you can't just check a few paths. The line y equals x seems innocent but it reveals the discontinuity. Always be thorough when testing for existence.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary and Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Key Concepts:**\n1. Limits in multivariable calculus require path independence.\n2. Epsilon-delta definition: for any ε>0, there exists δ>0.\n3. Limit laws extend from single-variable.\n4. Squeeze Theorem: bound a function between two that converge to the same limit.\n5. To show a limit DNE: find two paths with different limits.\n6. Continuity: limit equals function value.\n\n**Common Pitfalls:**\n- Checking only linear paths is insufficient.\n- Assuming existence because limits along axes match.\n- Forgetting to verify denominator limit ≠0 for quotient law."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": [
+          "Button: click to reveal a quick quiz question"
+        ]
+      },
+      "on_screen_text": "Master these tools to confidently analyze limits and continuity of multivariable functions.",
+      "teacher_narration": "Let's wrap up. We've learned that the fundamental idea of a limit extends to multiple variables, but with a crucial twist: we must consider infinitely many paths. The epsilon-delta definition gives us a rigorous foundation, while limit laws let us compute efficiently. The Squeeze Theorem is your go-to tool for tricky limits at points where substitution fails. To show a limit does not exist, you only need one path that gives a different value. Finally, continuity simply requires the limit to equal the function's value. If you keep these ideas in mind, you'll be able to handle any multivariable limit problem you encounter. Good luck!",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

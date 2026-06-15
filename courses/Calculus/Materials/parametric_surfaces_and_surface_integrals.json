@@ -1,0 +1,351 @@
+{
+  "lecture_meta": {
+    "title": "Parametric Surfaces and Surface Integrals",
+    "topic": "Parametric Surfaces and Surface Integrals",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Parametrize common surfaces (spheres, cylinders, cones, planes)",
+      "Compute surface area using parametric representations",
+      "Evaluate scalar surface integrals over curved surfaces",
+      "Calculate flux integrals (vector surface integrals) through oriented surfaces",
+      "Apply surface integrals to compute physical quantities like fluid flow"
+    ],
+    "prerequisite_reminder": "You already know double integrals over flat regions, parametric curves, and cross products."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Surface Integrals?",
+      "left": {
+        "content_type": "text",
+        "content": "**Scalar:** Imagine spray-painting a curved sculpture. The paint thickness $f(x,y,z)$ differs per patch. The total paint is $\\iint_S f\\,dS$.\n\n**Vector:** Wind blows through a fishing net. The net's orientation matters. Flux $\\iint_S \\mathbf{F}\\cdot d\\mathbf{S}$ measures net flow through the surface."
+      },
+      "right": {
+        "content_type": "image_description",
+        "content": "Illustration of a curved surface with varying paint thickness (scalar) and a net with arrows passing through (vector)",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Surface integrals add up quantities on curved surfaces. Scalar: paint thickness. Vector: flow through a net.",
+      "teacher_narration": "Think of spray-painting a curved sculpture. Each area patch receives a certain thickness of paint. To find the total paint used, you integrate that thickness over the curved surface. That's a scalar surface integral. Now imagine wind blowing through a fishing net—how much air passes through depends on the net's orientation. That's a flux integral, a vector surface integral. Both are natural extensions of double integrals to curved surfaces.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Parametric Surfaces: The Idea",
+      "left": {
+        "content_type": "concept",
+        "content": "A **parametric surface** is a vector function of two parameters:\n$$\\mathbf{r}(u,v) = (x(u,v), y(u,v), z(u,v))$$\nAs $(u,v)$ varies over a domain $D$, $\\mathbf{r}(u,v)$ traces out the surface."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive 3D plot of a parametric sphere",
+        "visual_spec": "Plot a sphere of radius 1 using spherical coordinates: r(phi,theta) = (sin(phi)*cos(theta), sin(phi)*sin(theta), cos(phi)). Show the surface as a wireframe with grid lines. Use sliders for phi0 and theta0 to highlight a specific point and show the coordinate curves. Color the point red. Include axis labels x,y,z and title 'Parametric Sphere'. Set phi range 0 to pi, theta 0 to 2pi.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider\n\n# Create sphere data\nphi = np.linspace(0, np.pi, 30)\ntheta = np.linspace(0, 2*np.pi, 30)\nphi, theta = np.meshgrid(phi, theta)\nx = np.sin(phi)*np.cos(theta)\ny = np.sin(phi)*np.sin(theta)\nz = np.cos(phi)\n\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\nax.plot_surface(x, y, z, alpha=0.6, cmap='viridis', edgecolor='gray', linewidth=0.3)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_zlabel('z')\nax.set_title('Parametric Sphere')\nax.set_xlim(-1.2,1.2)\nax.set_ylim(-1.2,1.2)\nax.set_zlim(-1.2,1.2)\n\n# Slider for phi0\nax_phi = plt.axes([0.2, 0.01, 0.65, 0.03])\nslider_phi = Slider(ax_phi, '$\\\\phi_0$', 0.1, np.pi-0.1, valinit=np.pi/2)\nax_theta = plt.axes([0.2, 0.06, 0.65, 0.03])\nslider_theta = Slider(ax_theta, '$\\\\theta_0$', 0, 2*np.pi, valinit=0)\n\npoint_plot, = ax.plot([], [], [], 'ro', markersize=8)\nu_curve, = ax.plot([], [], [], 'r-', alpha=0.8, linewidth=2)\nv_curve, = ax.plot([], [], [], 'b-', alpha=0.8, linewidth=2)\n\ndef update(val):\n    phi0 = slider_phi.val\n    theta0 = slider_theta.val\n    # Point\n    x0 = np.sin(phi0)*np.cos(theta0)\n    y0 = np.sin(phi0)*np.sin(theta0)\n    z0 = np.cos(phi0)\n    point_plot.set_data([x0], [y0])\n    point_plot.set_3d_properties([z0])\n    # u-curve (constant phi)\n    u_theta = np.linspace(0, 2*np.pi, 50)\n    u_x = np.sin(phi0)*np.cos(u_theta)\n    u_y = np.sin(phi0)*np.sin(u_theta)\n    u_z = np.full_like(u_theta, np.cos(phi0))\n    u_curve.set_data(u_x, u_y)\n    u_curve.set_3d_properties(u_z)\n    # v-curve (constant theta)\n    v_phi = np.linspace(0, np.pi, 50)\n    v_x = np.sin(v_phi)*np.cos(theta0)\n    v_y = np.sin(v_phi)*np.sin(theta0)\n    v_z = np.cos(v_phi)\n    v_curve.set_data(v_x, v_y)\n    v_curve.set_3d_properties(v_z)\n    fig.canvas.draw_idle()\n\nslider_phi.on_changed(update)\nslider_theta.on_changed(update)\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for $\\\\phi_0$ (0 to pi)",
+          "Slider for $\\\\theta_0$ (0 to 2pi)"
+        ]
+      },
+      "on_screen_text": "A parametric surface is a vector function $\\mathbf{r}(u,v)$ over a 2D domain $D$.",
+      "teacher_narration": "A parametric surface is like a map from a flat 2D region into 3D space. Each pair of parameters—think of them like coordinates on a stamp—gives one point on the surface. As you vary the parameters, the stamp moves and paints the whole surface. On this sphere, $\\phi$ is the polar angle from the north pole and $\\theta$ is the azimuth. Use the sliders to see how changing these parameters traces out grid lines and highlights a specific point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Surface Area Element $dS$",
+      "left": {
+        "content_type": "concept",
+        "content": "At each point, the tangent vectors $\\mathbf{r}_u$ and $\\mathbf{r}_v$ form a small parallelogram. Its area is:\n$$dS = |\\mathbf{r}_u \\times \\mathbf{r}_v|\\,du\\,dv$$\nThis is the **surface area element**.",
+        "formula": null
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive exploration of tangent vectors on a saddle surface $z = x^2 - y^2$",
+        "visual_spec": "Plot the saddle surface z = x^2 - y^2 for x,y in [-1,1]. Use sliders to choose a point (u0,v0). Show the point, the two tangent vectors r_u and r_v (red and blue arrows), and the cross product vector n (green arrow, scaled to show direction). Also display the numerical value of |r_u x r_v| as a text annotation.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider\n\n# Surface: r(u,v) = (u, v, u^2 - v^2)\ndef r(u,v):\n    return np.array([u, v, u**2 - v**2])\ndef ru(u,v):\n    return np.array([1, 0, 2*u])\ndef rv(u,v):\n    return np.array([0, 1, -2*v])\n\n# Mesh\nu = np.linspace(-1, 1, 20)\nv = np.linspace(-1, 1, 20)\nU, V = np.meshgrid(u, v)\nX = U\nY = V\nZ = U**2 - V**2\n\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\nax.plot_surface(X, Y, Z, alpha=0.4, cmap='coolwarm', edgecolor='gray', linewidth=0.3)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_zlabel('z')\nax.set_xlim(-1.2,1.2)\nax.set_ylim(-1.2,1.2)\nax.set_zlim(-1.2,1.2)\n\n# Sliders\nax_u = plt.axes([0.2, 0.01, 0.65, 0.03])\nslider_u = Slider(ax_u, '$u_0$', -0.9, 0.9, valinit=0.5)\nax_v = plt.axes([0.2, 0.06, 0.65, 0.03])\nslider_v = Slider(ax_v, '$v_0$', -0.9, 0.9, valinit=0.5)\n\n# Initial quivers\npoint = r(0.5,0.5)\nru_vec = ru(0.5,0.5)\nrv_vec = rv(0.5,0.5)\ncross = np.cross(ru_vec, rv_vec)\n\nquiver_u = ax.quiver(point[0], point[1], point[2], ru_vec[0], ru_vec[1], ru_vec[2], color='red', length=0.3, label='r_u')\nquiver_v = ax.quiver(point[0], point[1], point[2], rv_vec[0], rv_vec[1], rv_vec[2], color='blue', length=0.3, label='r_v')\nquiver_n = ax.quiver(point[0], point[1], point[2], cross[0], cross[1], cross[2], color='green', length=0.3, label='n = r_u x r_v')\nax.legend()\n\n# Text annotation for magnitude\ntext = ax.text2D(0.7, 0.9, '', transform=ax.transAxes)\n\ndef update(val):\n    u0 = slider_u.val\n    v0 = slider_v.val\n    point = r(u0,v0)\n    ru_vec = ru(u0,v0)\n    rv_vec = rv(u0,v0)\n    cross = np.cross(ru_vec, rv_vec)\n    mag = np.linalg.norm(cross)\n    # Update quivers: remove old, add new\n    global quiver_u, quiver_v, quiver_n\n    ax.collections.remove(quiver_u)\n    ax.collections.remove(quiver_v)\n    ax.collections.remove(quiver_n)\n    quiver_u = ax.quiver(point[0], point[1], point[2], ru_vec[0], ru_vec[1], ru_vec[2], color='red', length=0.3)\n    quiver_v = ax.quiver(point[0], point[1], point[2], rv_vec[0], rv_vec[1], rv_vec[2], color='blue', length=0.3)\n    quiver_n = ax.quiver(point[0], point[1], point[2], cross[0], cross[1], cross[2], color='green', length=0.3)\n    text.set_text(f'|r_u x r_v| = {mag:.3f}')\n    fig.canvas.draw_idle()\n\nslider_u.on_changed(update)\nslider_v.on_changed(update)\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for $u_0$ (-0.9 to 0.9)",
+          "Slider for $v_0$ (-0.9 to 0.9)"
+        ]
+      },
+      "on_screen_text": "Area element: $dS = |\\mathbf{r}_u \\times \\mathbf{r}_v|\\,du\\,dv$. The cross product magnitude gives the local area scaling.",
+      "teacher_narration": "The surface area element is the heart of surface integrals. At each point on the surface, the two partial derivative vectors define a tiny parallelogram. Its area is the magnitude of their cross product. So to integrate a function over the surface, we weight it by this local area factor. Use the sliders to move the point and see how the tangent vectors and the area magnitude change—notice it's not constant on a curved surface like this saddle.",
+      "student_prompt": "What happens to the area element as you move to the center of the saddle? Why?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Scalar Surface Integral Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Definition:**\n$$\\iint_S f(x,y,z)\\,dS = \\iint_D f(\\mathbf{r}(u,v))\\,|\\mathbf{r}_u \\times \\mathbf{r}_v|\\,du\\,dv$$\n\n**Special case (graph $z=g(x,y)$):**\n$$dS = \\sqrt{1 + g_x^2 + g_y^2}\\,dx\\,dy$$\n$$\\iint_S f\\,dS = \\iint_D f(x,y,g(x,y))\\sqrt{1+g_x^2+g_y^2}\\,dx\\,dy$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of mapping from parameter domain D to surface S",
+        "visual_spec": "Draw a flat rectangular domain D in the uv-plane with a grid. Then show the surface S in 3D with a corresponding distorted grid (like a curved rectangle). Highlight one small patch: a rectangle in D maps to a curved parallelogram on S, and label its area as dS = |r_u x r_v| du dv.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nfig = plt.figure(figsize=(12,5))\n\n# Left: domain D\nax1 = fig.add_subplot(121)\nu = np.linspace(0,1,5)\nv = np.linspace(0,1,5)\nfor i in u:\n    ax1.plot([i,i], [0,1], 'k-', lw=0.5)\nfor j in v:\n    ax1.plot([0,1], [j,j], 'k-', lw=0.5)\nax1.fill_between([0.4,0.6], 0.4, 0.6, alpha=0.3, color='red')\nax1.text(0.5,0.5, '$du\\,dv$', ha='center', va='center')\nax1.set_xlim(0,1); ax1.set_ylim(0,1)\nax1.set_title('Domain $D$')\nax1.set_xlabel('u'); ax1.set_ylabel('v')\nax1.set_aspect('equal')\n\n# Right: surface S (a curved rectangle / saddle mapping)\n# Use a parametrization that maps a rectangle to a curved surface: r(u,v) = (u, v, u^2 - v^2) for u,v in [0,1]\nu = np.linspace(0,1,10)\nv = np.linspace(0,1,10)\nU, V = np.meshgrid(u, v)\nX = U\nY = V\nZ = U**2 - V**2\n\nax2 = fig.add_subplot(122, projection='3d')\nax2.plot_surface(X, Y, Z, alpha=0.5, cmap='coolwarm', edgecolor='gray', linewidth=0.3)\n# highlight a patch\npatch_u = [0.4, 0.6, 0.6, 0.4]\npatch_v = [0.4, 0.4, 0.6, 0.6]\npatch_x = patch_u\npatch_y = patch_v\npatch_z = [u**2 - v**2 for u,v in zip(patch_u, patch_v)]\nax2.plot(patch_x, patch_y, patch_z, 'r-', lw=2)\nax2.scatter(patch_x, patch_y, patch_z, color='red')\nax2.text(0.5, 0.5, 0.2, '$dS$', color='red')\nax2.set_xlabel('x'); ax2.set_ylabel('y'); ax2.set_zlabel('z')\nax2.set_title('Surface $S$')\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Scalar surface integral: integrate the function weighted by the area element.",
+      "teacher_narration": "The scalar surface integral works like a double integral, but instead of $dx\\,dy$, we use the surface area element $|\\mathbf{r}_u \\times \\mathbf{r}_v|\\,du\\,dv$. You first parametrize the surface, then substitute the parametrization into the function, multiply by the cross-product magnitude, and integrate over the parameter domain. There's also a convenient special case when the surface is a graph of a function $z=g(x,y)$; then $dS$ simplifies to $\\sqrt{1+g_x^2+g_y^2}\\,dx\\,dy$.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1: Surface Area of a Cylinder (Warm-Up)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find the lateral surface area of the cylinder $x^2+z^2=4$, $0\\leq y\\leq 3$.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Parametrize: $\\mathbf{r}(u,v)=(2\\cos u,\\,v,\\,2\\sin u)$, $0\\leq u\\leq2\\pi$, $0\\leq v\\leq3$ | $u$ = angle, $v$ = height |\n| 2 | $\\mathbf{r}_u=(-2\\sin u,0,2\\cos u)$, $\\mathbf{r}_v=(0,1,0)$ | Partial derivatives |\n| 3 | $\\mathbf{r}_u\\times\\mathbf{r}_v = (-2\\cos u,\\,0,\\,-2\\sin u)$ (check determinant) | Cross product |\n| 4 | $|\\mathbf{r}_u\\times\\mathbf{r}_v| = \\sqrt{4\\cos^2 u+4\\sin^2 u}=2$ | Constant magnitude |\n| 5 | $A = \\iint_D 2\\,du\\,dv = \\int_0^{2\\pi}\\int_0^3 2\\,dv\\,du = 12\\pi$ | Area = $2\\pi r h = 12\\pi$ ✓ |\n\n**Answer: $12\\pi$ square units**"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Warm-up: Surface area of a cylinder. Step through the parametrization, tangent vectors, cross product, magnitude, then integrate.",
+      "teacher_narration": "Let's start with a simple warm-up: the lateral surface area of a cylinder. We parametrize using angle and height. The partial derivatives lead to a constant cross-product magnitude of 2, which makes sense because the cylinder has uniform curvature. Integrating over the domain gives $12\\pi$, exactly $2\\pi r h$ as expected. Always check your answer with a known formula when possible.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2: Scalar Integral Over a Cone (Standard)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Evaluate $\\iint_S (x^2+y^2)\\,dS$ where $S$ is the cone $z=\\sqrt{x^2+y^2}$, $0\\leq z\\leq 4$.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Parametrize as graph: $z=g(x,y)=\\sqrt{x^2+y^2}$ over disk $x^2+y^2\\leq 16$ | Use $x,y$ as parameters |\n| 2 | $g_x = \\frac{x}{\\sqrt{x^2+y^2}},\\; g_y = \\frac{y}{\\sqrt{x^2+y^2}}$ | Partial derivatives |\n| 3 | $dS = \\sqrt{1+g_x^2+g_y^2}\\,dx\\,dy = \\sqrt{2}\\,dx\\,dy$ | Simplifies nicely |\n| 4 | $\\iint_S (x^2+y^2)\\,dS = \\sqrt{2}\\iint_D (x^2+y^2)\\,dx\\,dy$ | Set up integral |\n| 5 | Convert to polar: $r^2 = x^2+y^2$, $dx\\,dy=r\\,dr\\,d\\theta$, $0\\leq r\\leq 4$, $0\\leq\\theta\\leq2\\pi$ | Polar coordinates |\n| 6 | $\\sqrt{2}\\int_0^{2\\pi}\\int_0^4 r^2\\cdot r\\,dr\\,d\\theta = \\sqrt{2}\\int_0^{2\\pi}\\left[\\frac{r^4}{4}\\right]_0^4 d\\theta = \\sqrt{2}\\int_0^{2\\pi} 64\\,d\\theta = 128\\pi\\sqrt{2}$ | Final answer |\n\n**Answer: $128\\pi\\sqrt{2}$**"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Scalar integral over a cone. The area element $dS = \\sqrt{2}\\,dx\\,dy$ because the cone has constant slope.",
+      "teacher_narration": "This example combines the graph formula with polar coordinates. Notice that the factor $\\sqrt{1+g_x^2+g_y^2}$ simplifies to $\\sqrt{2}$ everywhere on the cone because the slope is constant. That means the surface area element is simply $\\sqrt{2}$ times the projected area element in the plane. Then the integral reduces to a double integral of $r^2$ over a disk, which we evaluate using polar coordinates.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Vector Surface Integral (Flux)",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Flux integral:**\n$$\\iint_S \\mathbf{F}\\cdot d\\mathbf{S} = \\iint_D \\mathbf{F}(\\mathbf{r}(u,v))\\cdot (\\mathbf{r}_u\\times\\mathbf{r}_v)\\,du\\,dv$$\n\n$d\\mathbf{S}=\\mathbf{n}\\,dS$ is the oriented area element.\n\n**Orientation:**\n$\\mathbf{r}_u\\times\\mathbf{r}_v$ gives one normal direction. Reversing order gives the opposite. Always verify the desired orientation (outward/inward)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of a vector field F (arrows) passing through a surface patch S, with the oriented normal vector n shown on a small patch",
+        "visual_spec": "Draw a surface patch (like a curved rectangle). Draw several vector field arrows in the space around it. On one patch, draw the unit normal vector n (long arrow) perpendicular to the surface. Show that the flux is the dot product of F with n, integrated over the surface.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\n# Simple surface: part of a plane? Use a curved surface: z = 0.2*(x^2+y^2) for x,y in [-1,1]\nx = np.linspace(-1,1,10)\ny = np.linspace(-1,1,10)\nX,Y = np.meshgrid(x,y)\nZ = 0.2*(X**2+Y**2)\n\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\nax.plot_surface(X,Y,Z, alpha=0.4, cmap='viridis', edgecolor='gray')\n\n# Sample points for field and normals\npoints = np.array([[0.5,0.5,0.1], [-0.5,0.5,0.1], [0.5,-0.5,0.1], [0,0,0]])\nfor p in points:\n    # Field F = (x, y, 0) for illustration\n    F = np.array([p[0], p[1], 0])\n    ax.quiver(p[0], p[1], p[2], F[0], F[1], F[2], color='blue', alpha=0.7, length=0.3, normalize=True)\n    # Normal? For graph z=0.2(x^2+y^2), n = (-gx, -gy, 1) normalized\n    gx = 0.4*p[0]; gy = 0.4*p[1]\n    n = np.array([-gx, -gy, 1])\n    n = n / np.linalg.norm(n)\n    ax.quiver(p[0], p[1], p[2], n[0], n[1], n[2], color='red', length=0.5, label='n' if p[0]==0.5 else '')\nax.legend()\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Flux integral: $\\iint_S \\mathbf{F}\\cdot d\\mathbf{S}$. Dot the field with the oriented area element.",
+      "teacher_narration": "The flux integral adds up the component of the vector field that is perpendicular to the surface at each point. It's like measuring how much fluid flows through the surface per unit time. The key difference from scalar integrals is that we use the dot product with the oriented area element $\\mathbf{r}_u\\times\\mathbf{r}_v$, not its magnitude. Orientation matters crucially—if you choose the opposite normal direction, the sign of the flux flips.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Example 3: Flux Through a Sphere (Tricky)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Compute $\\iint_S \\mathbf{F}\\cdot d\\mathbf{S}$ for $\\mathbf{F}=\\langle x,y,z\\rangle$ over the sphere $x^2+y^2+z^2=a^2$, outward orientation.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Parametrize: $\\mathbf{r}(\\phi,\\theta)=(a\\sin\\phi\\cos\\theta,\\,a\\sin\\phi\\sin\\theta,\\,a\\cos\\phi)$, $0\\leq\\phi\\leq\\pi$, $0\\leq\\theta\\leq2\\pi$ | Spherical coords |\n| 2 | $\\mathbf{r}_\\phi = (a\\cos\\phi\\cos\\theta,\\,a\\cos\\phi\\sin\\theta,\\,-a\\sin\\phi)$ | Derivative w.r.t. $\\phi$ |\n| 3 | $\\mathbf{r}_\\theta = (-a\\sin\\phi\\sin\\theta,\\,a\\sin\\phi\\cos\\theta,\\,0)$ | Derivative w.r.t. $\\theta$ |\n| 4 | $\\mathbf{r}_\\phi\\times\\mathbf{r}_\\theta = a^2\\sin\\phi\\,(\\sin\\phi\\cos\\theta,\\,\\sin\\phi\\sin\\theta,\\,\\cos\\phi)=a^2\\sin\\phi\\,\\hat{\\mathbf{r}}$ (outward ✓) | Cross product |\n| 5 | $\\mathbf{F}(\\mathbf{r}) = (a\\sin\\phi\\cos\\theta,\\,a\\sin\\phi\\sin\\theta,\\,a\\cos\\phi)$ | Field on surface |\n| 6 | $\\mathbf{F}\\cdot(\\mathbf{r}_\\phi\\times\\mathbf{r}_\\theta)= a^3\\sin\\phi(\\sin^2\\phi+\\cos^2\\phi)=a^3\\sin\\phi$ | Dot product simplifies |\n| 7 | $\\iint_S \\mathbf{F}\\cdot d\\mathbf{S} = \\int_0^{2\\pi}\\int_0^\\pi a^3\\sin\\phi\\,d\\phi\\,d\\theta = 4\\pi a^3$ | Integrate |\n\n**Answer: $4\\pi a^3$**"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Flux of radial field through a sphere. Note the cross product gives outward normal.",
+      "teacher_narration": "Here's a classic flux calculation for a radial field out of a sphere. The parametrization uses spherical coordinates. The cross product $\\mathbf{r}_\\phi\\times\\mathbf{r}_\\theta$ gives a vector of length $a^2\\sin\\phi$ pointing radially outward. Dotting with the field gives $a^3\\sin\\phi$, and integrating over the sphere yields $4\\pi a^3$. This matches the result from Gauss's divergence theorem, which we'll see later. A common mistake is to use the opposite order of the cross product, which would give $-4\\pi a^3$—always check orientation.",
+      "student_prompt": "Would the flux be positive or negative if we used $\\mathbf{r}_\\theta\\times\\mathbf{r}_\\phi$? Try to reason before the next slide.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Orientation Reversal in Flux",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** Using $\\mathbf{r}_\\theta\\times\\mathbf{r}_\\phi$ instead of $\\mathbf{r}_\\phi\\times\\mathbf{r}_\\theta$.\n\n**Result:** The normal flips direction. For the sphere, $\\mathbf{r}_\\theta\\times\\mathbf{r}_\\phi = -a^2\\sin\\phi\\,\\hat{\\mathbf{r}}$, which points **inward**.\n\n**Consequence:** The flux becomes $-4\\pi a^3$, but the problem asked for outward orientation.\n\n**Why it happens:** The order of cross product determines the sign. Always verify by checking the direction of the resulting vector against a known reference (e.g., outward from origin)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side comparison: outward normal (correct) vs inward normal (wrong) on a sphere",
+        "visual_spec": "Draw a sphere wireframe. On one point, show both normals: a green arrow pointing outward (r_phi x r_theta) and a red arrow pointing inward (r_theta x r_phi). Label them. Add a note: 'Outward : correct, Inward : wrong.'",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nphi = np.linspace(0, np.pi, 20)\ntheta = np.linspace(0, 2*np.pi, 20)\nPhi, Theta = np.meshgrid(phi, theta)\nR = 1\nx = R*np.sin(Phi)*np.cos(Theta)\ny = R*np.sin(Phi)*np.sin(Theta)\nz = R*np.cos(Phi)\n\nfig = plt.figure(figsize=(6,6))\nax = fig.add_subplot(111, projection='3d')\nax.plot_wireframe(x, y, z, alpha=0.5, color='gray')\n\n# Point at phi=pi/4, theta=pi/4\nphi0, theta0 = np.pi/4, np.pi/4\npoint = np.array([R*np.sin(phi0)*np.cos(theta0), R*np.sin(phi0)*np.sin(theta0), R*np.cos(phi0)])\n# r_phi x r_theta (outward)\nr_phi = np.array([R*np.cos(phi0)*np.cos(theta0), R*np.cos(phi0)*np.sin(theta0), -R*np.sin(phi0)])\nr_theta = np.array([-R*np.sin(phi0)*np.sin(theta0), R*np.sin(phi0)*np.cos(theta0), 0])\nn_out = np.cross(r_phi, r_theta)\nn_out = n_out / np.linalg.norm(n_out) * 0.3\nn_in = -n_out\nax.quiver(point[0], point[1], point[2], n_out[0], n_out[1], n_out[2], color='green', length=0.3, label='Outward (correct)')\nax.quiver(point[0], point[1], point[2], n_in[0], n_in[1], n_in[2], color='red', length=0.3, label='Inward (wrong)')\nax.legend()\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Misconception: The order of the cross product determines the orientation of the flux normal. Always check outward vs inward.",
+      "teacher_narration": "A very common mistake is to pick the wrong order when computing the cross product for flux integrals. In the sphere example, if you swap $\\phi$ and $\\theta$ in the cross product, you get the inward normal instead of outward. The answer changes sign. To avoid this, always check—literally—whether your normal vector points in the intended direction. For a sphere centered at the origin, the outward normal should be a positive scalar multiple of the position vector.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 4: Flat Surface (Edge Case)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Evaluate $\\iint_S z\\,dS$ where $S$ is the part of the plane $z=0$ bounded by $x^2+y^2=1$.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Parametrize as graph: $z=0$, domain $x^2+y^2\\leq 1$ | Flat surface in xy-plane |\n| 2 | $g_x=0$, $g_y=0$ | Partial derivatives zero |\n| 3 | $dS = \\sqrt{1+0+0}\\,dx\\,dy = dx\\,dy$ | Area element = standard area |\n| 4 | $\\iint_S z\\,dS = \\iint_D 0\\cdot dx\\,dy = 0$ | Integrand is zero everywhere |\n\n**Answer: $0$**\n\n$\\boxed{0}$\n\n**Why it matters:** When the surface lies in a coordinate plane, surface integrals reduce to standard double integrals. Here $z=0$ makes the integral vanish."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Edge case: flat surface in xy-plane. The surface integral becomes a double integral of $z=0$, so result is 0.",
+      "teacher_narration": "This example looks trivial, but it demystifies an edge case. When your surface is flat and lies in a coordinate plane, the surface area element $dS$ reduces to the standard area element. Here $z$ is zero on the entire surface, so the integral is zero. This shows that surface integrals are consistent with ordinary double integrals when the surface is planar.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 5: Flux Through a Cylinder (Application)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Compute $\\iint_S \\mathbf{F}\\cdot d\\mathbf{S}$ for $\\mathbf{F}=\\langle x,y,0\\rangle$ over the lateral surface of $x^2+y^2=4$, $0\\leq z\\leq 3$, outward orientation.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Parametrize: $\\mathbf{r}(u,v)=(2\\cos u,\\,2\\sin u,\\,v)$, $0\\leq u\\leq2\\pi$, $0\\leq v\\leq3$ | Standard cylinder |\n| 2 | $\\mathbf{r}_u=(-2\\sin u,\\,2\\cos u,\\,0)$, $\\mathbf{r}_v=(0,0,1)$ | Partial derivatives |\n| 3 | $\\mathbf{r}_u\\times\\mathbf{r}_v = (2\\cos u,\\,2\\sin u,\\,0)$ (outward ✓) | Cross product |\n| 4 | $\\mathbf{F}(\\mathbf{r}) = (2\\cos u,\\,2\\sin u,\\,0)$ | Field on surface |\n| 5 | $\\mathbf{F}\\cdot(\\mathbf{r}_u\\times\\mathbf{r}_v)=4\\cos^2 u+4\\sin^2 u = 4$ | Dot product |\n| 6 | $\\iint_S \\mathbf{F}\\cdot d\\mathbf{S} = \\int_0^{2\\pi}\\int_0^3 4\\,dv\\,du = 24\\pi$ | Final answer |\n\n**Answer: $24\\pi$**"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Flux through a cylinder: the field is radial in xy-plane, dot product gives constant 4, integral yields $24\\pi$.",
+      "teacher_narration": "Another important example: flux through a cylinder. The field $\\langle x,y,0\\rangle$ points radially outward in the horizontal plane, but it has no vertical component. The cross product gives an outward radial vector of length 2. Dot multiplying yields 4, constant across the entire lateral surface. So the flux is just 4 times the surface area of the cylinder's lateral side, which is $2\\pi(2)(3)=12\\pi$, giving $24\\pi$.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Flux Visualization",
+      "left": {
+        "content_type": "text",
+        "content": "Explore flux through a cylinder. Adjust the radius and height, and see how the dot product changes across the surface."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive 3D plot of a cylinder with sliders for radius and height, showing vector field arrows and normals",
+        "visual_spec": "Plot a cylinder with parametric radius R and height H. Show a few sample points on the lateral surface with the vector field F = (x,y,0) as blue arrows and the outward normal as red arrows. Include sliders for R (1 to 5) and H (1 to 5). Add a text display showing the total flux computed analytically (2*pi*R^2*H? Wait: For F=(x,y,0), flux = 2*pi*R^2*H? Actually from earlier example: R=2, H=3 gave 24pi = 2*pi*R*H * (R? Let's recalc: F=(x,y,0) on cylinder x^2+y^2=R^2: F.n = (R cos u, R sin u, 0) dot (R cos u, R sin u,0) (since cross product magnitude R and direction outward) = R^2 cos^2 u + R^2 sin^2 u = R^2. Then flux = int_0^{2pi} int_0^H R^2 dv du = 2pi H R^2. So flux = 2pi H R^2. So correct. Use sliders to change R and H, update the plot and show the computed flux value.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, Button\n\n# Initial parameters\nR0, H0 = 2, 3\n\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\n\ndef draw_cylinder(R, H):\n    ax.clear()\n    u = np.linspace(0, 2*np.pi, 30)\n    v = np.linspace(0, H, 20)\n    U, V = np.meshgrid(u, v)\n    X = R*np.cos(U)\n    Y = R*np.sin(U)\n    Z = V\n    ax.plot_surface(X, Y, Z, alpha=0.4, cmap='viridis', edgecolor='gray')\n    # Sample points for vectors\n    us = np.linspace(0, 2*np.pi, 8)[:-1]\n    vs = np.linspace(0, H, 4)\n    for u0 in us:\n        for v0 in vs:\n            p = np.array([R*np.cos(u0), R*np.sin(u0), v0])\n            # Field F = (x,y,0)\n            F = np.array([p[0], p[1], 0])\n            ax.quiver(p[0], p[1], p[2], F[0], F[1], F[2], color='blue', alpha=0.6, length=0.5)\n            # Outward normal: from cross product of r_u and r_v\n            ru = np.array([-R*np.sin(u0), R*np.cos(u0), 0])\n            rv = np.array([0,0,1])\n            n = np.cross(ru, rv)\n            n = n / np.linalg.norm(n) * 0.5\n            ax.quiver(p[0], p[1], p[2], n[0], n[1], n[2], color='red', alpha=0.8)\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n    ax.set_zlabel('z')\n    ax.set_xlim(-R-1, R+1)\n    ax.set_ylim(-R-1, R+1)\n    ax.set_zlim(0, H+1)\n    # Compute flux analytically: 2*pi*H*R^2\n    flux = 2*np.pi*H*R**2\n    ax.set_title(f'Flux = {flux:.2f}')\n    fig.canvas.draw_idle()\n\ndraw_cylinder(R0, H0)\n\n# Sliders\nax_R = plt.axes([0.2, 0.01, 0.65, 0.03])\nslider_R = Slider(ax_R, 'Radius', 1, 5, valinit=R0)\nax_H = plt.axes([0.2, 0.06, 0.65, 0.03])\nslider_H = Slider(ax_H, 'Height', 1, 5, valinit=H0)\n\ndef update(val):\n    R = slider_R.val\n    H = slider_H.val\n    draw_cylinder(R, H)\n\nslider_R.on_changed(update)\nslider_H.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for radius (1 to 5)",
+          "Slider for height (1 to 5)"
+        ]
+      },
+      "on_screen_text": "Explore flux through a cylinder with adjustable radius and height. See the field and normals.",
+      "teacher_narration": "This interactive lab lets you explore the flux of the radial field $\\langle x,y,0\\rangle$ through a cylinder. As you change the radius and height, watch how the flux value updates. The blue arrows show the field, the red arrows show the outward normals. Notice that the dot product is constant because both the field and the normal are radial and aligned. The flux formula $2\\pi HR^2$ matches the displayed value.",
+      "student_prompt": "What happens to the flux if you double the radius? Why?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: Surface Integrals",
+      "left": {
+        "content_type": "text",
+        "content": "**Key Formulas:**\n- Surface area element: $dS = |\\mathbf{r}_u\\times\\mathbf{r}_v|\\,du\\,dv$\n- Scalar surface integral: $\\iint_S f\\,dS = \\iint_D f(\\mathbf{r})\\,|\\mathbf{r}_u\\times\\mathbf{r}_v|\\,du\\,dv$\n- Scalar integral (graph $z=g$): $\\iint_S f\\,dS = \\iint_D f(x,y,g)\\sqrt{1+g_x^2+g_y^2}\\,dx\\,dy$\n- Flux (vector) integral: $\\iint_S \\mathbf{F}\\cdot d\\mathbf{S} = \\iint_D \\mathbf{F}\\cdot (\\mathbf{r}_u\\times\\mathbf{r}_v)\\,du\\,dv$\n\n**Always check orientation** for flux integrals—it determines the sign.\n\n**Learning objectives revisited:**\n- Parametrize surfaces (sphere, cylinder, cone, plane, graph)\n- Compute surface area and scalar surface integrals\n- Evaluate flux integrals through closed surfaces\n- Apply to physical situations (fluid flow, paint thickness)"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary of key formulas and learning goals.",
+      "teacher_narration": "Let's quickly recap what we've learned. Surface integrals extend double integrals to curved surfaces. The area element $dS$ is the magnitude of the cross product of the tangent vectors. For scalar integrals, we weight the function by this area. For flux integrals, we dot the vector field with the oriented area element—the cross product itself, not its magnitude. Always check orientation. You should now be able to parametrize surfaces, compute surface area, evaluate scalar and vector surface integrals, and apply them in physical examples.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Flux Through a Torus",
+      "left": {
+        "content_type": "text",
+        "content": "**Problem:** Compute the flux of $\\mathbf{F} = \\langle 0,0,z \\rangle$ outward through the torus parametrized by\n$$\\mathbf{r}(\\phi,\\theta)=((R+r\\cos\\phi)\\cos\\theta,\\,(R+r\\cos\\phi)\\sin\\theta,\\,r\\sin\\phi)$$\nfor $0\\leq\\phi,\\theta\\leq2\\pi$.\n\n**Hint:** The outward normal can be found by computing $\\mathbf{r}_\\phi\\times\\mathbf{r}_\\theta$; it should point away from the tube axis. Then compute the dot product and integrate."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A torus with arrow indicating the vertical field F = (0,0,z)",
+        "visual_spec": "Plot a torus with parameters R=3, r=1. Show a few arrows of the field F=(0,0,z) as vertical blue arrows. On a patch, show the outward normal in red. Label the parameters.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\n\nR, r = 3, 1\nphi = np.linspace(0, 2*np.pi, 30)\ntheta = np.linspace(0, 2*np.pi, 20)\nPhi, Theta = np.meshgrid(phi, theta)\nX = (R + r*np.cos(Phi)) * np.cos(Theta)\nY = (R + r*np.cos(Phi)) * np.sin(Theta)\nZ = r*np.sin(Phi)\n\nfig = plt.figure(figsize=(8,6))\nax = fig.add_subplot(111, projection='3d')\nax.plot_surface(X, Y, Z, alpha=0.5, cmap='cool', edgecolor='gray')\n\n# Sample points for vectors\nphi_s = np.linspace(0, 2*np.pi, 6)[:-1]\ntheta_s = np.linspace(0, 2*np.pi, 4)\nfor p in phi_s:\n    for t in theta_s:\n        x = (R + r*np.cos(p)) * np.cos(t)\n        y = (R + r*np.cos(p)) * np.sin(t)\n        z = r*np.sin(p)\n        # Field F = (0,0,z)\n        ax.quiver(x,y,z, 0,0,z, color='blue', length=0.5, normalize=False)\nax.set_xlabel('x'); ax.set_ylabel('y'); ax.set_zlabel('z')\nax.set_title('Challenge: Flux through a torus')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "[Challenge – Optional] Flux of vertical field through a torus using parametric surface integral.",
+      "teacher_narration": "For those ready for a deeper challenge, try computing the flux of the vertical field $\\langle 0,0,z\\rangle$ through a torus. You'll need to compute the cross product carefully. The outward normal on a torus points away from the tube axis. This is a good test of your understanding of parametric surfaces and orientation. The answer is zero—do you see why?",
+      "student_prompt": "Try to compute the integral and see if the answer is zero. Why would it be zero?",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    }
+  ]
+}

@@ -1,0 +1,350 @@
+{
+  "lecture_meta": {
+    "title": "Triple Integrals: From Boxes to General Solids",
+    "topic": "Triple Integrals",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Set up and evaluate triple integrals over rectangular boxes and general bounded regions",
+      "Interpret triple integrals as volume accumulation in 3D space",
+      "Choose the optimal order of integration to simplify calculations",
+      "Apply triple integrals to compute volumes and center of mass of complex solids"
+    ],
+    "prerequisite_reminder": "Double integrals and iterated integration in 2D."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Flat to Solid: Why Triple Integrals?",
+      "left": {
+        "content_type": "concept",
+        "content": "**Swimming Pool Dye Analogy**\n\nImagine pouring dye into a pool with varying depth. How much dye is needed if concentration changes at every point?\n- Double integral: dye over the surface (2D)\n- Triple integral: dye through the entire volume (3D)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D volume with color gradient showing concentration variation.",
+        "visual_spec": "Animate a 3D rectangular box with a vertical gradient from blue to red. Gradually fill it from bottom to top, showing horizontal slices accumulating. Label 'Double integral: area of one slice' vs 'Triple integral: volume of all slices'. Use matplotlib 3D with slider to control fill level.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for fill level from 0 to 1"
+        ]
+      },
+      "on_screen_text": "How much dye? Double integral → surface. Triple integral → whole volume.",
+      "teacher_narration": "Think about filling a swimming pool with a dye that changes concentration at every point. A double integral would measure the dye spread over the pool's surface, but the pool has depth. To capture the dye throughout the entire water volume, we need three nested summations: that's a triple integral. In this lecture, you'll learn exactly how to set them up and evaluate them.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Intuition: Stacking 2D Slices",
+      "left": {
+        "content_type": "concept",
+        "content": "**Key Insight**\n\nTriple integrals stack double integrals over height.\n$$\n\\iiint_E f(x,y,z) dV = \\iint_D \\left[ \\int_{z_1(x,y)}^{z_2(x,y)} f(x,y,z) dz \\right] dA\n$$\n- Inner: integrate through each vertical rod\n- Outer: integrate over the 2D projection"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animation of stacking horizontal slices into a solid.",
+        "visual_spec": "Show a 3D solid (e.g., a cylinder) sliced into N thin horizontal disks. Animate adding each slice from bottom to top. Display the cumulative volume. Use a slider for N (number of slices). Color slices alternating for clarity. Axes labels: x, y, z. Title: 'Approximating Volume by Slices'.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for number of slices from 1 to 50"
+        ]
+      },
+      "on_screen_text": "Triple integral = stack of double integrals. Inner integral through height, outer over projection.",
+      "teacher_narration": "Here's the core intuition: you can think of a solid as a stack of thin horizontal slices. For each (x,y) point, the inner integral adds contributions from z from bottom to top. Then you integrate that over the 2D shadow of the solid. The slider lets you see how more slices give a better approximation of the total volume. This stacking perspective is the foundation for understanding triple integrals as a natural extension of double integrals.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definition: Triple Integral over a Box",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\n\\iiint_B f(x,y,z) dV = \\lim_{l,m,n\\to\\infty} \\sum_{i=1}^l \\sum_{j=1}^m \\sum_{k=1}^n f(x_{ijk}^*,y_{ijk}^*,z_{ijk}^*) \\Delta V\n$$\n- $B = [a,b]\\times[c,d]\\times[r,s]$\n- $\\Delta V = \\Delta x \\Delta y \\Delta z$\n- Triple sum = 3D Riemann sum"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D Riemann sum with small boxes and sample points.",
+        "visual_spec": "Draw a rectangular box in 3D. Subdivide into small rectangular boxes. Highlight one small box with its sample point at the center. Use a slider for number of subdivisions in each direction (l=m=n). Show the Riemann sum value and the exact integral (if known) for a simple function like f=1. Use matplotlib. Axes: x,y,z. Title: '3D Riemann Sum'.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for subdivisions from 1 to 10"
+        ]
+      },
+      "on_screen_text": "Triple integral = limit of triple Riemann sum. Volume $ΔV$ becomes $dV$.",
+      "teacher_narration": "Formally, we partition the box into small sub-boxes, sample the function inside each, multiply by the sub-box volume, and sum. Taking the limit as all three subdivisions go to infinity gives the triple integral. This is the natural 3D extension of the single and double Riemann sums you already know. The slider helps you see how increasing subdivisions improves the approximation of the integral.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Fubini's Theorem for Triple Integrals",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Fubini's Theorem (Triple)**\n\nIf $f$ is continuous on $B=[a,b]\\times[c,d]\\times[r,s]$, then\n$$\n\\iiint_B f(x,y,z) dV = \\int_r^s \\int_c^d \\int_a^b f(x,y,z) \\,dx\\,dy\\,dz\n$$\n- Any order works (6 permutations)\n- Innermost limits: constants or functions of outer variables only"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram showing one iterated integration order on a box.",
+        "visual_spec": "Draw a 3D box with axes labeled. Show arrows indicating the order: first integrate along x (line), then y (plane), then z (volume). Color each integration step differently. Label 'dx', 'dy', 'dz' on arrows. Optionally show a second order (e.g., dz dy dx) for comparison.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Fubini: Triple integral = three nested single integrals. Any order works on a box.",
+      "teacher_narration": "Fubini's theorem lets us compute a triple integral as three iterated single integrals. For a rectangular box, any order of integration yields the same result. The key is that the innermost limits are constants (or functions of outer variables) and the outermost limits are constants. We'll see that for general regions, we must adapt the limits. This theorem is valid for continuous functions on a rectangular box, which ensures the iterated integrals converge to the same value.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1 (Warm-Up): Rectangular Box",
+      "left": {
+        "content_type": "steps",
+        "content": "**Evaluate** $\\iiint_B xyz^2 \\,dV$ with $B=[0,1]\\times[-1,2]\\times[0,3]$.\n\n| Step | Action | Intermediate Result |\n|------|--------|--------------------|\n| 1 | Order: $dx\\,dy\\,dz$ | $\\int_0^3\\int_{-1}^2\\int_0^1 xyz^2\\,dx\\,dy\\,dz$ |\n| 2 | Inner $\\int_0^1 xyz^2\\,dx$ | $\\frac{y z^2}{2}$ |\n| 3 | Middle $\\int_{-1}^2 \\frac{y z^2}{2}\\,dy$ | $\\frac{3z^2}{4}$ |\n| 4 | Outer $\\int_0^3 \\frac{3z^2}{4}\\,dz$ | $\\frac{27}{4}$ |\n\n**Answer:** $\\frac{27}{4}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example 1: rectangular box, constant limits. Integrate step by step.",
+      "teacher_narration": "Let's start with a simple rectangular box. We choose to integrate with respect to x first, then y, then z. Notice that the limits are all constants because the box is axis-aligned. After integrating in x, we treat y and z as constants. Then integrate in y, then finally in z. The final answer is 27/4. Try a different order to verify Fubini's theorem.",
+      "student_prompt": "Try computing with order dz dy dx. Do you get the same answer?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "General Regions: Type 1 (z-simple)",
+      "left": {
+        "content_type": "concept",
+        "content": "**z-simple region:**\n$$\nE = \\{ (x,y,z) \\mid (x,y)\\in D, \\, u_1(x,y) \\le z \\le u_2(x,y) \\}\n$$\n- $D$ is projection onto $xy$-plane\n- First integrate in $z$, then over $D$:\n$$\n\\iiint_E f\\,dV = \\iint_D \\left[ \\int_{u_1(x,y)}^{u_2(x,y)} f\\,dz \\right] dA\n$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D solid with its projection (shadow) on xy-plane.",
+        "visual_spec": "Draw a 3D solid (e.g., a dome or tetrahedron) with curved boundaries. Show a vertical line from a point (x,y) in D penetrating the solid from bottom surface z=u1 to top surface z=u2. Highlight the projection D in translucent gray on the xy-plane. Use arrows to indicate integration direction. Axes: x,y,z.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "General region: integrate z first from bottom to top, then integrate over the 2D shadow.",
+      "teacher_narration": "Most solids are not boxes. We describe them as z-simple: for each (x,y) in the projection D, z varies from a lower surface to an upper surface. The triple integral becomes a double integral over D of the inner z-integral. Always first identify the projection and the bounding surfaces. This approach is analogous to how we handled type I regions in double integrals, but now we have an extra dimension to account for.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2 (Standard): Tetrahedron",
+      "left": {
+        "content_type": "steps",
+        "content": "**Evaluate** $\\iiint_E z\\,dV$ where $E$ is tetrahedron bounded by $x=0,y=0,z=0$, and $x+y+z=1$.\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | Region: $0\\le z\\le 1-x-y$, $(x,y)\\in D$ | $D: x\\ge0,y\\ge0,x+y\\le1$ |\n| 2 | Setup: $\\int_0^1\\int_0^{1-x}\\int_0^{1-x-y} z\\,dz\\,dy\\,dx$ | |\n| 3 | Inner: $\\int_0^{1-x-y} z\\,dz$ | $\\frac{(1-x-y)^2}{2}$ |\n| 4 | Middle: $\\int_0^{1-x} \\frac{(1-x-y)^2}{2}\\,dy$ | $\\frac{(1-x)^3}{6}$ |\n| 5 | Outer: $\\int_0^1 \\frac{(1-x)^3}{6}\\,dx$ | $\\frac{1}{24}$ |\n\n**Answer:** $\\frac{1}{24}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example 2: tetrahedron. Integrate z first, then y, then x.",
+      "teacher_narration": "Now we work with a tetrahedron. The bounds for z are from 0 to the plane 1-x-y. The projection onto the xy-plane is a triangle. We integrate z first, then y up to the line, then x from 0 to 1. Follow the steps carefully; the inner integral yields a quadratic, which simplifies nicely. The final answer is 1/24.",
+      "student_prompt": "What is the volume of this tetrahedron? (Hint: integrate f=1).",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Tetrahedron Slicing",
+      "left": {
+        "content_type": "concept",
+        "content": "Explore the tetrahedron from Example 2.\n- Drag the slider to slice at a given $x$.\n- Toggle the projection on/off.\n- Observe how the cross-section changes.",
+        "content_text": null
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive 3D tetrahedron with slicing plane",
+        "visual_spec": "Use matplotlib 3D. Plot the tetrahedron with vertices (0,0,0), (1,0,0), (0,1,0), (0,0,1). Add a transparent plane at x = constant using a slider. Show the triangular cross-section in a different color. Toggle button to show/hide the xy-plane projection (the shadow triangle). Slider for x from 0 to 1.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, Button\n\nfig = plt.figure(figsize=(10, 8))\nax = fig.add_subplot(111, projection='3d', facecolor='white')\nax.set_xlim(0, 1.2)\nax.set_ylim(0, 1.2)\nax.set_zlim(0, 1.2)\nax.set_xlabel('X')\nax.set_ylabel('Y')\nax.set_zlabel('Z')\nax.set_title('Tetrahedron Slicing')\n\n# Tetrahedron vertices\nverts = np.array([[0,0,0],[1,0,0],[0,1,0],[0,0,1]])\n# Edges\nedges = [\n    [verts[0], verts[1]],\n    [verts[0], verts[2]],\n    [verts[0], verts[3]],\n    [verts[1], verts[2]],\n    [verts[1], verts[3]],\n    [verts[2], verts[3]]\n]\nfor e in edges:\n    e = np.array(e)\n    ax.plot(e[:,0], e[:,1], e[:,2], 'b-', linewidth=2)\n\n# Projection triangle on xy-plane\nproj_x = np.array([0,1,0,0])\nproj_y = np.array([0,0,1,0])\nproj_z = np.zeros(4)\nproj_line, = ax.plot(proj_x, proj_y, proj_z, 'g--', linewidth=1.5, alpha=0.7, label='Projection')\n\n# Initial slice plane\nx0 = 0.5\n# Cross-section points at x=x0: line from (x0,0,0) to (x0,1-x0,0) and from (x0,0,0) to (x0,0,1-x0) and between them?\n# Actually cross-section is triangle with vertices (x0,0,0), (x0,1-x0,0), (x0,0,1-x0)\ny_vals = np.linspace(0, 1-x0, 20)\nz_vals = np.linspace(0, 1-x0, 20)\nY, Z = np.meshgrid(y_vals, z_vals)\nX = x0 * np.ones_like(Y)\n# Condition: y+z <= 1-x0\nmask = (Y + Z) <= (1 - x0)\nX_masked = X[mask]\nY_masked = Y[mask]\nZ_masked = Z[mask]\nslice_plot = ax.scatter(X_masked, Y_masked, Z_masked, c='r', s=10, alpha=0.8)\n\n# Slider\nax_slider = plt.axes([0.2, 0.02, 0.6, 0.03])\nslider = Slider(ax_slider, 'x slice', 0.0, 1.0, valinit=x0, valstep=0.01)\n\ndef update(val):\n    x0 = slider.val\n    # update slice scatter\n    global slice_plot\n    slice_plot.remove()\n    y_vals = np.linspace(0, 1-x0, 20)\n    z_vals = np.linspace(0, 1-x0, 20)\n    Y, Z = np.meshgrid(y_vals, z_vals)\n    X = x0 * np.ones_like(Y)\n    mask = (Y + Z) <= (1 - x0)\n    X_masked = X[mask]\n    Y_masked = Y[mask]\n    Z_masked = Z[mask]\n    slice_plot = ax.scatter(X_masked, Y_masked, Z_masked, c='r', s=10, alpha=0.8)\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\n\n# Button to toggle projection\nax_button = plt.axes([0.8, 0.02, 0.1, 0.04])\nbutton = Button(ax_button, 'Toggle Proj')\nproj_visible = True\ndef toggle(event):\n    global proj_visible\n    proj_visible = not proj_visible\n    proj_line.set_visible(proj_visible)\n    fig.canvas.draw_idle()\nbutton.on_clicked(toggle)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for x slice from 0 to 1",
+          "Button: Toggle projection on/off"
+        ]
+      },
+      "on_screen_text": "Drag the slider to see how the cross-section changes. Toggle the projection.",
+      "teacher_narration": "Let's explore the tetrahedron interactively. Drag the slider to slice the tetrahedron at a given x-coordinate. Notice how the cross-section shrinks as x increases. Toggle the projection to see the triangular shadow on the xy-plane. This visualization helps you understand how the limits in the triple integral correspond to geometry.",
+      "student_prompt": "At x=0.5, what are the y and z limits of the cross-section?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Choosing the Wrong Order",
+      "left": {
+        "content_type": "concept",
+        "content": "**Common mistake:** automatically using $dz\\,dy\\,dx$ without checking simpler orders.\n\n**Example:** $\\iiint_E x\\,dV$, $E$ bounded by $x=0,y=0,z=0$, $2x+3y+4z=12$.\n- **Wrong:** $\\int_0^6\\int_0^{(12-2x)/3}\\int_0^{(12-2x-3y)/4} x\\,dz\\,dy\\,dx$ (messy)\n- **Better:** Integrate $x$ first: $\\int_0^3\\int_0^{(12-4z)/3}\\int_0^{(12-3y-4z)/2} x\\,dx\\,dy\\,dz$ (simpler)\n\n**Why it works:** The plane $2x+3y+4z=12$ gives $x$ as a simple linear function of $y,z$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Comparison of two integration orders with annotations showing complexity.",
+        "visual_spec": "Split panel: left side shows the wrong order (dz dy dx) with convoluted limits highlighted in red. Right side shows the better order (dx dy dz) with simple linear limits highlighted in green. Below, show the projection shapes: on left, projection onto xy-plane; on right, projection onto yz-plane. Annotate with arrows indicating integration direction.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Wrong: always dz dy dx. Better: choose order where innermost variable has simplest bounds.",
+      "teacher_narration": "A common mistake is to blindly use dz dy dx without thinking. Here, integrating x first is much simpler because the plane equation gives x directly as a linear function of y and z. The wrong order makes you work with nested radicals and complicated limits. Always examine which variable has the simplest bounds—often the one that appears linearly in a bounding surface.",
+      "student_prompt": "Which order of integration would you try first for this region?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3 (Volume): Paraboloid and Plane",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find volume** of solid bounded by $z=x^2+y^2$ and $z=4$.\n\n| Step | Action | Expression |\n|------|--------|------------|\n| 1 | Volume $= \\iiint_E 1\\,dV$ | $\\iint_D \\int_{x^2+y^2}^4 dz\\, dA$ |\n| 2 | Projection $D$: $x^2+y^2 \\le 4$ | circle radius 2 |\n| 3 | Inner: $\\int_{x^2+y^2}^4 dz = 4 - (x^2+y^2)$ | height |\n| 4 | Switch to polar: $r,\\theta$ | $\\int_0^{2\\pi}\\int_0^2 (4-r^2) r\\,dr\\,d\\theta$ |\n| 5 | Evaluate | $8\\pi$ |\n\n**Answer:** $8\\pi$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Volume by triple integral: integrate f=1, use polar coordinates for circular symmetry.",
+      "teacher_narration": "When the integrand is 1, the triple integral gives the volume. Here the solid lies between a paraboloid and a plane. The inner z-integral gives the height of the solid at each point. Because the projection is a disk, we switch to polar coordinates to simplify the double integral. The final volume is 8π, which matches what you'd get from the disk method in Calculus II.",
+      "student_prompt": "What would the volume be if the upper plane were z=8 instead? (Answer: 16π?)",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 4 (Application): Center of Mass of a Tetrahedron",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find center of mass** of tetrahedron from Example 2 (density $\\rho=1$).\n\n| Quantity | Integral | Value |\n|----------|----------|-------|\n| Mass $M$ | $\\iiint_E 1\\,dV$ | $\\frac{1}{6}$ |\n| $M_z$ | $\\iiint_E z\\,dV$ | $\\frac{1}{24}$ |\n| $M_x$ | $\\iiint_E x\\,dV$ | $\\frac{1}{24}$ (by symmetry) |\n| $M_y$ | $\\iiint_E y\\,dV$ | $\\frac{1}{24}$ (by symmetry) |\n\n**Center of mass:** $(\\bar{x},\\bar{y},\\bar{z}) = (1/4,1/4,1/4)$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Center of mass = (M_x/M, M_y/M, M_z/M). Symmetry simplifies calculations.",
+      "teacher_narration": "Triple integrals are used in physics to find the center of mass. For constant density, the center of mass is the centroid. We already computed the integral of z in Example 2, which gives M_z. By symmetry of the tetrahedron, the x and y moments are the same. The mass is just the volume, which is 1/6. So each coordinate of the center of mass is 1/4.",
+      "student_prompt": "If the density were not constant, say ρ = x, would symmetry still hold?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof Sketch of Fubini's Theorem",
+      "left": {
+        "content_type": "steps",
+        "content": "**Sketch for continuous $f$ on box $B=[a,b]\\times[c,d]\\times[r,s]$:**\n\n1. Partition each axis: $\\Delta x = (b-a)/l$, $\\Delta y = (d-c)/m$, $\\Delta z = (s-r)/n$.\n2. Riemann sum: $\\sum_{i=1}^l \\sum_{j=1}^m \\sum_{k=1}^n f(x_i^*,y_j^*,z_k^*) \\Delta x \\Delta y \\Delta z$.\n3. Fix $y_j^*,z_k^*$, sum over i: $\\to \\int_a^b f(x,y_j^*,z_k^*) dx$ as $l\\to\\infty$.\n4. Then sum over j: $\\to \\int_c^d \\left[\\int_a^b f(x,y,z_k^*) dx\\right] dy$.\n5. Finally sum over k: $\\to \\int_r^s \\left[\\int_c^d \\int_a^b f(x,y,z) dx\\,dy\\right] dz$.\n6. Continuity ensures convergence to the triple integral."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof: nested Riemann sums → iterated integrals. Requires continuity.",
+      "teacher_narration": "For those interested, here's a sketch of Fubini's theorem. We start with the triple Riemann sum and fix two variables, turning the inner sum into an integral over x. Then we integrate over y, and finally over z. The continuity of f guarantees that these limits can be interchanged and that the iterated integrals converge to the same value as the triple integral.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Check Your Understanding",
+      "left": {
+        "content_type": "concept",
+        "content": "**Which integral setup correctly represents the volume of the tetrahedron bounded by $x=0,y=0,z=0$, $x+y+z=1$?**\n\nA) $\\int_0^1\\int_0^1\\int_0^1 dz\\,dy\\,dx$\n\nB) $\\int_0^1\\int_0^{1-x}\\int_0^{1-x-y} dz\\,dy\\,dx$\n\nC) $\\int_0^1\\int_0^{1-z}\\int_0^{1-y-z} dx\\,dy\\,dz$\n\nD) Both B and C"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Tetrahedron diagram with coordinate axes and labels.",
+        "visual_spec": "Draw a 3D tetrahedron with vertices (0,0,0), (1,0,0), (0,1,0), (0,0,1). Show the plane x+y+z=1. Mark the axes. Optionally, shade the projection triangle on the xy-plane. No interactivity needed.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause and decide: Which integral gives the volume?",
+      "teacher_narration": "Here's a quick test. Carefully look at the tetrahedron and its bounding planes. Which setup correctly captures the variable limits? Pause the video now and think about it. [pause] The correct answer is both B and C, because the region can be described in two different orders of integration. Option A has constant limits, which would give a cube, not a tetrahedron.",
+      "student_prompt": "Which integral setup correctly represents the volume of the tetrahedron?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: What You've Learned",
+      "left": {
+        "content_type": "concept",
+        "content": "**Learning Objectives Revisited**\n\n✅ Set up and evaluate triple integrals over rectangular boxes and general regions\n✅ Interpret triple integrals as accumulation over 3D volume\n✅ Choose optimal order of integration\n✅ Apply triple integrals to compute volumes and center of mass\n\n**Key Formulas**\n- Triple integral: $\\iiint f dV$\n- Fubini: $\\int_r^s\\int_c^d\\int_a^b f\\,dx\\,dy\\,dz$\n- Type 1 region: $\\iint_D\\int_{u_1}^{u_2} f\\,dz\\,dA$\n- Volume: $\\iiint_E 1\\,dV$\n- Center of mass: $(\\bar{x},\\bar{y},\\bar{z}) = (M_x/M, M_y/M, M_z/M)$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Triple integrals extend double integrals to 3D. Master the set-up, then evaluate.",
+      "teacher_narration": "Congratulations! You've learned the core concept of triple integrals. You can set them up over boxes and general regions, choose the best order of integration, and apply them to compute volumes and physical quantities like center of mass. This powerful tool will appear again when we study cylindrical and spherical coordinates. Keep practicing with the examples provided. Remember that the key to success is carefully identifying the region and choosing the simplest order of integration.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

@@ -52,8 +52,50 @@ function normalizeList(items, prefix) {
       id: item.id || `${prefix}_${index + 1}`,
       text: item.text || "",
       say: item.say || "",
+      children: normalizeList(item.children || item.items || [], `${prefix}_${index + 1}_child`),
     };
   });
+}
+
+function normalizeTableRows(rows) {
+  return (rows || []).map((row) => Array.isArray(row) ? row.map((cell) => String(cell ?? "")) : [String(row ?? "")]);
+}
+
+function normalizeBlock(block, prefix, index) {
+  if (typeof block === "string") {
+    return {
+      id: `${prefix}_block_${index + 1}`,
+      type: "paragraph",
+      text: block,
+      say: "",
+    };
+  }
+
+  const type = String(block?.type || "paragraph").toLowerCase();
+  const id = block?.id || `${prefix}_${type}_${index + 1}`;
+  return {
+    ...block,
+    id,
+    type,
+    titleId: block?.title ? block.titleId || `${id}_title` : "",
+    bodyId: block?.text || block?.content || block?.formula ? block.bodyId || `${id}_body` : "",
+    text: block?.text ?? block?.content ?? "",
+    say: block?.say || "",
+    items: normalizeList(block?.items || block?.bullets || [], `${id}_item`),
+    steps: normalizeList(block?.steps || [], `${id}_step`),
+    reveal: block?.reveal
+      ? {
+        ...block.reveal,
+        id: block.reveal.id || `${id}_reveal`,
+      }
+      : null,
+    headers: (block?.headers || []).map((cell) => String(cell ?? "")),
+    rows: normalizeTableRows(block?.rows),
+  };
+}
+
+function normalizeBlocks(blocks, prefix) {
+  return (blocks || []).map((block, index) => normalizeBlock(block, prefix, index));
 }
 
 function normalizeMedia(media, prefix) {
@@ -85,6 +127,7 @@ function normalizeColumn(column, prefix) {
     htmlId: column.html ? column.htmlId || `${prefix}_legacy_html` : "",
     bullets: normalizeList(column.bullets, `${prefix}_bullet`),
     paragraphs: normalizeList(column.paragraphs, `${prefix}_paragraph`),
+    blocks: normalizeBlocks(column.blocks, prefix),
     media: normalizeMedia(column.media, prefix),
   };
 }
@@ -130,18 +173,32 @@ export function normalizeSlidesData(slidesData, options = {}) {
       normalized.titleId = normalized.title ? "title" : "";
       normalized.leadId = normalized.lead ? "lead" : "";
       normalized.bullets = normalizeList(normalized.bullets, "bullet");
+      normalized.blocks = normalizeBlocks(normalized.blocks, "body");
       return normalized;
     }
 
     if (normalized.type === "text") {
       normalized.titleId = normalized.title ? "title" : "";
+      normalized.questionId = normalized.question ? "question" : "";
       normalized.leadId = normalized.lead ? "lead" : "";
       normalized.paragraphs = normalizeList(normalized.paragraphs, "paragraph");
+      normalized.blocks = normalizeBlocks(normalized.blocks, "body");
+      normalized.media = normalizeMedia(normalized.media, "body");
+      return normalized;
+    }
+
+    if (normalized.type === "visual_lab") {
+      normalized.titleId = normalized.title ? "title" : "";
+      normalized.questionId = normalized.question ? "question" : "";
+      normalized.leadId = normalized.lead ? "lead" : "";
+      normalized.blocks = normalizeBlocks(normalized.blocks, "body");
+      normalized.media = normalizeMedia(normalized.media, "visual_lab");
       return normalized;
     }
 
     if (normalized.type === "two-col") {
       normalized.titleId = normalized.title ? "title" : "";
+      normalized.questionId = normalized.question ? "question" : "";
       normalized.left = normalizeColumn(normalized.left, "left");
       normalized.right = normalizeColumn(normalized.right, "right");
       return normalized;

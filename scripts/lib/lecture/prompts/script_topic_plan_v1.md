@@ -23,6 +23,10 @@ Rules:
 - opening_intent must describe how the professor opens the class topic for students, not how to create a presentation.
 - closing_intent must describe the student takeaway, reminder, or handoff at the end of the topic, not how to close a presentation creation process.
 - Avoid generic bridge language like "introduce the next key term".
+- For Arian University calculus topics, the first video in a course should introduce the channel/instructor identity once, naturally: Arian from Arian University. Later videos should use a brief welcome-back style instead of repeating the full introduction.
+- For Arian University calculus learning-objective/setup slides, plan a course-orientation beat first: point to the roadmap/progress visual, name the current session and nearby session/topic context when visible, then explain what this topic covers.
+- For AU calculus roadmap narration, use session-level course framing. Do not say "topic X of Y" out loud; the compact numbered boxes can carry that visually.
+- Treat course-roadmap/progress visuals as real teaching objects, not decoration. The script writer should target the roadmap element when orienting students.
 
 Output shape:
 - opening_intent: string

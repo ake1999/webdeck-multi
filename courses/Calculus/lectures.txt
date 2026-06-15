@@ -1,0 +1,100 @@
+# Module 0: Preliminaries (2 lectures)
+"0|Review of Functions and Graphs|functions"
+"0|Trigonometry and Graphing Review|trig"
+
+# Module 1a: Limits (4 lectures) — COMPLETE
+"1|The Intuitive Concept of a Limit|limits"
+"1|Limit Laws and Algebraic Evaluation|limits"
+"1|One-Sided Limits and Limits at Infinity|limits"
+"1|The Squeeze Theorem|limits"
+
+# Module 1b: Continuity (2 lectures) — COMPLETE
+"1|Continuity and the Intermediate Value Theorem|continuity"
+
+# Module 2: The Derivative (7 lectures) — COMPLETE
+"2|Instantaneous Rate of Change|derivatives"
+"2|Formal Definition of the Derivative|derivatives"
+"2|Power Rule and Basic Properties of Derivatives|derivatives"
+"2|The Product Rule for Derivatives|derivatives"
+"2|The Chain Rule|derivatives"
+"2|Implicit Differentiation|derivatives"
+"2|Related Rates|derivatives"
+
+# Module 3a: Extrema & Graphing (3 lectures)
+"3|Critical Points and Extrema on an Interval|derivatives"
+"3|Rolles Theorem and the Mean Value Theorem|derivatives"
+"3|First and Second Derivative Tests|derivatives"
+
+# Module 3b: Advanced Applications (3 lectures)
+"3|Optimization Problems|derivatives"
+"3|LHopitals Rule|limits"
+"3|Newtons Method and Linear Approximations|derivatives"
+
+# Module 4: Integration Intro (5 lectures)
+"4|Antiderivatives and Indefinite Integrals|integrals"
+"4|Approximating Area with Riemann Sums|integrals"
+"4|The Definite Integral|integrals"
+"4|The Fundamental Theorem of Calculus|integrals"
+"4|Integration by Substitution|integrals"
+
+# Module 5: Applications of Integration (5 lectures)
+"5|Area Between Curves|integrals"
+"5|Volume Disk and Washer Methods|integrals"
+"5|Volume Cylindrical Shells|integrals"
+"5|Arc Length and Surface Area of Revolution|integrals"
+"5|Work and Fluid Force|integrals"
+
+# Module 6: Techniques of Integration (5 lectures)
+"6|Integration by Parts|integrals"
+"6|Trigonometric Integrals|integrals"
+"6|Trigonometric Substitution|integrals"
+"6|Partial Fractions|integrals"
+"6|Improper Integrals|integrals"
+
+# Module 7: Sequences & Series (6 lectures)
+"7|Sequences and Convergence|series"
+"7|Series and Partial Sums|series"
+"7|The Integral Test and p-Series|series"
+"7|Comparison Tests Direct and Limit|series"
+"7|Alternating Series and Absolute Convergence|series"
+"7|The Ratio and Root Tests|series"
+
+# Module 8: Power Series & Polar (4 lectures)
+"8|Power Series and Radius of Convergence|series"
+"8|Taylor and Maclaurin Series|series"
+"8|Parametric Equations and Calculus|param"
+"8|Polar Coordinates and Graphing|polar"
+
+# Module 9: Vectors & 3D Geometry (5 lectures)
+"9|3D Coordinate Systems and Vectors|vectors"
+"9|The Dot Product and Projections|vectors"
+"9|The Cross Product|vectors"
+"9|Equations of Lines and Planes|vectors"
+"9|Quadric Surfaces|vectors"
+
+# Module 10a: Partial Derivatives Basics (4 lectures)
+"10|Functions of Several Variables|multivar"
+"10|Limits and Continuity in Multivariable Calculus|multivar"
+"10|Partial Derivatives|multivar"
+"10|Tangent Planes and Linear Approximations|multivar"
+
+# Module 10b: Advanced Partial Derivatives (3 lectures)
+"10|The Multivariable Chain Rule|multivar"
+"10|Directional Derivatives and the Gradient Vector|multivar"
+"10|Maximum Minimum Problems and Lagrange Multipliers|multivar"
+
+# Module 11: Multiple Integrals (5 lectures)
+"11|Double Integrals over Rectangular Regions|multivar"
+"11|Double Integrals over General Regions|multivar"
+"11|Double Integrals in Polar Coordinates|multivar"
+"11|Triple Integrals|multivar"
+"11|Triple Integrals in Cylindrical and Spherical Coordinates|multivar"
+
+# Module 12: Vector Calculus (7 lectures)
+"12|Vector Fields and Line Integrals|vectors"
+"12|The Fundamental Theorem for Line Integrals|vectors"
+"12|Greens Theorem|vectors"
+"12|Curl and Divergence|vectors"
+"12|Parametric Surfaces and Surface Integrals|vectors"
+"12|Stokes Theorem|vectors"
+"12|The Divergence Theorem|vectors"

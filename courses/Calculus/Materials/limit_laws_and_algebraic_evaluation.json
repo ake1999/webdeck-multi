@@ -1,0 +1,355 @@
+{
+  "lecture_meta": {
+    "title": "Limit Laws and Algebraic Evaluation",
+    "topic": "Calculating limits using algebraic techniques and limit laws",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate limits of polynomial, rational, and root functions using the Limit Laws",
+      "Apply algebraic techniques (factoring, rationalizing) to evaluate limits that initially yield indeterminate forms",
+      "Analyze when a limit does not exist and justify using one-sided limits or infinite behavior",
+      "Interpret limit statements graphically and algebraically to determine function behavior near a point"
+    ],
+    "prerequisite_reminder": "You should be comfortable with the definition of a limit and have experience with basic function algebra."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "full_width",
+      "title": "Why Limit Laws Are Like Building Blocks",
+      "left": {
+        "content_type": "text",
+        "content": "Think of limit laws as LEGO bricks: if you know the size of each brick (simple function limit) and the rules for connecting them (addition, multiplication, division), you can build and evaluate any complicated limit structure without measuring the whole thing."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Limit Laws are LEGO bricks for calculus: combine known part limits to compute the whole.",
+      "teacher_narration": "Imagine you're a chef following a recipe. The Limit Laws are like knowing: 'If I know the weight of flour and the weight of sugar separately, then the weight of the mixture is just the sum.' You don't need to weigh the entire bowl — you trust the arithmetic. Similarly, if you know the limit of f of x and the limit of g of x exist, you can combine them algebraically without re-measuring. This idea — that limits respect arithmetic — is the foundation for everything we do today.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Eleven Limit Laws at a Glance",
+      "left": {
+        "content_type": "text",
+        "content": "**1. Sum Law** – $\\lim(f+g)=\\lim f + \\lim g$\n**2. Difference Law** – $\\lim(f-g)=\\lim f - \\lim g$\n**3. Constant Multiple Law** – $\\lim(cf) = c\\lim f$\n**4. Product Law** – $\\lim(fg) = \\lim f \\cdot \\lim g$\n**5. Quotient Law** – $\\lim(f/g) = \\lim f / \\lim g$ (denom. ≠0)\n**6. Power Law** – $\\lim(f^n) = (\\lim f)^n$\n**7. Constant Law** – $\\lim c = c$\n**8. Identity Law** – $\\lim x = a$\n**9. Power of x** – $\\lim x^n = a^n$\n**10. Root Law** – $\\lim\\sqrt[n]{x} = \\sqrt[n]{a}$\n**11. Root of Function** – $\\lim\\sqrt[n]{f} = \\sqrt[n]{\\lim f}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A diagram showing a function h(x)=f(x)+g(x) with f and g approaching their limits. A slider to change the approach point a from -2 to 5.",
+        "visual_spec": "Plot f(x)=x^2 and g(x)=2x+1 on axes with a movable vertical line at x=2. As the line moves, show the values of f(x), g(x), and their sum. The slider changes a. Include labels for L, M, and L+M. Use matplotlib.widgets.Slider.",
+        "python_code": "%matplotlib widget\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots()\nplt.subplots_adjust(bottom=0.25)\n\nx = np.linspace(-2, 5, 400)\na_init = 2\nf = lambda x: x**2\ng = lambda x: 2*x + 1\n\nline_f, = ax.plot(x, f(x), label='f(x)')\nline_g, = ax.plot(x, g(x), label='g(x)')\nline_sum, = ax.plot(x, f(x)+g(x), 'k--', label='f+g')\npoint_f, = ax.plot([], [], 'ro', markersize=8, label='f(a)')\npoint_g, = ax.plot([], [], 'bo', markersize=8, label='g(a)')\npoint_sum, = ax.plot([], [], 'ko', markersize=8, label='(f+g)(a)')\nax.axvline(x=a_init, color='gray', linestyle=':', alpha=0.5)\nax.legend()\nax.grid(True, alpha=0.3)\n\naxcolor = 'lightgoldenrodyellow'\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03], facecolor=axcolor)\nslider_a = Slider(ax_slider, 'a', -2, 5, valinit=a_init)\n\ndef update(val):\n    a = slider_a.val\n    point_f.set_data([a], [f(a)])\n    point_g.set_data([a], [g(a)])\n    point_sum.set_data([a], [f(a)+g(a)])\n    # update vertical line\n    ax.lines[0].set_xdata([a, a])\n    fig.canvas.draw_idle()\n\nslider_a.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for a from -2 to 5"
+        ]
+      },
+      "on_screen_text": "Eleven Limit Laws: break any limit into simple parts.",
+      "teacher_narration": "Here they are: all eleven Limit Laws. You don't need to memorise every single one right now — we'll focus on the most important: Sum, Difference, Constant Multiple, Product, and Quotient. Notice that laws 7 through 11 are really special cases of the first six. For example, the Power Law applied to the identity function gives law 9. The key point is that these laws allow you to compute a limit by breaking it into known pieces. The visual on the right shows the Sum Law: as you drag the slider a, you can see the individual function values and their sum. Notice that the limit of the sum always equals the sum of the limits.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Proof Intuition: The Sum Law",
+      "left": {
+        "content_type": "concept",
+        "content": "If $\\lim_{x\\to a}f(x)=L$ and $\\lim_{x\\to a}g(x)=M$, then $\\lim_{x\\to a}(f+g)(x)=L+M$.\n\n**Key idea**: distance from sum to $L+M$ ≤ distance from $f$ to $L$ + distance from $g$ to $M$.\n\nMake each distance $< \\epsilon/2$, then sum $< \\epsilon$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two number lines: one showing f(x) within an epsilon band around L, another showing g(x) within epsilon band around M. The sum lies inside the sum of bands.",
+        "visual_spec": "Draw two horizontal number lines from -5 to 5. On the first, mark point L at 2 and f(x) near it. On the second, mark M at -1 and g(x) near it. Below, show L+M=1 and the sum f(x)+g(x) inside an epsilon band. Add arrows and labels. Use matplotlib with simple shapes.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nfig, (ax1, ax2, ax3) = plt.subplots(3,1, figsize=(6, 4))\n\nexample = {'L':2, 'M':-1, 'f_x':2.3, 'g_x':-0.8}\n\nfor ax in [ax1, ax2, ax3]:\n    ax.set_xlim(-5,5)\n    ax.set_yticks([])\n    ax.spines['bottom'].set_position('center')\n    ax.spines['left'].set_visible(False)\n    ax.spines['right'].set_visible(False)\n    ax.spines['top'].set_visible(False)\n\n# first line: f\nax1.plot([-5,5],[0,0],'k')\nax1.plot(example['L'], 0, 'ro', markersize=8, label='L')\nax1.plot(example['f_x'], 0, 'bo', markersize=8, label='f(x)')\nax1.legend()\nax1.set_title('f(x) near L')\n\n# second line: g\nax2.plot([-5,5],[0,0],'k')\nax2.plot(example['M'], 0, 'ro', markersize=8, label='M')\nax2.plot(example['g_x'], 0, 'bo', markersize=8, label='g(x)')\nax2.legend()\nax2.set_title('g(x) near M')\n\n# third line: sum\nax3.plot([-5,5],[0,0],'k')\nLplusM = example['L']+example['M']\nfplusg = example['f_x']+example['g_x']\nax3.plot(LplusM, 0, 'ro', markersize=8, label='L+M')\nax3.plot(fplusg, 0, 'bo', markersize=8, label='f(x)+g(x)')\nax3.legend()\nax3.set_title('Sum: f(x)+g(x) near L+M')\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": [
+          "Slider: change epsilon band width",
+          "Button: reveal next step"
+        ]
+      },
+      "on_screen_text": "Sum Law proof: control each part separately, then combine.",
+      "teacher_narration": "Why does the Sum Law work? Imagine we want to make the total error smaller than epsilon. If we can make the error in f smaller than half of epsilon, and the error in g smaller than half of epsilon, then the triangle inequality tells us the total error in their sum is less than epsilon. The visual shows this: f of x is close to L, g of x is close to M, and their sum is close to L plus M. This is the core idea behind the rigorous epsilon-delta proof.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Explore the Product and Quotient Laws",
+      "left": {
+        "content_type": "text",
+        "content": "Use the controls to see how $f(x)\\cdot g(x)$ and $\\frac{f(x)}{g(x)}$ behave as $x → a$. Adjust $a$ and the functions to test the laws."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive plot with two function generators and sliders for a.",
+        "visual_spec": "Plot f(x) and g(x) on the same axes, with separate traces for f*g and f/g (if g≠0). Add sliders for a (from -3 to 3) and for selecting function presets (polynomials, simple trig). Show vertical line at a and dotted horizontal lines at limits. Include buttons to toggle product/quotient display.",
+        "python_code": "%matplotlib widget\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button, RadioButtons\n\n# Define functions\nfuncs = {\n    'x^2 and x+1': (lambda x: x**2, lambda x: x+1),\n    'sin(x) and cos(x)': (np.sin, np.cos),\n    'x^3 and x-2': (lambda x: x**3, lambda x: x-2)\n}\n\nfig, ax = plt.subplots()\nplt.subplots_adjust(bottom=0.35)\nx = np.linspace(-3, 3, 400)\na_init = 1.0\n\nf, g = funcs['x^2 and x+1']\nf_eval, g_eval = f(x), g(x)\nline_f, = ax.plot(x, f_eval, label='f(x)')\nline_g, = ax.plot(x, g_eval, label='g(x)')\nline_prod, = ax.plot(x, f_eval*g_eval, 'k--', label='f*g', alpha=0.7)\nline_quot, = ax.plot(x, f_eval/g_eval, 'r--', label='f/g', alpha=0.7)\npoint_f, = ax.plot([], [], 'o', color='C0', markersize=8)\npoint_g, = ax.plot([], [], 'o', color='C1', markersize=8)\npoint_prod, = ax.plot([], [], 'o', color='k', markersize=8)\npoint_quot, = ax.plot([], [], 'o', color='r', markersize=8)\nax.axvline(x=a_init, color='gray', ls=':', alpha=0.5)\nax.legend()\nax.grid(True, alpha=0.3)\n\n# Sliders\nax_a = plt.axes([0.2, 0.2, 0.6, 0.03], facecolor='lightgoldenrodyellow')\nslider_a = Slider(ax_a, 'a', -3, 3, valinit=a_init)\n\n# Radio for function choice\nax_radio = plt.axes([0.02, 0.5, 0.15, 0.3])\nradio = RadioButtons(ax_radio, list(funcs.keys()), active=0)\n\ndef update(val):\n    a = slider_a.val\n    # update points\n    fa = f(a); ga = g(a)\n    point_f.set_data([a], [fa])\n    point_g.set_data([a], [ga])\n    point_prod.set_data([a], [fa*ga])\n    if ga != 0:\n        point_quot.set_data([a], [fa/ga])\n        line_quot.set_data(x, f_eval/g_eval)\n    else:\n        point_quot.set_data([],[])\n    # update vertical line\n    ax.lines[0].set_xdata([a, a])\n    fig.canvas.draw_idle()\n\ndef radio_on_clicked(label):\n    nonlocal f, g, f_eval, g_eval\n    f, g = funcs[label]\n    f_eval, g_eval = f(x), g(x)\n    line_f.set_ydata(f_eval)\n    line_g.set_ydata(g_eval)\n    line_prod.set_ydata(f_eval*g_eval)\n    line_quot.set_ydata(f_eval/g_eval)\n    slider_a.set_val(slider_a.val)  # trigger update\n    fig.canvas.draw_idle()\n\nradio.on_clicked(radio_on_clicked)\nslider_a.on_changed(update)\nplt.show()",
+        "interactive_controls": [
+          "Slider for a from -3 to 3",
+          "Radio buttons to select function pair",
+          "Toggle buttons for product/quotient visibility (future)"
+        ]
+      },
+      "on_screen_text": "Drag a to see limits of products and quotients in action.",
+      "teacher_narration": "Now let's explore the Product and Quotient Laws interactively. On the right, you see two functions, f and g, and their product and quotient. Drag the slider for a to see how f times g approaches the product of the limits, and f divided by g approaches the quotient — as long as the denominator's limit isn't zero. Try switching the function pair using the radio buttons. This hands-on exploration will build intuition for why these laws work.",
+      "student_prompt": "Predict: what happens to the quotient when g(x) becomes zero at a?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Quick Check: Sum Law in Action",
+      "left": {
+        "content_type": "text",
+        "content": "Given $\\lim_{x→3}f(x)=7$ and $\\lim_{x→3}g(x)=2$, find $\\lim_{x→3}[f(x)+g(x)]$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Number line showing the two limits and their sum region.",
+        "visual_spec": "A simple number line with 7 at position 7, 2 at position 2, and 9 at position 9. Arrows show 'L' and 'M' and 'L+M'.",
+        "python_code": "import matplotlib.pyplot as plt\nfig, ax = plt.subplots(figsize=(4,1))\nax.set_xlim(0, 12)\nax.set_ylim(-0.5, 0.5)\nax.spines['bottom'].set_position('center')\nax.spines['left'].set_visible(False)\nax.spines['right'].set_visible(False)\nax.spines['top'].set_visible(False)\nax.set_yticks([])\nax.plot([0,12],[0,0],'k')\n# mark L, M, L+M\nax.plot(7,0,'ro',label='L=7')\nax.plot(2,0,'bo',label='M=2')\nax.plot(9,0,'ko',label='L+M=9')\nax.legend(loc='upper right', fontsize='small')\nplt.show()",
+        "interactive_controls": [
+          "Button: reveal answer"
+        ]
+      },
+      "on_screen_text": "$\\lim_{x→3}f=7$, $\\lim_{x→3}g=2$ → $\\lim_{x→3}(f+g)=?$",
+      "teacher_narration": "Pause the video here and try this quick check yourself. I'll give you a moment. You have two limits: f of x approaches 7 and g of x approaches 2 as x goes to 3. What does the Sum Law tell you about the limit of their sum? Remember, if both limits exist, the limit of the sum is just the sum of the limits. Think about it, then resume to see the answer.",
+      "student_prompt": "Calculate the limit.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 1 (Warm-Up): Direct Substitution",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Evaluate $\\lim_{x→5}(2x^2 - 3x + 4)$\n\n1. **Sum/Difference Law:** $\\lim 2x^2 - \\lim 3x + \\lim 4$\n2. **Constant Multiple Law:** $2\\lim x^2 - 3\\lim x + 4$\n3. **Power Law:** $2(5^2) - 3(5) + 4$\n4. **Simplify:** $50 - 15 + 4 = 39$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$\\lim_{x→5}(2x^2 - 3x + 4) = 39$",
+      "teacher_narration": "Let's walk through a warm-up example. We want the limit of two x squared minus three x plus four as x approaches five. We apply the Sum Law to split into three separate limits. Then the Constant Multiple Law lets us factor out the 2 and the 3. Next, the Power Law gives us the limit of x squared — that's 5 squared equals 25. Finally we simplify to get 39. This is the simplest case: all parts are polynomials and direct substitution works beautifully.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 2 (Standard): Quotient with Non-Zero Denominator",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Evaluate $\\lim_{x→2}\\frac{x^3+2x^2-1}{5-3x}$\n\n1. Check denominator limit: $\\lim_{x→2}(5-3x)=5-6=-1\\neq0$ ✓\n2. Evaluate numerator: $\\lim_{x→2}(x^3+2x^2-1)=8+8-1=15$\n3. Apply Quotient Law: $\\frac{15}{-1}=-15$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Check denominator limit ≠ 0 first, then apply Quotient Law.",
+      "teacher_narration": "Now a standard quotient problem. Always check the denominator limit first. Here, the denominator 5 minus 3x approaches -1 as x goes to 2, which is not zero. So the Quotient Law applies directly. The numerator is a polynomial, so we can use the Power and Sum Laws to get 15. Then we divide to get -15. Quick and clean.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Cancelling Factors Too Early",
+      "left": {
+        "content_type": "concept",
+        "content": "**Wrong approach for** $\\lim_{x→2}\\frac{x^2-4}{x-2}$:\n\nCancel $x-2$ before checking domain → get $x+2$ → limit = 4. **Correct** but the step is invalid: the original function is undefined at $x=2$, not $x+2$.\n\n**Right:** Factor, cancel **after** noting domain restriction, then evaluate limit."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph showing the function with a hole at (2,4) and the line y=x+2.",
+        "visual_spec": "Plot y=(x^2-4)/(x-2) with a removable discontinuity. Also plot y=x+2 as a dashed line. Mark the hole with an open circle. Show that the two functions are equal except at x=2. The limit exists even though the function is undefined.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 4, 400)\nx_hole = 2\ny = (x**2 - 4) / (x - 2)\ny = np.where(x == x_hole, np.nan, y)  # remove point\n\nfig, ax = plt.subplots()\nax.plot(x, y, label='$\\\\frac{x^2-4}{x-2}$')\nax.plot(x, x+2, 'k--', label='$x+2$')\nax.plot(x_hole, x_hole+2, 'o', markerfacecolor='white', markeredgecolor='red', markersize=8)\nax.set_xlim(0,4)\nax.set_ylim(0,6)\nax.grid(True, alpha=0.3)\nax.legend()\nplt.show()",
+        "interactive_controls": [
+          "Toggle: show/hide simplified function y=x+2"
+        ]
+      },
+      "on_screen_text": "Don't cancel without acknowledging the hole; limit ≠ function value at the point.",
+      "teacher_narration": "A common mistake is to cancel factors like x minus 2 without thought, then treat the simplified expression as the same function. But the original function is undefined at x equals 2 — you've created a hole. The simplified version x plus 2 is defined everywhere. The limit is still 4, but you must justify cancellation by noting the functions are identical except at the limit point. The graph on the right shows the hole; the limit exists because the function gets arbitrarily close to 4 from both sides.",
+      "student_prompt": "Why can't we just plug x=2 into (x^2-4)/(x-2)?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3 (Standard): Factoring to Resolve 0/0",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\lim_{x→2}\\frac{x^2-4}{x-2}$\n\n1. Direct sub → $\\frac{0}{0}$ (indeterminate)\n2. Factor numerator: $x^2-4 = (x-2)(x+2)$\n3. Cancel common factor: $\\frac{(x-2)(x+2)}{x-2} = x+2$ for $x\\neq2$\n4. Now evaluate: $\\lim_{x→2}(x+2) = 4$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Indeterminate 0/0? Factor and cancel, then substitute.",
+      "teacher_narration": "Here's the same problem done correctly. Direct substitution gives zero over zero — an indeterminate form. That means we need algebra. Factor the numerator as difference of squares, cancel with the denominator, and now we have a simple linear function. Its limit as x approaches 2 is 4. Notice we used the fact that the limit doesn't care about what happens exactly at x equals 2; only the behavior near 2 matters.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Try Factoring Yourself",
+      "left": {
+        "content_type": "text",
+        "content": "**Quick Check:** Evaluate $\\lim_{x→3}\\frac{x^2-9}{x-3}$.\n\nA) 0 B) 3 C) 6 D) Does not exist"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of (x^2-9)/(x-3) with a hole. Same as previous but with different values.",
+        "visual_spec": "Plot y=(x^2-9)/(x-3) with a hole at (3,6). Show vertical dashed line at x=3. Label axes.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(0, 6, 400)\nx_hole = 3\ny = (x**2 - 9) / (x - 3)\ny = np.where(x == x_hole, np.nan, y)\n\nfig, ax = plt.subplots(figsize=(5,4))\nax.plot(x, y, label='$\\\\frac{x^2-9}{x-3}$')\nax.plot(x, x+3, 'k--', alpha=0.5, label='$x+3$')\nax.plot(x_hole, x_hole+3, 'o', markerfacecolor='white', markeredgecolor='red', markersize=10)\nax.set_xlim(0,6)\nax.set_ylim(0,8)\nax.axvline(x=3, color='gray', ls=':', alpha=0.5)\nax.grid(True, alpha=0.3)\nax.legend()\nplt.show()",
+        "interactive_controls": [
+          "Button: reveal answer"
+        ]
+      },
+      "on_screen_text": "$\\lim_{x→3}\\frac{x^2-9}{x-3} = ?$   A) 0  B) 3  C) 6  D) DNE",
+      "teacher_narration": "Now it's your turn. Pause the video and try this multiple choice question. The limit of x squared minus 9 over x minus 3 as x approaches 3. The graph on the right shows the function with a hole. Factor the numerator, cancel, and you'll get a simple linear expression. What do you get? I'll check the answer in a moment.",
+      "student_prompt": "Select the correct answer.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 4 (Tricky): Rationalizing",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\lim_{x→4}\\frac{\\sqrt{x}-2}{x-4}$\n\n1. Direct sub → $\\frac{0}{0}$\n2. Multiply numerator and denominator by conjugate $\\sqrt{x}+2$:\n   $\\frac{(\\sqrt{x}-2)(\\sqrt{x}+2)}{(x-4)(\\sqrt{x}+2)} = \\frac{x-4}{(x-4)(\\sqrt{x}+2)}$\n3. Cancel $x-4$ (for $x\\neq4$): $\\frac{1}{\\sqrt{x}+2}$\n4. Now evaluate: $\\frac{1}{\\sqrt{4}+2} = \\frac{1}{4}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Roots in numerator? Multiply by conjugate to eliminate.",
+      "teacher_narration": "When you have a root in the numerator and direct substitution gives zero over zero, try rationalizing. Multiply top and bottom by the conjugate of the numerator. This uses the difference of squares to remove the square root. After cancellation, you get a simple fraction. Substitute x equals 4 into the simplified expression to get one fourth. This technique is powerful for limits involving square roots.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Example 5: Combined Techniques",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\lim_{x→1}\\frac{x^3-1}{x^2-1}$\n\n1. Direct sub → $\\frac{0}{0}$\n2. Factor numerator: $x^3-1=(x-1)(x^2+x+1)$\n3. Factor denominator: $x^2-1=(x-1)(x+1)$\n4. Cancel $(x-1)$: $\\frac{x^2+x+1}{x+1}$ for $x\\neq1$\n5. Evaluate: $\\frac{1+1+1}{2}=\\frac{3}{2}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Factor difference of cubes and squares, cancel, then substitute.",
+      "teacher_narration": "This challenge example combines factoring techniques. We have a cubic in the numerator and a quadratic in the denominator. Use the difference of cubes formula: x cubed minus 1 equals (x-1)(x squared plus x plus 1). The denominator is difference of squares. Cancel the common factor x minus 1, and you're left with a rational expression. Plug in x equals 1 to get three halves. This problem shows you need to recognize cube factorizations as well.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Putting It All Together: Direct Substitution with Piecewise",
+      "left": {
+        "content_type": "text",
+        "content": "Many functions we encounter are **continuous** at the point of interest, meaning $\\lim_{x→a}f(x)=f(a)$. For polynomials, rational functions (where defined), and root functions, direct substitution works."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of a polynomial and a rational function showing continuity and a hole.",
+        "visual_spec": "Two subplots: left shows a polynomial (y=x^2) with a filled circle at a point; right shows a rational function with a hole (removable discontinuity).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.linspace(-3, 3, 400)\nf1 = x**2\nf2 = (x**2 - 1)/(x - 1)\nf2 = np.where(x == 1, np.nan, f2)\n\nfig, (ax1, ax2) = plt.subplots(1,2, figsize=(8,4))\n\nax1.plot(x, f1)\nax1.plot(2,4,'ro')\nax1.set_title('Polynomial: continuous')\nax1.grid()\n\nax2.plot(x, f2, label='$(x^2-1)/(x-1)$')\nax2.plot(1,2,'o', markerfacecolor='white', markeredgecolor='red', markersize=10)\nax2.set_title('Rational: removable discontinuity')\nax2.grid()\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Continuity: $\\lim_{x→a}f(x)=f(a)$ when $f$ is continuous at $a$.",
+      "teacher_narration": "The ultimate goal of using limit laws is to reach a point where you can simply plug in the value — that's called direct substitution. Most of the functions you'll encounter in calculus, like polynomials, rational functions where the denominator isn't zero, and root functions, are continuous. The graph shows a continuous polynomial on the left and a rational function with a hole on the right. The hole means it's not continuous, but after algebraic simplification we can still use direct substitution.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "1. **Limit Laws** allow us to break limits into simpler parts.\n2. **Indeterminate form** $\\frac{0}{0}$ requires algebraic manipulation: factoring, rationalizing, or simplifying.\n3. **Direct substitution** works for continuous functions (polynomials, etc.) after any needed algebra.\n4. **Check conditions** – denominator limit ≠ 0 for Quotient Law, both limits exist for Sum/Product.\n\n**Final Check:** Which limit requires algebra?\nA) $\\lim_{x→3}(2x+1)$ B) $\\lim_{x→0}\\frac{x^2+3x}{x}$ C) $\\lim_{x→2}\\frac{x+1}{x-3}$ D) $\\lim_{x→1}(x^2-4)$\nAnswer: B"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Summary: Use laws, watch for 0/0, simplify, then substitute.",
+      "teacher_narration": "Let's recap. The Limit Laws are your toolkit. When you get an indeterminate form, that's a signal to use algebra. Factoring and rationalizing are your main weapons. Remember that direct substitution is the final step, not the first. Test yourself with the final multiple choice: only option B gives zero over zero and needs factoring. Good luck with your practice problems!",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

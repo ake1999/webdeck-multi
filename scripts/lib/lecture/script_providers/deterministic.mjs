@@ -213,7 +213,7 @@ function describeMediaSegment(media, targetId) {
     };
   }
 
-  if (kind === "iframe" || kind === "widget") {
+  if (kind === "iframe" || kind === "widget" || kind === "calculus_widget") {
     return {
       text: ensureSentence(`The interactive panel on this slide is meant to explore ${label}`),
       target_element: targetId,
@@ -239,6 +239,118 @@ function describeBulletText(text, index, total) {
 
   if (!plain) return ensureSentence("Use this item as a reference point on the slide");
   return ensureSentence(`${lead} ${plain}`);
+}
+
+function joinReadable(items) {
+  return asArray(items)
+    .map((item) => plainTextForSpeech(item))
+    .filter(Boolean)
+    .slice(0, 4)
+    .join(" ");
+}
+
+function tableSummary(block) {
+  const header = joinReadable(asArray(block?.headers));
+  const rows = asArray(block?.rows)
+    .slice(0, 2)
+    .map((row) => Array.isArray(row) ? row.join(" ") : String(row || ""));
+  return [header, joinReadable(rows)].filter(Boolean).join(" ");
+}
+
+function blockMainText(block) {
+  const parts = [
+    block?.title,
+    block?.text,
+    block?.content,
+    block?.formula,
+    block?.prompt,
+    ...asArray(block?.items).map((item) => item.text || item.say || ""),
+    ...asArray(block?.steps).map((step) => step.text || step.say || ""),
+    ...asArray(block?.pairs).map((pair) => `${pair.label || ""}: ${pair.text || ""}`),
+    block?.reveal?.text,
+  ];
+  if (block?.type === "math_table") parts.push(tableSummary(block));
+  return joinReadable(parts);
+}
+
+function describeBlockSegment(block, targetId) {
+  const type = String(block?.type || "paragraph").toLowerCase();
+  const text = blockMainText(block);
+  if (!text) {
+    return {
+      text: ensureSentence("Use this block as the visible reference for the next idea"),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "formula_block") {
+    return {
+      text: ensureSentence(`Read this formula as the compact version of the idea: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "derivation_steps") {
+    return {
+      text: ensureSentence(`Follow the derivation step by step: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "example_solution") {
+    return {
+      text: ensureSentence(`In this example solution, the important moves are: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "proof_sketch") {
+    return {
+      text: ensureSentence(`The proof sketch is meant to show the logic, not just the final result: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "theorem_box") {
+    return {
+      text: ensureSentence(`This theorem box is the statement students should keep in view: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "misconception_compare") {
+    return {
+      text: ensureSentence(`Compare the tempting mistake with the safer reasoning: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "pause_and_reveal") {
+    return {
+      text: ensureSentence(`Pause on this prompt before revealing the explanation: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "math_table") {
+    return {
+      text: ensureSentence(`Use the table to compare the cases: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  return {
+    text: ensureSentence(text),
+    target_element: targetId,
+  };
+}
+
+function appendBlockSegments({ blocks, push, maxItems }) {
+  asArray(blocks)
+    .slice(0, maxItems)
+    .forEach((block) => {
+      push(describeBlockSegment(block, block?.id || "slide"));
+    });
 }
 
 function roleLeadSentence(slide, rawSlide, planSlide) {
@@ -353,6 +465,37 @@ export function generateSegmentsFromContent(slide, rawSlide, layoutContext, slid
         });
       });
 
+    appendBlockSegments({
+      blocks: slide.blocks,
+      push,
+      maxItems: Number(options.maxAutoItems) || 6,
+    });
+
+    if (slide.media?.id) {
+      push(describeMediaSegment(slide.media, slide.media.id));
+    }
+
+    return compactSegments(segments, Number(options.maxSegmentsPerSlide) || 8);
+  }
+
+  if (slide.type === "visual_lab") {
+    push({
+      text: rawSlide.lead
+        ? plainTextForSpeech(rawSlide.lead)
+        : roleLeadSentence(slide, rawSlide, planSlide),
+      target_element: slide.leadId || slide.titleId || "slide",
+    });
+
+    appendBlockSegments({
+      blocks: slide.blocks,
+      push,
+      maxItems: Number(options.maxAutoItems) || 6,
+    });
+
+    if (slide.media?.id) {
+      push(describeMediaSegment(slide.media, slide.media.id));
+    }
+
     return compactSegments(segments, Number(options.maxSegmentsPerSlide) || 8);
   }
 
@@ -386,6 +529,11 @@ export function generateSegmentsFromContent(slide, rawSlide, layoutContext, slid
             target_element: paragraph.id,
           });
         });
+      appendBlockSegments({
+        blocks: column.blocks,
+        push,
+        maxItems: Number(options.maxAutoItems) || 4,
+      });
       if (column.media?.id) {
         push(describeMediaSegment(column.media, column.media.id));
       }

@@ -1,0 +1,353 @@
+{
+  "lecture_meta": {
+    "title": "The Product Rule For Derivatives",
+    "topic": "calculus - differentiation",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "State the product rule formula correctly",
+      "Apply the product rule to products of polynomials, exponentials, and trigonometric functions",
+      "Decide when to use the product rule versus algebraic simplification",
+      "Avoid the common mistake of multiplying derivatives instead of adding two terms"
+    ],
+    "prerequisite_reminder": "You should be comfortable with the power rule, constant rule, and sum/difference rule for derivatives."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "The Product Rule For Derivatives",
+      "left": {
+        "content_type": "text",
+        "content": "By the end of this lecture, you will be able to:\n- **State** the product rule formula correctly\n- **Apply** it to products of polynomials, exponentials, and trigonometric functions\n- **Decide** when to use vs. simplify first\n- **Avoid** the common mistake of multiplying derivatives"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of f(x)=x^2 (blue), g(x)=sin(x) (green), h(x)=x^2*sin(x) (red) for x in [0,2]. Show tangent line at x=1 with slope h'(1)=1*cos(1)+2*sin(1). Legend and grid.",
+        "visual_spec": "Plot of f(x)=x^2 (blue), g(x)=sin(x) (green), h(x)=x^2*sin(x) (red) for x in [0,2]. Show tangent line at x=1 with slope h'(1)=1*cos(1)+2*sin(1). Legend and grid.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for x from 0 to 2",
+          "Toggle: show/hide tangent line"
+        ]
+      },
+      "on_screen_text": "State, apply, decide, avoid mistakes.",
+      "teacher_narration": "Welcome. Today we tackle the product rule. You've learned to differentiate sums and differences easily. But what happens when two functions are multiplied? The natural guess is to multiply their derivatives, but that's wrong. Let's see why and learn the correct formula. By the end, you'll handle products of polynomials, exponentials, trig functions, and even apply it to real-world growth problems. The product rule is a fundamental tool that appears in many areas of calculus, so mastering it now will pay off later.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Prerequisite Check",
+      "left": {
+        "content_type": "concept",
+        "content": "**Power Rule:** $\\frac{d}{dx}[x^n] = nx^{n-1}$\n\n**Constant Rule:** $\\frac{d}{dx}[c] = 0$\n\n**Sum/Difference Rule:** $\\frac{d}{dx}[f \\pm g] = f' \\pm g'$\n\nQuick check: Find $\\frac{d}{dx}[3x^2 + 5]$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of y=3x^2+5 (blue) and its derivative y=6x (red) for x in [-2,2]. Highlight that constant drops out.",
+        "visual_spec": "Plot of y=3x^2+5 (blue) and its derivative y=6x (red) for x in [-2,2]. Highlight that constant drops out.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: reveal answer",
+          "Toggle: show/hide derivative curve"
+        ]
+      },
+      "on_screen_text": "You need these rules before the product rule. Test yourself with the check.",
+      "teacher_narration": "Before we dive in, make sure you have these basics down. The power rule, constant rule, and sum rule are your foundation. Try the quick check in your head. The derivative of three x squared plus five is six x, because the derivative of three x squared is six x, and the constant five drops to zero. If you got it right, you are ready. These rules are the building blocks for the product rule, so it's important to be comfortable with them.",
+      "student_prompt": "Find the derivative of $3x^2 + 5$.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Why Can't We Just Multiply Derivatives?",
+      "left": {
+        "content_type": "steps",
+        "content": "Test the incorrect guess: $f(x)=x$, $g(x)=x^2$\n\n- Product: $h(x)=x^3$, correct derivative: $3x^2$\n- Wrong: $f'(x)g'(x)=1\\cdot 2x = 2x$\n- $3x^2 \\neq 2x$ → wrong!"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Two panels: left shows f(x)=x, g(x)=x^2, h(x)=x^3. Right shows correct h'=3x^2 (solid) and wrong f'g'=2x (dashed). Mark the difference at x=1.",
+        "visual_spec": "Two panels: left shows f(x)=x, g(x)=x^2, h(x)=x^3. Right shows correct h'=3x^2 (solid) and wrong f'g'=2x (dashed). Mark the difference at x=1.",
+        "python_code": null,
+        "interactive_controls": [
+          "Toggle: show/hide wrong derivative",
+          "Button: reset view"
+        ]
+      },
+      "on_screen_text": "The product of derivatives does NOT equal the derivative of the product.",
+      "teacher_narration": "Many students guess that the derivative of a product is the product of the derivatives. Let's test it with simple functions: f equals x, g equals x squared. Their product is x cubed, whose derivative is three x squared. But if we multiply the derivatives, we get one times two x equals two x. These are not equal. So that guess fails. Let's see the correct formula. This example shows why we need a new rule.",
+      "student_prompt": "Why is $f'(x)g'(x)$ not equal to $(f(x)g(x))'$?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Product Rule Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\frac{d}{dx}[f(x)g(x)] = f(x)g'(x) + f'(x)g(x)$$\n\nMemory aid: \"First times derivative of second, plus derivative of first times second.\""
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: two functions labeled f and g. Arrows from f to g' and from f' to g, with a plus sign. Color-coded.",
+        "visual_spec": "Diagram: two functions labeled f and g. Arrows from f to g' and from f' to g, with a plus sign. Color-coded.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: highlight first term",
+          "Button: highlight second term"
+        ]
+      },
+      "on_screen_text": "The product rule is a sum of two terms: $f g' + f' g$. Never $f' g'$.",
+      "teacher_narration": "The correct product rule is a sum of two terms. Take the first function times the derivative of the second, plus the derivative of the first times the second. This is not a product of derivatives, but a sum of two products. Use the memory aid: 'first times derivative of second, plus derivative of first times second'. This formula is the key to differentiating products.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 1: Polynomial × Trigonometric",
+      "left": {
+        "content_type": "steps",
+        "content": "Find $\\frac{d}{dx}[x^2 \\sin x]$\n\n1. $f=x^2$, $g=\\sin x$\n2. $f'=2x$, $g'=\\cos x$\n3. Apply: $x^2 \\cos x + 2x \\sin x$\n4. Answer: $\\boxed{x^2\\cos x + 2x\\sin x}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of f(x)=x^2, g(x)=sin x, h(x)=x^2 sin x. At x=1, tangent to h with slope value. Show two colored vertical bars representing the two terms of the derivative.",
+        "visual_spec": "Plot of f(x)=x^2, g(x)=sin x, h(x)=x^2 sin x. At x=1, tangent to h with slope value. Show two colored vertical bars representing the two terms of the derivative.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Warm-up: differentiate $x^2 \\sin x$.",
+      "teacher_narration": "Let's apply the product rule to a warm-up. Identify f as x squared, g as sine x. Their derivatives are two x and cosine x. Then plug into the formula: f times g prime gives x squared times cosine x, plus f prime times g gives two x times sine x. That's our answer. Notice how both terms survive. Pause the video and try a similar problem on the next slide.",
+      "student_prompt": "Try it: differentiate $x^3 \\cos x$ (answer on next slide)",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause and Try: Similar Problem",
+      "left": {
+        "content_type": "text",
+        "content": "Find $\\frac{d}{dx}[x^3 \\cos x]$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Blank axes with only the function x^3 cos x plotted for x in [-1.5,1.5]. No derivative shown.",
+        "visual_spec": "Blank axes with only the function x^3 cos x plotted for x in [-1.5,1.5]. No derivative shown.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: Reveal answer"
+        ]
+      },
+      "on_screen_text": "Pause the video and differentiate $x^3 \\cos x$.",
+      "teacher_narration": "Now it's your turn. Pause the video and try to differentiate x cubed times cosine x. Set up f and g, find their derivatives, and apply the product rule. When you're ready, click the button to reveal the answer. See if you got it right. This is a good way to build confidence with the product rule.",
+      "student_prompt": "Differentiate $x^3 \\cos x$.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 2: Polynomial × Polynomial",
+      "left": {
+        "content_type": "steps",
+        "content": "Find $h'(x)$ if $h(x) = (3x^2+2x)(x^3-5)$\n\n1. $f=3x^2+2x$, $g=x^3-5$\n2. $f'=6x+2$, $g'=3x^2$\n3. Apply: $(3x^2+2x)(3x^2)+(6x+2)(x^3-5)$\n4. Simplify: $15x^4+8x^3-30x-10$\n\nVerification by expansion: $3x^5+2x^4-15x^2-10x$, derivative: $15x^4+8x^3-30x-10$ ✓"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of h(x) and its derivative. Show that the derivative matches result from expanding product.",
+        "visual_spec": "Plot of h(x) and its derivative. Show that the derivative matches result from expanding product.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Standard example: differentiate $(3x^2+2x)(x^3-5)$.",
+      "teacher_narration": "Now a standard example with two polynomials. Identify f and g as the two factors. Compute their derivatives. Then plug into the product rule. You get a sum of two products. Expand and combine like terms. The final answer is fifteen x to the fourth plus eight x cubed minus thirty x minus ten. As a check, you could expand the product first and differentiate term by term to confirm.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 3: Radical × Exponential",
+      "left": {
+        "content_type": "steps",
+        "content": "Find $\\frac{d}{dt}[\\sqrt{t} \\cdot e^t]$\n\n1. Rewrite: $f=t^{1/2}$, $g=e^t$\n2. $f'=\\frac12 t^{-1/2}$, $g'=e^t$\n3. Apply: $t^{1/2} e^t + \\frac12 t^{-1/2} e^t$\n4. Factor: $e^t t^{-1/2}(t+\\frac12) = e^t\\left(\\sqrt{t}+\\frac{1}{2\\sqrt{t}}\\right)$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of sqrt(t)*e^t for t in [0.1,2]. Tangent at t=1 with slope. Two dashed lines showing the two component terms of the derivative.",
+        "visual_spec": "Plot of sqrt(t)*e^t for t in [0.1,2]. Tangent at t=1 with slope. Two dashed lines showing the two component terms of the derivative.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Tricky: differentiate $\\sqrt{t} \\cdot e^t$. Remember to rewrite the radical.",
+      "teacher_narration": "Now a trickier example involving a radical. Always rewrite radicals as powers: square root of t is t to the one-half. Then differentiate using the power rule for the radical part. The exponential stays the same. The product rule gives two terms. You can factor out e to the t and something with t to combine into a cleaner form. Be careful with the fractional exponent.",
+      "student_prompt": "Try: differentiate $x^{1/3} e^x$ (answer in practice ladder)",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4: Edge Case – Constant Times Function",
+      "left": {
+        "content_type": "steps",
+        "content": "Find $g'(x)$ if $g(x)=5x^3$\n\n1. $f=5$, $g=x^3$\n2. $f'=0$, $g'=3x^2$\n3. Apply: $5\\cdot3x^2 + 0\\cdot x^3 = 15x^2$\n\nKey: The $f'g$ term vanishes because $f'=0$. This matches the constant multiple rule."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of 5x^3 and its derivative 15x^2. Annotation highlighting that product rule gives same as constant multiple rule.",
+        "visual_spec": "Plot of 5x^3 and its derivative 15x^2. Annotation highlighting that product rule gives same as constant multiple rule.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Edge case: derivative of constant times function. Use product rule but constant multiple rule is simpler.",
+      "teacher_narration": "What if one factor is a constant? The product rule still applies. Take f as the constant five, g as x cubed. f prime is zero, so the second term vanishes, leaving five times three x squared equals fifteen x squared. This matches the constant multiple rule. But it's overkill—use the constant multiple rule when possible.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 5: Application – Bacteria Growth",
+      "left": {
+        "content_type": "steps",
+        "content": "Population $N(t) = (t^2+1)e^{0.1t}$. Find rate at $t=3$.\n\n1. $f=t^2+1$, $g=e^{0.1t}$\n2. $f'=2t$, $g'=0.1e^{0.1t}$\n3. $N'(t) = (t^2+1)(0.1e^{0.1t}) + (2t)(e^{0.1t})$\n4. Factor: $e^{0.1t}[0.1(t^2+1)+2t]$\n5. At $t=3$: $e^{0.3}[0.1(10)+6] = 7e^{0.3} \\approx 9.45$ bacteria/hour."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot of N(t) for t in [0,5]. Mark point at t=3 with tangent line. Show slope value 9.45.",
+        "visual_spec": "Plot of N(t) for t in [0,5]. Mark point at t=3 with tangent line. Show slope value 9.45.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Real-world application: bacteria growth. Find rate of change at t=3.",
+      "teacher_narration": "Let's look at a real-world application. A bacteria population is modeled by the product of a polynomial and an exponential. The rate of change is the derivative, found using the product rule. At t equals three hours, the derivative gives approximately nine point four five bacteria per hour. The product rule lets us handle such combined models. This shows how calculus applies to biology.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Visual Lab: Explore the Product Rule",
+      "left": {
+        "content_type": "text",
+        "content": "Drag the slider to change the point x. The red curve is $h(x)=f(x)g(x)$. The dashed line is the tangent with slope $h'(x)=f(x)g'(x)+f'(x)g(x)$. Toggle to see the two contributions separately."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive plot: slider for x from 0 to 2, toggles to show contributions of f'g and fg'. Functions: f(x)=x^2, g(x)=sin(x). Axis ranges: x in [0,2], y in [-2,5]. Layout: slider at bottom, checkboxes on right.",
+        "visual_spec": "Interactive plot: slider for x from 0 to 2, toggles to show contributions of f'g and fg'. Functions: f(x)=x^2, g(x)=sin(x). Axis ranges: x in [0,2], y in [-2,5]. Layout: slider at bottom, checkboxes on right.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, CheckButtons\n\n# Define functions\nf = lambda x: x**2\ng = lambda x: np.sin(x)\nf_prime = lambda x: 2*x\ng_prime = lambda x: np.cos(x)\nproduct = lambda x: f(x)*g(x)\n\nx_vals = np.linspace(0, 2, 400)\n\nfig, ax = plt.subplots(figsize=(8, 6))\nplt.subplots_adjust(left=0.1, bottom=0.25)\n\n# Plot product\nline_product, = ax.plot(x_vals, product(x_vals), 'r-', label='h(x)=f(x)g(x)')\nline_tangent, = ax.plot([], [], 'r--', lw=2, label='Tangent')\npoint, = ax.plot([], [], 'ro', markersize=8)\n\n# Contribution lines (initially invisible)\nline_fg_prime, = ax.plot([], [], 'g--', lw=1, alpha=0.6, label='f * g\\'')\nline_f_prime_g, = ax.plot([], [], 'b--', lw=1, alpha=0.6, label='f\\' * g')\n\nax.set_ylim(-2, 5)\nax.legend(loc='upper left')\nax.grid(True, alpha=0.3)\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_title('Product Rule Visual')\n\n# Slider\nax_slider = plt.axes([0.1, 0.1, 0.65, 0.03])\nslider = Slider(ax_slider, 'x', 0, 2, valinit=1)\n\n# Toggles\nax_check = plt.axes([0.8, 0.3, 0.15, 0.1])\ncheck = CheckButtons(ax_check, ['Show fg\\'', 'Show f\\'g'], [False, False])\n\n# Update function\ndef update(val):\n    a = slider.val\n    h_a = product(a)\n    h_prime_a = f(a)*g_prime(a) + f_prime(a)*g(a)\n    # tangent line\n    tangent_x = np.linspace(a-0.3, a+0.3, 10)\n    tangent_y = h_prime_a*(tangent_x - a) + h_a\n    line_tangent.set_data(tangent_x, tangent_y)\n    # point\n    point.set_data([a], [h_a])\n    # contributions: horizontal lines at the point showing the two term values\n    x_local = np.linspace(0.1, 2, 100)\n    fg_prime_val = f(a)*g_prime(a)\n    f_prime_g_val = f_prime(a)*g(a)\n    # draw horizontal lines at the contribution values\n    line_fg_prime.set_data([a-0.3, a+0.3], [fg_prime_val, fg_prime_val])\n    line_f_prime_g.set_data([a-0.3, a+0.3], [f_prime_g_val, f_prime_g_val])\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\n\n# Toggle visibility\ndef toggle_contributions(label):\n    if label == 'Show fg\\'':\n        line_fg_prime.set_visible(not line_fg_prime.get_visible())\n    elif label == 'Show f\\'g':\n        line_f_prime_g.set_visible(not line_f_prime_g.get_visible())\n    fig.canvas.draw_idle()\n\ncheck.on_clicked(toggle_contributions)\n\nupdate(1)\nplt.show()",
+        "interactive_controls": [
+          "Slider for x from 0 to 2",
+          "Checkbox: Show f*g' contribution",
+          "Checkbox: Show f'*g contribution"
+        ]
+      },
+      "on_screen_text": "Explore the product rule interactively. Adjust the point and see how the derivative is built from two parts.",
+      "teacher_narration": "This interactive lab lets you explore the product rule visually. The red curve is the product of two functions. Drag the slider to change the point. The tangent line shows the derivative. Use the toggles to see how the two contributions—f times g prime and f prime times g—add up to give the total slope. This makes the formula come alive.",
+      "student_prompt": "Move the slider and observe how the two contributions sum to the derivative.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Practice Problem Ladder",
+      "left": null,
+      "right": null,
+      "on_screen_text": "Practice problems from easy to challenge. Attempt all before checking answers.",
+      "teacher_narration": "Here's a ladder of practice problems. Start with the easy one: derivative of two x times x squared plus one. Then move to medium, hard, and challenge. For the challenge, you need to apply product rule twice because there are three factors. Pause the video and try them all before clicking 'Show Answers'. Working through these will solidify your understanding of the product rule.",
+      "student_prompt": null,
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false,
+      "content": "**Easy:** $h(x)=(2x)(x^2+1)$\n\n**Medium:** $\\frac{d}{dt}[t^3\\ln t]$\n\n**Hard:** $f(x)=(x^2+3x)(\\sqrt{x}+1)$\n\n**Challenge:** $g(x)=(x^2+1)(x^3+2)(x^4+3)$\n\nTry each, then toggle answers.",
+      "interactive_controls": [
+        "Button: Show Answers"
+      ]
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof of the Product Rule",
+      "left": {
+        "content_type": "steps",
+        "content": "Start from limit definition:\n\n$(fg)'(x) = \\lim_{h\\to0} \\frac{f(x+h)g(x+h)-f(x)g(x)}{h}$\n\nAdd and subtract $f(x)g(x+h)$:\n\n$= \\lim_{h\\to0} \\frac{[f(x+h)-f(x)]g(x+h) + f(x)[g(x+h)-g(x)]}{h}$\n\nSplit limit:\n\n$= \\lim_{h\\to0} \\frac{f(x+h)-f(x)}{h} \\cdot \\lim_{h\\to0} g(x+h) + f(x) \\cdot \\lim_{h\\to0} \\frac{g(x+h)-g(x)}{h}$\n\nSince $g$ continuous: $= f'(x)g(x) + f(x)g'(x)$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: rectangle of area f(x)g(x). As x increases by h, new strips represent f'(x)g(x)h and f(x)g'(x)h. Color-coded.",
+        "visual_spec": "Diagram: rectangle of area f(x)g(x). As x increases by h, new strips represent f'(x)g(x)h and f(x)g'(x)h. Color-coded.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Optional: Proof using limit definition. The 'add and subtract' trick is key.",
+      "teacher_narration": "This slide is optional for those interested in the proof. It starts from the limit definition of derivative. The clever trick is to add and subtract f of x times g of x plus h. This breaks the change into two parts that look like the product rule. Then we take limits. The key insight: the change in the product is approximately the change in f times g plus change in g times f.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "split_left_right",
+      "title": "Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "1. **Formula:** $(fg)' = fg' + f'g$\n2. **When to use:** genuine products of functions\n3. **When not to use:** constants (use constant multiple), expandable products (expand first)\n4. **Common mistake:** writing $f'g'$ instead of sum"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Boxed formula with arrows for the two parts. Checkmark for correct, X for wrong.",
+        "visual_spec": "Boxed formula with arrows for the two parts. Checkmark for correct, X for wrong.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Remember: product rule = sum of two products. Never multiply derivatives.",
+      "teacher_narration": "Let's summarize. The product rule says the derivative of a product is the first times derivative of the second, plus derivative of the first times the second. Use it when you have a genuine product of two variable expressions. Avoid the common mistake of multiplying derivatives. Next up, the chain rule for compositions. The product rule is a powerful tool that you will use frequently.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

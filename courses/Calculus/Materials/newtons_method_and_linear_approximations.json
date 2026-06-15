@@ -1,0 +1,396 @@
+{
+  "lecture_meta": {
+    "title": "Newton's Method and Linear Approximations",
+    "topic": "Newton's Method for root-finding with tangent line approximations",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate successive approximations to roots of equations using Newton's method",
+      "Interpret the geometric meaning of Newton's method as tangent line iteration",
+      "Apply Newton's method to find roots with specified accuracy (4–6 decimal places)",
+      "Analyze convergence behavior and identify conditions where Newton's method fails",
+      "Construct linear approximations to functions and use them to estimate values"
+    ],
+    "prerequisite_reminder": "Recall: the tangent line at x=a has equation y=f(a) + f'(a)(x-a)"
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "The Foggy Trail Analogy",
+      "left": {
+        "content_type": "text",
+        "content": "You're on a winding trail in fog. You can't see the river crossing, but you have a straight stick. Lay it along the slope at your feet, extend it to the river, walk there, and repeat. That's Newton's method — each step uses a local linear approximation to leap toward the root."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A curved function crossing the x-axis. An initial point (x0,f(x0)) with a tangent line extending to the x-axis at x1. Another tangent from (x1,f(x1)) to x2. Animated stick analogy: the tangent line is drawn as a straight stick, and a small figure walks along it.",
+        "visual_spec": "Animated plot of y = (x-2)^3 + 1 from -1 to 4. Mark root near 1. Show x0=0, draw tangent line intersecting x-axis at x1≈0.5, then from x1 draw tangent to x2≈0.8. Animate a stick being laid and a figure moving. Use matplotlib.animation.FuncAnimation with 100 frames, 50 ms interval. The figure walks along the tangent line from (x_n, f(x_n)) to (x_{n+1}, 0) over 30 frames per step, then the stick is drawn as a line segment from (x_n, f(x_n)) to (x_{n+1}, 0) that appears over 10 frames.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from matplotlib.animation import FuncAnimation\n\nfig, ax = plt.subplots()\nx = np.linspace(-1, 4, 400)\nf = lambda x: (x-2)**3 + 1\nax.plot(x, f(x), 'b-', label='f(x)')\nax.axhline(0, color='gray')\n# initial guess x0=0\nx0 = 0\nx1 = 0.5\nx2 = 0.8\nax.plot([x0, x0], [0, f(x0)], 'ro')\nax.plot([x0, x1], [f(x0), 0], 'r--')\nax.plot([x1, x1], [0, f(x1)], 'go')\nax.plot([x1, x2], [f(x1), 0], 'g--')\nax.set_xlim(-1,4); ax.set_ylim(-2,6); ax.grid(True)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Stick = tangent line. Walk to where it hits the river. Repeat. That's Newton's method.",
+      "teacher_narration": "Imagine you're hiking on a mountain trail in thick fog. You know somewhere there's a river crossing the trail, but you can't see it. What you can see is the ground under your feet. You have a long straight stick. You lay the stick along the slope of the trail at your feet, extend it straight until it touches the river, then walk to that point. Then you do it again. Each time the stick's intersection moves closer to the actual crossing. That's the heart of Newton's method: using a local tangent line as a proxy to leap toward the root.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Newton Iteration Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of a curve with a tangent line at (xn, f(xn)) intersecting the x-axis at xn+1. Labeled arrows showing subtraction: xn minus the ratio f(xn)/f'(xn).",
+        "visual_spec": "Graph of a smooth function f(x) crossing x-axis. Show point (xn, f(xn)), tangent line with slope f'(xn). Highlight the x-intercept as xn+1. Add a magnified callout showing the right triangle: vertical leg f(xn), horizontal leg f(xn)/f'(xn).",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt\nx = np.linspace(0,2,100)\nf = lambda x: x**3 - 2*x + 1\nplt.plot(x,f(x))\nxn = 0.5; fxn = f(xn); dfxn = 3*xn**2 - 2\nxn1 = xn - fxn/dfxn\nplt.plot([xn,xn],[0,fxn],'k--')\nplt.plot([xn,xn1],[fxn,0],'r-',lw=2)\nplt.plot(xn1,0,'ro')\nplt.text(xn-0.1,fxn/2,'f(xn)',fontsize=12)\nplt.text((xn+xn1)/2,-0.2,'f(xn)/f\\'(xn)',fontsize=12)\nplt.axhline(0,color='gray')\nplt.xlim(0,2); plt.ylim(-1,2)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "$$x_{n+1} = x_n - \\frac{f(x_n)}{f'(x_n)}$$ — Each step subtracts the ratio of function to derivative.",
+      "teacher_narration": "Here is the compact formula for one step of Newton's method. Starting from your current guess x_n, you compute the function value and the derivative at that point. Then you subtract the ratio. The ratio f over f prime tells you the horizontal distance from your current point to where the tangent line hits the x-axis. This comes from the right triangle geometry: the vertical leg is f(x_n), the slope is f'(x_n), so the horizontal leg is f(x_n)/f'(x_n). So you're improving your guess by moving along the tangent line down to the axis.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Derivation in Five Steps",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Tangent line at (x_n, f(x_n)): $y = f(x_n) + f'(x_n)(x - x_n)$\n2. Set $y = 0$ to find x-intercept: $0 = f(x_n) + f'(x_n)(x - x_n)$\n3. Solve for $x$: $-f(x_n) = f'(x_n)(x - x_n)$\n4. $x - x_n = -f(x_n)/f'(x_n)$\n5. $x_{n+1} = x_n - f(x_n)/f'(x_n)$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Tangent line → find x-intercept → solve for x. That's all there is to it.",
+      "teacher_narration": "Let's quickly derive the formula. We start with the equation of the tangent line at the current guess. We set y to zero because we want to find where the tangent line crosses the x-axis. Then we solve algebraically for x. After simplifying, we get the Newton iteration. The derivation is just two lines of algebra, but the geometric insight is powerful: you are approximating the curve by a straight line and finding where that line hits zero.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Visual: Step Through Newton's Method",
+      "left": {
+        "content_type": "text",
+        "content": "Adjust the initial guess and step through iterations. Watch the tangent lines converge to the root."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot with sliders. Students can change initial guess and see iterations 0-5. Tangent lines drawn for each step.",
+        "visual_spec": "Function f(x) = x^3 - 2x^2 + x - 1. A slider for initial guess from -3 to 3. A button to step forward one iteration. Show current xn and f(xn) in text. Gray x-axis. Red tangent line for current step, previous steps in blue. Mark root with a star after convergence.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from matplotlib.widgets import Slider, Button\nfig, ax = plt.subplots()\nplt.subplots_adjust(bottom=0.3)\nx_vals = np.linspace(-3,3,400)\nf = lambda x: x**3 - 2*x**2 + x - 1\ndf = lambda x: 3*x**2 - 4*x + 1\nax.plot(x_vals, f(x_vals), 'k-')\nax.axhline(0, color='gray')\npoint, = ax.plot([],[], 'ro', markersize=8)\ntangent_line, = ax.plot([],[], 'r--')\ninit_val = 1.0; xn = init_val; step = 0\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'x0', -3, 3, valinit=init_val)\ndef update(val):\n    global xn, step\n    xn = slider.val\n    step = 0\n    plot_step()\nslider.on_changed(update)\nax_button = plt.axes([0.8, 0.05, 0.1, 0.04])\nbutton = Button(ax_button, 'Step')\ndef step_once(event):\n    global xn, step\n    step += 1\n    xn = xn - f(xn)/df(xn)\n    plot_step()\nbutton.on_clicked(step_once)\ndef plot_step():\n    point.set_data([xn], [f(xn)])\n    # tangent line\n    t = np.linspace(xn-1, xn+1, 100)\n    yt = f(xn) + df(xn)*(t - xn)\n    tangent_line.set_data(t, yt)\n    ax.set_title(f'Step {step}, xn = {xn:.4f}')\n    plt.draw()\nplot_step()\nplt.show()",
+        "interactive_controls": [
+          "Slider for initial guess from -3 to 3",
+          "Button to step through iterations"
+        ]
+      },
+      "on_screen_text": "Try different initial guesses. Each step draws a new tangent line.",
+      "teacher_narration": "Now let's see it in action. I'll start with an initial guess of 1. Notice the red tangent line. The point where it crosses the x-axis becomes the next guess. I can click step to advance. Already after three steps we are very close to the true root. Try dragging the initial guess slider to different values — see how the method sometimes converges faster or slower depending on where you start.",
+      "student_prompt": "Predict: for which initial guesses will the method fail?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm-Up: Square Root of 5",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find $x_2$ for $f(x) = x^2 - 5$ starting with $x_0 = 2$.\n\n| Step | Computation | Result |\n|------|-------------|--------|\n| 1 | $f'(x) = 2x$ | Derivative |\n| 2 | $x_1 = 2 - \\frac{-1}{4}$ | $x_1 = 2.25$ |\n| 3 | $f(2.25) = 0.0625$, $f'(2.25)=4.5$ | Values |\n| 4 | $x_2 = 2.25 - \\frac{0.0625}{4.5}$ | $x_2 = 2.2361111$ |\n\nTrue $\\sqrt{5} \\approx 2.2360679$. Already accurate to 4 decimal places!"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Starting with x0=2, after just two steps we have sqrt(5) ≈ 2.2361.",
+      "teacher_narration": "Let's work a simple example together. We want to find the square root of 5 using Newton's method. We set up the function f(x) equals x squared minus 5. Starting at x0 equals 2, we compute the derivative 2x. The first step gives 2.25. Then we plug that back in. After just one more step we get 2.236111 — already accurate to four decimal places. The true value is 2.23607. That's the power of Newton's method.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard: Cubic with Linear Term",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $x^3 + 2x - 4 = 0$, $x_1 = 1$, find $x_3$ to four decimal places.\n\n| Step | Computation | Result |\n|------|-------------|--------|\n| 1 | $f'(x) = 3x^2 + 2$ | Derivative |\n| 2 | $x_2 = 1 - \\frac{-1}{5}$ | $x_2 = 1.2$ |\n| 3 | $f(1.2)=0.128$, $f'(1.2)=6.32$ | Values |\n| 4 | $x_3 = 1.2 - \\frac{0.128}{6.32}$ | $x_3 = 1.1797$ |\n\n**Answer:** $x_3 \\approx 1.1797$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Equation: x^3+2x-4=0, start at 1. After three iterations we get 1.1797.",
+      "teacher_narration": "Here's a typical exam problem. The function is x cubed plus 2x minus 4. Starting from x1 equals 1, we compute the derivative and get x2 equals 1.2. Then we evaluate the function and derivative at 1.2. Substituting into the formula gives x3 equals 1.1797. Always keep at least six decimal places during calculations for accuracy. You can verify by plugging 1.1797 back into the original equation; you should get a value very close to zero.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Division by Zero",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong attempt:** For $f(x)=x^3-3x+1$, starting at $x_0=1$:\n\n$x_1 = 1 - \\frac{-1}{0} \\Rightarrow$ division by zero!\n\n**Why it fails:** $f'(1)=0$, so the tangent line is horizontal. It never crosses the x-axis. Always check $f'(x_n) \\neq 0$ before applying the formula."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f(x)=x^3-3x+1 with a horizontal tangent at x=1. Show that the tangent line never meets the x-axis.",
+        "visual_spec": "Plot f(x)=x^3-3x+1 from -2 to 3. Mark point (1, -1) with a horizontal tangent line (dashed). Extend line to show it remains horizontal, no intersection with x-axis. Highlight the derivative being zero.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt\nx = np.linspace(-2,3,400)\nf = lambda x: x**3 - 3*x + 1\nplt.plot(x, f(x)); plt.axhline(0,color='gray')\nplt.plot(1, -1, 'ro', markersize=8)\nplt.plot([-2,3], [-1,-1], 'r--', lw=2)\nplt.text(1.1, -0.8, 'f \\'(1)=0', fontsize=12, color='red')\nplt.xlim(-2,3); plt.ylim(-3,5)\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "If f'(x_n)=0, the tangent is horizontal and never hits the x-axis. Newton's method fails.",
+      "teacher_narration": "A common mistake is to blindly apply the formula without checking the denominator. Here the derivative at x equals 1 is zero, giving a horizontal tangent. That tangent line never intersects the x-axis, so the method breaks down. Always verify that the derivative is nonzero at your current guess. If it is zero, you need to choose a different starting point or use a different method.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Tricky: Avoiding the Zero-Derivative Trap",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $f(x)=x^3-3x+1$, start with $x_0=0$ instead of 1.\n\n| Step | Computation | Result |\n|------|-------------|--------|\n| 1 | $f'(x)=3x^2-3$ | Derivative |\n| 2 | $x_1=0 - \\frac{1}{-3}$ | $x_1=0.3333$ |\n| 3 | $f(0.3333)\\approx0.0371$, $f'(0.3333)\\approx-2.6667$ | Values |\n| 4 | $x_2=0.3333 - \\frac{0.0371}{-2.6667}$ | $x_2=0.3472$ |\n\nNow the method works because the derivative is not zero at the new guesses."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Starting at x0=0 avoids the derivative zero. Now Newton's method converges quickly.",
+      "teacher_narration": "After seeing the division by zero at x equals 1, we can instead start at x equals 0. The derivative there is negative 3, so the update is well-defined. We compute x1 equals 0.3333, then x2 equals 0.3472. The method now converges nicely to the root around 0.3473. The lesson is: if one initial guess fails, try another. A quick graph of the function helps you choose a good starting point where the derivative is nonzero and the function changes sign.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Pause and Predict: Convergence or Divergence?",
+      "left": {
+        "content_type": "text",
+        "content": "Consider $f(x) = \\sqrt[3]{x}$ (cube root). The root is at $x=0$.\n\nIf we start at $x_0=1$, will Newton's method converge to 0?\n\nTake a moment to think..."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of cube root function, showing nearly vertical tangent at x=0. Plot with tangent lines from x0=1, -2, 4 to illustrate divergence.",
+        "visual_spec": "Plot f(x)=x^(1/3) from -8 to 8. Mark root at 0. Show tangent at x0=1, then subsequent points x1=-2, x2=4, x3=-8. Use arrows to show the sequence bouncing away. Highlight the vertical tangent at 0.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt\nx = np.linspace(-8, 8, 400, endpoint=True)\nf = lambda x: np.cbrt(x)  # cube root\ndf = lambda x: (1/3)*(x**(-2/3)) if x!=0 else np.inf\nplt.plot(x, f(x))\nplt.axhline(0,color='gray')\nxn = 1\nfor i in range(4):\n    plt.plot(xn, f(xn), 'ro')\n    t = np.linspace(xn-1, xn+1, 100)\n    if xn != 0:\n        yt = f(xn) + (xn**(-2/3)/3)*(t - xn)\n        plt.plot(t, yt, 'r--')\n    xn = xn - f(xn)/df(xn) if df(xn) != np.inf else 'stop'\n    if isinstance(xn, str): break\nplt.xlim(-8,8); plt.ylim(-3,3)\nplt.show()",
+        "interactive_controls": [
+          "Reveal button to show the answer after prediction"
+        ]
+      },
+      "on_screen_text": "Cube root f(x)=x^(1/3) with root at 0. Will x0=1 converge?",
+      "teacher_narration": "Here's a more subtle case. The cube root function has a root at zero, but its derivative goes to infinity at zero — the tangent is vertical. Starting from x0 equals 1, compute the first step. See that x1 jumps to negative 2, then x2 to 4, then to negative 8. The method actually diverges, oscillating more and more wildly. Why? Because near the root, the tangent is nearly vertical, so the x-intercept is far away. This illustrates that Newton's method is not foolproof.",
+      "student_prompt": "Will the method converge or diverge? Write your prediction, then advance the slide.",
+      "youtube_pause": true,
+      "difficulty": "challenge",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Solution: Cube Root Divergence",
+      "left": {
+        "content_type": "steps",
+        "content": "**Result:** The sequence $1, -2, 4, -8, 16, \\dots$ diverges.\n\n| Step | $x_n$ | $f(x_n)$ | $f'(x_n)$ | $x_{n+1}$ |\n|------|-------|----------|-----------|-----------|\n| 0 | 1 | 1 | 1/3 | -2 |\n| 1 | -2 | $\\sqrt[3]{-2}\\approx -1.26$ | $(1/3)(-2)^{-2/3}\\approx 0.21$ | 4 |\n| 2 | 4 | $\\sqrt[3]{4}\\approx 1.59$ | $(1/3)4^{-2/3}\\approx 0.21$ | -8 |\n\n**Why:** The derivative at the root is infinite (vertical tangent). The linear approximation becomes very poor near the root."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Newton's method on cube root: sequence 1, -2, 4, -8, 16, … It diverges instead of converging.",
+      "teacher_narration": "Here's the confirmed result. Starting at 1, the approximations bounce to negative 2, then 4, then negative 8. The absolute error doubles each step. The reason is the vertical tangent at the root: the linear approximation is not a good proxy for the function near zero. This is an important lesson: Newton's method requires the derivative to be nonzero at the root for quadratic convergence. If the derivative is infinite or zero at the root, convergence may be slow or absent.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Car Loan Interest Rate",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $18,000 loan, 60 monthly payments of $375. Find the monthly interest rate $x$.\n\nEquation: $f(x) = 48x(1+x)^{60} - (1+x)^{60} + 1 = 0$\n\n| Step | Action | Result |\n|------|--------|--------|\n| 1 | $f'(x) = 48(1+x)^{60} + (2880x - 60)(1+x)^{59}$ | Derivative |\n| 2 | Start with $x_0 = 0.01$ (1% monthly) | Initial guess |\n| 3 | $x_1 = 0.01 - \\frac{0.0553}{31.25}$ | $x_1 = 0.00823$ |\n| 4 | After few more iterations | $x \\approx 0.00823$ (0.823% monthly) |\n\n**Note:** This equation cannot be solved algebraically — Newton's method is essential."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Real-world: Car loan rate solver. Newton's method finds the monthly interest rate quickly.",
+      "teacher_narration": "Let's see a real application. A car loan of 18,000 dollars repaid over 60 monthly payments of 375 dollars each. The equation relating these involves the term 1 plus x to the 60th power. This is impossible to solve by hand algebraically. We set up the function and its derivative, start with a guess of 1 percent monthly, and apply Newton's method. In just one step we get 0.823 percent. A few more iterations refine it. This is why Newton's method is so powerful: it handles equations with exponentials and radicals that have no closed-form solution.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Convergence vs Initial Guess",
+      "left": {
+        "content_type": "text",
+        "content": "Use the dropdown to choose a function and the slider to pick an initial guess. See if Newton's method converges (green) or diverges (red)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive panel: dropdown for functions (x^2-2, x^3-2x-5, cos(x)-x), slider for initial guess, button to run 10 iterations. Plot the function and mark each iterate. Color-coded: green if last two iterates differ by <1e-6, red otherwise.",
+        "visual_spec": "Dropdown: functions with names. Slider: x0 from -5 to 5. Button: 'Run 10 iterations'. Plot: function line, initial guess point, subsequent points connected with arrows. Text showing convergence status and final iterate.",
+        "python_code": "import numpy as np; import matplotlib.pyplot as plt; from matplotlib.widgets import Slider, Button, RadioButtons\nfig, ax = plt.subplots()\nplt.subplots_adjust(bottom=0.4)\nx_vals = np.linspace(-5,5,400)\nfuncs = {'x^2-2': lambda x: x**2-2, 'x^3-2x-5': lambda x: x**3-2*x-5, 'cos(x)-x': lambda x: np.cos(x)-x}\nderivs = {'x^2-2': lambda x: 2*x, 'x^3-2x-5': lambda x: 3*x**2-2, 'cos(x)-x': lambda x: -np.sin(x)-1}\ncur_func_name = 'x^2-2'\nax_slider = plt.axes([0.2, 0.25, 0.6, 0.03])\nslider = Slider(ax_slider, 'x0', -5, 5, valinit=1)\nax_radio = plt.axes([0.05, 0.05, 0.15, 0.15])\nradio = RadioButtons(ax_radio, list(funcs.keys()))\nax_button = plt.axes([0.7, 0.05, 0.2, 0.04])\nbutton = Button(ax_button, 'Run 10 iter')\nline, = ax.plot([],[], 'r-', lw=2)\npoints, = ax.plot([],[], 'go', markersize=8)\nfinal_text = ax.text(0.5,0.9,'', transform=ax.transAxes)\ndef run(event):\n    cur_func = funcs[cur_func_name]\n    cur_deriv = derivs[cur_func_name]\n    x0 = slider.val\n    xn = x0\n    n=10\n    xs = [xn]\n    for i in range(n):\n        if cur_deriv(xn) == 0:\n            break\n        xn = xn - cur_func(xn)/cur_deriv(xn)\n        xs.append(xn)\n    # plot function\n    x_plt = np.linspace(min(-5, min(xs)-1), max(5, max(xs)+1), 400)\n    y_plt = cur_func(x_plt)\n    line.set_data(x_plt, y_plt)\n    points.set_data(xs, [cur_func(x) for x in xs])\n    # check convergence\n    if abs(xs[-1] - xs[-2]) < 1e-6:\n        final_text.set_text(f'Converged to {xs[-1]:.6f}')\n        points.set_color('green')\n    else:\n        final_text.set_text('Diverged or not converged')\n        points.set_color('red')\n    ax.set_xlim(min(x_plt), max(x_plt)); ax.set_ylim(min(y_plt)-1, max(y_plt)+1)\n    ax.axhline(0, color='gray')\n    plt.draw()\nbutton.on_clicked(run)\ndef radio_on(label):\n    global cur_func_name\n    cur_func_name = label\n    run(None)\nradio.on_clicked(radio_on)\nplt.show()",
+        "interactive_controls": [
+          "Radio buttons to select function",
+          "Slider for initial guess",
+          "Button to run 10 iterations"
+        ]
+      },
+      "on_screen_text": "Choose a function and initial guess. The method might converge (green) or diverge (red).",
+      "teacher_narration": "Now you can explore convergence behavior yourself. Select a function from the dropdown. Use the slider to choose a starting guess, then click the button to run ten iterations. The points will be colored green if they approach a root closely, red if they diverge or get stuck. Try x squared minus 2 starting at 2 — it converges quickly to the square root of 2. Now try the cubic function starting around 1.5. You'll see that a poor initial guess can lead to divergence or cycling.",
+      "student_prompt": "Which initial guesses cause divergence for the cubic function?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Convergence Behavior: Quadratic Convergence",
+      "left": {
+        "content_type": "text",
+        "content": "**Quadratic convergence:**\n- If error at step $n$ is $|r - x_n| \\approx 10^{-k}$, then error at step $n+1$ is $|r - x_{n+1}| \\approx 10^{-2k}$.\n- This means number of correct digits approximately doubles each step.\n\n**Conditions for quadratic convergence:**\n- $f$ is twice differentiable near root $r$.\n- $f(r)=0$ and $f'(r) \\neq 0$.\n- Initial guess $x_0$ is close enough to $r$.\n\n**Failure modes:**\n- $f'(x_n)=0$ : horizontal tangent.\n- $f'(r)=0$ : multiple roots (convergence linear).\n- Derivative undefined at root (e.g., cube root).\n- Initial guess too far, leading to divergence."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Quadratic convergence: correct digits double each step. But check f'(r) ≠ 0 and guess close enough.",
+      "teacher_narration": "When the stars align, Newton's method converges quadratically. That means if you have two correct decimal places at one iteration, you'll have about four at the next, then eight, then sixteen. This is extremely fast. The conditions are that the function is smooth, the derivative at the root is nonzero, and your initial guess is in the 'basin of attraction'. When these fail, convergence may be slower or not happen at all. Knowing these conditions helps you diagnose problems and choose better starting points.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Practice Problem Ladder",
+      "left": {
+        "content_type": "text",
+        "content": "**Easy:** $f(x)=x^3-8$, $x_0=2$. Find $x_1$.\n- $x_1 = 2$ (already at root!)\n\n**Medium:** $f(x)=\\cos x - x$, $x_0=1$. Find $x_2$.\n- $x_1\\approx0.7504$, $x_2\\approx0.7391$\n\n**Hard:** $f(x)=x^5 - x - 1 = 0$, $x_0=1$. Find root to 6 decimal places.\n- $x\\approx1.167304$\n\n**Challenge:** Use Newton's method to find $\\sqrt[5]{100}$ correct to 6 decimals.\n- $x\\approx2.511886$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Try these: easy, medium, hard, challenge. Answers provided.",
+      "teacher_narration": "Here's a ladder of problems to test your understanding. The easy one simply checks that you know the formula: starting at the root gives no change. The medium uses the equation cos x equals x — a transcendental equation that you can only solve numerically. The hard and challenge require multiple iterations to reach six decimal places. I strongly recommend you work through at least the medium and hard ones on paper or with a calculator. Attempt the challenge if you want to go further.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "core",
+      "layout": "full_width",
+      "title": "Pro Tips for Newton's Method",
+      "left": {
+        "content_type": "text",
+        "content": "• **Exam speed:** Compute $f(x_n)$ and $f'(x_n)$ separately before dividing.\n• **Precision:** Keep 6-8 decimal places during iteration; round only the final answer.\n• **Verification:** After finding an approximate root, plug back into the original equation to check.\n• **Shortcut for $\\sqrt{a}$:** $x_{n+1} = \\frac{1}{2}\\left(x_n + \\frac{a}{x_n}\\right)$ — the Babylonian method.\n• **Check:** Graph the function first to choose a good initial guess."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Tips: separate f and f' calculations, keep extra decimals, verify by substitution, use Babylonian shortcut for square roots.",
+      "teacher_narration": "Here are some practical tips. When you're in an exam, work step by step and write down the function value and derivative separately before dividing. This reduces errors. Keep a few extra decimals along the way; only round at the very end. Always check your answer by substituting back into the original equation — it should be close to zero. There's a neat shortcut for square roots: the iteration simplifies to the average of x_n and a divided by x_n. And finally, a quick sketch of the function helps you avoid bad initial guesses.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Newton's Method:** $x_{n+1} = x_n - f(x_n)/f'(x_n)$\n\n**Geometric Idea:** Use tangent lines to approximate the curve and find where they cross the x-axis.\n\n**Convergence:** Quadratic if $f'(r)\\neq0$ and initial guess is close.\n\n**Failures:** $f'(x_n)=0$, vertical tangent at root, poor initial guess.\n\n**Always:** Check derivative, keep extra precision, verify result."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": "",
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Remember: formula, tangent line idea, quadratic convergence, failure modes, and check your work.",
+      "teacher_narration": "Let's recap what we've covered. Newton's method is a powerful iterative technique for solving equations numerically. The formula is simple: each new guess is the old guess minus the ratio of the function to its derivative. Geometrically, we are following tangent lines to the x-axis. The method converges quadratically if the conditions are right, but it can fail if the derivative is zero or if the initial guess is too far off. Always check your derivative and your result. Now go practice with the take-home problems.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

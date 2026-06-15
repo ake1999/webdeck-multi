@@ -2,6 +2,68 @@
 
 This document is a durable context handoff for continuing the project in a fresh assistant conversation. It summarizes the current goal, project structure, generated contracts, completed work, known gaps, and the next likely implementation steps.
 
+## 2026-06-11 Branch Context
+
+This branch is being reshaped away from university course delivery and toward
+personal-brand courses for YouTube and the website. The first target course is
+Calculus.
+
+Current calculus source state:
+
+- `courses/Calculus/Materials/` contains 70 lecture JSON files.
+- It also contains 70 preview markdown files and 8 `debug_pass1` files.
+- `courses/Calculus/lectures.txt` describes the intended module/order source.
+- Calculus material JSON is wired into the browser picker under Arian
+  University (`AU`) as Calculus 1, Calculus 2, and Calculus 3.
+- The browser bridge uses `shared/calculus_material_adapter.js` to convert
+  material JSON into WebDeck slide data at runtime.
+- A first generation-side test topic has been created from material JSON:
+  `courses/AU/ARIAN_Calculus_1/sessions/S01/review_of_functions_and_graphs.slides.js`
+  and
+  `courses/AU/ARIAN_Calculus_1/sessions/S01/review_of_functions_and_graphs.lecture.plan.json`.
+- The converter is `scripts/convert_calculus_material.mjs`; the shortcut
+  command is `npm run convert:calculus-test`.
+- Arian University lecture plans use `shared/arian.avatar.profile.json` for the
+  personal-brand calculus voice profile.
+- Calculus slide rendering now supports rich content blocks and native inline
+  widgets rather than only old bullets/paragraphs. The reusable runtime lives in
+  `shared/calculus/`.
+- Supported rich block types are `formula_block`, `derivation_steps`,
+  `theorem_box`, `example_solution`, `proof_sketch`,
+  `misconception_compare`, `pause_and_reveal`, `math_table`, `paragraph`, and
+  `nested_bullets`.
+- `visual_lab` is available for full-width interactive slides.
+- Inline widget media uses `media.kind: "calculus_widget"`. The first native
+  widgets are `function_transform`, `limit_epsilon`, `secant_tangent`, and
+  `riemann_integral`.
+- Widgets use shared parameter state so controls, formula text, numeric
+  readout, plot, and `scriptedTimeline` animation remain synchronized. Website
+  mode is manually draggable; lecture playback can drive the same parameters
+  from timeline events.
+- Python snippets in material JSON are preserved as source metadata. They are
+  not the primary rendering path for calculus visuals.
+- The remaining 69 calculus material JSON files are not yet bulk-converted into
+  `courses/AU/.../*.slides.js` modules for generation scripts.
+- DeepSeek/OpenAI-compatible script generation can use a runtime key file via
+  `--scriptApiKeyFile` or `WEBDECK_SCRIPT_API_KEY_FILE`. The key file is
+  expected outside the repo as `dsk.txt`; do not commit or copy it into the
+  project.
+
+Current cleanup direction:
+
+- Keep the existing lecture-generation contracts intact.
+- Centralize browser course metadata in `shared/course_catalog.js`.
+- Use the material adapter for calculus until a deliberate generation-side
+  bridge is added.
+- Keep durable agent guidance in `AGENTS.md` and `.agents/project-map.md`.
+- Treat `graphify-out/` as generated analysis output, not source.
+
+Important worktree note:
+
+- The old robotics/university course files may appear as deleted in `git
+  status`. Treat those deletions as user-owned state unless explicitly asked to
+  restore them.
+
 ## Project Goal
 
 This repo generates lecture experiences from authored web-slide courses.
@@ -33,9 +95,9 @@ Frozen downstream contracts should not be casually redesigned:
 - timing semantics
 - compiled/manual/auto media source behavior
 
-## Current Status
+## Historical Robotics Pipeline Status
 
-The project currently has:
+The previous university/robotics version of the project had:
 
 - 23 lecture topics.
 - 23 upgraded rich `*.lecture.plan.json` files.
@@ -43,6 +105,9 @@ The project currently has:
 - 619 slide-video jobs.
 - 3,784 cue-level avatar jobs.
 - 619 production/manual audio WAV files under `generated/outputs/audio`.
+
+Those numbers are useful context for the pipeline's intended scale, but they no
+longer describe the current calculus-focused branch state.
 
 Completed major upgrades:
 
@@ -62,6 +127,53 @@ Main missing production piece:
 - The actual avatar/lip-sync renderer implementation. The repo now has a slide-video worker wrapper that resolves contracts, writes render packets, can invoke an external renderer command, verifies outputs, and updates status files.
 
 ## Important Commands
+
+Convert the first calculus test topic:
+
+```bash
+npm run convert:calculus-test
+```
+
+Run focused calculus architecture checks:
+
+```bash
+npm run test:calculus-widgets
+npm run test:topic-script-plan
+npm run test:slide-video-controls
+npm run validate -- \
+  --school AU \
+  --course ARIAN_Calculus_1 \
+  --session S01 \
+  --topic review_of_functions_and_graphs
+```
+
+Build deterministic professor scripts for the calculus test topic:
+
+```bash
+npm run build:prof-scripts -- \
+  --school AU \
+  --course ARIAN_Calculus_1 \
+  --session S01 \
+  --topic review_of_functions_and_graphs \
+  --scriptProvider deterministic \
+  --write-report
+```
+
+Run an OpenAI-compatible script provider later, after confirming the DeepSeek
+endpoint/model:
+
+```bash
+npm run build:prof-scripts -- \
+  --school AU \
+  --course ARIAN_Calculus_1 \
+  --session S01 \
+  --topic review_of_functions_and_graphs \
+  --scriptProvider llm_local \
+  --scriptEndpoint <deepseek-openai-compatible-url> \
+  --scriptModel <deepseek-model> \
+  --scriptApiKeyFile ../dsk.txt \
+  --write-report
+```
 
 Build lectures:
 

@@ -1,0 +1,400 @@
+{
+  "lecture_meta": {
+    "title": "Approximating Area With Riemann Sums",
+    "topic": "Riemann sums",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate Riemann sums using left, right, and midpoint sample points for continuous functions on closed intervals",
+      "Interpret the definite integral as the limit of Riemann sums as the number of subintervals approaches infinity",
+      "Apply Riemann sum approximations to estimate areas under curves when exact integration is difficult",
+      "Analyze how the choice of sample points affects approximation accuracy",
+      "Construct Riemann sum expressions in sigma notation"
+    ],
+    "prerequisite_reminder": "Familiarity with sigma notation and function evaluation."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Curved Garden Beds to Area",
+      "left": {
+        "content_type": "text",
+        "content": "You're a landscape architect. A garden bed has a curved edge. You need its area – but curved edges can't be measured with a ruler. **Slice it into thin vertical strips** – each nearly a rectangle. Sum their areas. More strips → better approximation. Infinitely many strips → exact area."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot a smooth curve f(x) = x^2 + 1 on [0,2] with 4 thin vertical rectangles inside. The rectangles are drawn with dashed edges, alternating red and blue, touching the curve at the left endpoint. Below, zoomed inset shows one rectangle with base Δx and height f(x_i^*). Background: subtle grid.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 20"
+        ]
+      },
+      "on_screen_text": "Slice → approximate rectangle sum → exact integral.",
+      "teacher_narration": "Imagine you're a landscape architect designing a curved garden bed. You need the area to order soil, but a curved edge can't be measured with a simple ruler. Here's the big idea: slice the region into thin vertical strips, each nearly a rectangle. Add their areas, and as the strips get thinner and thinner, the approximation becomes exact. This 'slice and sum' strategy is the foundation of integral calculus.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "What is a Riemann Sum?",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$S_n = \\sum_{i=1}^{n} f(x_i^*) \\Delta x$$\n\n- $n$: number of rectangles\n- $\\Delta x = \\frac{b-a}{n}$: width\n- $x_i^*$: sample point in $i$th subinterval\n- $f(x_i^*)$: height"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Diagram of a single rectangle between curve f and x-axis, spanning subinterval [x_{i-1}, x_i]. Label: base Δx, height f(x_i^*), and vertical dashed lines at x_{i-1} and x_i. The rectangle is filled light blue. The curve is red. Axes labeled x and y.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Riemann sum = sum of rectangle areas: Σ f(x_i^*) Δx",
+      "teacher_narration": "A Riemann sum gives a concrete way to approximate the area under a curve. We break the interval from a to b into n equal subintervals, each of width Δx. In each subinterval we pick a sample point, say x_i star, and build a rectangle of height f of that point. The total area is the sum of these rectangles. The more rectangles we use, the better the approximation.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Left Endpoint Riemann Sum",
+      "left": {
+        "content_type": "steps",
+        "content": "**Formula:** $$L_n = \\sum_{i=1}^{n} f(x_{i-1}) \\Delta x$$\n\n**Example:** $\\int_0^2 (x^2+1)\\,dx$, $n=4$\n- $\\Delta x = 0.5$\n- Left points: $x_0=0$, $x_1=0.5$, $x_2=1$, $x_3=1.5$\n- Heights: $f(0)=1$, $f(0.5)=1.25$, $f(1)=2$, $f(1.5)=3.25$\n- $L_4 = 0.5 (1 + 1.25 + 2 + 3.25) = 3.75$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot f(x)=x^2+1 on [0,2]. Draw 4 rectangles touching the curve at the left endpoints. Each rectangle is outlined in red, filled with transparent red. The first rectangle's height is clearly from the left endpoint. Title: 'Left Endpoint, n=4'. Include grid.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "L_n uses left edge of each strip as sample point.",
+      "teacher_narration": "The left endpoint Riemann sum uses the left edge of each subinterval as the sample point. Let's compute it for f(x)=x^2+1 from 0 to 2 with just 4 rectangles. The width is 0.5. Our left points are 0, 0.5, 1, and 1.5. Evaluate the function at each, multiply by the width, and add. We get an approximate area of 3.75. Notice that the left endpoints are below the curve for an increasing function, so this sum underestimates the true area.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Right Endpoint Riemann Sum",
+      "left": {
+        "content_type": "steps",
+        "content": "**Formula:** $$R_n = \\sum_{i=1}^{n} f(x_i) \\Delta x$$\n\n**Example:** Same function & $n$:\n- $\\Delta x = 0.5$\n- Right points: $x_1=0.5$, $x_2=1$, $x_3=1.5$, $x_4=2$\n- Heights: $1.25, 2, 3.25, 5$\n- $R_4 = 0.5 (1.25 + 2 + 3.25 + 5) = 5.75$\n\n> **Compare:** $L_4=3.75$, $R_4=5.75$. True area lies between."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Same as left endpoint but rectangles touch curve at right endpoints. Rectangles outlined blue, filled transparent blue. Title: 'Right Endpoint, n=4'. Include grid and axis labels.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "R_n uses right edge. For increasing f, R_n overestimates.",
+      "teacher_narration": "Now the right endpoint sum uses the right edge of each strip. For the same function and same number of rectangles, the right endpoints are higher because the function is increasing, so each rectangle overestimates the area. Our sum is 5.75, while the left sum was 3.75. The true area – which we'll compute later – is about 4.67, so the left and right sums bracket the exact answer.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Midpoint Riemann Sum",
+      "left": {
+        "content_type": "steps",
+        "content": "**Formula:** $$M_n = \\sum_{i=1}^{n} f\\!\\left(\\frac{x_{i-1}+x_i}{2}\\right) \\Delta x$$\n\n**Example:** Same function & $n$:\n- Midpoints: $0.25, 0.75, 1.25, 1.75$\n- Heights: $1.0625, 1.5625, 2.5625, 4.0625$\n- $M_4 = 0.5 (1.0625 + 1.5625 + 2.5625 + 4.0625) = 4.625$\n\n> True area: $\\frac{14}{3} \\approx 4.667$ — remarkably close!"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Same plot with rectangles touching curve at midpoints. Each rectangle is outlined green, filled transparent green. Title: 'Midpoint, n=4'. Show exact area annotation as a horizontal line at y=4.667 for comparison.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Midpoint rule often gives best approximation for same n.",
+      "teacher_narration": "The midpoint Riemann sum uses the middle of each subinterval. For our increasing function, the midpoint height is much closer to the average height of the curve over that strip. With n=4, the midpoint sum gives 4.625, while the true area – which we can compute exactly as 14/3 or about 4.667 – is only 0.042 away. That's a huge improvement over the left and right sums.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "full_width",
+      "title": "Explore Riemann Sums Interactively",
+      "left": {
+        "content_type": "text",
+        "content": "Use the controls to change the number of rectangles and the sampling method. Observe how the sum changes as n increases.\n\n- **Slider**: $n$ from 1 to 50\n- **Radio**: left / right / midpoint\n- **Display**: current sum vs. exact integral $\\frac{14}{3}$"
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "Interactive matplotlib figure with two panels: left panel shows the function f(x)=x^2+1 on [0,2] with rectangles; right panel shows a bar graph of the error (sum - exact). Controls: slider for n (1-50), radio buttons for method. Annotations: current sum value, exact integral, absolute error.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, RadioButtons\n\nf = lambda x: x**2 + 1\na, b = 0, 2\nexact = 14/3\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))\nplt.subplots_adjust(bottom=0.25)\n\nx_curve = np.linspace(a, b, 400)\ny_curve = f(x_curve)\nax1.plot(x_curve, y_curve, 'k', lw=2)\nax1.set_xlabel('x')\nax1.set_ylabel('y')\nax1.set_xlim(a, b)\nax1.set_ylim(0, 6)\n\nax2.set_xlabel('n')\nax2.set_ylabel('Riemann sum')\nax2.axhline(y=exact, color='r', linestyle='--', label='Exact')\n\n# Initial plot\nn_init = 4\nmethod_init = 'right'\n\nrect_patches = []\nline_sum, = ax2.plot([], [], 'bo-', label='Sum')\n\ndef update_rectangles(n, method):\n    global rect_patches\n    for p in rect_patches:\n        p.remove()\n    rect_patches.clear()\n    dx = (b-a)/n\n    if method == 'left':\n        xs = np.linspace(a, b-dx, n)\n    elif method == 'right':\n        xs = np.linspace(a+dx, b, n)\n    else:\n        xs = np.linspace(a+dx/2, b-dx/2, n)\n    for x in xs:\n        rect = plt.Rectangle((x, 0), dx, f(x), alpha=0.3, facecolor='blue', edgecolor='blue')\n        ax1.add_patch(rect)\n        rect_patches.append(rect)\n    sum_val = np.sum(f(xs))*dx\n    line_sum.set_data(np.arange(1, n+1), [sum_val]*n)\n    ax2.set_xlim(1, n*1.2)\n    ax2.set_ylim(0, 6)\n    ax2.legend()\n    fig.canvas.draw_idle()\n\nupdate_rectangles(n_init, method_init)\n\n# Slider\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nn_slider = Slider(ax_slider, 'n', 1, 50, valinit=n_init, valstep=1)\n\ndef slider_update(val):\n    n = int(n_slider.val)\n    update_rectangles(n, radio.value_selected)\n\nn_slider.on_changed(slider_update)\n\n# Radio\nax_radio = plt.axes([0.02, 0.4, 0.15, 0.2])\nradio = RadioButtons(ax_radio, ('left', 'right', 'midpoint'), active=1)\ndef radio_update(label):\n    n = int(n_slider.val)\n    update_rectangles(n, label)\nradio.on_clicked(radio_update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for number of rectangles n from 1 to 50",
+          "Radio buttons to choose left, right, or midpoint sampling",
+          "Display of current sum and exact integral value (as annotation)"
+        ]
+      },
+      "on_screen_text": "Change n and method. Watch the rectangles and the sum update.",
+      "teacher_narration": "Now you can explore Riemann sums yourself. Use the slider to increase the number of rectangles from 1 to 50, and switch between left, right, and midpoint methods. Watch how the rectangles crowd under the curve and the sum approaches the exact integral of 14 over 3. Notice that midpoint is often more accurate than left or right for the same n.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Which Sum is Larger?",
+      "left": {
+        "content_type": "text",
+        "content": "For $f(x) = x^2$ on $[1,3]$, predict:\n\n**Will the left sum or right sum be larger for n=4?**\n\nTake 15 seconds to think before clicking the button."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot of f(x)=x^2 on [1,3] with 4 equal subintervals. No rectangles drawn yet. The curve is a smooth increasing parabola.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: Show Answer — reveals left and right rectangle overlays and a numeric comparison"
+        ]
+      },
+      "on_screen_text": "Pause: For f(x)=x^2 on [1,3], n=4: which sum is larger?",
+      "teacher_narration": "Let's test your intuition. For the increasing function x-squared on the interval 1 to 3, with 4 rectangles, which Riemann sum do you think will be larger: the left or the right? Think about how each rectangle's height compares to the curve. I'll give you a moment, then we'll check together.",
+      "student_prompt": "Pause: Will left sum or right sum be larger for f(x)=x^2 on [1,3] with n=4?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Answer: Right Sum is Larger",
+      "left": {
+        "content_type": "steps",
+        "content": "**Explanation:** For an increasing function, right endpoints are higher than left endpoints, so $R_n > L_n$.\n\n**Check:**\n- $\\Delta x = 0.5$\n- Left points: $1, 1.5, 2, 2.5$ → $L_4 \\approx 5.875$\n- Right points: $1.5, 2, 2.5, 3$ → $R_4 \\approx 10.875$\n- True area $= \\frac{26}{3} \\approx 8.667$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Split visualization: left panel shows left endpoint rectangles (4 rectangles touching curve at left edges), right panel shows right endpoint rectangles. Both curves are f(x)=x^2. Underneath each panel, the computed sum is displayed.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Right sum is larger because the function is increasing.",
+      "teacher_narration": "If you predicted right sum larger, you're correct. For an increasing function, right endpoints are always higher than left endpoints, so each rectangle is taller. That gives a larger total – here, 10.875 versus 5.875. The true area is 26 over 3, about 8.667, so left underestimates and right overestimates. This bracketing property is very useful for error bounds.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Definite Integral as a Limit",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\int_a^b f(x)\\,dx = \\lim_{n \\to \\infty} \\sum_{i=1}^{n} f(x_i^*) \\Delta x$$\n\n**Key idea:** The exact area is the limit of Riemann sums as the number of rectangles approaches infinity (or equivalently, as the width of each rectangle approaches zero).\n\n**Important:** For continuous functions on [a,b], this limit exists and is independent of the choice of sample points."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Animated concept: as n increases from 2 to 50 (represented by a slider), the rectangles under f(x)=x^2+1 get thinner and the total sum converges. A dashed horizontal line shows the exact integral value 14/3. The error bar below shows the difference shrinking.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 100",
+          "Checkbox to show/hide error band"
+        ]
+      },
+      "on_screen_text": "Definite integral = limit of Riemann sums as n→∞.",
+      "teacher_narration": "The definite integral is defined as the limit of Riemann sums as the number of rectangles goes to infinity, making each rectangle infinitely thin. For any continuous function on [a,b], this limit exists and, remarkably, does not depend on which sample points we choose. This is a powerful result: it means we can use any convenient sampling method and still get the same exact answer in the limit.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Evaluating the Limit for x²",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Show $\\int_1^3 x^2\\,dx = \\frac{26}{3}$ using right endpoint Riemann sums.\n\n| Step | Derivation |\n|------|------------|\n| 1 | $\\Delta x = \\frac{2}{n}$ |\n| 2 | $x_i = 1 + \\frac{2i}{n}$ |\n| 3 | $R_n = \\sum_{i=1}^n \\left(1+\\frac{2i}{n}\\right)^2\\cdot\\frac{2}{n}$ |\n| 4 | Expand: $= \\frac{2}{n}\\sum_{i=1}^n \\left(1 + \\frac{4i}{n} + \\frac{4i^2}{n^2}\\right)$ |\n| 5 | Use sum formulas: $\\frac{2}{n}\\left[n + \\frac{4}{n}\\cdot\\frac{n(n+1)}{2} + \\frac{4}{n^2}\\cdot\\frac{n(n+1)(2n+1)}{6}\\right]$ |\n| 6 | Simplify: $2 + \\frac{4(n+1)}{n} + \\frac{4(n+1)(2n+1)}{3n^2}$ |\n| 7 | $\\lim_{n\\to\\infty} R_n = 2 + 4 + \\frac{8}{3} = \\frac{26}{3}$ |\n| 8 | Check: $\\int_1^3 x^2\\,dx = \\left[\\frac{x^3}{3}\\right]_1^3 = \\frac{27}{3} - \\frac{1}{3} = \\frac{26}{3}$ ✓ |"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot of f(x)=x^2 on [1,3] with a few right endpoint rectangles shown, and a callout showing the limit process: as n increases, the sum approaches 26/3.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Step-by-step limit computation for ∫ x² from 1 to 3.",
+      "teacher_narration": "For those who want to see the algebra in action, here's the full derivation for the integral of x-squared from 1 to 3 using right endpoint sums. We write the Riemann sum, expand, use formulas for sum of i and i-squared, simplify, and then take the limit as n goes to infinity. The result matches the antiderivative method exactly. This is an optional challenge slide – the main lesson does not require following every algebra step.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 1: Warm-Up – Square Root",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Approximate $\\int_0^4 \\sqrt{x}\\,dx$ using right endpoints with $n=4$.\n\n1. $\\Delta x = \\frac{4-0}{4} = 1$\n2. Right endpoints: $x_1=1, x_2=2, x_3=3, x_4=4$\n3. Heights: $1, \\sqrt{2}\\approx1.414, \\sqrt{3}\\approx1.732, 2$\n4. $R_4 = 1(1 + 1.414 + 1.732 + 2) = 6.146$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot f(x)=√x from 0 to 4 with 4 shaded rectangles touching the curve at the right endpoints. The first rectangle is very short, the tallest is at x=4.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Warm-up: R₄ for √x from 0 to 4 gives 6.146.",
+      "teacher_narration": "Let's work a warm-up problem. Approximate the integral of the square root function from 0 to 4 using 4 right endpoint rectangles. Width is 2 minus 0 over 4, that's 1. The right endpoints are 1, 2, 3, and 4. Their square roots are roughly 1, 1.414, 1.732, and 2. Adding and multiplying by 1 gives 6.146. This is a straightforward calculation to build confidence.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 2: Standard – ln x in Sigma",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Write the left endpoint Riemann sum for $\\int_1^4 \\ln x\\,dx$ with $n=6$ in sigma notation.\n\n1. $\\Delta x = \\frac{4-1}{6} = 0.5$\n2. Left endpoints: $x_i = 1 + 0.5i$ for $i=0,1,\\ldots,5$\n3. $L_6 = \\sum_{i=0}^{5} \\ln(1 + 0.5i) \\cdot 0.5$\n4. Or: $L_6 = 0.5\\sum_{i=0}^{5} \\ln(1 + 0.5i)$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot of ln x from 1 to 4 with 6 left endpoint rectangles. The rectangles are thin, showing the left edges. Indices i=0 to 5 labeled on x-axis.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Standard: Write the sum in sigma — careful with indices.",
+      "teacher_narration": "Here's a standard exercise: express the left Riemann sum for natural log from 1 to 4 with 6 rectangles in sigma notation. The width is 0.5. Left endpoints are 1 plus 0.5 i, where i runs from 0 to 5. Make sure you don't include i=6 – that would be the right endpoint of the last rectangle. The sum is 0.5 times the sum of ln of 1 plus 0.5 i for i from 0 to 5.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 3: Tricky – sin x and Concavity",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** For $f(x)=\\sin x$ on $[0,\\pi]$, compute $R_4$ and explain why it underestimates.\n\n1. $\\Delta x = \\frac{\\pi}{4}$\n2. Right endpoints: $\\frac{\\pi}{4},\\frac{\\pi}{2},\\frac{3\\pi}{4},\\pi$\n3. Heights: $\\frac{\\sqrt{2}}{2},1,\\frac{\\sqrt{2}}{2},0$\n4. $R_4 \\approx 1.896$\n5. True area $= 2$\n\n**Why underestimates?** $\\sin x$ is concave down on $[0,\\pi]$. For a concave down function, right endpoint rectangles lie below the curve, so the sum underestimates. Additionally, on the second half of the interval where sin is decreasing, the right endpoints are lower than the curve, contributing to the underestimate."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Plot sin x from 0 to π with 4 right endpoint rectangles. The curve is a bump. The fourth rectangle at x=π has height 0. The rectangles are shaded.",
+        "python_code": null,
+        "interactive_controls": [
+          "Toggle: show concavity annotation (curvature arrows)"
+        ]
+      },
+      "on_screen_text": "Tricky: Right sum underestimates concave down function.",
+      "teacher_narration": "This example challenges a common assumption. For sine from 0 to pi, the right sum with 4 rectangles gives about 1.896, which is less than the true area of 2. Wait – you might have thought right sums always overestimate. That's only true for increasing functions. Here sine is increasing then decreasing, but more importantly it's concave down. For a concave down function, the curve lies above the chords, so even right endpoint rectangles can underestimate.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4: Edge Case – Constant Function",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Approximate $\\int_2^5 7\\,dx$ using midpoint rule with $n=3$.\n\n1. $\\Delta x = \\frac{5-2}{3} = 1$\n2. Midpoints: $2.5, 3.5, 4.5$\n3. $f(x)=7$ constant → all heights are 7\n4. $M_3 = 1(7+7+7) = 21$\n5. Exact: $7(5-2) = 21$\n\n> **Key insight:** Any Riemann sum for a constant function gives the exact area immediately."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Horizontal line y=7 from x=2 to 5. Three rectangles (1 wide each) fill perfectly under the line. The area is a simple rectangle of width 3, height 7.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Edge: Constant f → any Riemann sum is exact.",
+      "teacher_narration": "Edge cases help solidify understanding. For a constant function, every rectangle has the same height. So left, right, or midpoint sums all give the same result, and that result is exactly the area – 7 times the width, which is 21. This shows that Riemann sums are not just approximations: they can be exact when the function is flat. It also reminds us that the approximation error comes from variation in the function.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Index Confusion",
+      "left": {
+        "content_type": "steps",
+        "content": "**Wrong approach:** A student writes the left endpoint sum for $\\int_0^2 x^2\\,dx$ with $n=4$ as:\n\n$$\\sum_{i=1}^{4} f(x_i)\\Delta x$$\n\nusing $x_i = 0.5i$. This is actually the **right** endpoint sum!\n\n**Correct:** For left endpoints, use $i=0$ to $3$ or $x_{i-1}$ with $i=1$ to $4$.\n\n**Reminder:**\n- Left: $i=0$ to $n-1$ (or $x_{i-1}$)\n- Right: $i=1$ to $n$ (or $x_i$)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two side-by-side plots: left panel shows the *wrong* sum (using xi for left) – rectangles touch right edges; right panel shows the correct left sum. Each plot has the computed sum labeled.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Mistake: Don't use xi for left sum. Use x_{i-1}.",
+      "teacher_narration": "A very common mistake is mixing up indices. Here a student uses i from 1 to 4 with x_i for a left sum – that gives right endpoints. The correct left sum uses i from 0 to 3, or equivalently x_{i-1} when i goes from 1 to 4. Always double-check: if the sample point is the left edge, the index starts one before the right index. This small slip can change your entire approximation.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: What You've Learned",
+      "left": {
+        "content_type": "text",
+        "content": "**Core Ideas:**\n- Riemann sums approximate area by summing rectangles: $S_n = \\sum f(x_i^*)\\Delta x$\n- Left, right, and midpoint are common choices for $x_i^*$\n- The definite integral $\\int_a^b f\\,dx$ is the limit of Riemann sums as $n\\to\\infty$\n- For increasing functions: left sum < integral < right sum\n- Error typically decreases as $n$ increases\n\n**You should now be able to:**\n- Compute left, right, and midpoint sums for any continuous function\n- Write Riemann sums in sigma notation\n- Interpret the integral as a limit\n- Recognize how function behavior (monotonicity, concavity) affects approximation accuracy"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Riemann sums → limit → definite integral.",
+      "teacher_narration": "Let's review what we've covered. Riemann sums give us a way to approximate area by adding up rectangles. We saw three common sampling methods: left, right, and midpoint. The definite integral is the limit of these sums as n approaches infinity. For monotonic functions, left and right sums bracket the true value. The more rectangles, the better the approximation. You're now equipped to compute Riemann sums and understand how the integral is built from the ground up.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

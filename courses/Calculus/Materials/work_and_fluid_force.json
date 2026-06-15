@@ -1,0 +1,371 @@
+{
+  "lecture_meta": {
+    "title": "Work and Fluid Force",
+    "topic": "Work and Fluid Force",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate work done by variable forces using definite integrals",
+      "Set up integrals for hydrostatic force on submerged vertical surfaces",
+      "Apply the slice-and-sum method to physical problems",
+      "Analyze real-world scenarios involving pumps, dams, and submerged plates",
+      "Interpret pressure as force per unit area in fluid contexts"
+    ],
+    "prerequisite_reminder": "Recall the definite integral as a limit of Riemann sums: \\(\\int_a^b f(x)\\,dx = \\lim_{n \\to \\infty} \\sum_{i=1}^n f(x_i^*)\\Delta x\\)."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Intuition: Work as Area Under a Curve",
+      "left": {
+        "content_type": "text",
+        "content": "When a force changes, work isn't simply force times distance. Think of paying a worker whose hourly wage varies: you sum rate × time over each small interval. Similarly, work = \\(\\int f(x)\\,dx\\)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Riemann sum animation preview",
+        "visual_spec": "Plot of force F vs displacement x. Shade area under a curved force function from x=a to x=b. Add small rectangles to hint at Riemann sum. Axes: x (m), F (N). Use blue shaded area, orange rectangles. Include label 'Work = area under F(x)'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Work = (force)×(distance) only if force constant. Variable force: sum over many small pieces.",
+      "teacher_narration": "Imagine you're paying a worker whose hourly rate changes throughout the day. You can't just multiply one rate by total hours – you need to add up the pay for each period where the rate was constant. Work in physics works the same way: if the force pushing an object changes as it moves, you need to add up force times tiny distances. The integral does exactly that. In this lecture, we'll see how integrals let us compute work for springs, pumping water, and even the force of water against a dam.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Constant Force Work",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$W = F \\cdot d$$ (when force is constant and in direction of motion)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Crate lifting diagram",
+        "visual_spec": "Draw a crate being lifted vertically. Force arrow upward labeled 'F = mg', displacement arrow upward labeled 'd = height'. Include ground and a hand pulling a rope. Use simple 2D cartoon style.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Constant force: W = F·d. Force must be in direction of displacement.",
+      "teacher_narration": "The simplest case is when the force doesn't change. Then work is just force times distance in the direction of the force. For example, lifting a crate straight up against gravity: the force needed is the crate's weight, mg, and the distance is the height you lift it. The unit of work is joules in SI, foot-pounds in imperial. Let's do a quick example.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up Example: Lifting a Crate",
+      "left": {
+        "content_type": "steps",
+        "content": "A 50 kg crate is lifted vertically 3 m. Use \\(g = 9.8\\,\\text{m/s}^2\\).\n1. Force: \\(F = mg = 50 \\times 9.8 = 490\\,\\text{N}\\).\n2. Distance: \\(d = 3\\,\\text{m}\\).\n3. Work: \\(W = 490 \\times 3 = 1470\\,\\text{J}\\)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Crate with numbers",
+        "visual_spec": "Same diagram as slide 2, but add labels: '50 kg', '3 m', and the computed work '1470 J'. Use a dotted arrow showing displacement.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Lifting a crate: W = (mg) × height = 50·9.8·3 = 1470 J.",
+      "teacher_narration": "We have a 50 kilogram crate being lifted 3 meters straight up. The force we must exert equals the weight, 50 times 9.8 gives 490 newtons. Since the force is constant and the displacement is in the same direction, we multiply: 490 newtons times 3 meters gives 1470 joules. This is the work done against gravity. Notice that the units work out: newtons times meters gives joules. This simple calculation is the foundation for understanding variable force work, where we'll need to sum many such constant-force contributions over tiny intervals.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Variable Force Work",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$W = \\int_a^b f(x)\\,dx$$ where \\(f(x)\\) is the force component in the direction of displacement at position \\(x\\), moving from \\(x=a\\) to \\(x=b\\)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Area under force curve",
+        "visual_spec": "Plot a curved force function f(x). Shade the area under the curve from a to b. Add a label: 'Work = area under F(x)'. Use a dashed vertical line at a and b. Color: light blue fill.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Variable force: W = ∫ f(x) dx. Work = area under force vs. position curve.",
+      "teacher_narration": "Now suppose the force changes as the object moves. For example, a spring's force gets stronger the more you stretch it. We can't just multiply one number; we need to integrate. The integral of the force function from start to finish gives the total work. Think of it as adding up force times tiny distance intervals. This is exactly the same as finding the area under the force-versus-position graph, which is a powerful visual way to understand the concept.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "misconception",
+      "layout": "full_width",
+      "title": "Common Mistake: Wrong Lift Distance in Pumping",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong:** use depth of water slice as the lift distance.\n**Correct:** lift distance = distance from slice to top of tank.\n\nExample: slice at height \\(y\\) (bottom = 0) must be lifted to top at \\(H\\), so distance = \\(H - y\\)."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Misconception: Lift distance = distance from slice to top, not depth.",
+      "teacher_narration": "When pumping water out of a tank, a common error is to think the water at the bottom has to be lifted only the height of the tank. In reality, each slice of water must be lifted to the top, so the distance depends on its position. Water near the bottom travels farther than water near the top. Always set up your coordinate so that the 'lift distance' is the vertical distance from the slice to the outlet.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Hydrostatic Pressure",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$P = \\rho g h = \\delta h$$ where \\(\\rho\\) = density, \\(g\\) = gravity, \\(\\delta = \\rho g\\) = weight density. Pressure increases linearly with depth."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Pressure vs depth graph",
+        "visual_spec": "Line graph of pressure P vs depth h, through origin. Label axes: 'Depth h (m)', 'Pressure P (Pa)'. Also show a simple cartoon of a swimmer at two different depths, with pressure arrows growing larger at depth.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pressure at depth h: P = δh. Force = pressure × area only if pressure constant.",
+      "teacher_narration": "Now we shift to fluids. Water pressure depends only on depth, not on the shape of the container. The deeper you go, the greater the pressure. The formula is density times gravity times depth, or weight density times depth. This linear relationship is key for computing total force on a submerged surface. For example, at a depth of 10 meters in fresh water, the pressure is about 98,000 pascals, which is nearly one atmosphere. This increasing pressure is why dams are built thicker at the bottom.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Hydrostatic Force on a Vertical Surface",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$F = \\int_a^b \\delta \\cdot h(y) \\cdot w(y) \\, dy$$ where \\(h(y)\\) is depth at height \\(y\\), \\(w(y)\\) is the width of the plate at that height."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Submerged plate with slice",
+        "visual_spec": "Draw a vertical rectangular plate submerged in water. Show a thin horizontal slice at depth y, of thickness dy and width w(y). Label: depth h(y) from the water surface to the slice. Add pressure arrows acting on the slice. Include the water surface line.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Slice at depth y: force = (δ·depth)·(width·dy). Integrate over y from top to bottom.",
+      "teacher_narration": "To find the total force on a vertical surface like a dam gate, we slice it into thin horizontal strips. Each strip is at a constant depth, so pressure is constant across its area. Force on the strip is pressure times area. Then we integrate from the top to the bottom. The width function w(y) describes how wide the plate is at each depth.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Work as Riemann Sum",
+      "left": {
+        "content_type": "text",
+        "content": "Adjust the number of rectangles \\(n\\) to see how the Riemann sum approximates the area under the force curve \\(F = 200x\\) (a spring). Compare with the exact integral."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Riemann sum visualisation",
+        "visual_spec": "Plot of F=200x from x=0 to x=0.5. Show rectangles approximating the area. Use a slider for n from 1 to 50. Use radio buttons to select left, right, or midpoint sums. Display exact work value and Riemann sum approximation. Highlight difference in a label. Figure size: 10x6 inches. Colors: blue line (#0000FF), orange bars (#FFA500), green text (#008000), red text (#FF0000), purple text (#800080). Font sizes: title 14, labels 12, annotations 12. Slider positioned at [0.25, 0.1, 0.5, 0.03]. Radio buttons positioned at [0.7, 0.05, 0.2, 0.15].",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, RadioButtons\n\n# Spring force: F = 200x\nk = 200\nx_vals = np.linspace(0, 0.5, 1000)\nF_vals = k * x_vals\n\nfig, ax = plt.subplots(figsize=(10, 6))\nplt.subplots_adjust(bottom=0.25)\nax.plot(x_vals, F_vals, 'b-', linewidth=2, label='F = 200x')\nax.set_xlabel('Displacement x (m)')\nax.set_ylabel('Force F (N)')\nax.set_title('Work as Area Under Force-Displacement Curve')\nax.grid(True, alpha=0.3)\nax.legend()\n\n# Initial n\nn_init = 10\ndx = 0.5 / n_init\nx_rect = np.linspace(0, 0.5, n_init)\nF_rect = k * x_rect\nrects = ax.bar(x_rect, F_rect, width=dx, alpha=0.3, color='orange', label='Riemann sum')\n\n# Exact value\nexact = 0.5 * k * (0.5**2 - 0**2)  # 25\nax.text(0.35, 80, f'Exact work: {exact:.2f} J', fontsize=12, color='green')\n\n# Slider\nax_slider = plt.axes([0.25, 0.1, 0.5, 0.03])\nn_slider = Slider(ax_slider, 'n', 1, 50, valinit=n_init, valstep=1)\n\n# Radio buttons\nax_radio = plt.axes([0.7, 0.05, 0.2, 0.15])\nradio = RadioButtons(ax_radio, ('left', 'right', 'midpoint'))\n\ndef update(val):\n    n = int(n_slider.val)\n    dx = 0.5 / n\n    if radio.value_selected == 'left':\n        pts = np.linspace(0, 0.5 - dx, n)\n    elif radio.value_selected == 'right':\n        pts = np.linspace(dx, 0.5, n)\n    else:\n        pts = np.linspace(dx/2, 0.5 - dx/2, n)\n    F_pts = k * pts\n    ax.clear()\n    ax.plot(x_vals, F_vals, 'b-', linewidth=2, label='F = 200x')\n    rects = ax.bar(pts, F_pts, width=dx, alpha=0.3, color='orange', label=f'{radio.value_selected} sum, n={n}')\n    approx = np.sum(F_pts) * dx\n    ax.set_xlabel('Displacement x (m)')\n    ax.set_ylabel('Force F (N)')\n    ax.set_title('Work as Area Under Force-Displacement Curve')\n    ax.grid(True, alpha=0.3)\n    ax.legend()\n    ax.text(0.35, 80, f'Exact work: {exact:.2f} J', fontsize=12, color='green')\n    ax.text(0.35, 70, f'Approx: {approx:.2f} J', fontsize=12, color='red')\n    ax.text(0.35, 60, f'Error: {abs(approx-exact):.4f} J', fontsize=12, color='purple')\n    fig.canvas.draw_idle()\n\nn_slider.on_changed(update)\nradio.on_clicked(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Radio buttons: left, right, midpoint"
+        ]
+      },
+      "on_screen_text": "Explore Riemann sums for spring work. Change n and rectangle type.",
+      "teacher_narration": "Let's see how Riemann sums approximate the work done by a spring. Here force F equals 200x, and we want the area under the curve from x=0 to x=0.5. Use the slider to increase the number of rectangles. Watch the approximation get closer to the exact value shown in the label. Try different rectangle types – left, right, or midpoint – and notice how the error changes.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 2: Spring Work (Standard)",
+      "left": {
+        "content_type": "steps",
+        "content": "A force of 30 N stretches a spring 0.15 m. Find work to stretch from 0.2 m to 0.5 m.\n1. Hooke's Law: \\(F = kx\\). \\(k = 30/0.15 = 200\\) N/m.\n2. Work: \\(W = \\int_{0.2}^{0.5} 200x\\,dx = 100[x^2]_{0.2}^{0.5}\\).\n3. \\(W = 100(0.25 - 0.04) = 21\\) J."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Spring force graph with shaded area from 0.2 to 0.5",
+        "visual_spec": "Plot F=200x from x=0 to x=0.6. Shade the region between x=0.2 and x=0.5. Label the exact work '21 J' inside the shaded area. Add a dashed vertical line at x=0.2 and x=0.5.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Spring: k=200 N/m, W = ∫200x dx = 21 J.",
+      "teacher_narration": "A spring requires a 30 newton force to stretch 0.15 meters. From Hooke's law, the spring constant k is 200 newtons per meter. To find work stretching from 0.2 to 0.5 meters beyond natural length, we integrate kx from 0.2 to 0.5. The antiderivative is 100x^2, and evaluating gives 21 joules. Notice that the work is the area of a trapezoid under the force curve, which is a nice geometric check: the average force is 70 newtons, times 0.3 meters gives 21 joules.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Example 3: Pumping Water (Tricky)",
+      "left": {
+        "content_type": "steps",
+        "content": "Tank: radius 2 m, height 5 m, full water. Density ρ=1000 kg/m³, g=9.8 m/s². Set y=0 at bottom, y=5 at top.\n1. Slice at height y: volume dV = π·2² dy = 4π dy.\n2. Mass: dm = ρ dV = 1000·4π dy.\n3. Force (weight): dF = dm·g = 39200π dy.\n4. Lift distance: (5 - y) m.\n5. Work on slice: dW = dF·(5-y) = 39200π (5-y) dy.\n6. Total: W = ∫₀⁵ 39200π (5-y) dy = 39200π [5y - y²/2]₀⁵ = 39200π·12.5 = 490000π ≈ 1,539,379 J."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pumping: work = ∫ ρgπr²(H-y) dy. Each slice lift distance = H-y.",
+      "teacher_narration": "This problem is tricky because the lift distance varies with height. We set coordinates with y=0 at the bottom. Each thin horizontal slice of water at height y has volume 4π dy. Its weight is 39200π dy newtons. To pump it to the top at y=5, it must be lifted 5-y meters. So the work on this slice is weight times lift distance. Integrating from 0 to 5 gives about 1.54 million joules. Remember: the slice near the bottom has a larger lift distance than one near the top.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 4: Hydrostatic Force on a Rectangle (Edge Case)",
+      "left": {
+        "content_type": "steps",
+        "content": "Plate: 4 m wide, 3 m tall, top 2 m below surface. Weight density δ = 9800 N/m³. Set y=0 at surface, positive down. Plate extends from y=2 to y=5.\n1. Width constant: w(y)=4 m.\n2. Force: F = ∫₂⁵ δ·y·4 dy = 4δ [y²/2]₂⁵.\n3. Compute: 4·9800·(25/2 - 4/2) = 39200·10.5 = 411,600 N."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Submerged rectangle with slice",
+        "visual_spec": "Draw water surface at y=0. Rectangle from y=2 to y=5, width 4. Show a horizontal slice at depth y, thickness dy. Label depth y. Indicate pressure arrows on slice.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Rectangular plate: F = δ·w·(b²-a²)/2 = 411,600 N.",
+      "teacher_narration": "Now a rectangular plate submerged vertically. Its top is two meters below the surface, bottom at five meters. Width is constant four meters. The depth variable y goes from 2 to 5. Force is weight density times y times width, integrated. Because width is constant, we pull it out. The result is 411,600 newtons. This is a large force, equivalent to the weight of about 42 metric tons, which shows why dams need to be so strong.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Force on a Circular Gate",
+      "left": {
+        "content_type": "text",
+        "content": "**Setup:** Circular gate radius 2 ft, center 5 ft below surface. Weight density δ = 62.5 lb/ft³.\nUse coordinates with origin at circle center. Depth at y (positive upward) = 5 - y. Width w(y) = 2√(4 - y²).\n\nForce: \n$$F = \\int_{-2}^{2} \\delta (5-y) \\cdot 2\\sqrt{4-y^2}\\,dy$$\n$$= 2\\delta \\left[ 5 \\int_{-2}^{2} \\sqrt{4-y^2}\\,dy - \\int_{-2}^{2} y\\sqrt{4-y^2}\\,dy \\right]$$\nSecond integral = 0 (odd function). First integral = area of semicircle radius 2 = 2π.\nSo \\(F = 2\\delta \\cdot 5 \\cdot 2\\pi = 20\\pi \\delta = 1250\\pi \\approx 3927\\) lb."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Circular gate: use symmetry. ∫√(r²-y²)dy = area of semicircle = πr²/2.",
+      "teacher_narration": "This is a more challenging example requiring geometric insight. The circular gate has its center at 5 feet depth. We place coordinates at the center for simplicity. The width at each height y is given by the circle equation. Splitting the integral, the term with y integrates to zero because it's an odd function over a symmetric interval. The remaining integral is the area of a semicircle, which we know without doing trig substitution. The final force is about 3927 pounds.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Quick Check: Spring Work",
+      "left": {
+        "content_type": "text",
+        "content": "A spring requires 10 N to stretch 0.2 m. How much work is done stretching it from 0.3 m to 0.7 m?\n\nOptions:\nA) 5 J\nB) 10 J\nC) 20 J\nD) 40 J\n\n**Pause the video, solve, then click the button to reveal the answer.**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Hint diagram",
+        "visual_spec": "Graph of F = kx (with k unknown) showing shaded area from x=0.3 to x=0.7. Add label 'k = ?' and axes. Do not show solution.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: Show Answer (reveals answer and explanation on click)"
+        ]
+      },
+      "on_screen_text": "Pause: Find work from 0.3 to 0.7 m for spring with k=50 N/m.",
+      "teacher_narration": "Pause the video now and attempt this spring problem. Use the formula for work with constant k. First find k from the given data: a force of 10 newtons stretches the spring 0.2 meters, so k = 10/0.2 = 50 newtons per meter. Then integrate kx from 0.3 to 0.7 meters. After you've tried, press the button to see the answer and explanation.",
+      "student_prompt": "Compute W = ?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Quick Check: Hydrostatic Force",
+      "left": {
+        "content_type": "text",
+        "content": "A vertical rectangular plate 2 m wide and 4 m tall is submerged so its top is 1 m below the water surface. Water weight density δ = 9800 N/m³. Find the hydrostatic force on one side.\n\nOptions:\nA) 156,800 N\nB) 235,200 N\nC) 313,600 N\nD) 392,000 N\n\n**Pause and solve, then click to reveal.**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Submerged rectangle diagram",
+        "visual_spec": "Draw water surface at y=0, rectangle from y=1 to y=5, width 2. Show a horizontal slice. Label depths. No numbers.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: Show Answer (reveals answer and explanation on click)"
+        ]
+      },
+      "on_screen_text": "Pause: Compute force on rectangle 2×4 m, top at 1 m depth.",
+      "teacher_narration": "Another pause moment. Compute the hydrostatic force on this rectangular plate. Remember to set up your limits from y=1 to y=5 and integrate. The width is constant at 2 meters, and the depth at any y is just y. So the integral is δ times 2 times the integral of y from 1 to 5. Reveal the answer when ready.",
+      "student_prompt": "F = ?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary",
+      "left": {
+        "content_type": "text",
+        "content": "**Key Formulas**\n- Work (constant force): $W = Fd$\n- Work (variable force): $W = \\int_a^b F(x)\\,dx$\n- Hydrostatic pressure: $P = \\delta h$\n- Hydrostatic force: $F = \\int_a^b \\delta \\cdot h(y) \\cdot w(y)\\,dy$\n\n**Learning Objectives Revisited**\n- Calculate work by variable forces using integrals.\n- Set up integrals for hydrostatic force on submerged vertical surfaces.\n- Apply the slice-and-sum method to physical problems.\n- Analyze real-world scenarios (springs, pumps, dams, gates).\n- Interpret pressure as force per unit area."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Work = ∫F dx. Fluid force = ∫δ·depth·width dy. Slice and integrate.",
+      "teacher_narration": "Today we've seen how the definite integral is the workhorse for computing work and fluid forces. Remember the key idea: slice the object into pieces where the force or pressure is approximately constant, compute the contribution of each slice, and integrate. Practice with the examples and check your understanding with the problems. The same slice-and-sum approach will appear again in other applications like center of mass and moments of inertia.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

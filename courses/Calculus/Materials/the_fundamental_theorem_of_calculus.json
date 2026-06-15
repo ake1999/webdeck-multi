@@ -1,0 +1,408 @@
+{
+  "lecture_meta": {
+    "title": "The Fundamental Theorem of Calculus – Connecting Integration and Differentiation",
+    "topic": "Fundamental Theorem of Calculus",
+    "category": "calculus",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate definite integrals using antiderivatives via FTC Part 2",
+      "Interpret the inverse relationship between differentiation and integration",
+      "Apply FTC Part 1 to differentiate integrals with variable upper limits",
+      "Analyze functions defined by integrals and determine their properties",
+      "Evaluate definite integrals efficiently using endpoint evaluation"
+    ],
+    "prerequisite_reminder": "You should be comfortable with Riemann sums and the definition of the definite integral as a limit."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "From Riemann Sums to a Shortcut",
+      "left": {
+        "content_type": "text",
+        "content": "**The problem:**\n\n$$\\int_a^b f(x)\\,dx = \\lim_{n\\to\\infty}\\sum_{i=1}^n f(x_i^*)\\Delta x$$\n\nComputing this limit directly is tedious. The FTC gives us a fast way."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Riemann sum animation showing rectangles approximating area under $f(x)=x^2$ from 0 to 2",
+        "visual_spec": "Plot the function f(x)=x^2 from x=0 to 2. Show a Riemann sum with n rectangles (random sample points). As n increases, the sum approaches the true area. Use a slider to adjust n from 1 to 50. Animate the transition from coarse to fine rectangles. Label the Riemann sum value and the exact area (computed by FTC) as a reference line. Color the rectangles blue with low opacity. Interactive controls: Slider for n, Button to toggle exact area line.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button\n\nfig, ax = plt.subplots(figsize=(8,5))\nplt.subplots_adjust(bottom=0.25)\n\nx = np.linspace(0, 2, 400)\nf = lambda x: x**2\nexact_area = 8/3  # ∫0^2 x^2 dx = 8/3\nax.plot(x, f(x), 'k-', linewidth=2, label='$f(x)=x^2$')\nax.axhline(0, color='gray', linewidth=0.5)\nax.set_xlim(-0.1, 2.1)\nax.set_ylim(-0.1, 4.5)\nax.set_title('Riemann Sum Approximation')\nax.legend()\n\ndef update_plot(val):\n    n = int(slider.val)\n    ax.clear()\n    ax.plot(x, f(x), 'k-', linewidth=2)\n    ax.axhline(0, color='gray', linewidth=0.5)\n    dx = 2.0 / n\n    xi = np.linspace(0, 2-dx, n) + dx/2  # midpoint rule\n    riemann_sum = np.sum(f(xi) * dx)\n    for i in range(n):\n        ax.bar(xi[i], f(xi[i]), width=dx*0.9, bottom=0, alpha=0.4, color='blue', edgecolor='blue')\n    ax.set_xlim(-0.1, 2.1)\n    ax.set_ylim(-0.1, 4.5)\n    ax.set_title(f'Midpoint Riemann sum with n={n}: {riemann_sum:.4f} (exact: {exact_area:.4f})')\n    ax.text(0.1, 4.0, f'Error = {abs(riemann_sum-exact_area):.4f}', fontsize=10, color='red')\n    ax.plot(x, f(x), 'k-', linewidth=2)\n    ax.legend()\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.1, 0.65, 0.03])\nslider = Slider(ax_slider, 'n', 1, 50, valinit=5, valstep=1)\nslider.on_changed(update_plot)\n\nax_button = plt.axes([0.8, 0.05, 0.1, 0.04])\nbutton = Button(ax_button, 'Reset')\ndef reset(event):\n    slider.reset()\nbutton.on_clicked(reset)\n\nupdate_plot(5)\nplt.show()",
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Button to reset slider"
+        ]
+      },
+      "on_screen_text": "Riemann sums are tedious. FTC gives a shortcut using antiderivatives.",
+      "teacher_narration": "Calculating a definite integral by Riemann sums is like counting every step of a journey. It works, but it's painful. The Fundamental Theorem of Calculus gives us a revolutionary shortcut: instead of summing infinitely many tiny rectangles, we can evaluate the antiderivative at just two points. In this lecture, you'll learn this shortcut and why it works. Think of it as a fast-forward button for integration, turning a long process into a simple subtraction.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "A Simple Analogy: Speedometer and Odometer",
+      "left": {
+        "content_type": "concept",
+        "content": "| Speedometer $v(t)$ | Odometer $s(t)$ |\n|-------------------|-----------------|\n| instantaneous rate of change | net change in position (displacement) |\n| derivative of $s$ | antiderivative of $v$ (with $s(0)=0$) |\n\n**The FTC says:**\n$$\\int_a^b v(t)\\,dt = s(b) - s(a)$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of velocity vs. time and the accumulated distance",
+        "visual_spec": "Two-panel plot. Left panel: velocity v(t)=2t (linear). Right panel: position s(t)=t^2. Highlight the area under v(t) from a to b, and the difference s(b)-s(a). Use interactive sliders for a and b. Show that the area equals s(b)-s(a). Colors: v(t) in red, s(t) in blue, area shaded light red. Interactive controls: Slider for a (0 to 5), Slider for b (a+0.1 to 5). Display numeric values for area and s(b)-s(a).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,5))\nplt.subplots_adjust(bottom=0.25)\n\nt = np.linspace(0, 5, 500)\nv = lambda t: 2*t\ns = lambda t: t**2\n\nax1.plot(t, v(t), 'r-', linewidth=2, label='$v(t)=2t$')\nax1.set_xlim(0,5)\nax1.set_ylim(0,12)\nax1.set_xlabel('Time $t$')\nax1.set_ylabel('Velocity $v(t)$')\nax1.set_title('Speedometer: $v(t)$')\nax1.grid(True, alpha=0.3)\n\nax2.plot(t, s(t), 'b-', linewidth=2, label='$s(t)=t^2$')\nax2.set_xlim(0,5)\nax2.set_ylim(0,30)\nax2.set_xlabel('Time $t$')\nax2.set_ylabel('Position $s(t)$')\nax2.set_title('Odometer: $s(t)$')\nax2.grid(True, alpha=0.3)\n\ndef update(val):\n    a = slider_a.val\n    b = slider_b.val\n    if a >= b:\n        slider_b.set_val(a+0.1)\n        b = a+0.1\n    # clear and redraw\n    ax1.clear()\n    ax2.clear()\n    \n    ax1.plot(t, v(t), 'r-', linewidth=2)\n    ax1.fill_between(t, v(t), where=(t>=a)&(t<=b), alpha=0.3, color='red')\n    ax1.set_xlim(0,5)\n    ax1.set_ylim(0,12)\n    ax1.set_xlabel('Time $t$')\n    ax1.set_ylabel('Velocity $v(t)$')\n    ax1.set_title(f'Area = ∫_{{{a:.2f}}}^{{{b:.2f}}} v(t) dt = {b**2 - a**2:.2f}')\n    ax1.grid(True, alpha=0.3)\n    \n    ax2.plot(t, s(t), 'b-', linewidth=2)\n    ax2.plot([a,a], [0,s(a)], 'k--')\n    ax2.plot([b,b], [0,s(b)], 'k--')\n    ax2.plot([a,b], [s(a),s(a)], 'g--', linewidth=1)\n    ax2.plot([a,b], [s(b),s(b)], 'g--', linewidth=1)\n    ax2.fill_between(t, s(t), alpha=0.1, color='blue')\n    ax2.set_xlim(0,5)\n    ax2.set_ylim(0,30)\n    ax2.set_xlabel('Time $t$')\n    ax2.set_ylabel('Position $s(t)$')\n    ax2.set_title(f's(b)-s(a) = {s(b):.2f} - {s(a):.2f} = {s(b)-s(a):.2f}')\n    ax2.grid(True, alpha=0.3)\n    ax2.axvline(a, color='red', linestyle='--', label=f'a={a:.2f}')\n    ax2.axvline(b, color='green', linestyle='--', label=f'b={b:.2f}')\n    ax2.legend()\n    fig.canvas.draw_idle()\n\nax_slider_a = plt.axes([0.2, 0.1, 0.3, 0.03])\nax_slider_b = plt.axes([0.6, 0.1, 0.3, 0.03])\nslider_a = Slider(ax_slider_a, 'a', 0, 5, valinit=1)\nslider_b = Slider(ax_slider_b, 'b', 0.1, 5, valinit=3)\nslider_a.on_changed(update)\nslider_b.on_changed(update)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for a from 0 to 5",
+          "Slider for b from a+0.1 to 5"
+        ]
+      },
+      "on_screen_text": "Integration accumulates tiny changes; differentiation gives instantaneous rate. They are inverses.",
+      "teacher_narration": "Think of a car's speedometer and odometer. The speedometer shows instantaneous velocity, the derivative of position. The odometer shows net change in position, the antiderivative. If you want to know how far you traveled between time a and time b, you could either integrate velocity (area under speedometer) or simply subtract odometer readings. The FTC says these give the same result. This is the core idea: integration and differentiation undo each other.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "FTC Part 1 – Derivative of an Integral",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**FTC Part 1 (theorem):**\n\nIf $f$ is continuous on $[a,b]$, then for $x \\in (a,b)$,\n\n$$\\frac{d}{dx} \\int_a^x f(t)\\,dt = f(x).$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of f and the area function g(x) = ∫_a^x f(t) dt, showing that g'(x)=f(x)",
+        "visual_spec": "Plot f(t)=cos(t) from t=0 to 2π. Also plot the area function g(x) = ∫_0^x cos(t) dt = sin(x). Show that the slope of g at any point equals f at that point. Use a moving point on g to show tangent line, whose slope is f(x). Interactive controls: Draggable point on g (or slider for x). Display numeric values: g(x), slope (g'(x)), f(x). Show that they are equal.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,5))\nplt.subplots_adjust(bottom=0.2)\n\nt = np.linspace(0, 2*np.pi, 500)\nf = lambda t: np.cos(t)\ng = lambda x: np.sin(x)  # ∫_0^x cos(t) dt\n\ndef update(val):\n    x = slider.val\n    ax1.clear()\n    ax2.clear()\n    \n    # Left: f(t) with area shaded up to x\n    ax1.plot(t, f(t), 'b-', linewidth=2, label='$f(t)=\\cos(t)$')\n    ax1.fill_between(t, f(t), where=(t>=0)&(t<=x), alpha=0.3, color='blue')\n    ax1.axvline(x, color='red', linestyle='--', label=f'x={x:.2f}')\n    ax1.set_ylim(-1.5,1.5)\n    ax1.set_xlim(-0.1,2*np.pi+0.1)\n    ax1.set_title('Integrand $f(t)$')\n    ax1.set_xlabel('$t$')\n    ax1.set_ylabel('$f(t)$')\n    ax1.legend()\n    ax1.grid(True, alpha=0.3)\n    \n    # Right: g(x) with tangent line\n    ax2.plot(t, g(t), 'r-', linewidth=2, label='$g(x)=\\int_0^x \\cos(t) dt = \\sin(x)$')\n    ax2.scatter(x, g(x), color='green', s=100, zorder=5)\n    # tangent line slope = f(x) = cos(x)\n    slope = f(x)\n    x_tan = np.linspace(x-0.5, x+0.5, 10)\n    y_tan = g(x) + slope*(x_tan - x)\n    ax2.plot(x_tan, y_tan, 'g--', linewidth=2, label='tangent at $x$')\n    ax2.set_ylim(-1.5,1.5)\n    ax2.set_xlim(-0.1,2*np.pi+0.1)\n    ax2.set_title('Area function $g(x)$')\n    ax2.set_xlabel('$x$')\n    ax2.set_ylabel('$g(x)$')\n    ax2.legend()\n    ax2.grid(True, alpha=0.3)\n    \n    # Display information\n    ax1.text(0.2, -1.2, f'g(x) = {g(x):.3f}', fontsize=10, color='red')\n    ax1.text(0.2, -1.4, f\"g'(x) = {slope:.3f}\", fontsize=10, color='green')\n    ax1.text(0.2, -1.6, f'f(x) = {f(x):.3f}', fontsize=10, color='blue')\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'x', 0, 2*np.pi, valinit=1, valfmt='%.2f')\nslider.on_changed(update)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for x from 0 to 2*pi"
+        ]
+      },
+      "on_screen_text": "FTC Part 1: $\\frac{d}{dx} \\int_a^x f(t) dt = f(x)$ — differentiating an integral returns the integrand.",
+      "teacher_narration": "Now let's state Part 1 precisely. If f is continuous, then the function g of x defined as the integral from a constant a to x of f(t) dt is differentiable, and its derivative is f(x). In other words, integrating and then differentiating gives back the original function. The visual shows this: the area function g in red has a tangent line whose slope equals the value of f at that point. Play with the slider to see how the slope of g matches f.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "FTC Part 2 – Evaluating Definite Integrals",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**FTC Part 2 (theorem):**\n\nIf $f$ is continuous on $[a,b]$ and $F$ is any antiderivative of $f$ (i.e., $F' = f$), then\n\n$$\\int_a^b f(x)\\,dx = F(b) - F(a).$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Area under curve from a to b and the antiderivative difference",
+        "visual_spec": "Plot f(x)=x^2 from x=0 to 2. Shade the area under the curve. On the same plot, show the antiderivative F(x)=x^3/3 curve (in a different y-scale or on a second y-axis). Emphasize the difference F(2)-F(0) = 8/3 ≈ 2.667. Add annotations. Interactive controls: Slider for a and b to change limits, show both area and F(b)-F(a).",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig, ax = plt.subplots(figsize=(8,5))\nplt.subplots_adjust(bottom=0.25)\n\nt = np.linspace(0, 2, 500)\nf = lambda t: t**2\nF = lambda t: t**3/3\n\ndef update(val):\n    a = slider_a.val\n    b = slider_b.val\n    if a >= b:\n        slider_b.set_val(a+0.1)\n        b = a+0.1\n    ax.clear()\n    \n    ax.plot(t, f(t), 'b-', linewidth=2, label='$f(t)=t^2$')\n    ax.fill_between(t, f(t), where=(t>=a)&(t<=b), alpha=0.3, color='blue')\n    # Plot antiderivative on secondary y-axis\n    ax2 = ax.twinx()\n    ax2.plot(t, F(t), 'r-', linewidth=2, linestyle='--', label='$F(t)=t^3/3$')\n    ax2.set_ylabel('$F(t)$', color='r')\n    ax2.tick_params(axis='y', labelcolor='r')\n    \n    ax.set_xlim(0,2)\n    ax.set_ylim(0,4.5)\n    ax.set_xlabel('$x$')\n    ax.set_ylabel('$f(x)$')\n    ax.set_title(f'Area = ∫_{{{a:.2f}}}^{{{b:.2f}}} t^2 dt = F({b:.2f})-F({a:.2f}) = {F(b)-F(a):.3f}')\n    ax.legend(loc='upper left')\n    ax2.legend(loc='upper right')\n    ax.grid(True, alpha=0.3)\n    fig.canvas.draw_idle()\n\nax_slider_a = plt.axes([0.2, 0.1, 0.3, 0.03])\nax_slider_b = plt.axes([0.6, 0.1, 0.3, 0.03])\nslider_a = Slider(ax_slider_a, 'a', 0, 2, valinit=0.5)\nslider_b = Slider(ax_slider_b, 'b', 0.1, 2, valinit=1.5)\nslider_a.on_changed(update)\nslider_b.on_changed(update)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for a from 0 to 2",
+          "Slider for b from a+0.1 to 2"
+        ]
+      },
+      "on_screen_text": "FTC Part 2: $\\int_a^b f(x) dx = F(b) - F(a)$ — definite integral via antiderivative difference.",
+      "teacher_narration": "Part 2 is the practical workhorse. It says: to evaluate a definite integral, find any antiderivative of the integrand, then subtract its value at the lower limit from its value at the upper limit. Notice that the constant of integration cancels, so we never need to write it. This is far easier than evaluating a Riemann sum. The visual shows this: the shaded area equals the difference in the antiderivative curve F.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm-up Example: Direct FTC Part 2",
+      "left": {
+        "content_type": "steps",
+        "content": "**Evaluate $\\int_0^1 (3x^2 + 2x)\\,dx$**\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Find antiderivative $F(x) = x^3 + x^2$ | Since $F'(x) = 3x^2 + 2x$ |\n| 2 | $F(1) = 1^3 + 1^2 = 2$ | Evaluate at upper limit |\n| 3 | $F(0) = 0^3 + 0^2 = 0$ | Evaluate at lower limit |\n| 4 | $\\int_0^1 (3x^2 + 2x)\\,dx = F(1)-F(0) = 2$ | Apply FTC Part 2 |"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example: $\\int_0^1 (3x^2+2x)dx = [x^3+x^2]_0^1 = (1+1)-(0) = 2$",
+      "teacher_narration": "Let's begin with a straightforward application of FTC Part 2. We want the definite integral from 0 to 1 of 3x squared plus 2x. First, find an antiderivative. The antiderivative of 3x squared is x cubed, and of 2x is x squared. So F of x equals x cubed plus x squared. Then evaluate at the bounds: F of 1 is 1 plus 1 equals 2, F of 0 is 0. The difference is 2. That's the answer.",
+      "student_prompt": "Try: Evaluate $\\int_0^{\\pi/4} \\sec^2 x\\,dx$",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Standard Example: FTC Part 1",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find $g'(x)$ if $g(x) = \\int_0^x \\frac{1}{1+t^2}\\,dt$**\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n| 1 | Identify $f(t) = \\frac{1}{1+t^2}$ | Continuous for all $t$ |\n| 2 | $g'(x) = f(x)$ | By FTC Part 1 |\n| 3 | $g'(x) = \\frac{1}{1+x^2}$ | Substitute $t=x$ |\n\n**Check:** $g'(2) = \\frac{1}{1+4} = \\frac{1}{5}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "If $g(x)=\\int_0^x \\frac{1}{1+t^2}dt$, then $g'(x)=\\frac{1}{1+x^2}$.",
+      "teacher_narration": "Now apply FTC Part 1 to differentiate an integral with a variable upper limit. The function g of x is defined as the integral from 0 to x of 1 over 1 plus t squared dt. The integrand is continuous, so by Part 1, the derivative is simply the integrand evaluated at x. That gives 1 over 1 plus x squared. For instance, at x equals 2, g prime of 2 is 1/5. Notice we didn't need to find the antiderivative explicitly.",
+      "student_prompt": "Try: If $g(x) = \\int_0^x \\sqrt{1+t^3}\\,dt$, find $g'(2)$.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Forgetting the Chain Rule in FTC Part 1",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** $\\frac{d}{dx} \\int_0^{x^2} \\cos(t)\\,dt = \\cos(x^2)$\n\n**Why wrong:** The upper limit is $x^2$, not $x$. FTC Part 1 requires the chain rule:\n\n$$\\frac{d}{dx} \\int_0^{g(x)} f(t)\\,dt = f(g(x)) \\cdot g'(x)$$\n\n**Correct answer:** $\\cos(x^2) \\cdot 2x$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph showing the mistake: derivative of integral vs. correct chain rule",
+        "visual_spec": "Plot f(t)=cos(t). The area function G(x)=∫_0^{x^2} cos(t) dt. Show the incorrect tangent slope (cos(x^2)) vs correct slope (cos(x^2)*2x). Use two subplots: left shows G(x) with both tangent lines; right shows the difference. Highlight the error.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nx = np.linspace(0, 3, 300)\nf = lambda t: np.cos(t)\nG = lambda x: np.sin(x**2)  # ∫_0^{x^2} cos(t) dt = sin(x^2)\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,5))\nplt.subplots_adjust(bottom=0.2)\n\n# Precompute arrays for right panel\nwrong_slope_arr = np.cos(x**2)\ncorrect_slope_arr = np.cos(x**2) * 2*x\n\ndef update(val):\n    x0 = slider.val\n    ax1.clear()\n    ax2.clear()\n    \n    # Left: G(x) and tangent lines\n    ax1.plot(x, G(x), 'b-', linewidth=2, label='$G(x)=\\int_0^{x^2} \\cos(t) dt = \\sin(x^2)$')\n    ax1.scatter(x0, G(x0), color='green', s=100, zorder=5)\n    # wrong tangent slope = cos(x0^2)\n    wrong_slope = np.cos(x0**2)\n    correct_slope = np.cos(x0**2) * 2*x0\n    x_tan = np.linspace(x0-0.4, x0+0.4, 10)\n    y_wrong = G(x0) + wrong_slope*(x_tan - x0)\n    y_correct = G(x0) + correct_slope*(x_tan - x0)\n    ax1.plot(x_tan, y_wrong, 'r--', label='wrong: $\\cos(x^2)$')\n    ax1.plot(x_tan, y_correct, 'g--', label='correct: $\\cos(x^2)\\cdot 2x$')\n    ax1.set_ylim(-1.5,8)\n    ax1.set_xlim(0,3)\n    ax1.set_title('Tangent lines on $G(x)$')\n    ax1.set_xlabel('$x$')\n    ax1.set_ylabel('$G(x)$')\n    ax1.legend()\n    ax1.grid(True, alpha=0.3)\n    \n    # Right: show the difference\n    ax2.plot(x, wrong_slope_arr, 'r-', label='wrong $\\cos(x^2)$')\n    ax2.plot(x, correct_slope_arr, 'g-', label='correct $\\cos(x^2)\\cdot 2x$')\n    ax2.axvline(x0, color='gray', linestyle='--')\n    ax2.set_ylim(-3,12)\n    ax2.set_xlim(0,3)\n    ax2.set_title('Derivative of $G(x)$')\n    ax2.set_xlabel('$x$')\n    ax2.set_ylabel(\"$G'(x)$\")\n    ax2.legend()\n    ax2.grid(True, alpha=0.3)\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 'x', 0.2, 2.8, valinit=1.5)\nslider.on_changed(update)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for x from 0.2 to 2.8"
+        ]
+      },
+      "on_screen_text": "Common mistake: forgetting the chain rule factor. Always apply chain rule when upper limit is a function.",
+      "teacher_narration": "One of the most common errors in FTC Part 1 is forgetting the chain rule. When the upper limit is not just x but a function of x, you must differentiate that function and multiply. In our example, the upper limit is x squared, so the derivative is cosine of x squared times the derivative of x squared, which is 2x. The graph shows that the wrong tangent line does not match the curve G(x); the correct one does.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Tricky Example: FTC Part 1 with Chain Rule",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find $h'(x)$ if $h(x) = \\int_0^{x^3} \\sin(t^2)\\,dt$**\n\n1. Let $u = x^3$, then $h(x) = \\int_0^u \\sin(t^2)\\,dt$\n2. $\\frac{dh}{dx} = \\frac{dh}{du} \\cdot \\frac{du}{dx}$ (chain rule)\n3. $\\frac{dh}{du} = \\sin(u^2)$ by FTC Part 1\n4. $\\frac{du}{dx} = 3x^2$\n5. $h'(x) = \\sin(x^6) \\cdot 3x^2$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$h'(x) = \\sin((x^3)^2) \\cdot 3x^2 = \\sin(x^6)\\cdot 3x^2$",
+      "teacher_narration": "Here's a trickier version: the upper limit is x cubed. We apply the generalized FTC Part 1. Write u equals x cubed, then h of x becomes the integral from 0 to u of sine of t squared dt. Differentiate using the chain rule: derivative with respect to u gives sine of u squared, times derivative of u with respect to x gives 3x squared. So h prime of x equals sine of x to the sixth times 3x squared. Always remember the chain rule factor.",
+      "student_prompt": "Try: Find $\\frac{d}{dx} \\int_0^{x^2} \\cos(t^3)\\,dt$",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Edge Case: When the Lower Limit is Variable",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find $p'(x)$ if $p(x) = \\int_x^5 e^{t^2}\\,dt$**\n\n1. Swap limits: $p(x) = -\\int_5^x e^{t^2}\\,dt$\n2. Differentiate: $p'(x) = -\\frac{d}{dx}\\int_5^x e^{t^2}\\,dt$\n3. Apply FTC Part 1: $p'(x) = -e^{x^2}$\n\n**Check:** As $x$ increases, the interval $[x,5]$ shrinks, so the area decreases → negative derivative makes sense."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "If the integral has the variable in the lower limit, swap limits and apply FTC Part 1 with a sign change.",
+      "teacher_narration": "What if the variable appears in the lower limit instead of the upper? For p of x equals the integral from x to 5 of e to the t squared dt, we swap the limits and introduce a minus sign. Now it's minus the integral from 5 to x. Differentiate using FTC Part 1, and we get minus e to the x squared. This makes sense: as x increases, the interval gets smaller, so the total area decreases, giving a negative derivative.",
+      "student_prompt": "Try: Find $\\frac{d}{dx} \\int_x^2 \\ln(t)\\,dt$",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Finding a Function from Its Derivative",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find $F(x)$ if $F'(x) = 3x^2$ and $F(1) = 5$**\n\n**Method 1 (antiderivative):**\n- $F(x) = \\int 3x^2\\,dx = x^3 + C$\n- $F(1) = 1^3 + C = 5 \\Rightarrow C=4$\n- $F(x) = x^3 + 4$\n\n**Method 2 (FTC Part 2):**\n- $F(x) = F(1) + \\int_1^x 3t^2\\,dt = 5 + [t^3]_1^x = 5 + (x^3-1) = x^3+4$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Initial value problems connect FTC to differential equations.",
+      "teacher_narration": "This application shows how FTC helps solve initial value problems. Suppose we know the derivative of a function and its value at one point. We can reconstruct the function. Using indefinite integration, we get a family of antiderivatives differing by a constant. The initial condition picks the specific constant. Alternatively, we can use the definite integral formula from FTC Part 2: F of x equals F of 1 plus the integral from 1 to x of 3t squared dt. Both methods give the same result.",
+      "student_prompt": "Try: Find $F(x)$ if $F'(x) = \\cos x$ and $F(\\pi)=0$",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Area Between Curves",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find the area between $y=x^2$ and $y=x$ from $x=0$ to $x=1$**\n\n1. Top: $y=x$, bottom: $y=x^2$ on $[0,1]$\n2. Area = $\\int_0^1 (x - x^2)\\,dx$\n3. Antiderivative: $\\frac{x^2}{2} - \\frac{x^3}{3}$\n4. $\\left[\\frac{x^2}{2} - \\frac{x^3}{3}\\right]_0^1 = \\frac{1}{2} - \\frac{1}{3} = \\frac{1}{6}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Area between curves: integrate (top - bottom). Result: 1/6.",
+      "teacher_narration": "A classic application: area between two curves. From x=0 to 1, the line y=x lies above the parabola y=x squared. So the area is the integral of top minus bottom, from 0 to 1. Integrate x minus x squared. The antiderivative is x squared over 2 minus x cubed over 3. Evaluating at 1 gives 1/2 minus 1/3 equals 1/6. The lower bound gives 0, so the area is 1/6.",
+      "student_prompt": "Try: Find the area between $y=\\sin x$ and $y=0$ from $x=0$ to $x=\\pi$.",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Visual Lab: Explore FTC Part 2",
+      "left": {
+        "content_type": "text",
+        "content": "**Use the sliders to change the function and bounds.**\n\n- Choose $f(x)$ from dropdown.\n- See the area under $f$ equal to $F(b)-F(a)$.\n- Verify that the sum of Riemann rectangles approaches the FTC value.\n\n**What to notice:** The FTC value is exact; the Riemann sum is approximate and improves as $n$ increases."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot with function selector, bounds sliders, and Riemann sum slider",
+        "visual_spec": "Plot the selected function f(x) with shading from a to b. On the same plot, show a Riemann sum (midpoint) with n rectangles. Display both the FTC exact value and the Riemann sum. Use dropdown for f: 'x^2', 'sin(x)', 'exp(x)'. Sliders for a, b, n. A toggle to show/hide the antiderivative curve. Colors: f in blue, rectangles in light blue, antiderivative in red dashed. Display numeric values.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider, Button, RadioButtons\nfrom math import sin, cos, exp\n\ndef f_choice(f_name, t):\n    if f_name == 'x^2':\n        return t**2\n    elif f_name == 'sin(x)':\n        return np.sin(t)\n    elif f_name == 'exp(x)':\n        return np.exp(t)\n\ndef F_choice(f_name, t):\n    # antiderivatives\n    if f_name == 'x^2':\n        return t**3/3\n    elif f_name == 'sin(x)':\n        return -np.cos(t)\n    elif f_name == 'exp(x)':\n        return np.exp(t)\n\nfig, ax = plt.subplots(figsize=(10,6))\nplt.subplots_adjust(left=0.1, bottom=0.3, right=0.8, top=0.9)\n\nt = np.linspace(0, 2, 500)\ncurrent_f = 'x^2'\n\n# Radio buttons for function\nax_radio = plt.axes([0.82, 0.4, 0.15, 0.2])\nradio = RadioButtons(ax_radio, ('x^2', 'sin(x)', 'exp(x)'))\n\n# Toggle button for antiderivative\nax_button = plt.axes([0.82, 0.2, 0.15, 0.06])\nbutton_toggle = Button(ax_button, 'Hide F')\n\ndef update(val):\n    a = slider_a.val\n    b = slider_b.val\n    n = int(slider_n.val)\n    f_name = radio.value_selected\n    current_f = f_name\n    \n    ax.clear()\n    \n    f = lambda t: f_choice(f_name, t)\n    F = lambda t: F_choice(f_name, t)\n    \n    ax.plot(t, f(t), 'b-', linewidth=2, label='f(x)')\n    ax.fill_between(t, f(t), where=(t>=a)&(t<=b), alpha=0.2, color='blue')\n    \n    # Riemann sum (midpoint)\n    dx = (b-a)/n\n    xi = np.linspace(a+dx/2, b-dx/2, n)\n    riemann = np.sum(f(xi))*dx\n    for i in range(n):\n        ax.bar(xi[i], f(xi[i]), width=dx*0.9, bottom=0, alpha=0.3, color='lightblue', edgecolor='grey')\n    \n    exact = F(b)-F(a)\n    \n    # Show antiderivative curve if toggle\n    if button_toggle.label.get_text() == 'Hide F':\n        ax.plot(t, F(t), 'r--', linewidth=1.5, label='F(x)')\n        ax2 = ax.twinx()\n        ax2.set_ylabel('F(x)', color='r')\n        ax2.tick_params(axis='y', labelcolor='r')\n    \n    ax.set_xlim(0,2)\n    ax.set_ylim(-1, 5)\n    ax.set_xlabel('x')\n    ax.set_ylabel('f(x)')\n    ax.set_title(f'FTC: {exact:.4f}, Riemann (n={n}): {riemann:.4f}, error: {abs(riemann-exact):.4f}')\n    ax.legend(loc='upper left')\n    ax.grid(True, alpha=0.3)\n    fig.canvas.draw_idle()\n\n# Sliders\nax_slider_a = plt.axes([0.2, 0.15, 0.5, 0.03])\nax_slider_b = plt.axes([0.2, 0.1, 0.5, 0.03])\nax_slider_n = plt.axes([0.2, 0.05, 0.5, 0.03])\nslider_a = Slider(ax_slider_a, 'a', 0, 2, valinit=0.5)\nslider_b = Slider(ax_slider_b, 'b', 0.1, 2, valinit=1.5)\nslider_n = Slider(ax_slider_n, 'n', 1, 50, valinit=5, valstep=1)\nslider_a.on_changed(update)\nslider_b.on_changed(update)\nslider_n.on_changed(update)\n\nradio.on_clicked(update)\n\ndef toggle_F(event):\n    if button_toggle.label.get_text() == 'Hide F':\n        button_toggle.label.set_text('Show F')\n    else:\n        button_toggle.label.set_text('Hide F')\n    update(None)\nbutton_toggle.on_clicked(toggle_F)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for a from 0 to 2",
+          "Slider for b from a+0.1 to 2",
+          "Slider for n from 1 to 50",
+          "Radio button to choose function: x^2, sin(x), exp(x)",
+          "Toggle button to show/hide antiderivative curve"
+        ]
+      },
+      "on_screen_text": "Explore FTC Part 2 interactively. Change function, bounds, and Riemann sum resolution.",
+      "teacher_narration": "This interactive lab lets you see FTC Part 2 in action. Choose a function from the radio buttons, adjust the bounds a and b with sliders, and control the number of Riemann rectangles. The blue shaded area is the exact integral given by the FTC. The light blue rectangles show the Riemann sum approximation. Notice that as n increases, the Riemann sum converges to the exact value. You can also toggle the antiderivative curve to see F of x.",
+      "student_prompt": "Set a=0.5, b=1.5, and choose sin(x). Increase n to 30. How close is the Riemann sum to the FTC value?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause and Try: Test Your Understanding",
+      "left": {
+        "content_type": "text",
+        "content": "**Question:**\n\nIf $g(x) = \\int_0^{x^2} \\frac{1}{1+t^2}\\,dt$, find $g'(x)$.\n\nTake a moment to solve it yourself."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Blank area or placeholder for student to think",
+        "visual_spec": "Simple graphic: a question mark and a clock icon to indicate pause.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Pause and try: Find g'(x) if g(x) = ∫_0^{x^2} 1/(1+t^2) dt.",
+      "teacher_narration": "Let's pause here. I want you to try this problem on your own before I reveal the answer. Use the generalized FTC Part 1 with chain rule. Remember: the upper limit is x squared. Pause the video now, work it out, then come back to check your answer. This is a great chance to test your understanding of the chain rule extension. If you get stuck, think about how we handled the similar example with sine earlier.",
+      "student_prompt": "Find g'(x). Write your answer, then unpause to see the solution.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Solution to Pause Problem",
+      "left": {
+        "content_type": "steps",
+        "content": "**Find $g'(x)$ if $g(x) = \\int_0^{x^2} \\frac{1}{1+t^2}\\,dt$**\n\n1. Let $u = x^2$, then $g(x) = \\int_0^u \\frac{1}{1+t^2}\\,dt$\n2. Use chain rule: $\\frac{dg}{dx} = \\frac{dg}{du} \\cdot \\frac{du}{dx}$\n3. $\\frac{dg}{du} = \\frac{1}{1+u^2}$ (FTC Part 1)\n4. $\\frac{du}{dx} = 2x$\n5. $g'(x) = \\frac{1}{1+(x^2)^2} \\cdot 2x = \\frac{2x}{1+x^4}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Answer: $g'(x) = \\frac{2x}{1+x^4}$",
+      "teacher_narration": "Here's the solution. We set u equal to x squared. Then by the chain rule, the derivative of g with respect to x equals the derivative with respect to u times du over dx. By FTC Part 1, dg over du is 1 over 1 plus u squared. That becomes 1 over 1 plus x to the fourth. Then multiply by the derivative of u, which is 2x. So the final answer is 2x over 1 plus x to the fourth. Did you get it?",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof Sketch for FTC Part 1",
+      "left": {
+        "content_type": "text",
+        "content": "**Proof idea:** Use the definition of derivative.\n\n$$g'(x) = \\lim_{h\\to 0} \\frac{g(x+h)-g(x)}{h} = \\lim_{h\\to 0} \\frac{1}{h} \\int_x^{x+h} f(t)\\,dt$$\n\nBy continuity, for small $h$, $f(t) \\approx f(x)$ on $[x,x+h]$, so the integral $\\approx f(x)\\cdot h$. The limit gives $f(x)$.\n\n**Rigorous version uses the Extreme Value Theorem and Squeeze Theorem.**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph showing the integral from x to x+h and the approximation by a rectangle of height f(x)",
+        "visual_spec": "Plot f(t) and highlight the area from x to x+h. Superimpose a rectangle of height f(x) and width h. Show that as h→0, the shaded area approaches the rectangle. Use animation to shrink h.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nt = np.linspace(0, 2, 500)\nf = lambda t: t**2 + 1\n\nfig, ax = plt.subplots(figsize=(8,5))\nplt.subplots_adjust(bottom=0.25)\n\ndef update(val):\n    h = slider.val\n    x0 = 1.0\n    ax.clear()\n    \n    ax.plot(t, f(t), 'b-', linewidth=2, label='f(t)')\n    # shade area from x to x+h\n    ax.fill_between(t, f(t), where=(t>=x0)&(t<=x0+h), alpha=0.3, color='blue')\n    # rectangle of height f(x0) width h\n    ax.add_patch(plt.Rectangle((x0,0), h, f(x0), alpha=0.2, color='red', label='f(x)·h rectangle'))\n    ax.set_xlim(0.8, 1.5)\n    ax.set_ylim(0, 4)\n    ax.axvline(x0, color='green', linestyle='--', label='x')\n    ax.legend()\n    ax.set_title(f'h = {h:.3f}, ∫ f(t)dt ≈ {np.trapezoid(f(t[(t>=x0)&(t<=x0+h)]), t[(t>=x0)&(t<=x0+h)]):.4f}, f(x)*h = {f(x0)*h:.4f}')\n    ax.grid(True, alpha=0.3)\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])\nslider = Slider(ax_slider, 'h', 0.01, 0.5, valinit=0.3)\nslider.on_changed(update)\n\nupdate(None)\nplt.show()",
+        "interactive_controls": [
+          "Slider for h from 0.01 to 0.5"
+        ]
+      },
+      "on_screen_text": "For small h, the integral from x to x+h is approximately f(x)*h. The limit as h→0 gives g'(x)=f(x).",
+      "teacher_narration": "For those who want the mathematical proof, here's the intuition. The derivative of g at x is the limit of (g(x+h)-g(x))/h. That difference is the integral from x to x+h. For small h, because f is continuous, the values of f on that tiny interval are all close to f(x). So the integral is approximately f(x) times h. In the limit, that approximation becomes exact, so g prime of x equals f of x. Full rigor uses the Extreme Value Theorem and Squeeze Theorem. If you're interested in the details, check the supplementary materials.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary and Key Takeaways",
+      "left": {
+        "content_type": "text",
+        "content": "**Fundamental Theorem of Calculus**\n\n1. **Part 1:** $\\frac{d}{dx} \\int_a^x f(t)\\,dt = f(x)$\n   - Derivative of an integral returns the integrand.\n   - Use chain rule if upper limit is a function.\n\n2. **Part 2:** $\\int_a^b f(x)\\,dx = F(b) - F(a)$\n   - Definite integral = antiderivative difference.\n   - No constant of integration needed.\n\n3. **Applications:**\n   - Area between curves\n   - Initial value problems\n   - Relating differentiation and integration\n\n**Remember:** Always check continuity of $f$ before applying FTC. If $f$ is not continuous on $[a,b]$, the theorem may fail."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "FTC Part 1 & 2: differentiation and integration are inverse processes.",
+      "teacher_narration": "Let's summarize the Fundamental Theorem of Calculus. Part 1 tells us that differentiating an integral gives back the original function. Part 2 gives us an efficient way to evaluate definite integrals using antiderivatives. These two parts together show that integration and differentiation are inverse operations. We also saw applications to area between curves and initial value problems. Always check that the integrand is continuous on the interval before applying FTC. With this tool, you can solve many calculus problems much more quickly.",
+      "student_prompt": "Which part of the FTC would you use to differentiate a function defined by an integral? (Answer: Part 1)",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

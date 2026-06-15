@@ -1,0 +1,326 @@
+{
+  "lecture_meta": {
+    "title": "Green's Theorem",
+    "topic": "Green's Theorem",
+    "category": "vectors_3d_geometry",
+    "student_level": "First-year university / Advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "State Green's Theorem and identify its components",
+      "Apply Green's Theorem to convert line integrals to double integrals",
+      "Compute area using the line integral formula",
+      "Recognize when orientation matters and how to handle it",
+      "Connect Green's Theorem to conservative vector fields"
+    ],
+    "prerequisite_reminder": "You should be comfortable with line integrals of vector fields and double integrals."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Two Ways to Measure Circulation",
+      "left": {
+        "content_type": "text",
+        "content": "Walking along the shore, you feel the water pushing you. This is a line integral around the boundary. Standing in the pond, you measure the spin at every point. That's a double integral of the curl. **Green's Theorem says these two measurements are exactly the same.**"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side diagrams: left half shows a person walking on a closed curve (pond boundary) with arrows indicating force; right half shows small curl arrows inside the region. The two halves are connected by an equals sign.",
+        "visual_spec": "Two panels: left panel shows a simple closed curve (e.g., ellipse) with a small person icon walking counterclockwise and force vectors (F) tangent to the curve. Right panel shows the same region filled with small green curl arrows pointing upward (k direction). An equals sign in the middle. Label left: '∮_C F·dr', right: '∬_D (∇×F)·k dA'. Title: 'Green’s Theorem'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\ntheta = np.linspace(0, 2*np.pi, 100)\nx = 2*np.cos(theta)\ny = np.sin(theta)\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))\n\n# Left panel: curve with boundary force vectors\nax1.plot(x, y, 'b-', lw=2)\n# Sample points with force arrows (F = (-y, x) for rotational field)\nfor t in np.linspace(0, 2*np.pi, 8)[:-1]:\n    x0 = 2*np.cos(t)\n    y0 = np.sin(t)\n    Fx = -y0\n    Fy = x0\n    ax1.arrow(x0, y0, 0.3*Fx, 0.3*Fy, head_width=0.1, head_length=0.1, fc='red', ec='red')\nax1.set_xlim(-2.5, 2.5)\nax1.set_ylim(-1.5, 1.5)\nax1.set_aspect('equal')\nax1.set_title('∮_C F·dr')\n\n# Right panel: region with curl arrows (all pointing up = 2D curl = 2)\nX, Y = np.meshgrid(np.linspace(-1.8, 1.8, 10), np.linspace(-0.8, 0.8, 5))\ncurl = 2  # constant for F = (-y, x)\nax2.quiver(X, Y, np.zeros_like(X), curl*np.ones_like(Y), color='green', alpha=0.7)\nax2.plot(x, y, 'b-', lw=2, alpha=0.3)\nax2.set_xlim(-2.5, 2.5)\nax2.set_ylim(-1.5, 1.5)\nax2.set_aspect('equal')\nax2.set_title('∬_D (∇×F)·k dA')\n\nplt.suptitle('Green’s Theorem', fontsize=14)\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Green's Theorem: A line integral around a closed curve equals the double integral of the curl over the enclosed region.",
+      "teacher_narration": "Imagine you are standing at the edge of a pond and you walk all the way around it while measuring how the water pushes you. That is a line integral of the force around the boundary. Now imagine you take a boat to the middle and measure how the water spins at every point inside. That is the double integral of the curl. Green's Theorem tells us that these two numbers are always equal. It is a two-dimensional version of the Fundamental Theorem of Calculus, turning a one-dimensional boundary integral into a two-dimensional interior integral. We will see how powerful this is in just a moment.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Circulation Form of Green's Theorem",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\oint_C P\\,dx + Q\\,dy = \\iint_D \\left(\\frac{\\partial Q}{\\partial x} - \\frac{\\partial P}{\\partial y}\\right) dA$$\n\n- $C$: positively oriented (counterclockwise), piecewise smooth, simple closed curve.\n- $D$: region enclosed by $C$.\n- $P$ and $Q$ have continuous partial derivatives on an open region containing $D$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram of a closed curve with region D shaded, showing the boundary orientation.",
+        "visual_spec": "Single panel: a closed curve (like an ellipse) with a '+' sign indicating counterclockwise orientation. The interior is shaded light blue. Arrow labels: C (boundary), D (region). A small note: 'Positive orientation = counterclockwise'. The integrand (∂Q/∂x - ∂P/∂y) is shown inside the region.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\ntheta = np.linspace(0, 2*np.pi, 100)\nx = 2*np.cos(theta)\ny = np.sin(theta)\n\nfig, ax = plt.subplots(figsize=(6, 6))\nax.fill(x, y, alpha=0.2, color='skyblue', label='Region D')\nax.plot(x, y, 'b-', lw=2, label='Boundary C')\n# Draw orientation arrow at top\nax.annotate('', xy=(0, 1.1), xytext=(0.5, 0.8),\n            arrowprops=dict(arrowstyle='->', color='red', lw=2))\nax.text(0.2, 1.2, 'Counterclockwise', color='red', fontsize=9)\nax.set_xlim(-2.5, 2.5)\nax.set_ylim(-1.5, 1.5)\nax.set_aspect('equal')\nax.legend()\nax.set_title('Green’s Theorem Setup')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "∮_C P dx + Q dy = ∬_D (∂Q/∂x - ∂P/∂y) dA. Curve C must be positively oriented (counterclockwise).",
+      "teacher_narration": "Here is the standard circulation form. The left side is the line integral of the vector field (P, Q) around the closed curve C. The right side is the double integral over the region D of the two-dimensional curl: ∂Q/∂x minus ∂P/∂y. This quantity measures the local rotation of the field at each point. The theorem requires C to be a simple closed curve, piecewise smooth, and oriented counterclockwise. We will see why orientation matters very soon. The functions P and Q must have continuous partial derivatives on an open region containing D; this ensures the double integral is well defined.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Explore Orientation",
+      "left": {
+        "content_type": "text",
+        "content": "Use the toggle to switch between counterclockwise and clockwise orientation. Notice that the sign of the line integral flips. Green's Theorem requires the boundary to be oriented counterclockwise; otherwise you must add a negative sign."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive plot with a simple closed curve and toggle for orientation.",
+        "visual_spec": "Plot a simple closed curve (e.g., a circle). Show the boundary with arrowheads indicating direction. Provide a toggle button 'Orientation: CCW / CW'. When toggled, reverse the arrow direction and update the sign of the computed line integral value displayed on screen. Also show a small region D shaded inside. Use matplotlib widgets Button. Include a text box showing ∮_C F·dr = ? (value changes sign).",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom matplotlib.widgets import Button\n\ntheta = np.linspace(0, 2*np.pi, 200)\nr = 1.5\nx = r*np.cos(theta)\ny = r*np.sin(theta)\n\nfig, ax = plt.subplots(figsize=(6,6))\nplt.subplots_adjust(bottom=0.2)\n\n# Initial orientation: CCW (positive)\norientation = 1  # 1 for CCW, -1 for CW\nline, = ax.plot(x, y, 'b-', lw=2)\n# Arrow at top\narrow = ax.annotate('', xy=(0, r*1.1), xytext=(0.5, r*0.8),\n                   arrowprops=dict(arrowstyle='->', color='red', lw=2))\nax.fill(x, y, alpha=0.2, color='lightgreen')\nax.set_xlim(-2, 2)\nax.set_ylim(-2, 2)\nax.set_aspect('equal')\nax.set_title('Orientation: Counterclockwise')\ntext_val = ax.text(-1.5, -1.5, '∮ F·dr = +3.0', fontsize=12, color='red')\n\ndef toggle_orientation(event):\n    global orientation\n    orientation *= -1\n    # Reverse direction of plot? Actually just reverse the arrow and change text\n    if orientation == 1:\n        ax.set_title('Orientation: Counterclockwise')\n        arrow.remove()\n        arrow = ax.annotate('', xy=(0, r*1.1), xytext=(0.5, r*0.8),\n                           arrowprops=dict(arrowstyle='->', color='red', lw=2))\n        text_val.set_text('∮ F·dr = +3.0')\n    else:\n        ax.set_title('Orientation: Clockwise')\n        arrow.remove()\n        arrow = ax.annotate('', xy=(0.5, r*0.8), xytext=(0, r*1.1),\n                           arrowprops=dict(arrowstyle='->', color='red', lw=2))\n        text_val.set_text('∮ F·dr = -3.0')\n    plt.draw()\n\nax_button = plt.axes([0.4, 0.05, 0.2, 0.075])\nbutton = Button(ax_button, 'Toggle Orientation', color='lightblue')\nbutton.on_clicked(toggle_orientation)\nplt.show()",
+        "interactive_controls": [
+          "Button: Toggle orientation between counterclockwise and clockwise"
+        ]
+      },
+      "on_screen_text": "Toggle orientation and watch the sign change. Green's Theorem needs counterclockwise orientation.",
+      "teacher_narration": "Let's interactively see the effect of orientation. Here we have a simple closed curve. When we toggle from counterclockwise to clockwise, the line integral flips sign. This is because reversing the direction of traversal reverses the sign of the integral. Green's Theorem is stated for counterclockwise orientation. If your curve is clockwise, you must apply a negative sign. This is a very common mistake, so always check orientation first. Play with the toggle and observe the value changing.",
+      "student_prompt": "What do you think happens to the double integral if we flip the orientation? (Answer: nothing, it is independent of boundary orientation; only the line integral changes sign.)",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 1: Warm-Up Over a Square",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Evaluate $\\oint_C y\\,dx + x\\,dy$ where $C$ is the square with vertices $(0,0),(1,0),(1,1),(0,1)$ oriented counterclockwise.\n\n1. Identify $P=y$, $Q=x$.\n2. $\\frac{\\partial Q}{\\partial x}=1$, $\\frac{\\partial P}{\\partial y}=1$.\n3. $\\frac{\\partial Q}{\\partial x} - \\frac{\\partial P}{\\partial y}=0$.\n4. $\\iint_D 0\\,dA = 0$.\n5. Therefore $\\oint_C y\\,dx + x\\,dy = 0$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot the square region D with boundary C labeled, showing the constant curl zero inside.",
+        "visual_spec": "A square with corners (0,0), (1,0), (1,1), (0,1). Shade the interior. Label boundary C with counterclockwise arrows. Inside, write '∂Q/∂x - ∂P/∂y = 0' in the center. Optionally show a grid with zero curl vectors (all zero).",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\n# square vertices\nverts = [(0,0), (1,0), (1,1), (0,1), (0,0)]\nxs, ys = zip(*verts)\n\nfig, ax = plt.subplots(figsize=(5,5))\nax.fill(xs, ys, alpha=0.2, color='lightblue', label='Region D')\nax.plot(xs, ys, 'b-', lw=2, label='Boundary C')\n# orientation arrows\nax.annotate('', xy=(0.25,0), xytext=(0,0), arrowprops=dict(arrowstyle='->', color='red', lw=1.5))\nax.annotate('', xy=(1,0.25), xytext=(1,0), arrowprops=dict(arrowstyle='->', color='red', lw=1.5))\nax.annotate('', xy=(0.75,1), xytext=(1,1), arrowprops=dict(arrowstyle='->', color='red', lw=1.5))\nax.annotate('', xy=(0,0.75), xytext=(0,1), arrowprops=dict(arrowstyle='->', color='red', lw=1.5))\nax.text(0.5, 0.5, '∂Q/∂x - ∂P/∂y = 0', ha='center', va='center', fontsize=12, color='green')\nax.set_xlim(-0.2, 1.2)\nax.set_ylim(-0.2, 1.2)\nax.set_aspect('equal')\nax.set_title('Example 1: Square Region')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example 1: ∮_C y dx + x dy = 0 over unit square. Curl is zero, so double integral is zero.",
+      "teacher_narration": "This first example is very simple. We have the vector field (y, x) and the boundary of the unit square. The partial derivatives are both 1, so the curl is zero. Therefore the double integral is zero, and by Green's Theorem the line integral must also be zero. You could compute the line integral directly along the four edges and verify it adds to zero, but Green's Theorem gives the answer instantly. This illustrates that if the curl is zero everywhere, the circulation around any closed curve is zero. That is exactly the condition for a conservative vector field.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 2: Area of an Ellipse",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Find the area of ellipse $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}=1$ using Green's Theorem.\n\n1. Use $A = \\frac12\\oint_C x\\,dy - y\\,dx$.\n2. Parametrize: $x=a\\cos t$, $y=b\\sin t$, $0\\le t \\le 2\\pi$.\n3. $dx=-a\\sin t\\,dt$, $dy=b\\cos t\\,dt$.\n4. $x\\,dy - y\\,dx = (a\\cos t)(b\\cos t\\,dt) - (b\\sin t)(-a\\sin t\\,dt) = ab(\\cos^2t+\\sin^2t)\\,dt = ab\\,dt$.\n5. $A = \\frac12\\int_0^{2\\pi} ab\\,dt = \\frac12 ab \\cdot 2\\pi = \\pi ab$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "An ellipse with semi-axes a and b, showing the parametrization and the area formula.",
+        "visual_spec": "Plot ellipse x=a cos t, y=b sin t. Animate the point moving around as t increases, showing the radial line sweeping area. Display the intermediate expression x dy - y dx = ab dt on screen. At the end show the area πab. Use a slider for t to control point position.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom matplotlib.widgets import Slider\n\na, b = 2, 1\nt = np.linspace(0, 2*np.pi, 400)\nx_ell = a*np.cos(t)\ny_ell = b*np.sin(t)\n\nfig, ax = plt.subplots(figsize=(6,6))\nplt.subplots_adjust(bottom=0.2)\nax.plot(x_ell, y_ell, 'b-', lw=2)\nax.set_xlim(-2.5, 2.5)\nax.set_ylim(-1.5, 1.5)\nax.set_aspect('equal')\nax.grid(True)\nax.set_title('Ellipse Area via Green\\'s Theorem')\n\n# Initial point at t=0\npoint, = ax.plot([a], [0], 'ro', markersize=8)\nline_to_origin, = ax.plot([0, a], [0, 0], 'r-', lw=1)\ntext_area = ax.text(0, -1.2, f'Area = π·{a}·{b} = {np.pi*a*b:.2f}', fontsize=12,\n                   ha='center')\n\ndef update(val):\n    t_val = val\n    x0 = a*np.cos(t_val)\n    y0 = b*np.sin(t_val)\n    point.set_data([x0], [y0])\n    line_to_origin.set_data([0, x0], [0, y0])\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 't', 0, 2*np.pi, valinit=0)\nslider.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for parameter t from 0 to 2π, updating point position on ellipse"
+        ]
+      },
+      "on_screen_text": "Area of ellipse = πab using A = ½ ∮ x dy – y dx. Parametrize then integrate.",
+      "teacher_narration": "Now we use Green's Theorem to compute the area of an ellipse. The area formula A equals one half of the line integral of x dy minus y dx is a direct corollary. We paramatrize the ellipse with cosine and sine. Compute the differentials, substitute, simplify using the Pythagorean identity, and integrate from 0 to 2π. The result is pi a b, exactly the area. This is much easier than a double integral, especially because the ellipse boundary has a simple parametric form. The slider lets you see how the radial vector sweeps area as t increases.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Your Turn: Area of a Circle of Radius 3",
+      "left": {
+        "content_type": "text",
+        "content": "**Using the area formula $A = \\frac12\\oint_C x\\,dy - y\\,dx$, find the area of a circle of radius 3.**\n\nHint: Parametrize the circle as $x=3\\cos t,\\ y=3\\sin t$, $0\\le t \\le 2\\pi$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A circle of radius 3 centered at the origin, with a question mark in the center. No solution yet.",
+        "visual_spec": "Simple circle of radius 3, center at (0,0). Boundary labeled C. Inside the circle a large '?'. Leave space for answer.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\ntheta = np.linspace(0, 2*np.pi, 200)\nr = 3\nx = r*np.cos(theta)\ny = r*np.sin(theta)\n\nfig, ax = plt.subplots(figsize=(6,6))\nax.plot(x, y, 'b-', lw=2, label='Circle radius 3')\nax.fill(x, y, alpha=0.1, color='lightblue')\nax.text(0, 0, '?', fontsize=30, ha='center', va='center', color='red')\nax.set_xlim(-4, 4)\nax.set_ylim(-4, 4)\nax.set_aspect('equal')\nax.set_title('Find the area using Green\\'s Theorem')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Use A = ½ ∮ x dy – y dx to compute area of circle radius 3. Pause and try now.",
+      "teacher_narration": "Pause the video here and try this problem yourself. You already have the area formula and you know the paramatrization of a circle. Compute the line integral and see what you get. Remember to integrate from 0 to 2π. When you have your answer, resume the video and we will check it together.",
+      "student_prompt": "Compute the area of a circle of radius 3 using the line integral formula.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution: Area of Circle Radius 3",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Parametrize: $x=3\\cos t,\\ y=3\\sin t$, $0\\le t\\le 2\\pi$.\n2. $dx=-3\\sin t\\,dt$, $dy=3\\cos t\\,dt$.\n3. $x\\,dy - y\\,dx = 9\\cos^2t\\,dt + 9\\sin^2t\\,dt = 9\\,dt$.\n4. $A = \\frac12\\int_0^{2\\pi} 9\\,dt = \\frac12 \\cdot 9 \\cdot 2\\pi = 9\\pi$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Same circle as before but now with the answer $9\\pi$ displayed inside.",
+        "visual_spec": "Circle radius 3 with area 9π printed in center. The boundary is traced with a moving point to reinforce paramatrization.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\ntheta = np.linspace(0, 2*np.pi, 200)\nr = 3\nx = r*np.cos(theta)\ny = r*np.sin(theta)\n\nfig, ax = plt.subplots(figsize=(6,6))\nax.plot(x, y, 'b-', lw=2)\nax.fill(x, y, alpha=0.1, color='lightblue')\nax.text(0, 0, 'Area = 9π', fontsize=20, ha='center', va='center', color='green')\nax.set_xlim(-4, 4)\nax.set_ylim(-4, 4)\nax.set_aspect('equal')\nax.set_title('Solution: Area = 9π')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Area = 9π. Confirm your result: ½ ∮ x dy – y dx = ½ ⋅ 9 ⋅ 2π = 9π.",
+      "teacher_narration": "Let's check your work. With the paramatrization x equals 3 cos t, y equals 3 sin t, differentials are as shown. The expression x dy minus y dx simplifies to 9 dt. Integrating from 0 to 2π gives 18π, and half of that is 9π, which is exactly the area of a circle of radius 3. If you got that, perfect. If you made a mistake, maybe you forgot the factor one half or miscomputed the differentials. Remember: The area formula always includes the one half. This is a quick way to compute area of any region with a simple boundary paramatrization.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example 3: Region Between a Parabola and a Line",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** $\\oint_C (3y)\\,dx + (2x)\\,dy$, C boundary of region between $y=x^2$ and $y=x$ in first quadrant, positively oriented.\n\n1. $P=3y,\\ Q=2x$, so $\\frac{\\partial Q}{\\partial x}=2,\\ \\frac{\\partial P}{\\partial y}=3$, curl $=2-3=-1$.\n2. Region D: $0\\le x\\le 1,\\ x^2\\le y\\le x$.\n3. Double integral: $\\iint_D (-1)\\,dA = -\\int_0^1\\int_{x^2}^x 1\\,dy\\,dx$.\n4. Inner: $x - x^2$; outer: $\\int_0^1 (x - x^2)\\,dx = \\left[\\frac{x^2}{2} - \\frac{x^3}{3}\\right]_0^1 = \\frac16$.\n5. Result: $-\\frac16$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot the region between y=x^2 and y=x in first quadrant, shaded. Show the boundary orientation with arrows.",
+        "visual_spec": "Plot curves y=x^2 (red dashed) and y=x (blue solid). Shaded region between them. Outline boundary C with arrowheads showing counterclockwise direction: go up along y=x, then back along y=x^2. Label points (0,0) and (1,1). Display the curl value -1 inside.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\nx = np.linspace(0, 1, 200)\ny1 = x**2\ny2 = x\n\nfig, ax = plt.subplots(figsize=(6,6))\nax.fill_between(x, y1, y2, alpha=0.2, color='lightgreen', label='Region D')\nax.plot(x, y1, 'r--', lw=2, label='y=x^2')\nax.plot(x, y2, 'b-', lw=2, label='y=x')\n# orientation arrows on boundary\nax.annotate('', xy=(0.8, 0.8), xytext=(0.6, 0.6), arrowprops=dict(arrowstyle='->', color='red', lw=1.5))\nax.annotate('', xy=(0.4, 0.16), xytext=(0.2, 0.04), arrowprops=dict(arrowstyle='->', color='red', lw=1.5))\nax.text(0.5, 0.5, 'curl = -1', fontsize=12, ha='center', va='center', color='purple')\nax.set_xlim(0, 1.2)\nax.set_ylim(0, 1.2)\nax.set_aspect('equal')\nax.legend()\nax.set_title('Region: y=x² to y=x')\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Example 3: ∮_C (3y)dx + (2x)dy = -1/6 over region between y=x² and y=x.",
+      "teacher_narration": "In this example the vector field has a constant curl of negative one. The region is bounded by a parabola and a line. Setting up the double integral with x from 0 to 1 and y from x squared to x is straightforward. The inner integral gives x minus x squared, and integrating that from 0 to 1 gives one sixth. Because the curl is negative one, the final answer is negative one sixth. Notice how we did not need to compute four separate line integrals; Green's Theorem turned the boundary problem into a simple area calculation.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Ignoring Orientation",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** Student uses Green's Theorem on a clockwise curve without adding a negative sign.\n\n**Correct:** $\\oint_C^{clockwise} = -\\oint_{-C}^{counterclockwise}$. Always check orientation first.\n\n**Why:** The theorem assumes counterclockwise orientation; a clockwise curve contributes the opposite sign."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive: show a triangle with orientation toggle. Display computed line integral with and without correction.",
+        "visual_spec": "Plot a triangle (0,0), (2,0), (1,1). Use a toggle to switch between clockwise and counterclockwise. Show two values: one using Green's directly (wrong if clockwise), and one after applying negative sign (correct). Highlight the error if orientation is wrong.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom matplotlib.widgets import Button\n\n# triangle\nverts = np.array([[0,0], [2,0], [1,1], [0,0]])\nxv, yv = verts[:,0], verts[:,1]\n\nfig, ax = plt.subplots(figsize=(6,5))\nplt.subplots_adjust(bottom=0.25)\n\nline, = ax.plot(xv, yv, 'b-', lw=2)\nax.fill(xv, yv, alpha=0.2, color='lightyellow')\nax.set_xlim(-0.5, 2.5)\nax.set_ylim(-0.5, 1.5)\nax.set_aspect('equal')\nax.set_title('Triangle: Orientation?')\n\n# text for values\ncorrect_text = ax.text(1, 0.7, '', fontsize=10, color='green')\nwrong_text = ax.text(1, 0.5, '', fontsize=10, color='red')\n\norientation = 1  # 1 for CCW, -1 for CW\n\ndef compute(orient):\n    # for F = (y, x^2) example (not important, just show sign)\n    # We'll just use a placeholder value\n    return 4.5 * orient\n\ndef update_display():\n    val = compute(orientation)\n    if orientation == 1:\n        correct_text.set_text(f'Using Green: +{val:.1f}')\n        wrong_text.set_text('')\n    else:\n        correct_text.set_text(f'Using Green (wrong): {val:.1f}')\n        wrong_text.set_text(f'Correct: {-val:.1f} (add negative)')\n    plt.draw()\n\ndef toggle(event):\n    global orientation\n    orientation *= -1\n    # reverse direction of plot\n    if orientation == 1:\n        line.set_ydata(yv)\n    else:\n        line.set_ydata(np.flip(yv))  # simplistic\n    update_display()\n\nax_button = plt.axes([0.4, 0.05, 0.2, 0.075])\nbutton = Button(ax_button, 'Toggle Orientation')\nbutton.on_clicked(toggle)\n\nupdate_display()\nplt.show()",
+        "interactive_controls": [
+          "Button: Toggle orientation between clockwise and counterclockwise"
+        ]
+      },
+      "on_screen_text": "For clockwise curves, Green's Theorem gives the opposite sign. Always add a negative if curve is clockwise.",
+      "teacher_narration": "This is one of the most common mistakes students make. They apply Green's Theorem without checking orientation. If the curve is given as clockwise, the line integral on the left side should be the negative of the counterclockwise integral. The double integral on the right does not know about orientation. So you must attach a negative sign. In the interactive, toggle the orientation and see how the computed value changes. The wrong approach would just use the double integral directly and get the wrong sign. Always ask yourself: is my curve positively oriented? If not, add a factor of negative one.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Area of an Astroid",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Use Green's Theorem to find area of astroid $x^{2/3}+y^{2/3}=a^{2/3}$.\n\n1. Parametrize: $x=a\\cos^3 t$, $y=a\\sin^3 t$, $0\\le t\\le 2\\pi$.\n2. $dx=-3a\\cos^2 t\\sin t\\,dt$, $dy=3a\\sin^2 t\\cos t\\,dt$.\n3. $x\\,dy - y\\,dx = 3a^2\\cos^2 t\\sin^2 t(\\cos^2 t+\\sin^2 t)\\,dt = 3a^2\\cos^2 t\\sin^2 t\\,dt$.\n4. Use identity: $\\cos^2 t\\sin^2 t = \\frac14\\sin^2(2t) = \\frac18(1-\\cos4t)$.\n5. $A = \\frac12\\int_0^{2\\pi} 3a^2 \\cdot \\frac18(1-\\cos4t)\\,dt = \\frac{3a^2}{16}\\int_0^{2\\pi}(1-\\cos4t)\\,dt = \\frac{3a^2}{16}\\cdot 2\\pi = \\frac{3\\pi a^2}{8}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot the astroid curve for a given a, showing its star-like shape. Animate the parametrization with a slider.",
+        "visual_spec": "Astroid curve x = a*cos^3 t, y = a*sin^3 t. Use slider for t to move point along curve. Show area calculation step by step. Final area displayed: (3π a^2)/8.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\nfrom matplotlib.widgets import Slider\n\na = 2\nt_vals = np.linspace(0, 2*np.pi, 400)\nx_ast = a*np.cos(t_vals)**3\ny_ast = a*np.sin(t_vals)**3\n\nfig, ax = plt.subplots(figsize=(6,6))\nplt.subplots_adjust(bottom=0.2)\nax.plot(x_ast, y_ast, 'm-', lw=2)\nax.set_xlim(-2.5, 2.5)\nax.set_ylim(-2.5, 2.5)\nax.set_aspect('equal')\nax.grid(True)\nax.set_title('Astroid: x^⅔ + y^⅔ = a^⅔')\n\n# initial point at t=0\npoint, = ax.plot([a], [0], 'ro', markersize=8)\ntext_area = ax.text(0, -2.2, f'Area = (3π·{a}²)/8 = {3*np.pi*a**2/8:.2f}', ha='center', fontsize=12)\n\ndef update(val):\n    t_val = val\n    x0 = a*np.cos(t_val)**3\n    y0 = a*np.sin(t_val)**3\n    point.set_data([x0], [y0])\n    fig.canvas.draw_idle()\n\nax_slider = plt.axes([0.2, 0.05, 0.6, 0.03])\nslider = Slider(ax_slider, 't', 0, 2*np.pi, valinit=0)\nslider.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for parameter t from 0 to 2π, updating point on astroid"
+        ]
+      },
+      "on_screen_text": "Astroid area = 3πa²/8. Advanced example: use trig identities to simplify the integral.",
+      "teacher_narration": "This is a more challenging example. The astroid has a star like shape with cusps. Its paramatrization uses powers of cosine and sine. The algebra becomes heavy, but with trigonometric identities we can simplify. The key step is rewriting cos squared t sin squared t as one minus cosine 4t over eight. Then the integral of cosine 4t over a full period is zero, leaving a constant. The final area is three pi a squared over eight. This shows how powerful the area formula is: even a complicated shape has a neat area formula derived through Green's Theorem.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Two Vector Forms of Green's Theorem",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Circulation (Curl) Form:**\n$$\\oint_C \\mathbf{F} \\cdot d\\mathbf{r} = \\iint_D (\\nabla \\times \\mathbf{F}) \\cdot \\mathbf{k}\\,dA$$\n\n**Flux (Divergence) Form:**\n$$\\oint_C \\mathbf{F} \\cdot \\mathbf{n}\\,ds = \\iint_D \\nabla \\cdot \\mathbf{F}\\,dA$$\n\n- $\\mathbf{n}$ is the outward unit normal.\n- The flux form is the 2D version of the Divergence Theorem."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram comparing circulation (tangential component) and flux (normal component) on the same curve.",
+        "visual_spec": "Two small diagrams side by side. Left diagram: curve with tangential arrow (F·dr) shown. Right diagram: same curve with outward normal arrows (F·n ds). Both with region D inside. Labels: 'Circulation' and 'Flux'.",
+        "python_code": "import matplotlib.pyplot as plt\nimport numpy as np\n\ntheta = np.linspace(0, 2*np.pi, 100)\nx = np.cos(theta)\ny = np.sin(theta)\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))\n\n# Left: circulation with tangential vectors\nax1.plot(x, y, 'b-', lw=1.5)\nfor t in np.linspace(0, 2*np.pi, 8)[:-1]:\n    dx = -np.sin(t)\n    dy = np.cos(t)\n    ax1.arrow(np.cos(t), np.sin(t), dx*0.2, dy*0.2, head_width=0.1, head_length=0.1, fc='red', ec='red')\nax1.set_title('Circulation: F·dr')\nax1.set_xlim(-1.5,1.5)\nax1.set_ylim(-1.5,1.5)\nax1.set_aspect('equal')\n\n# Right: flux with outward normals\nax2.plot(x, y, 'b-', lw=1.5)\nfor t in np.linspace(0, 2*np.pi, 8)[:-1]:\n    nx = np.cos(t)\n    ny = np.sin(t)\n    ax2.arrow(np.cos(t), np.sin(t), nx*0.2, ny*0.2, head_width=0.1, head_length=0.1, fc='green', ec='green')\nax2.set_title('Flux: F·n ds')\nax2.set_xlim(-1.5,1.5)\nax2.set_ylim(-1.5,1.5)\nax2.set_aspect('equal')\n\nplt.tight_layout()\nplt.show()",
+        "interactive_controls": []
+      },
+      "on_screen_text": "Two forms: circulation (curl) and flux (divergence). Both are special cases of the generalized Stokes theorem.",
+      "teacher_narration": "Green's Theorem can be written in two vector forms. The circulation form uses the tangential component of the vector field along the boundary, and the curl inside. This is the version we have been using. The flux form uses the normal component of the field across the boundary, and the divergence inside. This is sometimes called the divergence form or normal form. It is actually the two dimensional version of the Divergence Theorem, which we will encounter in three dimensions. Both forms are equivalent; choosing one depends on whether you are measuring circulation or flux.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Proof Outline for Simple Regions",
+      "left": {
+        "content_type": "text",
+        "content": "For a region that is both Type I and Type II, we prove Green's Theorem in two parts:\n\n**Part 1:** $\\oint_C P\\,dx = -\\iint_D \\frac{\\partial P}{\\partial y} dA$\n- Write D as $a\\le x\\le b,\\ g_1(x)\\le y\\le g_2(x)$.\n- Double integral: $-\\int_a^b \\int_{g_1(x)}^{g_2(x)} \\frac{\\partial P}{\\partial y} dy\\,dx = -\\int_a^b [P(x,g_2(x))-P(x,g_1(x))]\\,dx$.\n- Line integral: break C into bottom (y=g1) and top (y=g2) curves, with opposite orientations; the vertical sides contribute zero. The sum matches.\n\n**Part 2:** $\\oint_C Q\\,dy = \\iint_D \\frac{\\partial Q}{\\partial x} dA$ by describing D as Type II.\n\nAdding gives the full theorem."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Proof splits into two line integrals, each using the Fundamental Theorem of Calculus along vertical or horizontal slices.",
+      "teacher_narration": "For those who want a deeper understanding, here is an outline of the proof. We treat the P dx part and the Q dy part separately. For the P part, we view the region as Type I: bounded above and below by functions of x. The double integral of negative partial P partial dy becomes an iterated integral. Using the Fundamental Theorem of Calculus on the inner integral gives a difference of P evaluated on the top and bottom boundaries. Those are exactly the contributions from the line integral along those curves. The vertical sides contribute nothing because dx is zero. Similarly, for the Q part we view the region as Type II. Adding the two gives Green's Theorem.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: Green's Theorem",
+      "left": {
+        "content_type": "text",
+        "content": "**Key Formulas:**\n- Circulation: $\\oint_C P\\,dx+Q\\,dy = \\iint_D (\\partial Q/\\partial x - \\partial P/\\partial y)\\,dA$\n- Area: $A = \\frac12\\oint_C x\\,dy - y\\,dx$\n- Vector forms: $\\oint_C \\mathbf{F}\\cdot d\\mathbf{r} = \\iint_D (\\nabla\\times\\mathbf{F})\\cdot\\mathbf{k}\\,dA$, $\\oint_C \\mathbf{F}\\cdot\\mathbf{n}\\,ds = \\iint_D \\nabla\\cdot\\mathbf{F}\\,dA$\n\n**Key Takeaways:**\n1. Relates line integrals to double integrals.\n2. Orientation must be counterclockwise (add negative if not).\n3. Area formula is a powerful application.\n4. Connects to divergence and curl."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Green's Theorem: boundary integral ↔ interior integral. Check orientation. Area as line integral.",
+      "teacher_narration": "Let's quickly recap what we've learned. Green's Theorem gives us a way to convert a line integral around a closed curve into a double integral over the enclosed region. The formula involves the two-dimensional curl. We also saw the area corollary, which allows us to compute area by integrating along the boundary. Orientation is critical: always use counterclockwise or add a negative sign. We also looked at two vector forms: one for circulation and one for flux. Green's Theorem is a fundamental result that connects line and double integrals and is a stepping stone to Stokes' and Divergence theorems in three dimensions.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

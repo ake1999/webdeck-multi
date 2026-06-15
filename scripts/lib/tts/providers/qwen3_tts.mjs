@@ -78,7 +78,7 @@ function buildConfig({ slide, options = {}, authoring }) {
     dtype: options.qwenDtype || "bfloat16",
     seed: Number(options.qwenSeed ?? 1234),
     language: options.qwenLanguage || "English",
-    allow_fallback: options.allowProviderFallback !== false && options.allowProviderFallback !== "0",
+    allow_fallback: options.allowProviderFallback === true || options.allowProviderFallback === "1",
     fallback_provider: options.fallbackProvider || profileVoice.fallback_provider || "ffmpeg_flite",
     python_bin: options.qwenPythonBin || "python3",
     segments: (Array.isArray(slide.segments) ? slide.segments : []).map((segment) => ({
@@ -188,7 +188,7 @@ export const qwen3TtsProvider = {
         authoring,
       });
     } catch (error) {
-      const allowFallback = options.allowProviderFallback !== false && options.allowProviderFallback !== "0";
+      const allowFallback = options.allowProviderFallback === true || options.allowProviderFallback === "1";
       if (!allowFallback) {
         throw error;
       }

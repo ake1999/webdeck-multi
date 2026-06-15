@@ -1,0 +1,331 @@
+{
+  "lecture_meta": {
+    "title": "Directional Derivatives and the Gradient Vector",
+    "topic": "Directional derivatives, gradient, and rates of change in multivariable functions",
+    "category": "vectors_3d_geometry",
+    "student_level": "First-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate directional derivatives using the limit definition and the gradient formula",
+      "Interpret the gradient as the direction and magnitude of steepest ascent",
+      "Apply the relationship to optimize rates of change in applied problems",
+      "Analyze functions to find directions of zero change, max increase, and max decrease"
+    ],
+    "prerequisite_reminder": "Partial derivatives and the gradient vector defined as ∇f = ⟨f_x, f_y⟩."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Standing on a Hillside",
+      "left": {
+        "content_type": "text",
+        "content": "You know the slope due east ($f_x$) and due north ($f_y$). What's the slope when you walk northeast? That's a **directional derivative**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A 3D surface plot of a hill with a person at a point, arrows showing east, north, and northeast directions. Label slopes.",
+        "visual_spec": "Use mpl_toolkits.mplot3d. Import Axes3D. Plot z = -((x-2)^2 + (y-2)^2) + 5 over x,y in [0,4]. Mark point (2,2,5) with a red dot. Draw three arrows from that point: ax.quiver(2,2,5, 1,0,0, color='blue') for east, ax.quiver(2,2,5, 0,1,0, color='green') for north, and ax.quiver(2,2,5, 0.707,0.707,0, color='magenta') for northeast. Label each arrow with partial df/dx, partial df/dy, and D_hat{u}f. Show a colorbar for height.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Slope east = f_x, north = f_y. What slope northeast?",
+      "teacher_narration": "Picture yourself on a smooth hill where you know the slope if you walk exactly east or exactly north. Those are the partial derivatives. But what if you wanted to walk northeast, or any other direction? You would need a directional derivative. Today we'll learn how to compute it and see that the gradient vector holds the key to finding the steepest climb.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Limit Definition of Directional Derivative",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$D_{\\mathbf{u}} f(x_0, y_0) = \\lim_{h \\to 0} \\frac{f(x_0 + h a,\\, y_0 + h b) - f(x_0, y_0)}{h}$$ where $\\mathbf{u} = \\langle a, b \\rangle$ is a **unit vector**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Animation: As h→0, the secant line approaches the tangent line in direction u.",
+        "visual_spec": "Plot 2D contours of f(x,y)=x^2+y^2. At point (1,2), show arrow of direction u=(0.6,0.8). Draw secant line from (1,2) to (1+ha, 2+hb) as a dashed line. Animate h shrinking from 1 to 0.01. Show the slope value updating. Use matplotlib.animation.FuncAnimation. Label the limit value.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for h from 0.01 to 1"
+        ]
+      },
+      "on_screen_text": "Directional derivative: limit of difference quotient along u.",
+      "teacher_narration": "This is the definition that extends the idea of a partial derivative to any direction. The key is that the direction vector u must have length one – we call that a unit vector. As h gets smaller, the ratio gives the instantaneous rate of change just like the ordinary derivative does for single-variable functions. We'll use this definition directly when the function isn't smooth, but most of the time we'll use a much simpler formula.",
+      "student_prompt": "Why must u be a unit vector? Think about scaling.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Gradient Vector",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\nabla f(x,y) = \\langle f_x(x,y),\\, f_y(x,y) \\rangle = \\frac{\\partial f}{\\partial x}\\mathbf{i} + \\frac{\\partial f}{\\partial y}\\mathbf{j}$$",
+        "additional": "The gradient packages all first partial derivatives into a vector field."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Vector field plot of gradient for f(x,y)=x^2+y^2 on a grid. Show arrows pointing outward from origin with increasing length.",
+        "visual_spec": "Use quiver plot over x,y in [-2,2] with np.meshgrid(np.linspace(-2,2,10), np.linspace(-2,2,10)). f = x^2+y^2. Gradient = (2x,2y). Color arrows by magnitude using a colormap (e.g., 'viridis'). Add contour lines to show level sets. Highlight that gradient is perpendicular to contours and points uphill.",
+        "python_code": null,
+        "interactive_controls": [
+          "Toggle: show/hide contour lines"
+        ]
+      },
+      "on_screen_text": "Gradient: ∇f = (f_x, f_y) – a vector at every point.",
+      "teacher_narration": "The gradient is a vector that stores all the partial derivatives. It's a vector field, meaning at every point you get a different vector. Notice on the screen that the gradient arrows point directly away from the level curves – uphill. This is no accident: the gradient always points in the direction of steepest ascent, and its length tells you how steep that direction is. We'll prove that soon.",
+      "student_prompt": "What do you think happens to the gradient at a local maximum?",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Directional Derivative Formula",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$D_{\\mathbf{u}} f(x,y) = \\nabla f(x,y) \\cdot \\mathbf{u}$$ where $\\mathbf{u}$ is a unit vector."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive: Choose direction angle θ, see dot product and directional derivative update.",
+        "visual_spec": "Plot f(x,y)=x^2+y^2. At point (1,2), show gradient vector (2,4). Draw unit vector u at angle θ from x-axis. Compute and display D_u f = grad f · u. Let user adjust θ with a slider from 0 to 2π. Show numeric value of directional derivative. Highlight when D_u f is maximum (aligned with gradient) and zero (perpendicular).",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for angle θ from 0 to 2π",
+          "Display: D_u f value"
+        ]
+      },
+      "on_screen_text": "D_u f = ∇f · u. Dot product collapses direction information.",
+      "teacher_narration": "This simple formula is the workhorse. Because the directional derivative is the dot product of the gradient with a unit direction vector, you can quickly compute the rate of change in any direction. The dot product also explains why the gradient gives the steepest ascent: the dot product is maximized when the two vectors point in the same direction, and its maximum value is the length of the gradient. Let's test this with the interactive slider.",
+      "student_prompt": "Adjust the angle slider: when is the directional derivative largest? Zero?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Warm-Up Example Using Limit Definition",
+      "left": {
+        "content_type": "steps",
+        "content": "Find $D_{\\mathbf{u}} f(1,2)$ for $f(x,y)=x^2+y^2$, $\\mathbf{u}=\\langle\\frac{3}{5},\\frac{4}{5}\\rangle$.\n\n**Step 1:** Verify $\\|\\mathbf{u}\\| = 1$.\n**Step 2:** Write limit.\n**Step 3:** Compute $f(1+\\frac{3}{5}h, 2+\\frac{4}{5}h)$.\n**Step 4:** Expand and simplify.\n**Step 5:** Take limit $h\\to0$.\n\nAnswer: $\\frac{22}{5}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show the contour map with point and direction; animate the secant line slope approaching the final value.",
+        "visual_spec": "Contour plot of f(x,y)=x^2+y^2. Mark (1,2) with a dot. Draw arrow in direction (0.6,0.8). Animate h decreasing from 1 to 0.01 using matplotlib.animation.FuncAnimation, showing the point moving along the line and the computed difference quotient approaching 4.4. Overlay the tangent line at the end.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: play animation"
+        ]
+      },
+      "on_screen_text": "Compute D_u f using limit. Answer = 22/5 = 4.4",
+      "teacher_narration": "Let's work through the definition step by step. First, always check that the direction vector is a unit vector – it is. Then we substitute into the limit. After expanding and simplifying, we get a cancellation that leaves us with 22/5. Notice that this is exactly the dot product of the gradient at that point (which is (2,4)) with the unit vector (3/5,4/5) – that's also 22/5. So the formula works.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Standard Example Using Gradient Formula",
+      "left": {
+        "content_type": "steps",
+        "content": "Find $D_{\\mathbf{u}} f(1,2)$ for $f(x,y)=x^3-3xy+4y^2$ in direction $\\mathbf{v}=\\langle 3,-4\\rangle$.\n\n| Step | Action | Explanation |\n|------|--------|-------------|\n|1| $f_x=3x^2-3y$, $f_y=-3x+8y$ | Partial derivatives |\n|2| At (1,2): $f_x=-3$, $f_y=13$ | Evaluate |\n|3| $\\nabla f(1,2)=\\langle-3,13\\rangle$ | Gradient |\n|4| Normalize $\\mathbf{v}$: $\\|\\mathbf{v}\\|=5$, $\\mathbf{u}=\\langle\\frac{3}{5},-\\frac{4}{5}\\rangle$ | Unit vector |\n|5| $D_{\\mathbf{u}} f = (-3)(3/5)+(13)(-4/5) = -61/5$ | Dot product |\n\nAnswer: $\\boxed{-\\frac{61}{5}}$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Gradient at (1,2): ⟨-3,13⟩. Normalize v to u. Dot = -61/5 ≈ -12.2",
+      "teacher_narration": "Here we use the gradient formula. Notice that the direction is given as <3, -4>, which is not a unit vector. A common mistake is to use this vector directly. The correct procedure is first to compute its magnitude – 5 – and then divide to get a unit vector. Only then do we take the dot product with the gradient. The result, -12.2, means the function is decreasing in that direction.",
+      "student_prompt": "What would the answer be if you forgot to normalize? Would it be too large or too small?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Misconception: Using Non-Unit Direction Vector",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** $D_{\\mathbf{v}} f(1,2) = \\nabla f \\cdot \\mathbf{v} = (-3)(3)+13(-4) = -9-52 = -61$\n\n**Why wrong:** The definition requires a unit vector. Using $\\mathbf{v}$ gives a scaled version. The correct answer is $-61/5$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Show two arrows: one for v (length 5) and one for u (length 1). Indicate that the dot product with v gives the wrong directional derivative because it includes the scaling factor.",
+        "visual_spec": "Draw coordinate axes. At origin, draw vector v=(3,-4) in red with magnitude 5. Draw u=(0.6,-0.8) in blue with magnitude 1. Label each. Show that dot product with v is 5 times larger than with u. Add text: 'Dot product ∇f·v = 5 × (∇f·u)'. Highlight that u must be unit.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Using v directly gives answer 5 times too large. Always normalize!",
+      "teacher_narration": "This is the most common mistake students make. The gradient formula only works when the direction vector is a unit vector. If you use a vector of length 5, you get a result that's 5 times the true directional derivative. Always check that your direction vector has length 1. If not, normalize it before taking the dot product.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Maximum and Minimum of Directional Derivatives",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\\max D_{\\mathbf{u}} f = \\|\\nabla f\\| \\quad (\\text{when } \\mathbf{u} \\parallel \\nabla f)$$\n$$\\min D_{\\mathbf{u}} f = -\\|\\nabla f\\| \\quad (\\text{when } \\mathbf{u} \\text{ opposite to } \\nabla f)$$\nAll other directions give values between $-\\|\\nabla f\\|$ and $\\|\\nabla f\\|$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Interactive polar plot of directional derivative vs angle. Show that maximum occurs at angle of gradient.",
+        "visual_spec": "For f(x,y)=x^2+y^2 at (1,2), compute gradient (2,4) with angle arctan(4/2)≈63.4°. Plot D_u f as a function of angle θ from 0 to 2π using polar coordinates. Mark max, min, and zero crossings. Use slider to highlight a specific angle and show corresponding u vector on the contour plot.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for angle θ from 0 to 360",
+          "Display: D_u f at chosen angle"
+        ]
+      },
+      "on_screen_text": "D_u f ranges from -‖∇f‖ to +‖∇f‖. Max = steepest ascent.",
+      "teacher_narration": "Because the directional derivative is the dot product of the gradient with a unit vector, its extreme values come from the geometry of the dot product. The maximum occurs when u points in the same direction as the gradient – that's the direction of steepest ascent. The minimum occurs when u points opposite. And for any other direction, the value lies between these two extremes. This is a powerful result: just by knowing the gradient, you know the fastest rate of increase and its direction.",
+      "student_prompt": "What is the directional derivative when u is perpendicular to the gradient?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Tricky Example: Direction of Steepest Ascent",
+      "left": {
+        "content_type": "steps",
+        "content": "For $f(x,y)=x^2 - y^2$ at $(2,1)$:\n\na) Direction of steepest ascent\nb) Maximum rate of change\n\n1. $f_x = 2x$, $f_y = -2y$\n2. At (2,1): $\\nabla f = \\langle 4, -2 \\rangle$\n3. Direction: $\\mathbf{u} = \\frac{\\nabla f}{\\|\\nabla f\\|} = \\langle \\frac{2}{\\sqrt{5}}, -\\frac{1}{\\sqrt{5}} \\rangle$\n4. Max rate: $\\|\\nabla f\\| = \\sqrt{20} = 2\\sqrt{5}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Contour plot of f(x,y)=x^2-y^2. Show hyperbolic level curves. At (2,1), draw gradient arrow and the unit direction of steepest ascent. Also show direction of steepest descent (opposite).",
+        "visual_spec": "Plot f = x^2 - y^2 over x in [0,4], y in [-2,3] using np.meshgrid(np.linspace(0,4,20), np.linspace(-2,3,20)). Mark point (2,1). Draw gradient vector (4,-2) in red, and the unit vector (0.894,-0.447) in green. Also draw opposite direction in blue. Label each. Use contour lines to show that gradient is perpendicular to level curves.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Gradient at (2,1) = ⟨4,-2⟩. Unit direction = ⟨2/√5, -1/√5⟩. Max rate = 2√5 ≈ 4.47",
+      "teacher_narration": "This function is a saddle shape. At the point (2,1), the gradient points partly in the positive x direction and partly in the negative y direction. To find the direction of steepest ascent, we simply take the gradient and normalize it to a unit vector. The magnitude of the gradient tells us the maximum rate of change, which is about 4.47. Notice that the gradient is perpendicular to the contour line through the point – that's always true.",
+      "student_prompt": "What is the direction of steepest descent?",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Edge Case: Non-Differentiable Function",
+      "left": {
+        "content_type": "steps",
+        "content": "Find $D_{\\mathbf{u}} f(0,0)$ for $f(x,y)=\\sqrt{x^2+y^2}$, $\\mathbf{u}=\\langle \\frac{1}{\\sqrt{2}},\\frac{1}{\\sqrt{2}} \\rangle$.\n\n$f_x$ and $f_y$ are undefined at (0,0) (cusp). Must use limit definition:\n\n$D_{\\mathbf{u}} f(0,0) = \\lim_{h\\to0} \\frac{f(h/\\sqrt{2},h/\\sqrt{2}) - 0}{h}$\n\n$= \\lim_{h\\to0} \\frac{|h|}{h}$ which does not exist.\n\nAnswer: The directional derivative does not exist."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Plot the cone z=sqrt(x^2+y^2) near origin. Show the cusp. Animate the secant line approaches from positive and negative h, showing different slopes.",
+        "visual_spec": "3D plot of cone z=sqrt(x^2+y^2). Zoom into origin. Show a line along u direction from origin. Draw secant lines for h>0 (slope 1) and h<0 (slope -1). Animate h approaching 0 from both sides using matplotlib.animation.FuncAnimation. Show that the limit is different from left and right.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: play animation from positive h",
+          "Button: play animation from negative h"
+        ]
+      },
+      "on_screen_text": "Cusp at origin → gradient undefined. Limit definition shows DNE (different left/right limits).",
+      "teacher_narration": "This is an important edge case. The function is the distance to the origin – it's shaped like a cone. At the tip, there's a cusp, so the partial derivatives don't exist. We cannot use the gradient formula. Falling back to the limit definition, we find that the limit from the right gives 1, and from the left gives -1. Because the two-sided limit doesn't agree, the directional derivative does not exist. This shows that the gradient formula only works when the function is differentiable at that point.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Application: Temperature on a Metal Sphere",
+      "left": {
+        "content_type": "steps",
+        "content": "$T(x,y,z)=x^2+y^2+z^2$. Find rate of change at $(1,1,1)$ toward $(2,3,1)$.\n\n1. $\\nabla T = \\langle 2x, 2y, 2z \\rangle$\n2. At (1,1,1): $\\nabla T = \\langle 2,2,2 \\rangle$\n3. Direction $\\mathbf{v} = \\langle 1,2,0 \\rangle$, $\\|\\mathbf{v}\\| = \\sqrt{5}$, $\\mathbf{u} = \\langle 1/\\sqrt{5}, 2/\\sqrt{5}, 0 \\rangle$\n4. $D_{\\mathbf{u}}T = 2\\cdot\\frac{1}{\\sqrt{5}} + 2\\cdot\\frac{2}{\\sqrt{5}} + 2\\cdot0 = \\frac{6}{\\sqrt{5}}$\n\nAnswer: $\\boxed{\\frac{6}{\\sqrt{5}}}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D plot of a sphere with temperature coloration. Show point (1,1,1) and arrow toward (2,3,1). Display computed directional derivative.",
+        "visual_spec": "Plot sphere surface with color mapping for T = x^2+y^2+z^2. Mark point (1,1,1) in red. Draw vector from (1,1,1) to (2,3,1) in yellow. Show gradient vector at (1,1,1) in green. Display numeric calculation. Use opacity to see interior.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Gradient ⟨2,2,2⟩. Direction unit ⟨1/√5, 2/√5, 0⟩. Dot = 6/√5 ≈ 2.683",
+      "teacher_narration": "Directional derivatives extend naturally to three dimensions. Here we have a temperature function on a metal sphere. At the point (1,1,1), we want the rate of change as we move towards (2,3,1). We compute the gradient, find the direction vector, normalize it, and take the dot product. The result tells us the temperature is increasing at about 2.68 units per unit distance in that direction.",
+      "student_prompt": "In which direction from (1,1,1) would the temperature increase most rapidly?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Proof of the Gradient Formula",
+      "left": {
+        "content_type": "text",
+        "content": "**Theorem:** If $f$ is differentiable at $(x_0,y_0)$, then $D_{\\mathbf{u}} f = \\nabla f \\cdot \\mathbf{u}$.\n\n**Idea:** Define $g(t)=f(x_0+ta, y_0+tb)$. Then $g'(0)=D_{\\mathbf{u}}f$. By the chain rule: $g'(t)=f_x x'(t) + f_y y'(t) = f_x a + f_y b$. Evaluate at $t=0$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: Parametric line through point in direction u, showing the single-variable function g(t) along that line.",
+        "visual_spec": "Plot contour map with point (x0,y0) and line along u. Draw the 1D graph of g(t) vs t below. Show that g'(0) gives the directional derivative. Animate the relationship between the 2D point and the 1D function.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Chain rule on g(t)=f(x0+ta, y0+tb) yields g'(0)=∇f·u.",
+      "teacher_narration": "For those who want a deeper understanding, here's the proof. We create a single-variable function g that tracks f along the line in direction u. Its derivative at t=0 is exactly the directional derivative. Using the chain rule, g'(t) equals the dot product of the gradient evaluated at the moving point with the direction vector. Evaluating at t=0 gives the result.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary of Key Formulas and Facts",
+      "left": {
+        "content_type": "text",
+        "content": "1. **Directional derivative (limit):** $D_{\\mathbf{u}}f(x_0,y_0) = \\lim_{h\\to0} \\frac{f(x_0+ha,y_0+hb)-f(x_0,y_0)}{h}$\n2. **Gradient:** $\\nabla f = \\langle f_x, f_y \\rangle$\n3. **Directional derivative (formula):** $D_{\\mathbf{u}}f = \\nabla f \\cdot \\mathbf{u}$, requires $\\|\\mathbf{u}\\|=1$ and $f$ differentiable.\n4. **Max & min:** $\\max D_{\\mathbf{u}}f = \\|\\nabla f\\|$, $\\min D_{\\mathbf{u}}f = -\\|\\nabla f\\|$.\n5. **Zero change:** $D_{\\mathbf{u}}f = 0$ when $\\mathbf{u} \\perp \\nabla f$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Directional derivative = dot product of gradient and unit direction. Gradient points uphill. Max rate = gradient magnitude.",
+      "teacher_narration": "Let's wrap up what we've learned. The directional derivative gives the rate of change in any direction. The gradient packages the partial derivatives and points in the direction of steepest ascent. To compute a directional derivative, take the dot product of the gradient with a unit vector in the desired direction. Remember to always normalize your direction vector and check that the function is differentiable. These tools are essential for optimization and modeling in multivariable calculus. Understanding these concepts deeply will help you in fields like machine learning, physics, and engineering, where finding the direction of fastest change is a fundamental task.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

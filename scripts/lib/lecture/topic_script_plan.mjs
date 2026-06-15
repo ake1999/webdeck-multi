@@ -74,6 +74,47 @@ async function loadPromptBundle(promptVersion = TOPIC_SCRIPT_PLAN_PROMPT_VERSION
   };
 }
 
+function blockVisibleText(block) {
+  if (!isObject(block)) return [];
+  const values = [
+    block.title,
+    block.text,
+    block.content,
+    block.formula,
+    block.prompt,
+    ...asArray(block.items).map((item) => (typeof item === "string" ? item : item?.text || item?.say || "")),
+    ...asArray(block.steps).map((step) => (typeof step === "string" ? step : step?.text || step?.say || "")),
+    ...asArray(block.pairs).map((pair) => `${pair?.label || ""} ${pair?.text || ""}`),
+    block.reveal?.text,
+    ...asArray(block.headers),
+    ...asArray(block.rows).map((row) => Array.isArray(row) ? row.join(" ") : row),
+  ];
+  return values.map(plainTextForSpeech).filter(Boolean);
+}
+
+function mediaVisibleText(media) {
+  if (!isObject(media)) return [];
+  return [
+    media.caption,
+    media.title,
+    media.widget,
+    media.sourceSpec,
+    media.alt,
+    media.source,
+  ].map(plainTextForSpeech).filter(Boolean);
+}
+
+function columnVisibleText(column) {
+  if (!isObject(column)) return [];
+  return [
+    column.lead,
+    ...asArray(column.bullets).map((item) => (typeof item === "string" ? item : item?.text || item?.say || "")),
+    ...asArray(column.paragraphs).map((item) => (typeof item === "string" ? item : item?.text || item?.say || "")),
+    ...asArray(column.blocks).flatMap(blockVisibleText),
+    ...mediaVisibleText(column.media),
+  ].map(plainTextForSpeech).filter(Boolean);
+}
+
 function compactRawSlide(rawSlide) {
   const visibleText = [
     rawSlide?.title,
@@ -81,6 +122,10 @@ function compactRawSlide(rawSlide) {
     rawSlide?.lead,
     ...asArray(rawSlide?.bullets).map((item) => (typeof item === "string" ? item : item?.text || item?.say || "")),
     ...asArray(rawSlide?.paragraphs).map((item) => (typeof item === "string" ? item : item?.text || item?.say || "")),
+    ...asArray(rawSlide?.blocks).flatMap(blockVisibleText),
+    ...mediaVisibleText(rawSlide?.media),
+    ...columnVisibleText(rawSlide?.left),
+    ...columnVisibleText(rawSlide?.right),
     rawSlide?.question,
     rawSlide?.explain,
   ].map(plainTextForSpeech).filter(Boolean);
@@ -493,13 +538,25 @@ function semanticTopicPlanWarnings(plan) {
   return warnings;
 }
 
-async function postJson(url, payload, timeoutMs) {
+async function readApiKey(options = {}) {
+  const direct = String(options.scriptApiKey || process.env.WEBDECK_SCRIPT_API_KEY || "").trim();
+  if (direct) return direct;
+  const keyFile = String(options.scriptApiKeyFile || process.env.WEBDECK_SCRIPT_API_KEY_FILE || "").trim();
+  if (!keyFile) return "";
+  return (await readFile(keyFile, "utf8")).trim();
+}
+
+function authHeaders(apiKey) {
+  return apiKey ? { authorization: `Bearer ${apiKey}` } : {};
+}
+
+async function postJson(url, payload, timeoutMs, headers = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetch(url, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", ...headers },
       body: JSON.stringify(payload),
       signal: controller.signal,
     });
@@ -526,7 +583,7 @@ async function callOllamaJson({ endpoint, model, temperature, systemPrompt, user
   return maybeJsonFragment(content);
 }
 
-async function callOpenAiCompatibleJson({ endpoint, model, temperature, systemPrompt, userPrompt, timeoutMs }) {
+async function callOpenAiCompatibleJson({ endpoint, model, temperature, systemPrompt, userPrompt, timeoutMs, apiKey }) {
   const url = endpoint.endsWith("/chat/completions")
     ? endpoint
     : endpoint.includes("/v1")
@@ -539,15 +596,15 @@ async function callOpenAiCompatibleJson({ endpoint, model, temperature, systemPr
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-  }, timeoutMs);
+  }, timeoutMs, authHeaders(apiKey));
   const content = extractContentString(response?.choices?.[0]?.message?.content || response?.output_text || "");
   return maybeJsonFragment(content);
 }
 
-async function callJsonByEndpoint({ endpointKind, endpoint, model, temperature, systemPrompt, userPrompt, schema, timeoutMs }) {
+async function callJsonByEndpoint({ endpointKind, endpoint, model, temperature, systemPrompt, userPrompt, schema, timeoutMs, apiKey }) {
   return endpointKind === "ollama"
     ? callOllamaJson({ endpoint, model, temperature, systemPrompt, userPrompt, schema, timeoutMs })
-    : callOpenAiCompatibleJson({ endpoint, model, temperature, systemPrompt, userPrompt, timeoutMs });
+    : callOpenAiCompatibleJson({ endpoint, model, temperature, systemPrompt, userPrompt, timeoutMs, apiKey });
 }
 
 async function callOllama({ endpoint, model, temperature, promptBundle, context, timeoutMs, slideIds }) {
@@ -580,7 +637,7 @@ async function callOllama({ endpoint, model, temperature, promptBundle, context,
   return extractContentString(response?.message?.content || response?.response || "");
 }
 
-async function callOpenAiCompatible({ endpoint, model, temperature, promptBundle, context, timeoutMs }) {
+async function callOpenAiCompatible({ endpoint, model, temperature, promptBundle, context, timeoutMs, apiKey }) {
   const url = endpoint.endsWith("/chat/completions")
     ? endpoint
     : endpoint.includes("/v1")
@@ -609,7 +666,7 @@ async function callOpenAiCompatible({ endpoint, model, temperature, promptBundle
         ].join("\n"),
       },
     ],
-  }, timeoutMs);
+  }, timeoutMs, authHeaders(apiKey));
   return extractContentString(response?.choices?.[0]?.message?.content || response?.output_text || "");
 }
 
@@ -687,6 +744,7 @@ async function buildPerSlideTopicPlanWithLlm({
   timeoutMs,
   maxRetries,
   reason,
+  apiKey,
 }) {
   console.error(`Topic plan one-shot response needed repair; using per-slide LLM planner. Reason: ${reason}`);
   const systemPrompt = [
@@ -703,6 +761,7 @@ async function buildPerSlideTopicPlanWithLlm({
     temperature,
     schema: buildTopicOverviewJsonSchema(),
     timeoutMs,
+    apiKey,
     systemPrompt,
     userPrompt: [
       "Create only the topic-level speaking overview for this class topic.",
@@ -750,6 +809,7 @@ async function buildPerSlideTopicPlanWithLlm({
         temperature,
         schema: buildSingleSlidePlanJsonSchema(),
         timeoutMs,
+        apiKey,
         systemPrompt,
         userPrompt: [
           "Create the speaking plan for exactly one slide.",
@@ -892,6 +952,7 @@ export async function getTopicScriptPlanWithCache({
   const endpointKind = normalizeEndpointKind(endpoint);
   const timeoutMs = Number(options.topicPlanTimeoutMs || options.scriptTimeoutMs || 180000);
   const temperature = Number(options.topicPlanTemperature ?? options.scriptTemperature ?? 0.15);
+  const apiKey = endpointKind === "openai" ? await readApiKey(options) : "";
 
   if (topicPlanMode === "per_slide") {
     const plan = await buildPerSlideTopicPlanWithLlm({
@@ -904,6 +965,7 @@ export async function getTopicScriptPlanWithCache({
       timeoutMs,
       maxRetries: Number(options.topicPlanMaxRetries ?? options.scriptMaxRetries ?? 2),
       reason: "no-fallback direct per-slide planning mode",
+      apiKey,
     });
     const validated = validateTopicScriptPlan(plan, slideIds);
     if (!validated.valid) throw new Error(`topic_script_plan failed: ${validated.errors.join(" ")}`);
@@ -932,7 +994,7 @@ export async function getTopicScriptPlanWithCache({
   try {
     const rawText = endpointKind === "ollama"
       ? await callOllama({ endpoint, model, temperature, promptBundle, context, timeoutMs, slideIds })
-      : await callOpenAiCompatible({ endpoint, model, temperature, promptBundle, context, timeoutMs });
+      : await callOpenAiCompatible({ endpoint, model, temperature, promptBundle, context, timeoutMs, apiKey });
     const parsed = maybeJsonFragment(rawText);
     if (!isObject(parsed)) throw new Error("LLM topic plan response was not valid JSON.");
     const repairedPlan = normalizeTopicScriptPlanPayload(parsed, context, {
@@ -960,6 +1022,7 @@ export async function getTopicScriptPlanWithCache({
           timeoutMs,
           maxRetries: Number(options.topicPlanMaxRetries ?? options.scriptMaxRetries ?? 2),
           reason: severeRepairs.join(" "),
+          apiKey,
         });
         const validated = validateTopicScriptPlan(plan, slideIds);
         if (!validated.valid) throw new Error(validated.errors.join(" "));

@@ -1,0 +1,374 @@
+{
+  "lecture_meta": {
+    "title": "The Dot Product and Projections",
+    "topic": "Dot product and vector projections in 2D/3D",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate dot products of vectors in 2D and 3D, and interpret the sign and magnitude",
+      "Apply the dot product to find angles between vectors and determine orthogonality",
+      "Compute scalar and vector projections of one vector onto another",
+      "Analyze geometric relationships using dot product properties and projections"
+    ],
+    "prerequisite_reminder": "You already know vector addition, scalar multiplication, and magnitude from previous lessons."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why the Dot Product?",
+      "left": {
+        "content_type": "text",
+        "content": "Imagine pushing a box at an angle. Only part of your force moves it forward. The dot product tells you exactly how much $\\mathbf{a}$ goes in the direction of $\\mathbf{b}$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A 2D diagram showing a force vector F (arrow at 45° from horizontal) pushing a block on the floor. A dashed line drops from the tip of F to the horizontal axis, showing the horizontal component F_x. Label: 'F ⋅ i = |F| cos θ'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Dot product: how much one vector acts in another’s direction.",
+      "teacher_narration": "Picture this: you’re pushing a heavy box across a rough floor. You push at an angle, so some of your effort goes sideways or downward. Only the part that points along the floor actually moves the box. The dot product is the mathematical tool that measures exactly that — how much of one vector acts in the direction of another. Push straight along the floor: you get the maximum. Push straight down: zero. Push backwards: even negative. That’s the key intuition we’ll build today.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The Dot Product Definition",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$ \\mathbf{a} \\cdot \\mathbf{b} = a_1 b_1 + a_2 b_2 + a_3 b_3 $$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two vectors a = (a1,a2,a3) and b = (b1,b2,b3) shown as arrows from origin. Below, a table with rows: a1·b1, a2·b2, a3·b3, and a sum arrow leading to the scalar result. Use colors to match components.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Multiply matching components, then add. Result: a single number.",
+      "teacher_narration": "Here’s the definition: multiply the first components together, the second components together, the third components together, and add the three products. That’s it. The result is a scalar — not a vector. So it has no direction, only magnitude and sign. Let’s write it out for a quick warm‑up example. This operation is the foundation for everything else we do today, so make sure you understand it before moving on.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm‑Up Example",
+      "left": {
+        "content_type": "steps",
+        "content": "**Example**: $\\mathbf{a} = \\langle 2, -3, 1 \\rangle$, $\\mathbf{b} = \\langle 4, 0, -5 \\rangle$\n\n1. Multiply each pair: $2\\cdot4 = 8$, $(-3)\\cdot0 = 0$, $1\\cdot(-5) = -5$\n2. Add: $8 + 0 + (-5) = 3$\n\n**Answer**: $\\mathbf{a}\\cdot\\mathbf{b} = 3$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Compute: ⟨2,−3,1⟩ · ⟨4,0,−5⟩",
+      "teacher_narration": "Let’s try one together. Vector a: two, negative three, one. Vector b: four, zero, negative five. Multiply component-wise: two times four is eight, negative three times zero is zero, one times negative five is negative five. Now add: eight plus zero minus five gives three. So the dot product is positive three. The positive sign tells us the angle between them is acute.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Dot Product and Angle",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$ \\mathbf{a} \\cdot \\mathbf{b} = |\\mathbf{a}|\\,|\\mathbf{b}|\\,\\cos\\theta $$  where $\\theta$ is the angle between them ($0\\leq \\theta \\leq \\pi$)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two vectors a and b from the origin, with angle θ labeled between them. A dashed arc shows the angle. Next to it, a right triangle showing the geometric interpretation: |a| cosθ is the adjacent leg.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "The dot product encodes the cosine of the angle.",
+      "teacher_narration": "There’s a beautiful relationship: the dot product equals the product of the magnitudes times the cosine of the angle between the vectors. This means we can reverse the formula to find the angle. If the dot product is zero and both vectors are nonzero, then cosine is zero, so the angle is 90 degrees — the vectors are perpendicular. If the dot product is positive, the angle is acute; if negative, obtuse.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Orthogonality Condition",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$ \\mathbf{a} \\perp \\mathbf{b} \\quad \\iff \\quad \\mathbf{a}\\cdot\\mathbf{b}=0 $$ (for nonzero vectors)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two perpendicular vectors a and b in 3D, with a right angle mark at the origin. If possible, show a b = 0 as a floating label.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Zero dot product = perpendicular (for nonzero vectors).",
+      "teacher_narration": "This is one of the most practical uses of the dot product: checking whether two vectors are perpendicular. Compute the dot product – if it’s exactly zero, they’re orthogonal. But careful: the zero vector dotted with anything gives zero, but we don’t call the zero vector perpendicular in the usual sense. Stick to nonzero vectors and you’re safe. This condition is used constantly in geometry, physics, and computer graphics to detect right angles.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause and Predict",
+      "left": {
+        "content_type": "text",
+        "content": "Let $\\mathbf{a} = \\langle 1,0,2 \\rangle$, $\\mathbf{b} = \\langle -2,3,1 \\rangle$. \n\nCompute the dot product, then use the angle formula to find $\\theta$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A 3D coordinate system with the two vectors drawn from origin, but no angle labels. The dot product and angle values are hidden. Students must compute mentally.",
+        "python_code": null,
+        "interactive_controls": [
+          "Button: 'Reveal answer' – when clicked, reveals dot product = 0, θ = 90°"
+        ]
+      },
+      "on_screen_text": "⟨1,0,2⟩ · ⟨−2,3,1⟩ = ?",
+      "teacher_narration": "Try this one on your own before I reveal the answer. Compute the dot product for these two vectors, then determine the angle between them. Pause the video now, work it out, and when you’re ready, press play to see if you got it right.",
+      "student_prompt": "Compute the dot product and find the angle.",
+      "youtube_pause": true,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Solution Revealed",
+      "left": {
+        "content_type": "steps",
+        "content": "1. Dot product: $1(-2) + 0(3) + 2(1) = -2 + 0 + 2 = 0$\n2. $|\\mathbf{a}| = \\sqrt{5}$, $|\\mathbf{b}| = \\sqrt{14}$\n3. $\\cos\\theta = \\frac{0}{\\sqrt{5}\\sqrt{14}} = 0$ → $\\theta = \\frac{\\pi}{2}$\n\n**Answer**: $\\mathbf{a}\\cdot\\mathbf{b}=0$, so $\\mathbf{a} \\perp \\mathbf{b}$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Dot product = 0 → perpendicular vectors.",
+      "teacher_narration": "Here’s the solution. The dot product works out to zero: one times negative two is negative two, zero times three is zero, two times one is two, and they sum to zero. So the dot product is zero. Both vectors are nonzero, so they must be perpendicular. The magnitudes weren’t even needed in this case because zero divided by anything is zero.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Scalar Projection (Component)",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$ \\text{comp}_{\\mathbf{b}} \\mathbf{a} = \\frac{\\mathbf{a}\\cdot\\mathbf{b}}{|\\mathbf{b}|} = |\\mathbf{a}|\\cos\\theta $$  (signed length of the shadow along b)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A diagram: vector a from origin, vector b from origin. A perpendicular dashed line from tip of a onto the line of b, forming a right triangle. Label the adjacent side along b as 'scalar projection'. Show negative case separately with a dashed arrow opposite b.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Scalar projection = signed length of a onto b.",
+      "teacher_narration": "Now we move to projections. The scalar projection tells you how long the shadow of vector a is when you shine a light perpendicular to vector b. The formula is simple: take the dot product of a and b and divide by the length of b. The result can be negative — that means the shadow lands in the opposite direction to b. The magnitude |a|cosθ gives the same signed length.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Vector Projection",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$ \\text{proj}_{\\mathbf{b}} \\mathbf{a} = \\left( \\frac{\\mathbf{a}\\cdot\\mathbf{b}}{|\\mathbf{b}|^2} \\right) \\mathbf{b} $$  (the actual shadow vector)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Same diagram as previous, but now the shadow is drawn as a vector along b, labeled proj_b a. The perpendicular component is shown as a dashed line from tip of a to tip of projection. Show the scalar factor highlighted.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Vector projection = scalar projection times unit vector in direction of b.",
+      "teacher_narration": "The vector projection gives you the actual shadow as a vector, not just its length. You take the scalar projection and multiply it by the unit vector in the direction of b. That’s equivalent to taking the dot product divided by the squared magnitude of b, then multiplying by b. The result is a vector parallel to b. If the scalar projection is negative, the vector projection points opposite to b.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: Wrong Denominator",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong**: $\\text{proj}_{\\mathbf{b}} \\mathbf{a} = \\left( \\frac{\\mathbf{a}\\cdot\\mathbf{b}}{|\\mathbf{b}|} \\right) \\mathbf{b}$ \n\n**Correct**: The denominator is $|\\mathbf{b}|^2$, not $|\\mathbf{b}|$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Two side-by-side diagrams: left shows the WRONG projection (too long by factor |b|), right shows the correct projection. Highlight the error with red 'X' and correct with green check.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Denominator must be |b|², not |b|.",
+      "teacher_narration": "A very common error: forgetting the square. If you divide by |b| instead of |b|², you get a vector that’s too long by a factor of |b|. Why does the square appear? Because the projection must be parallel to b, and we need to rescale the unit vector appropriately. Remember: the scalar projection uses |b|, but to turn that into a vector we multiply by the unit vector b/|b|, giving an overall factor of 1/|b|².",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Projection Lab",
+      "left": {
+        "content_type": "text",
+        "content": "Adjust the components of $\\mathbf{a}$ and $\\mathbf{b}$ with the sliders. Watch how the dot product, scalar projection, and vector projection change in real time."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": null,
+        "visual_spec": "Interactive 3D plot with mpl_toolkits.mplot3d. Show vectors a (blue), b (red), and proj_b a (green). Dashed line from tip of a to tip of projection. Display dot product, scalar projection, and vector projection as text annotations. Sliders for a=(ax,ay,az) and b=(bx,by,bz) over range -3 to 3. The plot updates in real-time as sliders are moved. Sliders are arranged in two columns: left column for a_x, a_y, a_z; right column for b_x, b_y, b_z. Each slider has a label and range -3 to 3.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.widgets import Slider\n\nfig = plt.figure(figsize=(12, 8))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.4)\n\ninit_a = np.array([2, 1, 1])\ninit_b = np.array([1, 2, 1])\n\ndef compute_and_plot(a, b):\n    ax.clear()\n    dot = np.dot(a, b)\n    norm_b = np.linalg.norm(b)\n    if norm_b == 0:\n        sc_proj = 0\n        vec_proj = np.zeros(3)\n        # Optionally display a warning\n        ax.text2D(0.5, 0.95, 'Warning: b is zero vector', transform=ax.transAxes, ha='center', color='red')\n    else:\n        sc_proj = dot / norm_b\n        vec_proj = (dot / (norm_b**2)) * b\n    \n    # Plot vectors from origin\n    ax.quiver(0, 0, 0, a[0], a[1], a[2], color='blue', label=f'a = {a}', linewidth=2)\n    ax.quiver(0, 0, 0, b[0], b[1], b[2], color='red', label=f'b = {b}', linewidth=2)\n    ax.quiver(0, 0, 0, vec_proj[0], vec_proj[1], vec_proj[2],\n              color='green', label=f'proj_b a = {vec_proj}', linewidth=2)\n    # Dashed perpendicular line\n    ax.plot([a[0], vec_proj[0]], [a[1], vec_proj[1]], [a[2], vec_proj[2]],\n            'k--', alpha=0.5)\n    \n    ax.set_xlim(-3, 3)\n    ax.set_ylim(-3, 3)\n    ax.set_zlim(-3, 3)\n    ax.set_xlabel('X')\n    ax.set_ylabel('Y')\n    ax.set_zlabel('Z')\n    ax.legend()\n    ax.set_title(f'Dot: {dot:.2f} | Scalar proj: {sc_proj:.2f}')\n    fig.canvas.draw_idle()\n\ncompute_and_plot(init_a, init_b)\n\n# Sliders\naxcolor = 'lightgoldenrodyellow'\nax_a0 = plt.axes([0.15, 0.25, 0.3, 0.03], facecolor=axcolor)\nax_a1 = plt.axes([0.15, 0.20, 0.3, 0.03], facecolor=axcolor)\nax_a2 = plt.axes([0.15, 0.15, 0.3, 0.03], facecolor=axcolor)\nax_b0 = plt.axes([0.55, 0.25, 0.3, 0.03], facecolor=axcolor)\nax_b1 = plt.axes([0.55, 0.20, 0.3, 0.03], facecolor=axcolor)\nax_b2 = plt.axes([0.55, 0.15, 0.3, 0.03], facecolor=axcolor)\n\ns_a0 = Slider(ax_a0, 'a_x', -3, 3, valinit=init_a[0])\ns_a1 = Slider(ax_a1, 'a_y', -3, 3, valinit=init_a[1])\ns_a2 = Slider(ax_a2, 'a_z', -3, 3, valinit=init_a[2])\ns_b0 = Slider(ax_b0, 'b_x', -3, 3, valinit=init_b[0])\ns_b1 = Slider(ax_b1, 'b_y', -3, 3, valinit=init_b[1])\ns_b2 = Slider(ax_b2, 'b_z', -3, 3, valinit=init_b[2])\n\ndef update(val):\n    a = np.array([s_a0.val, s_a1.val, s_a2.val])\n    b = np.array([s_b0.val, s_b1.val, s_b2.val])\n    compute_and_plot(a, b)\n\ns_a0.on_changed(update)\ns_a1.on_changed(update)\ns_a2.on_changed(update)\ns_b0.on_changed(update)\ns_b1.on_changed(update)\ns_b2.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for a_x from -3 to 3",
+          "Slider for a_y from -3 to 3",
+          "Slider for a_z from -3 to 3",
+          "Slider for b_x from -3 to 3",
+          "Slider for b_y from -3 to 3",
+          "Slider for b_z from -3 to 3"
+        ]
+      },
+      "on_screen_text": "Play with the sliders. Watch dot product and projections update.",
+      "teacher_narration": "Now for the hands-on part. You can drag the sliders to change the components of vectors a and b. The 3D plot updates instantly: the projection of a onto b appears in green, and the dashed line shows the perpendicular component. See what happens when you make the vectors perpendicular – the dot product hits zero and the projection shrinks to nothing. Try making a and b point in opposite directions; the projection flips.",
+      "student_prompt": "Try making vectors perpendicular. What happens to the projection?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Properties of the Dot Product",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$\n\\begin{aligned}\n\\mathbf{a}\\cdot\\mathbf{a} &= |\\mathbf{a}|^2 \\\\\n\\mathbf{a}\\cdot\\mathbf{b} &= \\mathbf{b}\\cdot\\mathbf{a} \\\\\n\\mathbf{a}\\cdot(\\mathbf{b}+\\mathbf{c}) &= \\mathbf{a}\\cdot\\mathbf{b} + \\mathbf{a}\\cdot\\mathbf{c} \\\\\n(c\\mathbf{a})\\cdot\\mathbf{b} &= c(\\mathbf{a}\\cdot\\mathbf{b}) = \\mathbf{a}\\cdot(c\\mathbf{b})\n\\end{aligned}\n$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A simple visual showing commutative property: a·b and b·a yield same scalar. Use two arrows labeled a and b and an equals sign between the two dot products.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Dot product behaves like ordinary multiplication (but no associativity).",
+      "teacher_narration": "These properties make the dot product easy to work with. It’s commutative, distributive over addition, and compatible with scalar multiplication. But note: there’s no associative law because the dot product of a scalar with a vector is undefined. Also, a·a gives the squared magnitude, which is handy for computing lengths. For example, if you know the dot product of a vector with itself, you can find its length by taking the square root.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "challenge",
+      "layout": "full_width",
+      "title": "[Challenge – Optional] Deriving the Angle Formula",
+      "left": {
+        "content_type": "steps",
+        "content": "Use the Law of Cosines on the triangle formed by $\\mathbf{a}$, $\\mathbf{b}$, and $\\mathbf{a}-\\mathbf{b}$:\n$$|\\mathbf{a}-\\mathbf{b}|^2 = |\\mathbf{a}|^2 + |\\mathbf{b}|^2 - 2|\\mathbf{a}||\\mathbf{b}|\\cos\\theta$$\n\nAlso compute directly:\n$$|\\mathbf{a}-\\mathbf{b}|^2 = (a_1-b_1)^2 + (a_2-b_2)^2 + (a_3-b_3)^2 = |\\mathbf{a}|^2 + |\\mathbf{b}|^2 - 2\\mathbf{a}\\cdot\\mathbf{b}$$\n\nEquate the two expressions and cancel $|\\mathbf{a}|^2 + |\\mathbf{b}|^2$:\n$$-2|\\mathbf{a}||\\mathbf{b}|\\cos\\theta = -2\\mathbf{a}\\cdot\\mathbf{b} \\\\ \\Rightarrow \\mathbf{a}\\cdot\\mathbf{b} = |\\mathbf{a}||\\mathbf{b}|\\cos\\theta$$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": [
+          "Button: 'Show next step' – reveals subsequent line in the derivation"
+        ]
+      },
+      "on_screen_text": "Proof: Law of Cosines + component expansion.",
+      "teacher_narration": "This derivation is optional, but it’s a beautiful connection between algebra and geometry. Start with the triangle formed by a, b, and a minus b. Law of Cosines gives one expression. Meanwhile, expand the squared magnitude of a minus b in components. You get a second expression involving the dot product. Equating them, the magnitude terms cancel, leaving the angle formula. Try it step by step with the button.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Application: Work Done by a Force",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem**: A constant force $\\mathbf{F} = \\langle 3, 4 \\rangle$ N moves an object along displacement $\\mathbf{d} = \\langle 2, 1 \\rangle$ m. Compute the work done.\n\n1. Work = $\\mathbf{F} \\cdot \\mathbf{d}$.\n2. $\\mathbf{F}\\cdot\\mathbf{d} = 3(2) + 4(1) = 6 + 4 = 10$ J.\n\n**Answer**: 10 joules.\n\nAlso find the scalar projection of $\\mathbf{F}$ onto $\\mathbf{d}$: $\\frac{10}{\\sqrt{5}} \\approx 4.47$ N (the magnitude of the component of F along d)."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Work = F·d. Scalar projection shows effective force.",
+      "teacher_narration": "Let’s see the dot product in physics: work done by a constant force. Force vector F is three newtons right, four newtons up. Displacement d is two meters right, one meter up. The dot product gives the work: three times two plus four times one equals ten joules. If we also compute the scalar projection of F onto d, we get about four point four seven newtons — that’s the magnitude of the component of F along d.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "summary",
+      "layout": "split_left_right",
+      "title": "What You Learned Today",
+      "left": {
+        "content_type": "text",
+        "content": "- Dot product: $\\mathbf{a}\\cdot\\mathbf{b} = a_1b_1 + a_2b_2 + a_3b_3$\n- Angle: $\\mathbf{a}\\cdot\\mathbf{b} = |\\mathbf{a}||\\mathbf{b}|\\cos\\theta$\n- Orthogonality: $\\mathbf{a}\\perp\\mathbf{b} \\iff \\mathbf{a}\\cdot\\mathbf{b}=0$\n- Scalar projection: $\\text{comp}_{\\mathbf{b}}\\mathbf{a} = \\frac{\\mathbf{a}\\cdot\\mathbf{b}}{|\\mathbf{b}|}$\n- Vector projection: $\\text{proj}_{\\mathbf{b}}\\mathbf{a} = \\left(\\frac{\\mathbf{a}\\cdot\\mathbf{b}}{|\\mathbf{b}|^2}\\right)\\mathbf{b}$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "A single composite diagram: a vector a, b, and the projection. Show the dot product scalar next to an equal sign with magnitude product times cosine. Key formulas displayed as callouts.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Key formulas and concepts summarized.",
+      "teacher_narration": "Today we covered the dot product from definition to applications. You learned how to compute it, how it relates to the angle between vectors, and how to use it for orthogonality and projections. Practice these skills by revisiting the interactive lab and trying different vector pairs. In the next lesson, we’ll extend these ideas to cross products and areas. Make sure you are comfortable with these concepts before moving on.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

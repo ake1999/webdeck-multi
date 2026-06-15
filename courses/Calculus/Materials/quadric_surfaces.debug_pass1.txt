@@ -1,0 +1,414 @@
+{
+  "lecture_meta": {
+    "title": "Quadric Surfaces: From 2D Conics to 3D Shapes",
+    "topic": "Quadric Surfaces",
+    "category": "vectors_3d_geometry",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "classify quadric surfaces by their standard equations and geometric properties",
+      "sketch quadric surfaces using traces in coordinate planes and parallel planes",
+      "analyze the effect of signs and coefficients on surface shape and orientation",
+      "apply completing the square to identify shifted quadric surfaces",
+      "interpret real-world applications of ellipsoids, paraboloids, and hyperboloids"
+    ],
+    "prerequisite_reminder": "You should already be comfortable with conic sections (ellipse, parabola, hyperbola) in 2D."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Why Quadric Surfaces?",
+      "left": {
+        "content_type": "text",
+        "content": "Think of a **satellite dish** (paraboloid), a **cooling tower** (hyperboloid), or an **M&M candy** (ellipsoid). These are quadric surfaces – the 3D cousins of conic sections.\n\nTheir equations are second-degree in $x, y, z$:\n$$Ax^2+By^2+Cz^2+Dxy+Exz+Fyz+Gx+Hy+Iz+J=0$$\n\nWe'll learn to recognize and sketch them using **traces**."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Show three annotated photographs/illustrations: left a satellite dish (elliptic paraboloid), center a cooling tower (hyperboloid of one sheet), right an M&M candy (ellipsoid). Below each, label the surface type. Use a simple grid background. No 3D axes needed.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Satellite dish (paraboloid), cooling tower (hyperboloid), M&M (ellipsoid) – all quadric surfaces.",
+      "teacher_narration": "Look around you. The satellite dish on your roof collects signals using a shape called a paraboloid. The cooling towers at a power plant are hyperboloids. Even an M&M candy is an ellipsoid. These are all quadric surfaces — the natural 3D extension of the conic sections you already know. Today we'll learn to recognize them from their equations and to sketch them using a powerful tool: traces. By the end, you'll be able to classify any second-degree equation in three variables.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "The General Formula and Standard Forms",
+      "left": {
+        "content_type": "concept",
+        "content": "**General second-degree equation in $x,y,z$:**\n$$Ax^2+By^2+Cz^2+Dxy+Exz+Fyz+Gx+Hy+Iz+J=0$$\n\nBut for this lecture we focus on **standard forms** that arise after rotation and translation. The key is to recognize surfaces by the signs and relative sizes of the coefficients on the squared terms.\n\n**The trace method:** fix one variable to a constant $k$ and see what 2D curve appears in the remaining plane."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Diagram showing three coordinate planes (xy-plane, xz-plane, yz-plane) with a generic quadric surface. Highlight a horizontal plane z=k cutting through the surface, leaving an ellipse trace on the plane. Use semi-transparent surface and plane. Label 'trace' on the intersection curve.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Traces = cross-sections. Substitute z = k to get a 2D curve.",
+      "teacher_narration": "The most general form looks scary, but we'll rarely use it. Instead, we work with standard forms where the surface is aligned with the coordinate axes. The secret to sketching these surfaces is the trace method: imagine slicing the 3D shape with a plane parallel to one of the coordinate planes. For example, set z equal to a constant. The resulting equation in x and y is a conic section. By stacking these slices mentally, you reconstruct the full surface.",
+      "student_prompt": "Take a moment to think: if you substitute z = 0 into the equation of an ellipsoid, what shape do you expect?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Ellipsoid",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Standard equation:**\n$$\\frac{x^2}{a^2}+\\frac{y^2}{b^2}+\\frac{z^2}{c^2}=1$$\n\n- All three squared terms appear with positive coefficients.\n- Intercepts: $(\\pm a,0,0)$, $(0,\\pm b,0)$, $(0,0,\\pm c)$.\n- If $a=b=c$, it's a sphere of radius $a$.\n- Every trace is an ellipse (or a point or empty)."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of an ellipsoid with semi-axes a=3, b=2, c=1. Show intercepts as dots. Show three coordinate plane traces: xy-plane trace (ellipse), xz-plane trace (ellipse), yz-plane trace (ellipse). Use different colors for each trace. Labels: 'x', 'y', 'z' axes.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Ellipsoid: $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}+\\frac{z^2}{c^2}=1$  – all traces are ellipses.",
+      "teacher_narration": "The ellipsoid is the most basic quadric surface. Think of it as a stretched sphere. The numbers a, b, c determine how far the surface extends along each axis. For example, if a equals 3, then the surface crosses the x-axis at positive and negative 3. Every slice parallel to a coordinate plane is an ellipse, unless the slice goes beyond the surface, in which case there is no intersection. When all three numbers are equal, you have a sphere.",
+      "student_prompt": "What happens to the size of the trace ellipse in the plane z = k as |k| increases from 0 to c?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Elliptic Paraboloid",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Standard equation:**\n$$z = \\frac{x^2}{a^2}+\\frac{y^2}{b^2}$$\n\n- One variable (z) is linear, the other two are squared.\n- The axis of symmetry is the linear variable's axis (here $z$).\n- Horizontal traces ($z = k > 0$) are ellipses.\n- Vertical traces ($x=0$ or $y=0$) are parabolas opening upward."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of elliptic paraboloid z = x^2/4 + y^2/9. Show horizontal trace at z=2 (ellipse) and vertical traces at x=0 (parabola) and y=0 (parabola). Use different colors for traces. Label axes.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Elliptic Paraboloid: $z = \\frac{x^2}{a^2}+\\frac{y^2}{b^2}$ – like a bowl opening upward.",
+      "teacher_narration": "The elliptic paraboloid looks like a bowl. The linear variable tells you which way the bowl opens: here z is alone, so the bowl opens along the positive z-axis. If the linear term had a minus sign, the bowl would open downward. Horizontal slices give ellipses that grow larger as you go up. Vertical slices give parabolas. This shape appears in satellite dishes and telescope mirrors.",
+      "student_prompt": "Imagine the equation z = -x^2 - y^2. How would the surface differ?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Hyperbolic Paraboloid (Saddle)",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Standard equation:**\n$$z = \\frac{x^2}{a^2} - \\frac{y^2}{b^2}$$\n\n- One linear variable, one squared term positive, the other negative.\n- Horizontal traces ($z = k \\neq 0$) are hyperbolas.\n- Vertical traces are parabolas: in the $x$-direction opening up, in the $y$-direction opening down.\n- At $z=0$, traces are two intersecting lines."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of hyperbolic paraboloid z = x^2 - y^2. Show horizontal trace at z=1 (hyperbola opening in x-direction), at z=-1 (hyperbola opening in y-direction), and the degenerate trace at z=0 (two intersecting lines). Show vertical traces at x=0 (downward parabola) and y=0 (upward parabola). Use distinct colors. Label axes.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Hyperbolic Paraboloid: $z = \\frac{x^2}{a^2} - \\frac{y^2}{b^2}$ – a saddle shape.",
+      "teacher_narration": "This is the saddle surface. It curves upward along the x-axis and downward along the y-axis, giving it that distinctive shape you see on a horse saddle. If you slice it horizontally at a positive height, you get a hyperbola that opens left-right. At a negative height, the hyperbola opens forward-backward. At exactly z equals zero, the hyperbola degenerates into two straight lines crossing at the origin.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Elliptic Cone",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Standard equation:**\n$$\\frac{z^2}{c^2} = \\frac{x^2}{a^2} + \\frac{y^2}{b^2}$$\n\n- No constant term; the surface passes through the origin.\n- The vertex is at the origin.\n- Horizontal traces ($z = k \\neq 0$) are ellipses.\n- Vertical traces (e.g., $y=0$) give two intersecting lines: $z = \\pm \\frac{c}{a}x$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of elliptic cone z^2/4 = x^2/9 + y^2/4. Show horizontal traces at z=2 and z=-2 (ellipses). Show vertical trace at y=0 (two lines). Label vertex at origin. Use semi-transparent surface. Label axes.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Elliptic Cone: $\\frac{z^2}{c^2} = \\frac{x^2}{a^2} + \\frac{y^2}{b^2}$ – two cones meeting at a point.",
+      "teacher_narration": "The elliptic cone is like two ice cream cones placed tip to tip. Notice there is no constant term, so the surface passes through the origin. If you set z equal to zero, you get the single point zero. As you move away from the origin, the horizontal slices become ellipses that grow linearly. Vertical slices through the vertex produce straight lines. The cone is a boundary between the paraboloids and the hyperboloids.",
+      "student_prompt": "What would the trace in the plane x=0 look like for this cone?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Hyperboloid of One Sheet",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Standard equation:**\n$$\\frac{x^2}{a^2}+\\frac{y^2}{b^2} - \\frac{z^2}{c^2} = 1$$\n\n- One negative squared term; the axis is the variable with the negative coefficient (here $z$).\n- Horizontal traces ($z = k$) are ellipses.\n- Vertical traces are hyperbolas.\n- The narrowest horizontal ellipse is at $z=0$ (the 'waist')."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of hyperboloid of one sheet x^2/4 + y^2/9 - z^2/16 = 1. Show horizontal trace at z=0 (ellipse), at z=4 (larger ellipse). Show vertical trace at y=0 (hyperbola). Use semi-transparent surface. Label axes and waist.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Hyperboloid of One Sheet: $\\frac{x^2}{a^2}+\\frac{y^2}{b^2} - \\frac{z^2}{c^2} = 1$ – a single connected surface.",
+      "teacher_narration": "This surface looks like a cooling tower. It is a single piece, like a tube that is pinched at the middle. The narrowest part is at z equals zero; that ellipse is called the waist. As you go out along the axis, the ellipses grow. Vertical slices give hyperbolas. An important property: despite its curved shape, this surface is 'ruled' — it can be made from straight lines! That's why cooling towers are constructed with straight beams.",
+      "student_prompt": "What would happen if the right-hand side were negative, say equal to -1?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Hyperboloid of Two Sheets",
+      "left": {
+        "content_type": "formula_block",
+        "content": "**Standard equation:**\n$$-\\frac{x^2}{a^2} - \\frac{y^2}{b^2} + \\frac{z^2}{c^2} = 1$$\n\n- Two negative squared terms; the positive term gives the axis (here $z$).\n- Horizontal traces exist only when $|z| > c$.\n- At $z = \\pm c$, trace degenerates to a point.\n- Vertical traces are hyperbolas.\n- The surface has two separate sheets.",
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of hyperboloid of two sheets -x^2/4 - y^2/9 + z^2/16 = 1. Show only the two sheets for |z|>4. Show horizontal trace at z=5 (ellipse). Show vertical trace at x=0 (hyperbola). Use distinct colors for the two sheets. Label axes. Indicate that there is no surface between z=-4 and z=4.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Hyperboloid of Two Sheets: $-\\frac{x^2}{a^2} - \\frac{y^2}{b^2} + \\frac{z^2}{c^2} = 1$ – two separate bowls.",
+      "teacher_narration": "The hyperboloid of two sheets consists of two separate bowl-shaped surfaces, one above and one below. Notice that the equation has two minus signs on x and y, and a plus sign on z. That tells you the axis is the z-axis, and the surface opens away from the origin. There is a gap between the sheets: for values of z between negative c and positive c, there is no trace. The two sheets are mirror images across the xy-plane.",
+      "student_prompt": "If you double the value of c, how does the gap change?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "split_left_right",
+      "title": "Common Mistake: One-Sheet vs. Two-Sheet",
+      "left": {
+        "content_type": "concept",
+        "content": "**Misconception:** 'If there is exactly one minus sign, it is a hyperboloid of two sheets.'\n\n**Correct:** \n- One minus sign → **one sheet** (the negative term gives the axis).\n- Two minus signs → **two sheets** (the positive term gives the axis).\n\n**Example:** $x^2 + y^2 - z^2 = 1$ is one sheet. $-x^2 - y^2 + z^2 = 1$ is two sheets. The number of minus signs before the squared terms determines which type."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Side-by-side 3D plots: left shows hyperboloid of one sheet (x^2+y^2-z^2=1), right shows hyperboloid of two sheets (-x^2-y^2+z^2=1). Add text labels: 'One minus sign → one sheet' and 'Two minus signs → two sheets'. Use arrows pointing to the surfaces.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "One minus sign → one sheet. Two minus signs → two sheets. Don't mix them up!",
+      "teacher_narration": "A very common mistake is to think that exactly one minus gives two sheets. Actually, one minus means the surface is connected — it is a single tube shape. Two minus signs mean two separate bowls. The rule: count how many of the squared terms have a minus sign. One minus: one sheet. Two minuses: two sheets. The axis is given by the term that has the opposite sign from the others.",
+      "student_prompt": "Identify: How many sheets does $x^2 - y^2 + z^2 = 1$ have?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example: Cylinder (Warm-Up)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Identify and sketch $x^2 + z^2 = 4$ in $\\mathbb{R}^3$.\n\n1. Notice $y$ is absent → rulings parallel to $y$-axis.\n2. For any fixed $y$, the equation is $x^2 + z^2 = 4$ (a circle of radius 2).\n3. Surface = all such circles stacked along $y$.\n4. Sketch: draw the circle in the $xz$-plane and extend parallel to $y$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of a circular cylinder x^2+z^2=4, extending from y=-3 to y=3. Show several circular traces at different y values with dashed circles. Show the rulings (vertical lines) on the surface. Label axes and radius 2.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Cylinder: $x^2+z^2=4$ – circle extended along missing variable (y).",
+      "teacher_narration": "Let's start with an easy warm-up. When you see that one variable is missing entirely, the surface is a cylinder with rulings parallel to that axis. Here, y is missing, so we have a circular cylinder whose axis is the y-axis. For any fixed y, the cross-section is a circle. So the surface is just that circle extruded along y. This is the simplest quadric surface — a cylinder.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example: Classifying an Ellipsoid (Standard)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Classify $4x^2+9y^2+z^2=36$.\n\n1. Divide by 36: $\\frac{x^2}{9}+\\frac{y^2}{4}+\\frac{z^2}{36}=1$\n2. Compare with $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}+\\frac{z^2}{c^2}=1$ → $a=3, b=2, c=6$\n3. Intercepts: $(\\pm3,0,0), (0,\\pm2,0), (0,0,\\pm6)$\n4. Traces: all ellipses. e.g., in $z=0$: $\\frac{x^2}{9}+\\frac{y^2}{4}=1$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of the ellipsoid x^2/9 + y^2/4 + z^2/36 = 1. Show the three intercepts as colored dots on each axis. Show the trace in the plane z=0 (ellipse in xy-plane) highlighted. Label the semi-axes lengths 3, 2, 6.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$4x^2+9y^2+z^2=36$ simplifies to $\\frac{x^2}{9}+\\frac{y^2}{4}+\\frac{z^2}{36}=1$ — an ellipsoid.",
+      "teacher_narration": "Now a standard example. We have an equation with all positive coefficients. First, rewrite it in the form equals 1. That gives denominators 9, 4, and 36. So the semi-axes are 3, 2, and 6. The surface is an ellipsoid that extends furthest along the z-axis. The trace in the xy-plane is an ellipse with semi-axes 3 and 2. This is a typical classification problem: identify and describe the shape.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause & Try: Classify this Surface",
+      "left": {
+        "content_type": "concept",
+        "content": "**Problem:** Identify the surface $z^2 - 4x^2 - y^2 = 4$.\n\nTake a moment to:\n- Rewrite in standard form.\n- Determine the axis.\n- Decide whether it is one-sheet or two-sheet.\n- Sketch rough traces.\n\n*Pause the video now, then click to reveal the solution.*"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Blank 3D axes with grid, but no surface drawn yet. Text overlay: 'Your turn! Try to sketch the surface.' Later the solution will appear (but for the coding agent, just describe that the visual will be replaced after pause).",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$z^2 - 4x^2 - y^2 = 4$ – pause and classify this surface.",
+      "teacher_narration": "Alright, time for you to try. Look at this equation: z squared minus 4x squared minus y squared equals 4. Rewrite it in standard form, identify the axis, and decide if it's a hyperboloid of one sheet or two sheets. Pause the video and give it a shot. When you're ready, play the next slide to see the solution.",
+      "student_prompt": "Classify the surface: $z^2 - 4x^2 - y^2 = 4$.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Solution: Tricky Example – Hyperboloid of Two Sheets",
+      "left": {
+        "content_type": "steps",
+        "content": "**Solution:** $z^2 - 4x^2 - y^2 = 4$\n1. Divide by 4: $\\frac{z^2}{4} - x^2 - \\frac{y^2}{4} = 1$\n2. Write as $-\\frac{x^2}{1} - \\frac{y^2}{4} + \\frac{z^2}{4} = 1$\n3. Two minus signs → **hyperboloid of two sheets**\n4. Axis: $z$-axis (positive coefficient)\n5. Traces exist only when $|z| > 2$\n6. Trace at $z=3$: $x^2 + \\frac{y^2}{4} = \\frac{5}{4}$ (ellipse)"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of hyperboloid of two sheets -x^2 - y^2/4 + z^2/4 = 1. Show two sheets for z>2 and z<-2. Highlight horizontal trace at z=3 (ellipse). Show vertical trace at x=0 (hyperbola). Label the gap between z=-2 and z=2. Use distinct colors for the two sheets.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$z^2 -4x^2-y^2=4$ → two minus signs → hyperboloid of two sheets, axis z.",
+      "teacher_narration": "Here's the solution. After dividing by 4, we have z-square over 4 minus x-square minus y-square over 4 equal 1. This fits the pattern of a hyperboloid of two sheets: two minus signs on the squared terms. The positive term is on z, so the axis is the z-axis. Traces only appear for z greater than 2 or less than negative 2. At z equals 3, the trace is an ellipse. This shape has two separate bowls, one above and one below.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example: Degenerate Quadric (Edge Case)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Classify $x^2 + 4y^2 + z^2 = 0$.\n\n1. All terms are non-negative: $x^2 \\ge 0$, $4y^2 \\ge 0$, $z^2 \\ge 0$.\n2. The sum equals $0$ ⇒ each term must be $0$.\n3. Only solution: $(0,0,0)$.\n4. This is a **single point** – a degenerate ellipsoid (collapsed sphere).\n5. Compare with $x^2+4y^2+z^2=1$: the constant $1$ gives a normal ellipsoid; as constant → $0$, it shrinks to a point."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Side-by-side 3D plots: left shows an ellipsoid x^2+4y^2+z^2=1, right shows a single red dot at the origin for x^2+4y^2+z^2=0. Arrow labeled 'constant → 0' between them. Include label 'Degenerate: point'.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "$x^2+4y^2+z^2=0$ – only the origin satisfies it. A degenerate quadric.",
+      "teacher_narration": "Sometimes the equation doesn't produce a true surface. Here, all the squared terms are added, so each is non-negative. The only way they sum to zero is if each is zero individually. That forces x, y, and z all to be zero. So this is just a single point: the origin. Compare it to the ellipsoid with constant 1; as that constant shrinks to zero, the ellipsoid collapses into a point. This is a degenerate quadric.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 15,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Example: Shifted Quadric (Application)",
+      "left": {
+        "content_type": "steps",
+        "content": "**Problem:** Identify $x^2+y^2-2x+4y-z+5=0$.\n\n1. Group: $(x^2-2x)+(y^2+4y)-z+5=0$\n2. Complete square: $x^2-2x=(x-1)^2-1$, $y^2+4y=(y+2)^2-4$\n3. Substitute: $(x-1)^2-1+(y+2)^2-4-z+5=0$\n4. Simplify: $(x-1)^2+(y+2)^2 - z =0$\n5. Solve for $z$: $z = (x-1)^2+(y+2)^2$\n6. This is an elliptic paraboloid with vertex at $(1,-2,0)$, opening upward."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "3D plot of elliptic paraboloid z = (x-1)^2 + (y+2)^2. Show shifted vertex at (1,-2,0) as a dot. Show the standard paraboloid z=x^2+y^2 in semi-transparent overlay for comparison. Label the shift.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Complete the square: $z = (x-1)^2+(y+2)^2$ – paraboloid vertex at $(1,-2,0)$.",
+      "teacher_narration": "Real equations aren't always centered at the origin. Here we have linear terms in x and y, and a constant. The trick is to complete the square for x and y. Group the x and y terms separately, then add and subtract the right numbers. After simplifying, we get z equals (x minus 1) squared plus (y plus 2) squared. That's an elliptic paraboloid that opens upward, but its vertex is at (1, -2, 0) instead of the origin. The shape is exactly the same, just shifted.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 16,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive Lab: Explore Quadric Surfaces",
+      "left": {
+        "content_type": "text",
+        "content": "Use the sliders to change the coefficients of an ellipsoid and see how the shape changes.\n\n**What to notice:**\n- When $a=b=c=1$, you get a sphere.\n- Changing one coefficient stretches the shape along that axis.\n- The traces in the coordinate planes are always ellipses."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": null,
+        "visual_spec": "Interactive 3D plot using matplotlib with sliders for a, b, c (ranges 0.5 to 3.0). Plot the ellipsoid x^2/a^2 + y^2/b^2 + z^2/c^2 = 1. Update the plot in real-time as sliders change. Also show the three coordinate plane traces as dashed curves. Include a checkbox to toggle traces on/off. Use a color scheme that clearly shows the surface.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, Button, CheckButtons\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.2)\n\n# Initial parameters\na0, b0, c0 = 1.0, 1.0, 1.0\n\n# Create grid\nu = np.linspace(0, 2*np.pi, 30)\nv = np.linspace(0, np.pi, 30)\n\ndef ellipsoid(a,b,c):\n    x = a * np.outer(np.cos(u), np.sin(v))\n    y = b * np.outer(np.sin(u), np.sin(v))\n    z = c * np.outer(np.ones_like(u), np.cos(v))\n    return x, y, z\n\nx, y, z = ellipsoid(a0, b0, c0)\nsurf = ax.plot_surface(x, y, z, alpha=0.6, color='cyan', edgecolor='none')\nax.set_xlim(-3,3)\nax.set_ylim(-3,3)\nax.set_zlim(-3,3)\nax.set_xlabel('X')\nax.set_ylabel('Y')\nax.set_zlabel('Z')\n\n# Slider axes\naxcolor = 'lightgoldenrodyellow'\naxa = plt.axes([0.2, 0.05, 0.6, 0.03], facecolor=axcolor)\naxb = plt.axes([0.2, 0.10, 0.6, 0.03], facecolor=axcolor)\naxc = plt.axes([0.2, 0.15, 0.6, 0.03], facecolor=axcolor)\n\nsa = Slider(axa, 'a', 0.5, 3.0, valinit=a0)\nsb = Slider(axb, 'b', 0.5, 3.0, valinit=b0)\nsc = Slider(axc, 'c', 0.5, 3.0, valinit=c0)\n\ndef update(val):\n    a = sa.val\n    b = sb.val\n    c = sc.val\n    ax.cla()\n    x, y, z = ellipsoid(a, b, c)\n    ax.plot_surface(x, y, z, alpha=0.6, color='cyan', edgecolor='none')\n    ax.set_xlim(-3,3)\n    ax.set_ylim(-3,3)\n    ax.set_zlim(-3,3)\n    ax.set_xlabel('X')\n    ax.set_ylabel('Y')\n    ax.set_zlabel('Z')\n    fig.canvas.draw_idle()\n\nsa.on_changed(update)\nsb.on_changed(update)\nsc.on_changed(update)\n\n# Reset button\nresetax = plt.axes([0.8, 0.05, 0.1, 0.04])\nbutton = Button(resetax, 'Reset', color=axcolor, hovercolor='0.975')\ndef reset(event):\n    sa.reset()\n    sb.reset()\n    sc.reset()\nbutton.on_clicked(reset)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for a from 0.5 to 3.0",
+          "Slider for b from 0.5 to 3.0",
+          "Slider for c from 0.5 to 3.0",
+          "Button: Reset to default values"
+        ]
+      },
+      "on_screen_text": "Interactive ellipsoid: drag sliders to change semi-axes a, b, c.",
+      "teacher_narration": "Now you can explore an ellipsoid interactively. Move the slider for a to stretch along the x-axis. As you increase it, the ellipsoid lengthens in that direction. The sliders for b and c do the same for y and z. Notice that when all three are equal, you get a perfect sphere. This dynamic visualization should help you build intuition for how the coefficients shape the surface. Play with it until you feel comfortable.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 17,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "Summary: The Six Basic Quadric Surfaces",
+      "left": {
+        "content_type": "text",
+        "content": "| Surface | Standard Equation | Axis | Key Trace(s) |\n|---------|-------------------|------|--------------|\n| **Ellipsoid** | $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}+\\frac{z^2}{c^2}=1$ | all | ellipses |\n| **Elliptic Paraboloid** | $z=\\frac{x^2}{a^2}+\\frac{y^2}{b^2}$ | z | horizontal: ellipses; vertical: parabolas |\n| **Hyperbolic Paraboloid** | $z=\\frac{x^2}{a^2}-\\frac{y^2}{b^2}$ | z | horizontal: hyperbolas; vertical: parabolas |\n| **Elliptic Cone** | $\\frac{z^2}{c^2}=\\frac{x^2}{a^2}+\\frac{y^2}{b^2}$ | z | horizontal: ellipses; vertical: lines/hyperbolas |\n| **Hyperboloid of One Sheet** | $\\frac{x^2}{a^2}+\\frac{y^2}{b^2}-\\frac{z^2}{c^2}=1$ | z (negative term) | horizontal: ellipses; vertical: hyperbolas |\n| **Hyperboloid of Two Sheets** | $-\\frac{x^2}{a^2}-\\frac{y^2}{b^2}+\\frac{z^2}{c^2}=1$ | z (positive term) | horizontal: ellipses for $|z|>c$; vertical: hyperbolas |\n\n**Key takeaways:**\n- Count the number of minus signs before squared terms to distinguish one-sheet vs. two-sheet.\n- Traces are conic sections.\n- Use completing the square to handle shifts."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Six quadric surfaces: ellipsoid, paraboloids, cone, and two hyperboloids. Use traces and sign patterns.",
+      "teacher_narration": "Let's review what we've learned. We have six basic quadric surfaces. The ellipsoid has all positive coefficients. The paraboloids have one linear variable. The cone has no constant term. The hyperboloids differ by the number of minus signs: one minus for one sheet, two minuses for two sheets. Remember, the axis is always the variable with the opposite sign pattern. Traces are your best friend for sketching. And when the equation has linear terms, complete the square to find the new center. You're now ready to tackle any quadric surface you encounter.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}

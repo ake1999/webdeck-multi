@@ -52,6 +52,8 @@ def bbox_center_size(bbox: tuple[float, float, float, float]):
 
 
 def face_align_frames(frames: list[np.ndarray], ref_face_bbox, app, target_w: int, target_h: int, bg=(247, 247, 247)) -> tuple[list[np.ndarray], dict]:
+    if app is None:
+        return frames, {"face_align_applied": False, "face_align_failed": False, "reason": "insightface_unavailable"}
     first_rgb = cv2.cvtColor(frames[0], cv2.COLOR_BGR2RGB)
     src_face_bbox = detect_face_bbox_rgb(first_rgb, app)
     if src_face_bbox is None or ref_face_bbox is None:
@@ -145,6 +147,8 @@ def reference_mask(reference_alpha: Path, target_w: int, target_h: int) -> np.nd
 
 
 def load_reference_face_bbox(reference_alpha: Path, target_w: int, target_h: int, app):
+    if app is None:
+        return None
     ref = Image.open(reference_alpha).convert("RGBA").resize((target_w, target_h), Image.LANCZOS)
     # Composite over the same off-white background used for normalized videos.
     arr = np.array(ref)
@@ -312,12 +316,16 @@ def main():
     ap.add_argument("--max-bbox-size-delta-px", type=float, default=180)
     args = ap.parse_args()
 
-    from insightface.app import FaceAnalysis
-    face_app = FaceAnalysis(providers=["CPUExecutionProvider"])
-    face_app.prepare(ctx_id=0, det_size=(640, 640))
+    face_app = None
+    try:
+        from insightface.app import FaceAnalysis
+        face_app = FaceAnalysis(providers=["CPUExecutionProvider"])
+        face_app.prepare(ctx_id=0, det_size=(640, 640))
+    except ModuleNotFoundError:
+        print("warning: insightface is not installed; continuing without face alignment")
     ref_mask = reference_mask(args.reference_alpha, args.width, args.height)
     ref_face_bbox = load_reference_face_bbox(args.reference_alpha, args.width, args.height, face_app)
-    if ref_face_bbox is None:
+    if face_app is not None and ref_face_bbox is None:
         raise RuntimeError(f"Could not detect reference face in {args.reference_alpha}")
     reports = []
     for src in sorted(args.raw_dir.glob("*_raw.mp4")):

@@ -1,0 +1,25 @@
+{
+  "character_id": "arian_teacher_v1",
+  "voice_references": [],
+  "image_references": [],
+  "avatar_clips": [],
+  "preferred_minimum_pack": {
+    "voice_files_required": 0,
+    "image_files_required": 0
+  },
+  "recording_rules": {
+    "audio_format": "wav",
+    "sample_rate_hz": 24000,
+    "channels": 1,
+    "environment": "quiet_room",
+    "processing": "clean_voice_no_music_no_reverb",
+    "delivery_note": "Arian University can use configured TTS speakers or future explicit Arian reference assets; no legacy Ali references are required."
+  },
+  "image_rules": {
+    "background": "transparent_or_easy_to_cut_out",
+    "framing": "full_body_visible_head_to_toe_when_fullbody",
+    "lighting": "soft_even_lighting",
+    "consistency": "same outfit for most files preferred",
+    "delivery_note": "Optional future Arian avatar references may be added here when available."
+  }
+}

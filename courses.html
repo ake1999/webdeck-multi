@@ -6,11 +6,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Choose Course — Teaching Decks</title>
   <style>
+    :root {
+      --page-bg: #0f172a;
+      --page-surface: #0b1220;
+      --page-border: rgba(226, 232, 240, 0.15);
+      --page-border-hover: rgba(226, 232, 240, 0.35);
+      --page-text: #e2e8f0;
+      --page-muted: #cbd5e1;
+      --page-link: #93c5fd;
+      --page-shadow: rgba(0, 0, 0, 0.25);
+    }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
+      background: var(--page-bg);
+      color: var(--page-text);
+    }
+
+    body[data-theme="arian"] {
+      --page-bg: #24130f;
+      --page-surface: #321912;
+      --page-border: rgba(231, 111, 54, 0.36);
+      --page-border-hover: rgba(247, 162, 98, 0.72);
+      --page-text: #fff7ed;
+      --page-muted: #f3d2bd;
+      --page-link: #f7a35c;
+      --page-shadow: rgba(61, 18, 10, 0.38);
     }
 
     .wrap {
@@ -25,7 +47,7 @@
     }
 
     p {
-      color: #cbd5e1;
+      color: var(--page-muted);
       line-height: 1.5;
     }
 
@@ -37,19 +59,19 @@
     }
 
     a.card {
-      background: #0b1220;
-      border: 1px solid rgba(226, 232, 240, 0.15);
-      border-radius: 16px;
+      background: var(--page-surface);
+      border: 1px solid var(--page-border);
+      border-radius: 8px;
       padding: 16px;
-      color: #e2e8f0;
+      color: var(--page-text);
       text-decoration: none;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 10px 30px var(--page-shadow);
       transition: border-color 0.15s ease, transform 0.15s ease;
       display: block;
     }
 
     a.card:hover {
-      border-color: rgba(226, 232, 240, 0.35);
+      border-color: var(--page-border-hover);
       transform: translateY(-1px);
     }
 
@@ -58,15 +80,15 @@
       font-size: 12px;
       padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(226, 232, 240, 0.2);
-      color: #cbd5e1;
+      border: 1px solid var(--page-border);
+      color: var(--page-muted);
       margin-bottom: 6px;
     }
 
     .back-link {
       display: inline-block;
       margin-bottom: 16px;
-      color: #93c5fd;
+      color: var(--page-link);
       text-decoration: none;
       font-size: 14px;
     }
@@ -86,53 +108,29 @@
     <div class="grid" id="courseGrid"></div>
   </div>
 
-  <script>
+  <script type="module">
+    import {
+      getCoursesBySchool,
+      getSchoolConfig,
+    } from "./shared/course_catalog.js";
+
     const params = new URLSearchParams(window.location.search);
     const school = params.get("school") || "AC";
-
-    const allCourses = [
-      {
-        school: "AC",
-        code: "ROB9205",
-        term: "W2026",
-        fullId: "ROB9205_Industrial_Robots_W2026",
-        title: "Industrial Robots",
-        desc: "School of Advanced Technology — Industrial Robot Fundamentals.",
-      },
-      {
-        school: "UO",
-        code: "MCG5138",
-        term: "W2026",
-        fullId: "MCG5138_Autonomous_Mobile_Robots_W2026",
-        title: "Autonomous Mobile Robots (Lab)",
-        desc: "Mobile robotics lab with TurtleBot3 simulation and ROS 2.",
-      },
-      {
-        school: "UO",
-        code: "MCG5353",
-        term: "W2026",
-        fullId: "MCG5353_Robotics_W2026",
-        title: "Robotics",
-        desc: "University of Ottawa robotics course deck scaffold.",
-      },
-    ];
-
-    const bySchool = allCourses.filter(c => c.school === school);
+    const schoolCfg = getSchoolConfig(school);
+    const knownSchool = schoolCfg.id === school;
+    const bySchool = getCoursesBySchool(school);
+    document.body.dataset.theme = schoolCfg.theme || "";
 
     const titleEl = document.getElementById("title");
     const subtitleEl = document.getElementById("subtitle");
     const gridEl = document.getElementById("courseGrid");
 
-    if (school === "AC") {
-      titleEl.textContent = "Algonquin College — Choose a course";
-      subtitleEl.textContent = "School of Advanced Technology (OTFT / SAT).";
-    } else if (school === "UO") {
-      titleEl.textContent = "University of Ottawa — Choose a course";
-      subtitleEl.textContent = "MCG 5138 Autonomous Mobile Robots and MCG 5353 Robotics.";
-    } else {
-      titleEl.textContent = "Choose a course";
-      subtitleEl.textContent = "";
-    }
+    titleEl.textContent = knownSchool
+      ? schoolCfg.coursesTitle
+      : "Choose a course";
+    subtitleEl.textContent = knownSchool
+      ? schoolCfg.coursesSubtitle
+      : "";
 
     if (!bySchool.length) {
       gridEl.innerHTML = "<p>No courses configured for this school yet.</p>";
@@ -141,11 +139,10 @@
       bySchool.forEach(c => {
         const a = document.createElement("a");
         a.className = "card";
-        // NEXT PAGE (we will build sessions.html in the next step)
         a.href = `sessions.html?school=${encodeURIComponent(c.school)}&course=${encodeURIComponent(c.fullId)}`;
         a.innerHTML = `
           <div class="tag">${c.code} • ${c.term}</div>
-          <h2 style="margin:10px 0 6px 0; color:${c.school === "AC" ? "#86efac" : "#f97373"};">
+          <h2 style="margin:10px 0 6px 0; color:${c.color || schoolCfg.courseColor};">
             ${c.title}
           </h2>
           <p style="margin:0;">${c.desc}</p>

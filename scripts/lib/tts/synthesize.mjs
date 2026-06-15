@@ -15,7 +15,7 @@ const PROVIDERS = new Map([
   [qwen3TtsProvider.id, qwen3TtsProvider],
 ]);
 
-export function resolveTtsProvider(providerId = "ffmpeg_flite") {
+export function resolveTtsProvider(providerId = "qwen3_tts") {
   const provider = PROVIDERS.get(providerId);
   if (!provider) {
     throw new Error(`Unknown TTS provider "${providerId}". Available providers: ${Array.from(PROVIDERS.keys()).join(", ")}`);
@@ -51,7 +51,7 @@ function buildProviderMeta(provider, providerId, options = {}) {
 export async function synthesizeTopicAudio({
   scriptManifest,
   audioDir,
-  providerId = "ffmpeg_flite",
+  providerId = "qwen3_tts",
   options = {},
   authoring = null,
 }) {

@@ -1,0 +1,356 @@
+{
+  "lecture_meta": {
+    "title": "Arc Length And Surface Area Of Revolution",
+    "topic": "Arc Length and Surface Area of Revolution",
+    "category": "general_mathematics",
+    "student_level": "first-year university / advanced high school",
+    "estimated_duration_minutes": 20,
+    "learning_objectives": [
+      "Calculate arc length of a curve y = f(x) over an interval.",
+      "Apply integration to find surface area when rotating a curve about the x-axis or y-axis.",
+      "Choose the correct variable of integration based on the axis of rotation.",
+      "Simplify surface area integrals using algebraic manipulation before integrating.",
+      "Analyze improper integrals for surface area (like Gabriel's Horn)."
+    ],
+    "prerequisite_reminder": "You should know the fundamental theorem of calculus and how to differentiate basic functions."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "slide_type": "hook",
+      "layout": "split_left_right",
+      "title": "Can We Measure the Surface of a Vase?",
+      "left": {
+        "content_type": "text",
+        "content": "Which has more surface area: a cylindrical can or a vase? How would you calculate the curved surface of the vase if you know its shape?"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Side-by-side silhouette: a can (rectangle) and a vase (curved profile). Highlight the curved surfaces.",
+        "visual_spec": "Plot two 2D profiles: left panel: a rectangle with height 2 and width 1, representing a can. Right panel: a smooth curve y = 1 + 0.3*sin(2*x) from x=0 to x=2, representing a vase silhouette. Use matplotlib subplots. Label 'Can' and 'Vase'. Color the interior of the shapes light blue. Show axis labels but no grid.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band"
+        ]
+      },
+      "on_screen_text": "Can vs. vase: which curved surface is larger? How to compute it?",
+      "teacher_narration": "Think about a beautifully shaped vase and a simple soup can. Which one has more surface area? The can is easy — just a rectangle wrapped into a cylinder. But the vase has a curved profile; its surface area is harder to measure. Today we will build a tool that lets us calculate the surface area of any shape obtained by rotating a curve around an axis. This tool builds directly on arc length, which we'll also revisit.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 2,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Arc Length – The Foundation",
+      "left": {
+        "content_type": "formula_block",
+        "content": "$$L = \\int_a^b \\sqrt{1 + [f'(x)]^2} \\, dx$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Right triangle on a curve: horizontal leg = dx, vertical leg = dy, hypotenuse = ds = sqrt(dx²+dy²).",
+        "visual_spec": "Create a plot of a smooth curve y = 0.5 x^2 from x=0 to x=2. At x=1, draw a small right triangle: horizontal segment of length 0.2, vertical segment of length f'(1)*0.2, and the hypotenuse connecting the start and end points. Label the legs 'dx' and 'dy', and the hypotenuse 'ds'. Use matplotlib with equal aspect ratio. Color: dx in blue, dy in red, ds in green.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band"
+        ]
+      },
+      "on_screen_text": "Arc length formula: L = ∫ sqrt(1 + (dy/dx)²) dx",
+      "teacher_narration": "Before we tackle surface area, we need to measure the length of a curve. If you zoom in on a curve, a tiny piece looks almost like a straight line. That tiny piece is the hypotenuse of a right triangle with legs dx and dy. Its length ds is sqrt(dx² + dy²). Dividing by dx gives ds = sqrt(1 + (dy/dx)²) dx. Integrate over the interval to get the total arc length.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 3,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Warm‑Up: Arc Length of a Semicubical Parabola",
+      "left": {
+        "content_type": "steps",
+        "content": "Find the arc length of $y = x^{3/2}$ from $x=1$ to $x=4$.\n\n1. $\\frac{dy}{dx} = \\frac{3}{2}x^{1/2}$\n2. $ds = \\sqrt{1 + \\frac{9}{4}x} \\, dx$\n3. $L = \\int_1^4 \\sqrt{1 + \\frac{9}{4}x} \\, dx$\n4. Substitute $u = 1 + \\frac{9}{4}x$, $du = \\frac{9}{4}dx$\n5. $L = \\frac{4}{9} \\int_{13/4}^{10} \\sqrt{u} \\, du$\n6. $L = \\frac{8}{27} \\left( 10^{3/2} - \\left(\\frac{13}{4}\\right)^{3/2} \\right)$\n7. Simplify: $L = \\frac{1}{27} (80\\sqrt{10} - 13\\sqrt{13})$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Arc length example: y = x^{3/2} from x=1 to x=4. Steps shown on left.",
+      "teacher_narration": "Let's walk through a complete arc length example. We take the derivative, square it, set up the integral. Then we use substitution: letting u equal the inside of the square root simplifies the integrand. After changing the limits and integrating, we get an exact expression involving square roots. This is the same strategy we'll use for surface area. Notice how the substitution method mirrors what we will do later for surface area problems, making this a valuable warm-up exercise.",
+      "student_prompt": "Try the substitution yourself before looking at the solution.",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 4,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "From Arc Length to Surface Area",
+      "left": {
+        "content_type": "concept",
+        "content": "Imagine peeling the curve into thin strips. Each strip has width $ds$. When rotated, it becomes a band of area $2\\pi r \\, ds$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "A curve segment rotated to form a thin band; label radius r and width ds.",
+        "visual_spec": "2D schematic: a curve segment (in red) with endpoints (x, f(x)) and (x+dx, f(x+dx)). A dashed arrow around the y-axis showing rotation. A thin grey band representing the surface swept out. Label r = distance from axis to the segment (shown as a horizontal line from axis to midpoint of segment). Label ds along the curve segment. Use matplotlib with adjustments. Keep simple and clean.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band"
+        ]
+      },
+      "on_screen_text": "Surface area element dS = (2πr) × ds",
+      "teacher_narration": "Now imagine taking a tiny piece of the curve with length ds. When you spin it around the axis, it sweeps out a thin band. The area of that band is the circumference 2π times the radius r, multiplied by the width ds. The radius r is the distance from the axis to the curve. For the x‑axis, r = y; for the y‑axis, r = x. Integrate dS to get the total surface area.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 5,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Surface Area Formulas",
+      "left": {
+        "content_type": "formula_block",
+        "content": "About x‑axis:\n$$S = \\int_a^b 2\\pi y \\, ds = \\int_a^b 2\\pi y \\,\\sqrt{1 + (dy/dx)^2}\\,dx$$\n\nAbout y‑axis:\n$$S = \\int_c^d 2\\pi x \\, ds = \\int_c^d 2\\pi x \\,\\sqrt{1 + (dx/dy)^2}\\,dy$$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: curve rotated about x‑axis (left) and y‑axis (right). Show radius r as distance from axis.",
+        "visual_spec": "Two panels. Left: curve y = f(x) rotated about x‑axis; highlight a point (x,y) with radius r = y. Right: same curve rotated about y‑axis; radius r = x. Use matplotlib subplots. Add arrows indicating rotation. Keep axes perpendicular.",
+        "python_code": null,
+        "interactive_controls": [
+          "Slider for n from 1 to 50",
+          "Toggle: show/hide error band"
+        ]
+      },
+      "on_screen_text": "S = ∫ 2π (radius) ds. Radius = y for x‑axis, x for y‑axis.",
+      "teacher_narration": "Here are the two main formulas. The radius is always the distance from the axis of rotation. If you rotate around the x‑axis, the radius is y. Around the y‑axis, it's x. The ds part is always sqrt(1 + (derivative)²) times the differential. Notice that when rotating around the y‑axis, we often write x as a function of y so that dx/dy appears.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 6,
+      "slide_type": "visual_lab",
+      "layout": "split_left_right",
+      "title": "Interactive: Watch the Surface Build Up",
+      "left": {
+        "content_type": "text",
+        "content": "Use the slider to rotate the curve $y = x^2$ from 0° to 360°. Observe how the surface forms."
+      },
+      "right": {
+        "content_type": "python_lab",
+        "content": "Interactive 3D plot of y = x² rotated about y‑axis; slider for rotation angle.",
+        "visual_spec": "3D surface of revolution: curve y = x² from x=0 to x=2, rotated about y‑axis. The surface should be plotted as a mesh that grows as the slider advances. Show the original curve as a red line. Axis labels: x, y, z. Slider controls: 'Rotation angle (degrees)' from 0 to 360, step 1. Also a 'Show ds elements' checkbox to toggle small bands.",
+        "python_code": "import numpy as np\nimport matplotlib.pyplot as plt\nfrom mpl_toolkits.mplot3d import Axes3D\nfrom matplotlib.widgets import Slider, CheckButtons\n\nfig = plt.figure(figsize=(10,8))\nax = fig.add_subplot(111, projection='3d')\nplt.subplots_adjust(bottom=0.25)\n\nx = np.linspace(0, 2, 30)\ny_curve = x**2\ntheta = np.linspace(0, 2*np.pi, 30)\n\nX, T = np.meshgrid(x, theta)\nY = np.outer(y_curve, np.ones_like(theta)).T\nZ = np.outer(x, np.cos(theta)).T\n# Create surface for full rotation initially\nsurf = ax.plot_surface(X, Y, Z, alpha=0.7, cmap='viridis', edgecolor='none')\nline, = ax.plot(x, y_curve, np.zeros_like(x), 'r-', lw=2)\n\nax.set_xlabel('x')\nax.set_ylabel('y')\nax.set_zlabel('z')\nax.set_title('Surface of Revolution')\n\nax_slider = plt.axes([0.2, 0.1, 0.65, 0.03])\nslider = Slider(ax_slider, 'Angle (deg)', 0, 360, valinit=360)\n\ndef update(val):\n    angle_deg = slider.val\n    angle_rad = np.deg2rad(angle_deg)\n    # Recompute surface up to current angle\n    theta_curr = np.linspace(0, angle_rad, max(2, int(30*angle_rad/(2*np.pi)+1)))\n    if angle_rad == 0:\n        theta_curr = np.array([0])\n    T_curr, X_curr = np.meshgrid(theta_curr, x)\n    Y_curr = np.outer(y_curve, np.ones_like(theta_curr)).T\n    Z_curr = np.outer(x, np.cos(theta_curr))\n    # Remove old surface\n    global surf\n    surf.remove()\n    surf = ax.plot_surface(X_curr, Y_curr, Z_curr, alpha=0.7, cmap='viridis', edgecolor='none')\n    fig.canvas.draw_idle()\n\nslider.on_changed(update)\n\nplt.show()",
+        "interactive_controls": [
+          "Slider for rotation angle from 0° to 360°",
+          "Checkbox 'Show bands' to overlay ds elements (implementation in full code not shown here but can be added)"
+        ]
+      },
+      "on_screen_text": "Drag the slider to rotate y = x². Watch the surface emerge.",
+      "teacher_narration": "Now you can see what we mean by 'surface of revolution'. Drag the slider from 0 to 360 degrees. The curve y = x² spins around the y‑axis, creating a smooth bowl. Each small segment of the curve becomes a band on the surface. This visual makes the integral formula concrete: the total area is the sum of all those bands.",
+      "student_prompt": "Set the slider to 180°. What shape do you see?",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 7,
+      "slide_type": "pause_and_try",
+      "layout": "split_left_right",
+      "title": "Pause: Set Up the Integral Yourself",
+      "left": {
+        "content_type": "text",
+        "content": "Find the surface area when $y = x^2$ from $(1,1)$ to $(2,4)$ is rotated about the y‑axis. Write the integral but do not evaluate."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of y = x² from x=1 to x=2, with axis of rotation (y‑axis) highlighted.",
+        "visual_spec": "Plot y = x² from x=0 to x=2.5. Shade the region from x=1 to x=2. Draw the y‑axis as a dashed line. Label points (1,1) and (2,4). Arrows showing rotation around y‑axis.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Set up the integral for S = ∫ 2π (radius) ds. Which variable will you use?",
+      "teacher_narration": "Before I show you the solution, try setting up the integral yourself. Remember: the radius is the distance from the axis. Which variable gives the most convenient ds? Think about whether you want to integrate with respect to x or y. Pause the video now and write down your setup.",
+      "student_prompt": "Write the integral for surface area of y = x² rotated about y‑axis from x=1 to x=2.",
+      "youtube_pause": true,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 8,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Solution: Standard Surface Area Example",
+      "left": {
+        "content_type": "steps",
+        "content": "Rotating $y = x^2$ about y‑axis from $(1,1)$ to $(2,4)$.\n\n1. Use $S = \\int 2\\pi x \\, ds$ because radius = x.\n2. Write $x = \\sqrt{y}$, $dx/dy = 1/(2\\sqrt{y})$.\n3. $ds = \\sqrt{1 + (dx/dy)^2}\\,dy = \\sqrt{1 + 1/(4y)}\\,dy = \\frac{\\sqrt{4y+1}}{2\\sqrt{y}}dy$.\n4. $S = \\int_{y=1}^{4} 2\\pi (\\sqrt{y}) \\cdot \\frac{\\sqrt{4y+1}}{2\\sqrt{y}}\\,dy = \\int_1^4 \\pi \\sqrt{4y+1}\\,dy$.\n5. Substitute $u = 4y+1$, $du=4dy$, limits: $y=1\\to u=5$, $y=4\\to u=17$.\n6. $S = \\frac{\\pi}{4} \\int_5^{17} \\sqrt{u}\\,du = \\frac{\\pi}{6}(17\\sqrt{17} - 5\\sqrt{5})$."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Step‑by‑step solution. The √y cancels, giving a simple integral.",
+      "teacher_narration": "Here's the full solution. Notice how we chose to integrate with respect to y because the radius x appears in 2πx. Writing x as sqrt(y) gave dx/dy, and after simplifying ds, the sqrt(y) in the radius canceled perfectly. This is a typical trick: choose the variable that makes the algebra clean. Always simplify the square root before integrating. This approach often significantly reduces the complexity of the integral.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 9,
+      "slide_type": "misconception",
+      "layout": "full_width",
+      "title": "Common Mistake: Wrong Substitution",
+      "left": {
+        "content_type": "text",
+        "content": "**Wrong approach:** To find $S = 2\\pi \\int_0^1 e^x \\sqrt{1+e^{2x}}\\,dx$, students often set $u = 1+e^{2x}$.\n\nThen $du = 2e^{2x}dx$. But the integrand has only $e^x$, not $e^{2x}$. The substitution fails.\n\n**Correct substitution:** Let $u = e^x$, then $du = e^x dx$, which appears directly."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Setting u = 1+e^{2x} gives du = 2e^{2x}dx, but we only have e^x dx.",
+      "teacher_narration": "Here's a typical pitfall. When you see e^x times sqrt(1+e^{2x}), you might be tempted to substitute u = 1+e^{2x}. But then du = 2e^{2x}dx, and you don't have e^{2x} in the integrand. Instead, notice that the derivative of e^x is e^x, so try u = e^x. That way, du = e^x dx, which is exactly the factor outside the square root. Always look for the derivative of your substitution already present in the integrand.",
+      "student_prompt": "Why does u = 1+e^{2x} fail?",
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 10,
+      "slide_type": "practice",
+      "layout": "split_left_right",
+      "title": "Tricky: Surface Area of y = eˣ",
+      "left": {
+        "content_type": "steps",
+        "content": "Rotate $y = e^x$ from $x=0$ to $x=1$ about x‑axis.\n\n1. $S = 2\\pi \\int_0^1 e^x \\sqrt{1+e^{2x}}\\,dx$\n2. Let $u = e^x$, $du = e^x dx$.\n3. $x=0\\to u=1$, $x=1\\to u=e$.\n4. $S = 2\\pi \\int_1^e \\sqrt{1+u^2}\\,du$\n5. Use $\\int \\sqrt{1+u^2}\\,du = \\frac{u}{2}\\sqrt{1+u^2} + \\frac12 \\ln(u+\\sqrt{1+u^2}) + C$.\n6. $S = \\pi\\left[e\\sqrt{1+e^2} + \\ln(e+\\sqrt{1+e^2}) - \\sqrt{2} - \\ln(1+\\sqrt{2})\\right]$"
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Graph of y = e^x from x=0 to x=1, rotated about x‑axis.",
+        "visual_spec": "Plot e^x from 0 to 1. Show the surface of revolution as a transparent shape (optional: simple 2D with rotation arrow).",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "y = e^x rotated about x‑axis. Use substitution u = e^x.",
+      "teacher_narration": "This example combines the surface area integral with a clever substitution. The integrand has e^x times sqrt(1+e^{2x}). By letting u = e^x, we convert the integral into the standard form sqrt(1+u²). That integral gives a combination of algebraic and logarithmic terms. The final answer looks messy, but it is exact. This problem also appears on many standard exams.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "medium",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 11,
+      "slide_type": "practice",
+      "layout": "full_width",
+      "title": "Edge Case: Surface of a Sphere Zone",
+      "left": {
+        "content_type": "steps",
+        "content": "Rotate $y = \\sqrt{4-x^2}$ from $x=-1$ to $x=1$ about x‑axis.\n\n1. $dy/dx = -x/\\sqrt{4-x^2}$\n2. $1+(dy/dx)^2 = \\frac{4}{4-x^2}$\n3. $\\sqrt{1+(dy/dx)^2} = \\frac{2}{\\sqrt{4-x^2}}$\n4. $S = \\int_{-1}^1 2\\pi (\\sqrt{4-x^2}) \\cdot \\frac{2}{\\sqrt{4-x^2}}\\,dx = \\int_{-1}^1 4\\pi\\,dx$\n5. $S = 4\\pi \\left[ x \\right]_{-1}^1 = 8\\pi$"
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "The radicals cancel beautifully! S = 4π × 2 = 8π for the spherical zone.",
+      "teacher_narration": "This is a beautiful example where algebra makes the integral trivial. The derivative of sqrt(4-x²) gives a neat simplification: 1+(dy/dx)² becomes 4/(4-x²). Taking the square root gives 2/sqrt(4-x²), which cancels with the y in the surface area formula. We end up integrating a constant! The result 8π is exactly the surface area of a spherical zone with height 2 on a sphere of radius 2.",
+      "student_prompt": "Check: What is the surface area of the full sphere of radius 2? (Answer: 16π)",
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 12,
+      "slide_type": "challenge",
+      "layout": "split_left_right",
+      "title": "[Challenge – Optional] Gabriel’s Horn: Finite Volume, Infinite Area",
+      "left": {
+        "content_type": "text",
+        "content": "Rotate $y = 1/x$ from $x=1$ to $\\infty$ about x‑axis.\n\n**Volume** = $\\pi$ (finite).\n**Surface area** $S = \\int_1^\\infty 2\\pi \\frac{1}{x} \\sqrt{1+1/x^4}\\,dx$.\n\nFor large $x$, $\\sqrt{1+1/x^4} \\approx 1$, so $S \\sim 2\\pi \\int_1^\\infty \\frac{dx}{x} = \\infty$."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "3D horn shape extending to infinity; label volume finite, area infinite.",
+        "visual_spec": "3D plot of y=1/x rotated about x‑axis from x=1 to x=4 (truncated). Use transparent surface. Add text annotation: 'Volume = π (finite)' and 'Surface area = ∞'. Use a color gradient to hint at infinite length.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Gabriel's Horn: infinite surface area, finite volume. Paradox!",
+      "teacher_narration": "Here's a famous paradox. Take y = 1/x and rotate it about the x‑axis from x = 1 to infinity. The volume turns out to be π, which is finite. But the surface area diverges. For large x, the integrand behaves like 1/x, whose integral diverges. So you can fill the horn with a finite amount of paint, but you cannot paint its infinite surface. This is a wonderful example of an improper integral in action.",
+      "student_prompt": "Why does the comparison test show divergence? (Hint: compare to 1/x)",
+      "youtube_pause": false,
+      "difficulty": "challenge",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_number": 13,
+      "slide_type": "core",
+      "layout": "split_left_right",
+      "title": "Proof Sketch (Lightweight)",
+      "left": {
+        "content_type": "concept",
+        "content": "Partition the interval, approximate each piece by a line segment, rotate to get a frustum of a cone. Sum the frustum surface areas and take the limit to obtain the integral."
+      },
+      "right": {
+        "content_type": "visual_spec",
+        "content": "Diagram: a curve approximated by straight line segments; one segment rotated to form a frustum.",
+        "visual_spec": "Left: curve y = f(x) with 4 line segments approximating it. Right: the segment between x_i and x_{i+1} rotated to form a frustum (drawn in 2D as a truncated cone). Label radii R1 and R2, slant height L. Use matplotlib with two subplots.",
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Surface area = limit of sum of frustum areas.",
+      "teacher_narration": "If you want the deeper reasoning: divide the curve into small segments. Each segment approximates a straight line. When you rotate that line segment, it sweeps out a frustum of a cone (a cone with the tip cut off). The surface area of a frustum is 2π times the average radius times the slant height. Sum all frusta and let the partition become infinitely fine. The limit gives the surface area integral we have been using.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    },
+    {
+      "slide_number": 14,
+      "slide_type": "summary",
+      "layout": "full_width",
+      "title": "What We Learned Today",
+      "left": {
+        "content_type": "text",
+        "content": "**Arc length:** $$L = \\int \\sqrt{1 + (dy/dx)^2}\\,dx$$\n**Surface area about x‑axis:** $$S = \\int 2\\pi y \\,\\sqrt{1 + (dy/dx)^2}\\,dx$$\n**Surface area about y‑axis:** $$S = \\int 2\\pi x \\,\\sqrt{1 + (dx/dy)^2}\\,dy$$\n\nKey skill: Choose the variable that simplifies the integral. Always simplify the square root first."
+      },
+      "right": {
+        "content_type": "empty",
+        "content": null,
+        "visual_spec": null,
+        "python_code": null,
+        "interactive_controls": []
+      },
+      "on_screen_text": "Three formulas. Remember: radius = distance from axis.",
+      "teacher_narration": "Today we built surface area from arc length. The key formula is S = ∫ 2π (radius) ds. The radius is always the perpendicular distance to the axis. We saw five examples: a warm‑up arc length, a standard surface area with a cancellation, a tricky exponential case, a beautiful simplification for a sphere, and the infinite paradox of Gabriel's Horn. Practice setting up the integrals — that's the hardest part.",
+      "student_prompt": null,
+      "youtube_pause": false,
+      "difficulty": "core",
+      "skip_if_time_limited": false
+    }
+  ]
+}
