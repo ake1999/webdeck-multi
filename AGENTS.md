@@ -65,6 +65,19 @@ them. Read this file before editing, then read `.agents/project-map.md`,
   of reusing the same hardcoded variant on every slide. Widgets expose formula,
   plot, readout, controls, and optional `scriptedTimeline` elements as layout
   targets.
+- **Interactive plot narration:** explain graphs while the plot moves. Pair
+  widgets with `scriptedTimeline` (auto-sync during lecture time) and/or
+  `widgetParams` on `math_solution_steps` / `example_solution` rows (fires when a
+  script segment targets that step id). Scripts use `delivery_kind: demo` on the
+  widget media id; plan entries carry `interaction_hints` (`widget_media_id`,
+  `step_ids`, `scripted_params`). See authoring guide §5b–§7b.
+- **Pause beats:** use `pause_and_reveal` only for real prediction moments (not
+  decorative filler). Script splits quiz (`delivery_kind: quiz_prompt`, targets
+  prompt id) from reveal (targets reveal element). The composite video inserts a
+  **silent think beat** between them; TTS does not speak the answer in the quiz
+  segment. Avatar head/body shifts under plots are video-only, not spoken.
+- Lecture plans may include `playback_contract` and per-slide `interaction_hints`;
+  generation uses `script_writer_v3` + `llm_local` with those hints in context.
 - Arian University lecture plans use `shared/arian.avatar.profile.json` so the
   personal-brand calculus voice does not inherit old robotics wording.
 - The historical robotics/university course pipeline is useful reference, but
@@ -81,7 +94,9 @@ them. Read this file before editing, then read `.agents/project-map.md`,
   `npm run test:math-solution-steps`, and the topic-script / slide-video-control
   tests.
 - Hand-enhanced AU topics should follow `docs/calculus_course_authoring_guide.md`
-  for slide/plan consistency, `math_solution_steps` usage, and widget pairing.
+  for slide/plan consistency, `math_solution_steps` usage, widget pairing,
+  `pause_and_reveal` quiz/reveal splits, and `interaction_hints` on dense
+  visual slides.
 - **`nested_bullets` ordered lists:** default is `<ol>` (`ordered !== false`).
   Do not prefix items with `**1.**` / `**2.**` (duplicates markers). Use
   `ordered: false` only for bullet dots. Keep left-column lists short on dense

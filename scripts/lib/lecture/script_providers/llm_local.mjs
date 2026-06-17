@@ -58,6 +58,12 @@ function compactLayoutElements(layoutSlide) {
 
 function compactMedia(media) {
   if (!isObject(media)) return null;
+  const timeline = asArray(media.scriptedTimeline)
+    .slice(0, 6)
+    .map((entry) => ({
+      t: entry?.t,
+      params: entry?.params || {},
+    }));
   return {
     id: media.id || "",
     kind: media.kind || "",
@@ -65,6 +71,8 @@ function compactMedia(media) {
     title: media.title || "",
     caption: media.caption || "",
     source_spec: media.sourceSpec || "",
+    ...(timeline.length ? { scripted_timeline: timeline } : {}),
+    ...(media.params && typeof media.params === "object" ? { default_params: media.params } : {}),
   };
 }
 
@@ -88,6 +96,7 @@ function compactBlock(block) {
     steps: asArray(block.steps).map((step) => ({
       id: step?.id || "",
       text: typeof step === "string" ? step : step?.text || step?.say || "",
+      ...(step?.widgetParams ? { widget_params: step.widgetParams } : {}),
     })),
     pairs: asArray(block.pairs).map((pair) => ({
       label: pair?.label || "",
@@ -247,6 +256,7 @@ export function buildScriptWriterRequestContext({
       scene_hint: planSlide?.scene_hint || "",
       prop_suggestions: asArray(planSlide?.prop_suggestions),
       avatar_hint: isObject(planSlide?.avatar_hint) ? planSlide.avatar_hint : {},
+      interaction_hints: isObject(planSlide?.interaction_hints) ? planSlide.interaction_hints : {},
     },
     voice_defaults: {
       style: slideDefaults.voice?.voice_style || "",

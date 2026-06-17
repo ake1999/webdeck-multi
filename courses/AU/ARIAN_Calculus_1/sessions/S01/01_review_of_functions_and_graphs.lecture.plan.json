@@ -23,16 +23,11 @@
   "audience_level": "first-year university and advanced high-school students learning calculus through visual intuition, formulas, and guided practice",
   "topic_goal": "Review functions and graphs as the visual language students need before limits, derivatives, and integrals.",
   "topic_takeaways": [
-    "Students should connect the visual intuition to the formal calculus statement.",
-    "Students should practice reading formulas, graphs, and units together.",
-    "Students should leave with one method they can apply to a new problem.",
-    "Students should be able to explain the core idea behind review of functions and graphs.",
-    "Students should know how review of functions and graphs connects to later labs, scripts, or robotics decisions.",
     "Recognize the main function families by both formula and graph shape.",
     "Find domain and range by asking which inputs are allowed and what outputs can appear.",
     "Apply shifts, stretches, and reflections in a deliberate order without the horizontal-sign mistake.",
     "Compose functions while carrying both the inner-function and outer-function domain restrictions.",
-    "Use symmetry and piecewise boundary behavior to reason from formulas and graphs together."
+    "Use even/odd symmetry and piecewise boundary behavior as graph-reading tools for later calculus."
   ],
   "style_notes": [
     "Keep the tone personal, warm, and precise, as if teaching directly to a YouTube viewer.",
@@ -47,8 +42,16 @@
     "When a widget is present, make the video feel active: call out the parameter or highlighted point, then let the scripted timeline or step state move while explaining.",
     "For website mode, leave students with a reason to drag the controls themselves after the narrated explanation.",
     "On dense visual slides, keep the avatar low and out of the main math area so the slide carries focus.",
-    "For pause-style questions, give students a real beat, then answer with one concrete test point or graph feature."
+    "For pause-style questions, give students a real beat, then answer with one concrete test point or graph feature.",
+    "Playback contract (lecture mode): when a calculus_widget is on screen, target its media id (e.g. right_function_transform) with delivery_kind demo while naming the slider or probe you are moving. scriptedTimeline on the slide auto-animates widget params during narration; example_solution steps with widgetParams animate when the segment targets that step id.",
+    "pause_and_reveal slides: first segment is quiz_prompt only (ask the prediction, target left_pause or prompt id). Do not speak the reveal answer in the same breath. The video layer inserts a silent think beat (waiting animation, no TTS); a later segment targets the reveal element with the answer.",
+    "Avatar head or body shifts when a plot sits under the presenter are handled by the silent video library later, not by spoken script or audio generation."
   ],
+  "playback_contract": {
+    "widget_sync": "scriptedTimeline + webdeck:lecture-time/cue drives sliders; segment targets on step ids fire widgetParams",
+    "pause_audio": "think beats are silent in the composite; only quiz_prompt and reveal segments carry speech",
+    "avatar_motion": "placement/head clips are video-only overlays, omitted from TTS"
+  },
   "transition_style": "Use each slide as one teaching beat: name the task, point to the visual or formula, move the interactive state when useful, then preview the next tool.",
   "scene_policy_default": "hybrid",
   "object_policy_default": "suggested",
@@ -298,7 +301,7 @@
       },
       "slide_role": "definition",
       "importance": "high",
-      "narration_seed": "Separate vertical shifts from horizontal shifts. Vertical changes are direct; horizontal changes require solving the inside expression.",
+      "narration_seed": "Separate vertical shifts from horizontal shifts. Demo h and k on right_function_transform while you speak. End with a prediction pause on left_pause before revealing the answer.",
       "voice_style": "energetic_demo",
       "tone": "clear, warm, and visual",
       "energy": 0.62,
@@ -306,15 +309,21 @@
       "attention_mode": "hybrid_focus",
       "scene_policy": "hybrid",
       "object_policy": "suggested",
+      "interaction_hints": {
+        "widget_media_id": "right_function_transform",
+        "scripted_params": ["h", "k"],
+        "pause_block_id": "left_pause",
+        "think_pause_sec": 8,
+        "reveal_element_id": "left_pause_reveal"
+      },
       "must_cover": [
         "\\(y = f(x) + k\\): shift up (\\(k>0\\)) or down (\\(k<0\\)). Match the k slider on the plot.",
         "\\(y = f(x - h)\\): shift right (\\(h>0\\)) or left (\\(h<0\\)). Match the h slider on the plot.",
-        "Pause and predict",
-        "Tell students exactly what to watch for in the visual or interactive material.",
-        "\\(y=f(x)+c\\) moves the graph up when \\(c>0\\) and down when \\(c<0\\).",
-        "\\(y=f(x-c)\\) moves the graph right when \\(c>0\\) and left when \\(c<0\\).",
-        "The horizontal sign feels opposite because the input must solve \\(x-c=0\\).",
-        "Use one anchor point on the graph to verify the movement."
+        "Pause and predict: which direction does f(x+2) shift?",
+        "\\(y=f(x)+k\\) moves the graph up when \\(k>0\\) and down when \\(k<0\\).",
+        "\\(y=f(x-h)\\) moves the graph right when \\(h>0\\) and left when \\(h<0\\).",
+        "The horizontal sign feels opposite because the input must solve \\(x-h=0\\).",
+        "Reveal after the think beat: f(x+2) shifts left 2."
       ],
       "must_say": [],
       "emphasis_words": [],
@@ -336,7 +345,7 @@
       "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
       "story_hint": "Keep Vertical and Horizontal Shifts connected to a mathematical question students can answer with a graph, formula, or short calculation.",
       "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
-      "scene_hint": "Move the transformation controls while speaking: first vertical shift, then horizontal shift, and pause on the sign-opposite moment."
+      "scene_hint": "Target right_function_transform with delivery_kind demo: move h then k while explaining. Quiz segment targets left_pause only; silent think beat; reveal segment targets left_pause_reveal."
     },
     {
       "slide_ref": {
@@ -437,7 +446,12 @@
       },
       "slide_role": "practice",
       "importance": "high",
-      "narration_seed": "Build \\(y=-2(x+1)^2+3\\) one step at a time from \\(y=x^2\\). Let each clickable step move the graph to the next state.",
+      "narration_seed": "Build \\(y=-2(x+1)^2+3\\) one step at a time from \\(y=x^2\\). Target each left_step id while right_function_transform scriptedTimeline moves h, a, k.",
+      "interaction_hints": {
+        "widget_media_id": "right_function_transform",
+        "step_ids": ["left_step_1", "left_step_2", "left_step_3", "left_step_4"],
+        "scripted_params": ["h", "a", "k", "family"]
+      },
       "voice_style": "energetic_demo",
       "tone": "clear, warm, and visual",
       "energy": 0.62,
@@ -588,7 +602,7 @@
       },
       "slide_role": "definition",
       "importance": "high",
-      "narration_seed": "Use the two plotted points to make symmetry physical: even means mirror across the y-axis, odd means rotate through the origin.",
+      "narration_seed": "Use the even/odd plot to make symmetry physical. Move probe a on right_function_analysis while defining mirror vs origin symmetry. No footer question and no pause block on this slide.",
       "voice_style": "energetic_demo",
       "tone": "clear, warm, and visual",
       "energy": 0.62,
@@ -596,15 +610,19 @@
       "attention_mode": "hybrid_focus",
       "scene_policy": "hybrid",
       "object_policy": "suggested",
+      "interaction_hints": {
+        "widget_media_id": "right_function_analysis",
+        "scripted_params": ["a"],
+        "no_footer_question": true,
+        "no_pause_block": true
+      },
       "must_cover": [
         "Even: \\(f(-x)=f(x)\\) for all \\(x\\) in the domain, symmetric about the y-axis.",
         "Odd: \\(f(-x)=-f(x)\\) for all \\(x\\), symmetric about the origin (180° rotational symmetry).",
-        "Test method: Substitute \\(-x\\) and simplify. If you get \\(f(x)\\) → even. If you get \\(-f(x)\\) → odd. If neither → neither.",
-        "Tell students exactly what to watch for in the visual or interactive material.",
-        "Even functions satisfy \\(f(-x)=f(x)\\) and mirror across the y-axis.",
-        "Odd functions satisfy \\(f(-x)=-f(x)\\) and have origin symmetry.",
-        "The algebraic test is: substitute \\(-x\\), simplify, and compare.",
-        "Symmetry can simplify later calculus work, especially integrals."
+        "Test method: substitute \\(-x\\), simplify, compare to \\(f(x)\\) or \\(-f(x)\\).",
+        "Classic examples: \\(x^2\\) and \\(\\cos x\\) even; \\(x^3\\) and \\(\\sin x\\) odd.",
+        "Later in calculus: even symmetry halves symmetric integrals; odd symmetry can cancel net area.",
+        "Demo: move probe a to show paired points on the gray even curve and orange odd curve."
       ],
       "must_say": [],
       "emphasis_words": [],
@@ -615,20 +633,18 @@
       ],
       "teacher_strategy": "compare_then_summarize",
       "avatar_hint": {
-        "preferred_behavior": "face_viewer",
+        "preferred_behavior": "point_right_mid",
         "preferred_anchor": "center_bottom",
         "allow_center": true,
         "allow_half_out": true
       },
       "prop_suggestions": [
-        "function graph",
-        "parameter sliders",
-        "highlighted point"
+        "symmetry_even_odd plot with probe a"
       ],
       "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
       "story_hint": "Tell it through the object students can see first: a graph, curve, area, slope, sequence, or vector field.",
       "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
-      "scene_hint": "Move paired points across the graph while explaining mirror symmetry and origin symmetry."
+      "scene_hint": "Target right_function_analysis with delivery_kind demo; move probe a across the even and odd curves. Plot may sit under avatar; video layer handles head shift, not speech."
     },
     {
       "slide_ref": {
@@ -658,7 +674,7 @@
       "must_say": [],
       "emphasis_words": [],
       "transition_from_previous": "The symmetry definitions become useful when the graph is not immediately obvious.",
-      "transition_to_next": "Next, read a function whose rule changes depending on where (x) is.",
+      "transition_to_next": "Optional challenge: prove even times odd is odd, then piecewise interval rules.",
       "likely_student_confusion": [
         "Students may see a denominator and assume the symmetry is gone. Show that the denominator is even."
       ],
@@ -669,23 +685,72 @@
         "allow_half_out": true
       },
       "prop_suggestions": [
-        "function graph",
-        "parameter sliders",
-        "highlighted point"
+        "odd_symmetry plot with probe a"
       ],
+      "interaction_hints": {
+        "widget_media_id": "right_function_analysis",
+        "step_ids": ["step_1", "step_2", "step_3", "step_4"],
+        "scripted_params": ["a"]
+      },
       "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
       "story_hint": "Tell it through the object students can see first: a graph, curve, area, slope, sequence, or vector field.",
       "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
-      "scene_hint": "Move the highlighted test point from x to -x while simplifying h(-x), then point to the origin symmetry."
+      "scene_hint": "Target left_steps step ids as you simplify h(-x); move probe a on right_function_analysis to show origin symmetry."
     },
     {
       "slide_ref": {
         "index": 13,
+        "source_title": "[Challenge – Optional] Product of Even × Odd"
+      },
+      "slide_role": "practice",
+      "importance": "medium",
+      "narration_seed": "Optional challenge: multiply the even and odd definitions. The table on the left is the proof; body_function_analysis confirms with x²·x³ = x⁵.",
+      "voice_style": "clear_teacher",
+      "tone": "clear, warm, and visual",
+      "energy": 0.6,
+      "pace": 0.9,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "interaction_hints": {
+        "widget_media_id": "body_function_analysis",
+        "scripted_params": ["a"]
+      },
+      "must_cover": [
+        "Theorem: if \\(f\\) is even and \\(g\\) is odd, then \\(h(x)=f(x)g(x)\\) is odd.",
+        "Substitute: \\(h(-x)=f(-x)g(-x)=f(x)(-g(x))=-h(x)\\).",
+        "Graph check: \\(x^2\\cdot x^3=x^5\\) shows origin symmetry.",
+        "Follow-up: even × even and odd × odd both give even."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "The rational symmetry example was computational; this challenge is definition-based reasoning.",
+      "transition_to_next": "Next, read a function whose rule changes depending on where \\(x\\) is.",
+      "likely_student_confusion": [
+        "Students may memorize product rules without proof. Keep the definitions visible in the table."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom",
+        "allow_half_out": true
+      },
+      "prop_suggestions": [
+        "x²·x³ = x⁵ odd symmetry plot"
+      ],
+      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
+      "story_hint": "Light proof slide: table carries logic, plot confirms visually.",
+      "delivery_goal": "Students should see why even × odd must be odd from the definitions alone.",
+      "scene_hint": "Walk the math_table rows, then target body_function_analysis with delivery_kind demo and move probe a on the product curve."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
         "source_title": "Example 5: Piecewise Functions"
       },
       "slide_role": "practice",
       "importance": "high",
-      "narration_seed": "For piecewise functions, first choose the correct condition, then evaluate. The open and closed dots decide what happens at boundaries.",
+      "narration_seed": "For piecewise functions, choose the correct interval first, then evaluate. Target each body_steps row and move probe x on body_function_analysis to match.",
       "voice_style": "clear_teacher",
       "tone": "clear, warm, and visual",
       "energy": 0.62,
@@ -693,23 +758,25 @@
       "attention_mode": "hybrid_focus",
       "scene_policy": "hybrid",
       "object_policy": "suggested",
+      "interaction_hints": {
+        "widget_media_id": "body_function_analysis",
+        "step_ids": ["step_eval1", "step_eval2", "step_eval3", "step_eval4", "step_eval5"],
+        "scripted_params": ["x"]
+      },
       "must_cover": [
-        "Theorem: If \\(f\\) is even and \\(g\\) is odd, then \\(h(x)=f(x)g(x)\\) is odd.",
-        "1 \\(h(-x)=f(-x)\\cdot g(-x)\\)",
-        "2 \\(f(-x)=f(x)\\) and \\(g(-x)=-g(x)\\)",
-        "Tell students exactly what to watch for in the visual or interactive material.",
         "Always choose the piece by checking the condition on \\(x\\) first.",
         "\\(f(-1)=1\\) from the \\(x<0\\) piece.",
-        "\\(f(0)=1\\) because the middle piece includes \\(x=0\\).",
-        "\\(f(2)=5\\) because the middle piece includes \\(x=2\\), while the right piece starts after 2.",
-        "There is a jump at \\(x=0\\) and a jump at \\(x=2\\)."
+        "\\(f(0)=1\\) because the middle piece includes \\(x=0\\); open dot at \\((0,0)\\) on piece 1.",
+        "\\(f(1.5)=4\\) from the middle linear piece.",
+        "\\(f(2)=5\\) on piece 2; open dot at \\((2,3)\\) for piece 3.",
+        "Jumps at \\(x=0\\) and \\(x=2\\); open vs closed dots tell the story."
       ],
       "must_say": [],
       "emphasis_words": [],
-      "transition_from_previous": "Symmetry gave one global test; piecewise functions require local decisions interval by interval.",
-      "transition_to_next": "End with a short proof challenge that uses the even and odd definitions directly.",
+      "transition_from_previous": "Symmetry used one global test; piecewise functions need a local interval decision at each \\(x\\).",
+      "transition_to_next": "Compress the whole lecture into the checklist students should keep.",
       "likely_student_confusion": [
-        "Students may use the nearest-looking curve instead of the interval condition. Keep pointing to open versus closed dots."
+        "Students may use the nearest-looking curve instead of the interval condition. Point to open versus closed dots at boundaries."
       ],
       "teacher_strategy": "guided_practice",
       "avatar_hint": {
@@ -719,61 +786,12 @@
         "allow_half_out": true
       },
       "prop_suggestions": [
-        "x²·x³ = x⁵: even × odd = odd"
+        "piecewise plot with open/closed boundary dots"
       ],
       "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
-      "story_hint": "Keep [Challenge – Optional] Product of Even × Odd connected to a mathematical question students can answer with a graph, formula, or short calculation.",
-      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
-      "scene_hint": "Use the piecewise marker and boundary dots actively: select the interval first, then evaluate the point."
-    },
-    {
-      "slide_ref": {
-        "index": 14,
-        "source_title": "[Challenge – Optional] Product of Even × Odd"
-      },
-      "slide_role": "practice",
-      "importance": "high",
-      "narration_seed": "Treat this as a short proof students can almost do in their heads. Multiply the definitions: even stays the same, odd changes sign, so the product changes sign.",
-      "voice_style": "clear_teacher",
-      "tone": "clear, warm, and visual",
-      "energy": 0.62,
-      "pace": 0.9,
-      "attention_mode": "hybrid_focus",
-      "scene_policy": "hybrid",
-      "object_policy": "suggested",
-      "must_cover": [
-        "Evaluate and sketch",
-        "\\(f(x)=\\begin{cases} x^2, & x 2 \\end{cases}\\)",
-        "\\(f(-1) = (-1)^2 = 1\\) , uses piece 1 since \\(-1<0\\).",
-        "Tell students exactly what to watch for in the visual or interactive material.",
-        "Let \\(h(x)=f(x)g(x)\\), where \\(f\\) is even and \\(g\\) is odd.",
-        "Then \\(h(-x)=f(-x)g(-x)\\).",
-        "Use \\(f(-x)=f(x)\\) and \\(g(-x)=-g(x)\\).",
-        "So \\(h(-x)=-f(x)g(x)=-h(x)\\), which means \\(h\\) is odd.",
-        "The graph example \\(x^2\\cdot x^3=x^5\\) confirms the rule visually."
-      ],
-      "must_say": [],
-      "emphasis_words": [],
-      "transition_from_previous": "Piecewise examples were computational; this challenge is a definition-based reasoning check.",
-      "transition_to_next": "Now compress the whole lecture into the checklist students should keep.",
-      "likely_student_confusion": [
-        "Students may memorize product rules without proof. Keep the definitions visible and let them do the work."
-      ],
-      "teacher_strategy": "guided_practice",
-      "avatar_hint": {
-        "preferred_behavior": "point_left_mid",
-        "preferred_anchor": "right_bottom",
-        "allow_half_out": true
-      },
-      "prop_suggestions": [
-        "function graph",
-        "parameter sliders",
-        "highlighted point"
-      ],
-      "explanation_style": "Use short text chunks as anchors, but teach by moving the visual state and pointing to one concrete formula or graph feature.",
-      "story_hint": "Tell it through the object students can see first: a graph, curve, area, slope, sequence, or vector field.",
-      "delivery_goal": "Students should see the graph or formula change at the exact moment the spoken explanation names the rule.",
-      "scene_hint": "Use the graph confirmation after the proof: even curve, odd curve, then product curve changing sign."
+      "story_hint": "Each evaluation step should fire widgetParams on the matching step id.",
+      "delivery_goal": "Students should pick the correct piece, evaluate, and read jump discontinuities from the dots.",
+      "scene_hint": "Target body_steps step ids in order; each segment moves probe x on body_function_analysis to the value being discussed."
     },
     {
       "slide_ref": {

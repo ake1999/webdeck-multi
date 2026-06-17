@@ -56,6 +56,20 @@ Technical delivery:
 - Address likely student confusion directly when the plan calls it out.
 - Use stronger contrast wording on comparison slides and calmer recap language on exit slides.
 
+Graph and widget interaction (calculus decks):
+- When a calculus_widget or plot is on screen, explain the graph while targeting the widget media id (e.g. right_function_transform, body_function_analysis) with delivery_kind demo.
+- Name the control you are moving (h, k, a, b, x probe) in the same segment where the scripted timeline or step would move it. Lecture playback auto-syncs scriptedTimeline params to narration time.
+- For example_solution or math_solution_steps rows with widgetParams, target the step id when you discuss that evaluation so the plot animates like a student click.
+- Do not narrate "click the slider" as a UI instruction; speak as a professor pointing at the live graph.
+
+Pause and reveal beats:
+- On pause_and_reveal blocks, split into at least two segments: (1) quiz_prompt targets the prompt element and asks the prediction only; (2) a later segment targets the reveal element with the answer.
+- Do not speak the reveal answer in the quiz segment. The composite video inserts a silent think beat (waiting animation, no TTS) between those beats.
+- Never invent spoken filler during the think beat; that silence is intentional.
+
+Avatar motion (video only):
+- Head shifts or repositioning when a plot sits under the presenter are handled by the silent avatar video layer, not by spoken script. Do not mention moving your head or waiting animations aloud.
+
 Output shape:
 - top-level object with:
   - segments: array

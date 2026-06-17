@@ -146,7 +146,7 @@ All agents working on AU Calculus 1 should keep these consistent across topics.
   first part is a label (`Pythagorean Identity: Proof`) or a comma when a colon
   already appears (`Example 1: Warm-Up, Direct Power Rule`).
 - YouTube **pause** slides: `pause_and_reveal` with a real think beat, not
-  decorative pauses.
+  decorative pauses. See §5b for script and composite-video contract.
 
 ### Footer safe zone (AU / themed decks)
 
@@ -420,12 +420,41 @@ For slides with `math_solution_steps`, plan entries should:
 - `must_cover` mention step concepts in reveal order.
 - Optionally reference step IDs in narration seeds for generation prep.
 - Deterministic provider targets: `{blockId}_problem`, then `step_1`, `step_2`, …
+- When steps drive a plot, add `interaction_hints` with `widget_media_id`,
+  `step_ids`, and `scripted_params` (see §7b).
 
 Example narration seed:
 
 ```text
 Direct sub gives 0/0 on step_1. Factor on step_2. Cancel on step_3. Answer 4 on step_4.
 ```
+
+### 4.10 `widgetParams` — sync steps with the plot
+
+Attach `widgetParams` to individual steps when revealing algebra should move a
+probe, slider, or variant on the paired widget (piecewise evaluation, symmetry
+check, transform gallery).
+
+```javascript
+{
+  id: "step_eval3",
+  math: "f(1.5)=2",
+  widgetParams: { x: 1.5 },
+}
+```
+
+**Rules**
+
+- Param keys must match widget controls (`x`, `a`, `h`, `k`, `family`, …). Check
+  `CONTROLS` in the widget file before authoring.
+- One param patch per step is enough; repeat only when the plot state should
+  hold across consecutive steps.
+- Scripts must **target the step id** in the same segment that discusses that
+  evaluation so lecture playback fires `webdeck:widget-params`.
+- Speak like a professor pointing at the graph, not like UI instructions ("drag
+  the slider" → "watch the probe at x equals 1.5").
+- Prefer `widgetParams` on steps for **discrete** plot jumps; use
+  `scriptedTimeline` on the widget for **continuous** motion during one beat.
 
 ### 4.9 Anti-patterns
 
@@ -446,7 +475,7 @@ Direct sub gives 0/0 on step_1. Factor on step_2. Cancel on step_3. Answer 4 on 
 | `theorem_box` | Formal statement students must remember |
 | `math_table` | Law summaries (eleven limit laws), comparison tables |
 | `misconception_compare` | Wrong vs right side-by-side (cancellation traps) |
-| `pause_and_reveal` | YouTube think-pause with MC or short reveal |
+| `pause_and_reveal` | YouTube think-pause with MC or short reveal (§5b) |
 | `proof_sketch` | Light proof intuition (not full epsilon proofs) |
 | `derivation_steps` | Non-algebraic narrative steps (still prose-first) |
 | `example_solution` | Legacy prose solutions — prefer `math_solution_steps` for computation |
@@ -468,7 +497,58 @@ by default (`ordered` is true unless you set `ordered: false`).
   before adding `pause_and_reveal` on the same slide.
 - `example_solution.steps` and `math_solution_steps` always use ordered lists;
   same rule: no manual `1.` / `2.` prefixes in step text.
-| `course_path` | Roadmap grid on objectives slide |
+- `course_path` — roadmap grid on objectives slide (usually inside a `bullets`
+  slide `blocks` array).
+
+### 5b. `pause_and_reveal` — quiz, silent beat, reveal
+
+Use when students should **predict** before you confirm (horizontal-shift trap,
+limit guess, symmetry check). Do not add pauses on every slide; skip them when
+the left column is already dense (definitions + examples).
+
+**Slide shape**
+
+```javascript
+{
+  id: "left_pause",
+  type: "pause_and_reveal",
+  title: "Pause and predict",
+  prompt: "Which direction does f(x+2) shift?",
+  reveal: { text: "LEFT 2 units (set x+2=0 → x=−2)." },
+}
+```
+
+- Give the block a stable `id` (e.g. `left_pause`) for layout targets.
+- Keep `prompt` short; put the worked answer in `reveal.text`.
+- Pair with a widget on the right when the prediction is visual (shifts,
+  probes, symmetry).
+
+**Plan alignment**
+
+- Set `slide_role: "pause"` (or `hook` / `intuition` when appropriate).
+- `narration_seed` should name the prediction, not the answer.
+- Add a `style_notes` line or topic-level `playback_contract.pause_audio` so
+  generation knows think beats are silent.
+
+**Script generation (`script_writer_v3`)**
+
+1. **Quiz segment** — `delivery_kind: quiz_prompt`, `target_element` = prompt id
+   (e.g. `left_pause` or prompt sub-element). Ask the prediction only.
+2. **Reveal segment** — later segment, `target_element` = reveal element. State
+   the answer with one concrete test point or graph feature.
+3. **Never** speak the reveal answer in the quiz segment.
+
+**Composite video / audio**
+
+- TTS runs on spoken segments only.
+- The avatar composite inserts a **silent think beat** (waiting animation, no
+  speech) between quiz and reveal.
+- Do not invent spoken filler for that gap; silence is intentional.
+
+**When to omit**
+
+- Optional challenge slides that are already proof-heavy (table + plot).
+- Slides where a pause would crowd the footer safe zone.
 
 ---
 
@@ -526,6 +606,36 @@ before authoring `params` and `scriptedTimeline`.
   compact `blocks`/`lead` on the left.
 - Widget sub-elements export as `_formula`, `_plot`, `_readout`, `_controls` for
   fine-grained cues.
+
+### 6c. Interactive narration during playback
+
+Lecture mode should feel **active**: the plot or step state changes when the
+instructor names the rule, not only after the slide ends.
+
+| Mechanism | Slide source | Runtime | Script target |
+|-----------|--------------|---------|---------------|
+| `scriptedTimeline` | widget `params` keyframes at `t` seconds | `webdeck:lecture-time` → widget params | widget media id, `delivery_kind: demo` |
+| `widgetParams` on steps | per-step patch on `math_solution_steps` | `webdeck:widget-params` on step cue | step id (e.g. `step_3`) |
+| Step reveal | hidden steps in `math_solution_steps` | `revealMathSolutionStep` on cue | step id |
+
+**Authoring checklist**
+
+1. Right column: widget with unique `id` and meaningful `params` default.
+2. Left column: `math_solution_steps` or compact bullets; optional
+   `widgetParams` on steps that match spoken evaluations.
+3. Plan entry: `interaction_hints` with `widget_media_id`, optional `step_ids`,
+   optional `scripted_params` list.
+4. `narration_seed` / `scene_hint`: name which control moves when (probe `x`,
+   shift `h`, toggle `showSimplified`).
+5. Generation: `script_writer_v3` — professor explains the graph while targeting
+   the widget or step; no crew directions.
+
+**Anti-patterns**
+
+- ❌ Static plot for a whole example slide when probe motion would teach the idea
+- ❌ `widgetParams` keys that do not exist on the widget
+- ❌ Speaking the reveal answer inside a `pause_and_reveal` quiz segment
+- ❌ Narrating avatar head motion or "wait while I think" during silent beats
 
 ### 6b. `flex_plot` — configurable graphs (prefer over repeating variants)
 
@@ -622,9 +732,48 @@ Per-slide plan entry:
 | `transition_from_previous` / `transition_to_next` | Bridge sentences |
 | `avatar_hint` | Anchor and behavior on dense visual slides |
 | `prop_suggestions` | Widget names for motion planning |
+| `interaction_hints` | Widget id, step ids, params to move during narration (§7b) |
+| `scene_hint` / `delivery_goal` | One-line cue for script writer and motion planner |
 
 **Index alignment:** `slide_ref.index` 0 = first slide in `slidesData`. If you
 insert a slide, reindex plan entries.
+
+### 7b. `playback_contract` and `interaction_hints`
+
+Top-level `playback_contract` (optional but recommended on hand-enhanced topics)
+documents generation/runtime expectations:
+
+```json
+{
+  "playback_contract": {
+    "widget_sync": "scriptedTimeline + lecture-time/cue drives sliders; step targets fire widgetParams",
+    "pause_audio": "think beats are silent in the composite; only quiz and reveal segments carry speech",
+    "avatar_motion": "placement/head clips are video-only overlays, omitted from TTS"
+  }
+}
+```
+
+Mirror the same ideas in `style_notes` so `script_writer_v3` sees them in plan
+context.
+
+Per-slide `interaction_hints` tell the LLM which elements to demo:
+
+```json
+{
+  "interaction_hints": {
+    "widget_media_id": "right_function_transform",
+    "step_ids": ["step_1", "step_2", "step_3"],
+    "scripted_params": ["h", "k"]
+  }
+}
+```
+
+- `widget_media_id` — layout target for `delivery_kind: demo`.
+- `step_ids` — `math_solution_steps` rows to target in order.
+- `scripted_params` — control names the narration should name aloud.
+
+**Gold reference:** Topic 01 plan entries for transforms (s04), composition,
+symmetry, challenge, and piecewise slides.
 
 ---
 
@@ -642,6 +791,12 @@ Contracts to preserve:
   reveal through that index automatically.
 - Layout export calls `revealAllMathSolutionSteps` so hidden steps still get
   bboxes for generation.
+- `shared/calculus/registry.js` listens for `webdeck:lecture-time` (widget
+  `scriptedTimeline`) and `webdeck:widget-params` (step `widgetParams`).
+- Pause slides: composite video owns the silent think beat; audio WAVs are per
+  spoken segment only.
+- Preferred script prompt for AU calculus: `script_writer_v3` with
+  `llm_local` and `allowScriptFallback 0` when a model endpoint is configured.
 
 **Tests to run after topic edits:**
 
@@ -672,7 +827,10 @@ Formal statement?
   → theorem_box or formula_block
 
 YouTube pause?
-  → pause_and_reveal (and plan slide_role: pause)
+  → pause_and_reveal (plan slide_role: pause; quiz segment + silent beat + reveal)
+
+Plot should move while explaining?
+  → scriptedTimeline on widget and/or widgetParams on steps + interaction_hints
 
 Topic open?
   → title + bullets with course_path (currentId set)
@@ -696,5 +854,7 @@ Hand-enhanced `*.slides.js` is the **presentation source** for AU.
 
 ---
 
-*Last updated: June 2026 — reflects `math_solution_steps` flow/split/merge layout.
+*Last updated: June 2026 — reflects `math_solution_steps` flow/split/merge layout,
+`pause_and_reveal` quiz/reveal contract, and interactive widget/step narration
+(`scriptedTimeline`, `widgetParams`, `interaction_hints`, `playback_contract`).
 Topics 1–4 v3; Session 05 Topics 22–26 v1 hand-enhanced (integration arc).*
