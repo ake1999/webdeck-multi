@@ -1,0 +1,186 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "04_first_and_second_derivative_tests",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Welcome back, Topic 17 MVT linked slopes; today we classify critical points with f′ sign charts and f″ concavity.",
+    "progression": "Hiking metaphor → critical numbers + sign-chart workflow → FDT theorem → warm-up → SDT theorem → standard example → cusp pitfall → tricky sign chart → pause edge case → profit application → visual lab → myth bust → recap.",
+    "destination": "Students run full curve-sketch classification: critical numbers, SDT when possible, FDT fallback, endpoint check on closed intervals.",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "visual intuition",
+      "theorem_box",
+      "nested_bullets workflow",
+      "math_solution_steps",
+      "flex_plot multi-curve",
+      "misconception_compare",
+      "visual_lab",
+      "pause_and_reveal",
+      "recap"
+    ]
+  },
+  "audience_level": "first-year university / advanced high school",
+  "topic_goal": "Teach First and Second Derivative Tests with sign-chart workflow, multi-curve flex_plot demos, and inconclusive SDT edge cases.",
+  "topic_takeaways": [
+    "Find critical numbers (f′=0 or undefined)",
+    "Apply First Derivative Test via sign chart",
+    "Apply Second Derivative Test when f″(c)≠0",
+    "Fall back to FDT when SDT inconclusive",
+    "Check endpoints on closed intervals"
+  ],
+  "style_notes": [
+    "Welcome back, callback Topic 17 MVT and Topic 16 critical points.",
+    "theorem_box on s03 FDT and s05 SDT.",
+    "nested_bullets sign-chart workflow on s02, s03, s14.",
+    "flex_plot f/f′/f″ on same slide, unique expressions per slide, not copy-paste.",
+    "math_solution_steps full workflow on s04, s06, s08, s10, s11.",
+    "misconception_compare s07 undefined f′, s13 f''=0 myth.",
+    "visual_lab s12: three tabs (inc/dec, concavity, inconclusive), demo tab B on video.",
+    "pause_and_reveal on s03, s08, s09, s14.",
+    "Tease Topic 19 optimization on summary."
+  ],
+  "transition_style": "Metaphor → definitions → worked examples → pitfalls → pause → application → lab → recap.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "First and Second Derivative Tests" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back. Topic 17 gave interior tangent slopes; today we classify flat spots as max, min, or neither using f prime and f double prime.",
+      "must_cover": ["Welcome back", "Topic 17 callback"],
+      "must_say": ["Welcome back to Arian University."],
+      "transition_to_next": "Objectives with path_topic_18."
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Four objectives: critical numbers, FDT sign chart, SDT, and inconclusive cases.",
+      "must_cover": ["path_topic_18 current", "Topic 17 previous", "Topic 19 next"]
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "Hiking the Derivative Trail" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "Hiking metaphor: f prime tells uphill/downhill; two tests ask sign change and concavity.",
+      "must_cover": ["Uphill f'>0", "Flat f'=0", "FDT vs SDT questions"],
+      "prop_suggestions": ["flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "Critical Numbers: The Foundation" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Critical numbers: f prime zero or undefined. Sign-chart workflow checklist. x cubed vs x squared at zero.",
+      "must_cover": ["Critical number definition", "nested_bullets workflow", "Topic 16 callback"],
+      "prop_suggestions": ["flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "First Derivative Test" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box FDT: plus to minus max, minus to plus min. Sign chart steps. pause_and_reveal why both sides matter.",
+      "must_cover": ["theorem_box FDT", "Sign chart workflow", "pause_and_reveal", "f and f' flex_plot"],
+      "prop_suggestions": ["theorem_box", "flex_plot", "pause_and_reveal"]
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "Warm-Up: f(x) = x² − 6x + 5" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "math_solution_steps: f prime 2x-6, c=3, sign minus to plus, local min at (3,-4). flex_plot f, f', f''.",
+      "must_cover": ["math_solution_steps step_1..step_5", "Local min at x=3", "Multi-curve flex_plot"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "Second Derivative Test" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box SDT: f''>0 min, f''<0 max, f''=0 inconclusive. Topic 17 link. Smile/frown flex_plot.",
+      "must_cover": ["theorem_box SDT", "Inconclusive f''=0", "Topic 17 callback"],
+      "prop_suggestions": ["theorem_box", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "Standard Example: f(x) = x³ − 3x² + 1" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "Critical x=0,2. f''(0)=-6 max, f''(2)=6 min. flex_plot three curves together.",
+      "must_cover": ["math_solution_steps", "SDT at 0 and 2", "f f' f'' same slide"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Mistake: Missing Undefined f′" },
+      "slide_role": "misconception",
+      "importance": "high",
+      "narration_seed": "misconception_compare: don't stop at f'=0, include cusp where f' undefined. x^(2/3)(x-1).",
+      "must_cover": ["misconception_compare", "x=0 critical", "piecewise flex_plot"],
+      "prop_suggestions": ["misconception_compare", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Tricky Example: x^(2/3)(x−1)" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "Full sign chart: critical 0 and 2/5, pattern plus minus plus. pause_and_reveal. math_solution_steps step_1..step_6.",
+      "must_cover": ["math_solution_steps", "Sign chart + − +", "pause_and_reveal"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot", "pause_and_reveal"]
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "Pause & Predict: Edge Case" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Pause on (x-1)^4. Predict SDT at x=1. Reveal: f''(1)=0 inconclusive.",
+      "must_cover": ["pause_and_reveal", "(x-1)^4"],
+      "prop_suggestions": ["pause_and_reveal", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "Edge Case: (x−1)⁴ expanded" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "f''(1)=0 inconclusive; FDT: f' negative then positive, local min at (1,0).",
+      "must_cover": ["SDT inconclusive", "FDT fallback", "math_solution_steps", "f f' f'' flex_plot"],
+      "transition_from_previous": "Solution to s09 pause."
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "Application: Profit on [0,5]" },
+      "slide_role": "application",
+      "importance": "medium",
+      "narration_seed": "Profit cubic: local max at 2 but absolute max at endpoint x=5. Topic 16 closed-interval callback.",
+      "must_cover": ["SDT local extrema", "Endpoint check", "math_solution_steps"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "Lab: Increasing, Decreasing & Concavity" },
+      "slide_role": "lab",
+      "importance": "high",
+      "narration_seed": "visual_lab three tabs: x³−3x sign chart, x³−3x²+1 SDT, (x−1)⁴ inconclusive. Demo tab B.",
+      "must_cover": ["visual_lab", "Three tabs different functions", "f f' f'' multi-curve"],
+      "prop_suggestions": ["visual_lab", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "Myth: f''(c)=0 ⇒ No Extremum" },
+      "slide_role": "misconception",
+      "importance": "high",
+      "narration_seed": "proof_sketch light plus misconception_compare: x^4 has f''(0)=0 but FDT shows minimum.",
+      "must_cover": ["misconception_compare", "proof_sketch", "x^4 counterexample"],
+      "prop_suggestions": ["misconception_compare", "flex_plot", "proof_sketch"]
+    },
+    {
+      "slide_ref": { "index": 15, "source_title": "Quick Check & Summary" },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Three quick checks with answers. Workflow recap. pause_and_reveal exit. Topic 19 optimization next.",
+      "must_cover": ["Quick check answers", "FDT vs SDT workflow", "Topic 19 teaser", "pause_and_reveal"],
+      "transition_to_next": "Topic 19 Optimization Problems."
+    }
+  ]
+}

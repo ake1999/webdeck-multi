@@ -2,8 +2,8 @@ import { createSvg, appendCurve, appendGrid, appendPlotTag, clearSvg, plotScales
 import { bindControls, buildStateFromControls, createWidgetShell, formatNumber, renderTex } from "../core/widget_ui.js";
 
 const DEFAULT_CONTROLS = [
-  { name: "a", label: "base point a", min: -2.5, max: 2.5, step: 0.05, value: 1 },
-  { name: "h", label: "step h", min: -2, max: 2, step: 0.02, value: 1 },
+  { name: "a", label: "a", min: -2.5, max: 2.5, step: 0.05, value: 1 },
+  { name: "h", label: "h", min: -2, max: 2, step: 0.02, value: 1 },
 ];
 
 export function computeSecantTangent(params = {}) {
@@ -68,7 +68,7 @@ export function mountSecantTangentWidget(root, spec = {}) {
       tone: "default",
     });
     appendPlotTag(svg, `secant m=${formatNumber(model.slope, 2)}  •  tangent m=${formatNumber(model.tangentSlope, 2)}`, {
-      x: scales.width - scales.padding,
+      x: scales.width - (scales.paddingRight ?? scales.padding),
       y: 24,
       anchor: "end",
       tone: "muted",

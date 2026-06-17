@@ -265,7 +265,12 @@ function blockMainText(block) {
     block?.formula,
     block?.prompt,
     ...asArray(block?.items).map((item) => item.text || item.say || ""),
-    ...asArray(block?.steps).map((step) => step.text || step.say || ""),
+    ...asArray(block?.steps).flatMap((step) => {
+      const parts = asArray(step?.parts).map((part) => part.math || part.text || "");
+      if (parts.length) return [step.math, ...parts].filter(Boolean);
+      return [step.math || step.text || step.say || ""];
+    }),
+    block?.problem,
     ...asArray(block?.pairs).map((pair) => `${pair.label || ""}: ${pair.text || ""}`),
     block?.reveal?.text,
   ];
@@ -300,6 +305,13 @@ function describeBlockSegment(block, targetId) {
   if (type === "example_solution") {
     return {
       text: ensureSentence(`In this example solution, the important moves are: ${text}`),
+      target_element: targetId,
+    };
+  }
+
+  if (type === "math_solution_steps") {
+    return {
+      text: ensureSentence(`Work through this limit step by step: ${text}`),
       target_element: targetId,
     };
   }
@@ -345,10 +357,33 @@ function describeBlockSegment(block, targetId) {
   };
 }
 
+function mathSolutionStepSegment(block, step, index) {
+  const stepId = step?.id || `${block?.id || "solution"}_step_${index + 1}`;
+  const say = String(step?.say || step?.note || "").trim();
+  const math = String(step?.math || step?.text || "").trim();
+  return {
+    text: ensureSentence(say || `Show step ${index + 1}: ${plainTextForSpeech(math)}`),
+    target_element: stepId,
+  };
+}
+
 function appendBlockSegments({ blocks, push, maxItems }) {
   asArray(blocks)
     .slice(0, maxItems)
     .forEach((block) => {
+      if (String(block?.type || "").toLowerCase() === "math_solution_steps") {
+        const problem = block?.problemSay || block?.problem || block?.title;
+        if (problem) {
+          push({
+            text: ensureSentence(`Set up the problem: ${plainTextForSpeech(problem)}`),
+            target_element: block?.problemId || `${block?.id || "solution"}_problem`,
+          });
+        }
+        asArray(block.steps).forEach((step, index) => {
+          push(mathSolutionStepSegment(block, step, index));
+        });
+        return;
+      }
       push(describeBlockSegment(block, block?.id || "slide"));
     });
 }

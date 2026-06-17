@@ -61,6 +61,7 @@ function buildConfig({ slide, options = {}, authoring }) {
     provider: "qwen3_tts",
     mode: options.qwenMode || profileVoice.mode || "clone",
     model_id: options.qwenModelId || options.qwenModel || profileVoice.model_id || "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+    speaker: options.qwenSpeaker || profileVoice.speaker || "Ryan",
     reference_audio: absoluteProjectPath(
       options.qwenReferenceAudio
       || profileVoice.reference_audio

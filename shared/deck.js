@@ -1,4 +1,6 @@
-import { renderSlide } from "./deck_render.js";
+import { getCourseTerminology } from "./course_labels.js";
+import { renderSlide, setDeckRenderContext } from "./deck_render.js";
+import { revealAllMathSolutionSteps } from "./math_solution_steps.js";
 import {
   clearDebugOverlay,
   collectSlideLayout,
@@ -6,6 +8,14 @@ import {
   waitForDeckAssets,
 } from "./deck_analysis.js";
 import { buildTopicRuntime } from "./deck_model.js";
+import { getCourseConfig } from "./course_catalog.js";
+import {
+  buildSessionTopicUrl,
+  findTopicIndex,
+  flattenCourseTopics,
+  getAdjacentTopic,
+  resolveTopicByPathId,
+} from "./topic_navigation.js";
 
 function nextFrame() {
   return new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
@@ -72,6 +82,8 @@ export function initDeck(config) {
 
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const prevTopicBtn = document.getElementById("prevTopicBtn");
+  const nextTopicBtn = document.getElementById("nextTopicBtn");
   const pdfBtn = document.getElementById("pdfBtn");
 
   if (!slidesRoot || !deck || !deckScale) {
@@ -88,6 +100,32 @@ export function initDeck(config) {
   }
 
   document.body.classList.toggle("analysis-mode", analysisMode);
+
+  function slideBleedsIntoFooterReserve(slideEl) {
+    if (!slideEl) return false;
+    const reserve = parseFloat(getComputedStyle(slideEl).paddingBottom) || 0;
+    if (reserve <= 0) return false;
+    const slideRect = slideEl.getBoundingClientRect();
+    const safeBottom = slideRect.bottom - reserve;
+    return Array.from(slideEl.children).some((child) => {
+      const rect = child.getBoundingClientRect();
+      return rect.height > 0 && rect.bottom > safeBottom + 1;
+    });
+  }
+
+  function auditSlideFooterClearance() {
+    const mark = analysisMode || debugEnabled;
+    document.body.dataset.footerDebug = mark ? "1" : "";
+    slides.forEach((slideEl) => {
+      const overflow = mark && slideBleedsIntoFooterReserve(slideEl);
+      slideEl.classList.toggle("slide--footer-overflow", overflow);
+      if (overflow) {
+        slideEl.dataset.footerOverflow = "true";
+      } else {
+        delete slideEl.dataset.footerOverflow;
+      }
+    });
+  }
 
   if (homeBtn) {
     homeBtn.href = homeHref;
@@ -132,12 +170,36 @@ export function initDeck(config) {
     emailFooter.classList.add("analysis-footer");
   }
 
+  const courseCfg = descriptor?.course ? getCourseConfig(descriptor.course) : null;
+  const terminology = getCourseTerminology(courseCfg);
+  setDeckRenderContext({ terminology });
+
+  if (prevTopicBtn) {
+    prevTopicBtn.title = terminology.prevLesson;
+    prevTopicBtn.setAttribute("aria-label", terminology.prevLesson);
+  }
+  if (nextTopicBtn) {
+    nextTopicBtn.title = terminology.nextLesson;
+    nextTopicBtn.setAttribute("aria-label", terminology.nextLesson);
+  }
+
   slidesRoot.innerHTML = "";
   runtime.slides.forEach((slideData, index) => {
     slidesRoot.appendChild(renderSlide(slideData, index));
   });
 
   const slides = Array.from(slidesRoot.querySelectorAll(".slide"));
+  if (theme === "arian") {
+    const watermarkSrc = homeIconSrc || "/shared/media/au-icon-light.png";
+    const watermarkUrl = String(watermarkSrc).replace(/["\\\n\r]/g, "");
+    deck.style.setProperty("--deck-slide-watermark-image", `url("${watermarkUrl}")`);
+    slides.forEach((slideEl) => {
+      const layer = document.createElement("div");
+      layer.className = "slide-brand-watermark";
+      layer.setAttribute("aria-hidden", "true");
+      slideEl.insertBefore(layer, slideEl.firstChild);
+    });
+  }
   const slideIndexById = new Map(runtime.slides.map((slide, index) => [slide.slideId, index]));
   const overlayLayer = createOverlayLayer("deck-overlay-layer", "deckOverlayLayer");
   const debugLayer = createOverlayLayer("deck-debug-layer", "deckDebugLayer");
@@ -148,6 +210,22 @@ export function initDeck(config) {
   let uiPaused = false;
   let debugEnabled = Boolean(startWithDebugOverlay);
   let currentScale = 1;
+
+  const flatTopics = courseCfg ? flattenCourseTopics(courseCfg) : [];
+  const currentTopicIndex = flatTopics.length && descriptor
+    ? findTopicIndex(flatTopics, {
+      session: descriptor.session,
+      topicId: runtime.topicId || descriptor.topic || topicId,
+    })
+    : -1;
+  const topicNavEnabled = flatTopics.length > 1 && currentTopicIndex >= 0;
+  const topicNavContext = topicNavEnabled
+    ? { descriptor, flatTopics, currentIndex: currentTopicIndex }
+    : null;
+
+  if (topicNavEnabled) {
+    deck.classList.add("deck--topic-nav");
+  }
 
   function updateCounter() {
     if (counter) counter.textContent = `${currentSlide + 1} / ${slides.length}`;
@@ -160,8 +238,20 @@ export function initDeck(config) {
   }
 
   function updateTopButtons() {
-    if (!pdfBtn) return;
-    pdfBtn.style.display = currentSlide === 0 && !analysisMode ? "inline-flex" : "none";
+    if (pdfBtn) {
+      pdfBtn.style.display = currentSlide === 0 && !analysisMode ? "inline-flex" : "none";
+    }
+
+    if (!topicNavContext || analysisMode) {
+      if (prevTopicBtn) prevTopicBtn.hidden = true;
+      if (nextTopicBtn) nextTopicBtn.hidden = true;
+      return;
+    }
+
+    const isFirstSlide = currentSlide === 0;
+    const isLastSlide = currentSlide === slides.length - 1;
+    if (prevTopicBtn) prevTopicBtn.hidden = !isFirstSlide;
+    if (nextTopicBtn) nextTopicBtn.hidden = !isLastSlide;
   }
 
   function updateSlideTypeState() {
@@ -172,7 +262,7 @@ export function initDeck(config) {
 
   function syncPauseState() {
     deck.dataset.runtimePaused = uiPaused ? "true" : "false";
-    [prevBtn, nextBtn, pdfBtn].forEach((button) => {
+    [prevBtn, nextBtn, prevTopicBtn, nextTopicBtn, pdfBtn].forEach((button) => {
       if (!button) return;
       button.disabled = uiPaused;
     });
@@ -192,6 +282,7 @@ export function initDeck(config) {
         },
       }),
     );
+    auditSlideFooterClearance();
   }
 
   function resetMCQ(slideEl) {
@@ -223,8 +314,33 @@ export function initDeck(config) {
       return slideRef;
     }
 
+    if (typeof slideRef === "string" && slideRef.toLowerCase() === "last") {
+      return slides.length ? slides.length - 1 : -1;
+    }
+
     if (!slideRef) return -1;
     return slideIndexById.has(slideRef) ? slideIndexById.get(slideRef) : -1;
+  }
+
+  function navigateToTopicTarget(pathId) {
+    if (!topicNavContext) return false;
+    const entry = resolveTopicByPathId(topicNavContext.flatTopics, pathId);
+    if (!entry) return false;
+    window.location.href = buildSessionTopicUrl(topicNavContext.descriptor, entry);
+    return true;
+  }
+
+  function navigateAdjacentTopic(direction) {
+    if (!topicNavContext) return false;
+    const entry = getAdjacentTopic(
+      topicNavContext.flatTopics,
+      topicNavContext.currentIndex,
+      direction,
+    );
+    if (!entry) return false;
+    const slide = direction === "prev" ? "last" : undefined;
+    window.location.href = buildSessionTopicUrl(topicNavContext.descriptor, entry, { slide });
+    return true;
   }
 
   function currentSlideId() {
@@ -481,6 +597,7 @@ export function initDeck(config) {
     updateHud();
     updateTopButtons();
     refreshDebug();
+    auditSlideFooterClearance();
     window.dispatchEvent(
       new CustomEvent("webdeck:slide-change", {
         detail: {
@@ -594,6 +711,8 @@ export function initDeck(config) {
     for (let index = 0; index < slides.length; index += 1) {
       showSlide(index, { force: true });
       await waitForSettledState(options);
+      revealAllMathSolutionSteps(slides[index]);
+      await nextFrame();
       slideLayouts.push(collectSlideLayout(slides[index]));
     }
 
@@ -615,7 +734,15 @@ export function initDeck(config) {
   function setDebugOverlay(enabled) {
     debugEnabled = Boolean(enabled);
     refreshDebug();
+    auditSlideFooterClearance();
     return debugEnabled;
+  }
+
+  function getFooterOverflowSlideIds() {
+    return slides
+      .filter((slideEl) => slideEl.dataset.footerOverflow === "true")
+      .map((slideEl) => slideEl.dataset.slideId || slideEl.id)
+      .filter(Boolean);
   }
 
   if (prevBtn) {
@@ -631,6 +758,36 @@ export function initDeck(config) {
       showSlide(currentSlide + 1, { force: true });
     });
   }
+
+  if (prevTopicBtn) {
+    prevTopicBtn.addEventListener("click", () => {
+      if (uiPaused) return;
+      navigateAdjacentTopic("prev");
+    });
+  }
+
+  if (nextTopicBtn) {
+    nextTopicBtn.addEventListener("click", () => {
+      if (uiPaused) return;
+      navigateAdjacentTopic("next");
+    });
+  }
+
+  slidesRoot.addEventListener("click", (event) => {
+    const target = event.target.closest("[data-topic-nav-target]");
+    if (!target || !topicNavContext) return;
+    event.preventDefault();
+    event.stopPropagation();
+    navigateToTopicTarget(target.dataset.topicNavTarget);
+  });
+
+  slidesRoot.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const target = event.target.closest("[data-topic-nav-target]");
+    if (!target || !topicNavContext) return;
+    event.preventDefault();
+    navigateToTopicTarget(target.dataset.topicNavTarget);
+  });
 
   document.addEventListener("keydown", (event) => {
     if (uiPaused) return;
@@ -755,6 +912,8 @@ export function initDeck(config) {
     showOverlay,
     clearOverlay,
     setDebugOverlay,
+    getFooterOverflowSlideIds,
+    auditSlideFooterClearance,
     refreshDebugOverlay: refreshDebug,
     waitForSettledState,
     exportLayoutManifest,

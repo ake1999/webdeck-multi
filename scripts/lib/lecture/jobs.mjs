@@ -96,6 +96,55 @@ function selectorForJob(descriptor) {
   };
 }
 
+export function buildTtsJobRecord({
+  descriptor,
+  scriptManifest,
+  slide,
+  slideAlignment = null,
+  alignmentManifest = null,
+  providerId,
+  options = {},
+}) {
+  const topicAlignmentPath = buildManualAlignmentPath(descriptor);
+  const outputAudioPath = buildManualAudioPath(descriptor, slide.slide_id);
+  const providerMeta = slideAlignment?.provider || alignmentManifest?.provider || null;
+  const jobBase = {
+    schema_version: TTS_JOB_SCHEMA_VERSION,
+    kind: "tts",
+    job_id: `${scriptManifest.topic_id}__${slide.slide_id}`,
+    topic_id: scriptManifest.topic_id,
+    selector: selectorForJob(descriptor),
+    slide_id: slide.slide_id,
+    provider: {
+      requested_provider: providerId,
+      active_provider: providerMeta?.actual_provider || providerMeta?.provider_id || alignmentManifest?.provider?.id || providerId,
+      config_hash: alignmentManifest?.provider?.config_hash || "",
+      requested_mode: options.qwenMode || "",
+    },
+    audio_output_file: relativeContractPath(outputAudioPath),
+    alignment_output_file: relativeContractPath(topicAlignmentPath),
+    alignment_slide_id: slide.slide_id,
+    warnings: (slide.warnings || []).slice(),
+    segments: asArray(slide.segments).map((segment) => ({
+      segment_id: segment.segment_id,
+      text: segment.text,
+      tone: segment.voice?.tone || "",
+      energy: Number(segment.voice?.energy || 0),
+      pace: Number(segment.voice?.pace || 0),
+      emphasis_words: asArray(segment.emphasis_words),
+      target_element: segment.target_element,
+      attention_mode: segment.attention_mode || "",
+    })),
+  };
+
+  return {
+    ...jobBase,
+    contract_hash: contractHash(jobBase),
+    output_file: relativeContractPath(outputAudioPath),
+    secondary_output_files: [relativeContractPath(topicAlignmentPath)],
+  };
+}
+
 export async function writeTtsJobs({
   descriptor,
   scriptManifest,
@@ -115,42 +164,15 @@ export async function writeTtsJobs({
   for (const slide of asArray(scriptManifest?.slides)) {
     const slideAlignment = asArray(alignmentManifest?.slides).find((item) => item.slide_id === slide.slide_id);
     const outputAudioPath = buildManualAudioPath(descriptor, slide.slide_id);
-    const providerMeta = slideAlignment?.provider || alignmentManifest?.provider || null;
-    const jobBase = {
-      schema_version: TTS_JOB_SCHEMA_VERSION,
-      kind: "tts",
-      job_id: `${scriptManifest.topic_id}__${slide.slide_id}`,
-      topic_id: scriptManifest.topic_id,
-      selector: selectorForJob(descriptor),
-      slide_id: slide.slide_id,
-      provider: {
-        requested_provider: providerId,
-        active_provider: providerMeta?.actual_provider || providerMeta?.provider_id || alignmentManifest?.provider?.id || providerId,
-        config_hash: alignmentManifest?.provider?.config_hash || "",
-        requested_mode: options.qwenMode || "",
-      },
-      audio_output_file: relativeContractPath(outputAudioPath),
-      alignment_output_file: relativeContractPath(topicAlignmentPath),
-      alignment_slide_id: slide.slide_id,
-      warnings: (slide.warnings || []).slice(),
-      segments: asArray(slide.segments).map((segment) => ({
-        segment_id: segment.segment_id,
-        text: segment.text,
-        tone: segment.voice?.tone || "",
-        energy: Number(segment.voice?.energy || 0),
-        pace: Number(segment.voice?.pace || 0),
-        emphasis_words: asArray(segment.emphasis_words),
-        target_element: segment.target_element,
-        attention_mode: segment.attention_mode || "",
-      })),
-    };
-
-    const job = {
-      ...jobBase,
-      contract_hash: contractHash(jobBase),
-      output_file: relativeContractPath(outputAudioPath),
-      secondary_output_files: [relativeContractPath(topicAlignmentPath)],
-    };
+    const job = buildTtsJobRecord({
+      descriptor,
+      scriptManifest,
+      slide,
+      slideAlignment,
+      alignmentManifest,
+      providerId,
+      options,
+    });
 
     const jobPath = buildTtsJobPath(descriptor, slide.slide_id);
     await writeFile(jobPath, `${JSON.stringify(job, null, 2)}\n`, "utf8");

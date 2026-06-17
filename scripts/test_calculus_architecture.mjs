@@ -7,6 +7,9 @@ import { computeFunctionTransform } from "../shared/calculus/widgets/function_tr
 import { computeLimitEpsilon } from "../shared/calculus/widgets/limit_epsilon.js";
 import { computeSecantTangent } from "../shared/calculus/widgets/secant_tangent.js";
 import { computeRiemannIntegral } from "../shared/calculus/widgets/riemann_integral.js";
+import { computeUnitCircleTrig } from "../shared/calculus/widgets/unit_circle_trig.js";
+import { listCalculusWidgets } from "../shared/calculus/registry.js";
+import { compileExpression } from "../shared/calculus/core/plot_spec.js";
 import { clippedLinePath, plotScales } from "../shared/calculus/core/svg_plot.js";
 
 function asArray(value) {
@@ -40,12 +43,12 @@ const material = JSON.parse(
 const adapted = adaptCalculusMaterialToDeck(material, {
   schoolName: "Arian University",
   courseTitle: "Calculus 1",
-  topic: "review_of_functions_and_graphs",
+  topic: "01_review_of_functions_and_graphs",
 });
 const runtime = buildTopicRuntime({
   topicMeta: adapted.topicMeta,
   slidesData: adapted.slidesData,
-  topicFallback: "review_of_functions_and_graphs",
+  topicFallback: "01_review_of_functions_and_graphs",
 });
 
 const blocks = runtime.slides.flatMap(collectBlocksFromSlide);
@@ -101,6 +104,9 @@ assert.equal(riemann.rectangles.length, 6);
 assert.equal(riemann.method, "midpoint");
 assert.ok(riemann.sum > 0);
 
+nearlyEqual(compileExpression("x*sin(1/x)")(0.2), 0.2 * Math.sin(5), 1e-9);
+assert.throws(() => compileExpression("alert(1)"), /Unsafe|Unknown/);
+
 const clippedPath = clippedLinePath([
   [-2, 9],
   [-1, 4],
@@ -133,5 +139,48 @@ const scriptedValues = valuesAtTimelineTime([
 ], 5);
 nearlyEqual(scriptedValues.n, 7);
 assert.equal(scriptedValues.method, "right");
+
+assert.ok(listCalculusWidgets().includes("unit_circle_trig"), "unit_circle_trig should be registered");
+
+const unitCircle = computeUnitCircleTrig({ theta: Math.PI / 3, variant: "projections" });
+nearlyEqual(unitCircle.cos, 0.5);
+nearlyEqual(unitCircle.sin, Math.sqrt(3) / 2);
+assert.equal(unitCircle.quadrant, 1);
+
+const specialAngle = computeUnitCircleTrig({ variant: "special_angle", preset: "five_pi_over_3" });
+nearlyEqual(specialAngle.theta, (5 * Math.PI) / 3);
+assert.equal(specialAngle.quadrant, 4);
+assert.equal(specialAngle.astc.label, "Cos");
+
+const tangentFamily = computeFunctionTransform({ family: "tangent", a: 1, b: 1, h: 0, k: 0 });
+nearlyEqual(tangentFamily.g(Math.PI / 4), 1);
+
+const trigMaterial = JSON.parse(
+  await readFile("courses/Calculus/Materials/trigonometry_and_graphing_review.json", "utf8"),
+);
+const trigVisualText = (trigMaterial.slides || [])
+  .flatMap((slide) => [
+    slide.title,
+    slide.left?.visual_spec,
+    slide.left?.content,
+    slide.right?.visual_spec,
+    slide.right?.content,
+    slide.teacher_narration,
+  ])
+  .concat(trigMaterial.lecture_meta?.learning_objectives || [])
+  .join(" ")
+  .toLowerCase();
+assert.ok(/unit circle|ferris|astc|reference angle|special angle/.test(trigVisualText), "trigonometry material should reference unit-circle visuals");
+assert.ok(
+  ["ferris_link", "projections", "astc", "reference_angle", "special_angle", "pythagorean"].every((variant) => {
+    const model = computeUnitCircleTrig({
+      variant,
+      theta: Math.PI / 4,
+      preset: variant === "special_angle" ? "pi_over_4" : undefined,
+    });
+    return Number.isFinite(model.sin) && Number.isFinite(model.cos);
+  }),
+  "unit_circle_trig variants should compute sin/cos for trigonometry review slides",
+);
 
 console.log("calculus architecture checks passed");

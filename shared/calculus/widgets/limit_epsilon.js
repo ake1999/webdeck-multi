@@ -2,8 +2,8 @@ import { createSvg, appendCurve, appendGrid, appendPlotTag, clearSvg, plotScales
 import { bindControls, buildStateFromControls, createWidgetShell, formatNumber, formatSigned, renderTex } from "../core/widget_ui.js";
 
 const DEFAULT_CONTROLS = [
-  { name: "epsilon", label: "epsilon", min: 0.1, max: 2, step: 0.05, value: 0.5 },
-  { name: "x", label: "approaching x", min: -1, max: 3, step: 0.02, value: 1.7 },
+  { name: "epsilon", label: "ε", min: 0.1, max: 2, step: 0.05, value: 0.5 },
+  { name: "x", label: "x", min: -1, max: 3, step: 0.02, value: 1.7 },
 ];
 
 export function computeLimitEpsilon(params = {}) {
@@ -42,23 +42,27 @@ export function mountLimitEpsilonWidget(root, spec = {}) {
   const unsubscribe = state.subscribe((params) => {
     const model = computeLimitEpsilon(params);
     clearSvg(svg);
-    const scales = plotScales({ xDomain: [-1, 3], yDomain: [-0.5, 5] });
+    const xPad = Math.max(0.8, Math.abs(model.a) * 0.4 + 0.5);
+    const scales = plotScales({
+      xDomain: [model.a - xPad, model.a + xPad],
+      yDomain: [Math.max(-0.5, model.L - 1.5), model.L + Math.max(2, model.epsilon + 1)],
+    });
     appendGrid(svg, scales);
 
     const bandTop = scales.y(model.L + model.epsilon);
     const bandBottom = scales.y(model.L - model.epsilon);
     svg.appendChild(svgEl("rect", {
-      x: scales.padding,
+      x: scales.paddingLeft ?? scales.padding,
       y: bandTop,
-      width: scales.width - scales.padding * 2,
+      width: scales.width - (scales.paddingLeft ?? scales.padding) - (scales.paddingRight ?? scales.padding),
       height: Math.max(2, bandBottom - bandTop),
       class: "calculus-band epsilon-band",
     }));
     svg.appendChild(svgEl("rect", {
       x: scales.x(model.a - model.delta),
-      y: scales.padding,
+      y: scales.paddingTop ?? scales.padding,
       width: Math.max(2, scales.x(model.a + model.delta) - scales.x(model.a - model.delta)),
-      height: scales.height - scales.padding * 2,
+      height: scales.height - (scales.paddingTop ?? scales.padding) - (scales.paddingBottom ?? scales.padding),
       class: "calculus-band delta-band",
     }));
 
@@ -82,7 +86,7 @@ export function mountLimitEpsilonWidget(root, spec = {}) {
       tone: model.insideEpsilon ? "accent" : "warn",
     });
     appendPlotTag(svg, `ε=${formatNumber(model.epsilon, 2)}  δ≈${formatNumber(model.delta, 2)}`, {
-      x: scales.width - scales.padding,
+      x: scales.width - (scales.paddingRight ?? scales.padding),
       y: 24,
       anchor: "end",
       tone: "muted",

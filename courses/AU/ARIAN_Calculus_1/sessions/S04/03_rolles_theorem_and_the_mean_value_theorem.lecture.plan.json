@@ -1,0 +1,203 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "03_rolles_theorem_and_the_mean_value_theorem",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Welcome back, Topic 16 hunted critical points where f′=0. Today we prove such points (or parallel secant tangents) are guaranteed when hypotheses hold.",
+    "progression": "Road-trip intuition → hypothesis checklist (Rolle vs MVT) → formal theorems → worked c-values → corner trap → pause practice → applications → visual labs → recap teasing Topic 18.",
+    "destination": "Students verify hypotheses, find MVT values of c, and explain geometry (horizontal vs parallel tangent).",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "visual intuition",
+      "theorem_box formalize",
+      "math_solution_steps",
+      "misconception_compare",
+      "pause_and_reveal",
+      "visual_lab",
+      "recap"
+    ]
+  },
+  "audience_level": "first-year university / advanced high school",
+  "topic_goal": "Teach Rolle's Theorem and the MVT with theorem statements, worked c-problems, geometry via secant_tangent and flex_plot, and hypothesis traps.",
+  "topic_takeaways": [
+    "State Rolle's and MVT hypotheses and conclusions",
+    "Verify hypotheses before applying either theorem",
+    "Find c guaranteed by MVT on concrete intervals",
+    "Use Rolle/MVT in short proofs (roots, constant functions)",
+    "Interpret horizontal vs parallel tangent geometry"
+  ],
+  "style_notes": [
+    "Welcome back, do not re-introduce Arian from scratch.",
+    "Callback Topic 16 critical points and f′(c)=0; tease Topic 18 derivative tests on summary.",
+    "theorem_box on s03 Rolle and s06 MVT, read hypotheses slowly.",
+    "misconception_compare s02 Rolle vs MVT; s08 corner breaks differentiability.",
+    "math_solution_steps on s04, s07, s10, s11, s12, cue step_1..step_n in order.",
+    "secant_tangent s06, s09, s15: narrate a then h as timeline moves; call slope readout.",
+    "flex_plot: unique plot per slide, probe and guides at c.",
+    "visual_lab s14/s15: YouTube demo one tab ~30s; site gets all three.",
+    "pause_and_reveal on s09 (real answer c=1) and s16 exit check.",
+    "proof_sketch optional on s05 Rolle, s13 MVT→constant."
+  ],
+  "transition_style": "Metaphor → formal theorem → worked example → student pause → application → lab → recap.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "Rolle's Theorem and the Mean Value Theorem" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back to Arian University. Topic 16 found where f prime is zero; today we prove those horizontal tangents must exist when Rolle's hypotheses hold, and generalize to the Mean Value Theorem.",
+      "must_cover": ["Welcome back", "Topic 16 callback", "Topic 18 teaser"],
+      "must_say": ["Welcome back to Arian University."],
+      "transition_to_next": "Roadmap on objectives, path_topic_17 current.",
+      "prop_suggestions": ["flex_plot", "secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Five objectives: state both theorems, verify hypotheses, find c, short proofs, and read the geometry.",
+      "must_cover": ["course_path currentId path_topic_17", "Topic 16 done", "Topic 18 next"],
+      "transition_to_next": "Road-trip metaphor on equal endpoint heights."
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "Why Horizontal Tangents Matter" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "Same start and end elevation on a smooth road, somewhere you drive level. flex_plot x squared minus four on minus two to two.",
+      "must_cover": ["Road-trip metaphor", "f(a)=f(b) intuition", "Topic 16 hunt vs Rolle guarantee"],
+      "prop_suggestions": ["flex_plot"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "Prerequisites: Continuity & Differentiability" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "misconception_compare: Rolle needs equal endpoints; MVT does not. Both need differentiability on the open interval, corners break the theorems.",
+      "must_cover": ["misconception_compare Rolle vs MVT", "Continuity on [a,b]", "Differentiability on (a,b)", "Corner at |x|"],
+      "prop_suggestions": ["flex_plot", "misconception_compare"]
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "Rolle's Theorem" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box: continuous, differentiable, f(a)=f(b) implies f prime of c equals zero. Graph parabola with horizontal guide at c=2.",
+      "must_cover": ["theorem_box Rolle", "f'(c)=0", "Horizontal tangent geometry"],
+      "prop_suggestions": ["flex_plot", "theorem_box"]
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "Example 1: Applying Rolle's Theorem" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "math_solution_steps: verify polynomial, f(1)=f(3)=0, solve 2c-4=0, c=2 in (1,3). step_1 through step_5.",
+      "must_cover": ["math_solution_steps step_1..step_5", "c=2"],
+      "prop_suggestions": ["flex_plot", "math_solution_steps"]
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "[Challenge] Proof of Rolle's Theorem" },
+      "slide_role": "challenge",
+      "importance": "medium",
+      "narration_seed": "Optional proof_sketch: EVT gives extrema; equal endpoints force interior extremum; Fermat gives f prime zero.",
+      "must_cover": ["proof_sketch", "EVT", "Fermat"],
+      "prop_suggestions": ["flex_plot", "proof_sketch"]
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "Mean Value Theorem (MVT)" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box MVT. secant_tangent on x squared: vary a and h until secant slope matches tangent, parallel lines at c≈1.",
+      "must_cover": ["theorem_box MVT", "f'(c) equals average slope", "secant parallel tangent"],
+      "must_say": ["Instantaneous slope equals average slope."],
+      "prop_suggestions": ["secant_tangent", "theorem_box"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Example 2: Typical MVT Problem" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "f(x)=x cubed minus 2x on [-1,2]. Average slope 1. 3c squared minus 2 equals 1 gives c=1; discard endpoint c=-1.",
+      "must_cover": ["math_solution_steps", "Average slope 1", "c=1 in open interval", "flex_plot cubic"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Misconception: When MVT Fails" },
+      "slide_role": "misconception",
+      "importance": "high",
+      "narration_seed": "|x-1| continuous on [0,2] but corner at 1, MVT fails. Average slope 0 but derivative never 0.",
+      "must_cover": ["misconception_compare", "Corner breaks MVT", "flex_plot abs"],
+      "prop_suggestions": ["misconception_compare", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "Pause & Try: Find c" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Pause: f(x)=x squared on [0,2]. Find c. pause_and_reveal answer c=1. secant_tangent full interval.",
+      "must_cover": ["pause_and_reveal", "Student computes average slope 2"],
+      "prop_suggestions": ["secant_tangent", "pause_and_reveal"]
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "Solution: Pause Problem" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "Reveal: average slope 2, f prime 2x, c=1. math_solution_steps step_1..step_4.",
+      "must_cover": ["c=1", "math_solution_steps", "flex_plot confirm"],
+      "transition_from_previous": "Reveal after s09 pause."
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "Edge Case: Constant Function" },
+      "slide_role": "example",
+      "importance": "medium",
+      "narration_seed": "Constant f: average slope 0, f prime zero everywhere, any c works. Non-unique c is allowed.",
+      "must_cover": ["Any c works", "MVT existence not uniqueness"]
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "Application: Exactly One Root" },
+      "slide_role": "application",
+      "importance": "high",
+      "narration_seed": "IVT gives a root; Rolle between two roots would force f prime zero, contradiction since f prime always positive.",
+      "must_cover": ["IVT", "Rolle contradiction", "math_solution_steps"]
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "[Challenge] MVT Proof Sketch" },
+      "slide_role": "challenge",
+      "importance": "medium",
+      "narration_seed": "Optional: f prime zero everywhere, MVT between any a,b gives f(b)=f(a), so constant.",
+      "must_cover": ["proof_sketch MVT", "Constant function proof"]
+    },
+    {
+      "slide_ref": { "index": 15, "source_title": "Lab: Rolle's Theorem on a Parabola" },
+      "slide_role": "lab",
+      "importance": "high",
+      "narration_seed": "visual_lab three intervals on x squared minus 4x plus 3. Demo tab B. Horizontal tangent at x=2 when endpoints match.",
+      "must_cover": ["visual_lab", "labExamples three tabs", "c=2"],
+      "prop_suggestions": ["visual_lab", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 16, "source_title": "Lab: MVT, Match Secant and Tangent Slopes" },
+      "slide_role": "lab",
+      "importance": "high",
+      "narration_seed": "visual_lab secant_tangent: presets a=0,h=2 then narrow to a=1,h small. Slopes match at c≈1.",
+      "must_cover": ["visual_lab", "secant_tangent vary a h", "slope readout"],
+      "prop_suggestions": ["visual_lab", "secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 17, "source_title": "Summary & Next Steps" },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Recap Rolle vs MVT. Check differentiability. pause_and_reveal exit. Next: Topic 18 derivative tests.",
+      "must_cover": ["Rolle vs MVT recap", "Topic 18 teaser", "pause_and_reveal exit"],
+      "transition_to_next": "Topic 18 First and Second Derivative Tests."
+    }
+  ]
+}

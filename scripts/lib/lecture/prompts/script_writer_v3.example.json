@@ -1,0 +1,52 @@
+{
+  "segments": [
+    {
+      "segment_id": "seg_hook",
+      "text": "Quick prediction: if you add two inside the input, why does the graph jump left instead of right? Most people guess wrong — and fixing that one habit will save you all semester.",
+      "target_element": "title",
+      "tone": "energetic_demo",
+      "energy": 0.68,
+      "pace": 0.94,
+      "emphasis_words": [
+        "prediction",
+        "left",
+        "wrong"
+      ],
+      "attention_mode": "hybrid_focus",
+      "avatar_behavior_hint": "face_viewer",
+      "delivery_kind": "quiz_prompt"
+    },
+    {
+      "segment_id": "seg_orient",
+      "text": "Hi, I'm Arian, and welcome to Arian University. We're in Session 1, Preliminaries, and this first toolkit video sharpens the function skills every limit and derivative will assume.",
+      "target_element": "subtitle",
+      "tone": "clear_teacher",
+      "energy": 0.62,
+      "pace": 0.95,
+      "emphasis_words": [
+        "welcome",
+        "toolkit",
+        "assumes"
+      ],
+      "attention_mode": "slide_focus",
+      "avatar_behavior_hint": "explain_open_hand",
+      "delivery_kind": "introduce"
+    },
+    {
+      "segment_id": "seg_promise",
+      "text": "By the end, you'll read a function from its formula, its graph, and its restrictions without guessing — and we'll stay visual and example-driven the whole way.",
+      "target_element": "meta",
+      "tone": "clear_teacher",
+      "energy": 0.6,
+      "pace": 0.94,
+      "emphasis_words": [
+        "formula",
+        "graph",
+        "restrictions"
+      ],
+      "attention_mode": "slide_focus",
+      "avatar_behavior_hint": "emphasize",
+      "delivery_kind": "explain"
+    }
+  ]
+}

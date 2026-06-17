@@ -193,6 +193,23 @@ export function normalizeSlidesData(slidesData, options = {}) {
       normalized.leadId = normalized.lead ? "lead" : "";
       normalized.blocks = normalizeBlocks(normalized.blocks, "body");
       normalized.media = normalizeMedia(normalized.media, "visual_lab");
+      if (normalized.left) {
+        normalized.left = normalizeColumn(normalized.left, "left");
+      }
+      if (normalized.right) {
+        normalized.right = normalizeColumn(normalized.right, "right");
+      }
+      normalized.labExamples = (normalized.labExamples || []).map((example, index) => ({
+        ...example,
+        id: example.id || `lab_example_${index + 1}`,
+        label: example.label || `Example ${index + 1}`,
+        steps: normalizeList(example.steps, `lab_step_${index + 1}`),
+      }));
+      normalized.labGeneratePresets = (normalized.labGeneratePresets || []).map((preset, index) => ({
+        ...preset,
+        id: preset.id || `lab_preset_${index + 1}`,
+        label: preset.label || `Preset ${index + 1}`,
+      }));
       return normalized;
     }
 

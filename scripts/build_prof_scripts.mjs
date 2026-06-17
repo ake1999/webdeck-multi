@@ -4,7 +4,9 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { discoverTopics, filterTopics, summarizeSelector, toReviewLabel } from "./lib/catalog.mjs";
 import { projectRoot } from "./lib/export_runtime.mjs";
+import { SCRIPT_WRITER_PROMPT_VERSION } from "./lib/lecture/llm_schema.mjs";
 import { buildLectureScriptArtifacts } from "./lib/lecture/pipeline.mjs";
+import { resolveAllowScriptFallbackDefault } from "./lib/lecture/script_provider.mjs";
 
 const BOOLEAN_FLAGS = new Set(["debug-screenshots", "write-report"]);
 
@@ -19,12 +21,12 @@ function parseArgs(argv) {
     scriptProvider: process.env.WEBDECK_SCRIPT_PROVIDER || (process.env.CI ? "deterministic" : "auto"),
     scriptModel: process.env.WEBDECK_SCRIPT_MODEL || "",
     scriptEndpoint: process.env.WEBDECK_SCRIPT_ENDPOINT || process.env.OLLAMA_HOST || "http://127.0.0.1:11434",
-    scriptPromptVersion: process.env.WEBDECK_SCRIPT_PROMPT_VERSION || "script_writer_v2",
+    scriptPromptVersion: process.env.WEBDECK_SCRIPT_PROMPT_VERSION || SCRIPT_WRITER_PROMPT_VERSION,
     scriptTemperature: process.env.WEBDECK_SCRIPT_TEMPERATURE || "0.2",
     scriptMaxRetries: process.env.WEBDECK_SCRIPT_MAX_RETRIES || "2",
     scriptTimeoutMs: process.env.WEBDECK_SCRIPT_TIMEOUT_MS || "60000",
     topicPlanTimeoutMs: process.env.WEBDECK_TOPIC_PLAN_TIMEOUT_MS || process.env.WEBDECK_SCRIPT_TIMEOUT_MS || "180000",
-    allowScriptFallback: process.env.WEBDECK_ALLOW_SCRIPT_FALLBACK || "1",
+    allowScriptFallback: process.env.WEBDECK_ALLOW_SCRIPT_FALLBACK || "",
     debugScreenshots: false,
     writeReport: false,
     maxSegmentsPerSlide: 8,
@@ -75,7 +77,12 @@ function makeOptions(args) {
     topicPlanTimeoutMs: Number(args.topicPlanTimeoutMs || args.scriptTimeoutMs || 180000),
     topicPlanMode: args.topicPlanMode || "",
     topicPlanMaxRetries: Number(args.topicPlanMaxRetries ?? args.scriptMaxRetries ?? 2),
-    allowScriptFallback: args.allowScriptFallback ?? true,
+    allowScriptFallback: args.allowScriptFallback !== ""
+      ? args.allowScriptFallback
+      : resolveAllowScriptFallbackDefault({
+        scriptProvider: args.scriptProvider,
+        scriptModel: args.scriptModel || "",
+      }),
     forceScriptComparison: args.forceScriptComparison || "",
     scriptOverride: args.scriptOverride || "",
     lecturePlan: args.lecturePlan || "",

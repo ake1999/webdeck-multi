@@ -2,10 +2,10 @@ import { createSvg, appendCurve, appendGrid, appendPlotTag, clearSvg, plotScales
 import { bindControls, buildStateFromControls, createWidgetShell, formatNumber, renderTex } from "../core/widget_ui.js";
 
 const DEFAULT_CONTROLS = [
-  { name: "a", label: "left bound a", min: 0, max: 3, step: 0.05, value: 0 },
-  { name: "b", label: "right bound b", min: 1, max: 4, step: 0.05, value: 3 },
-  { name: "n", label: "rectangles n", min: 2, max: 40, step: 1, value: 8, digits: 0 },
-  { name: "method", label: "sample method", type: "select", value: "midpoint", options: ["left", "midpoint", "right"] },
+  { name: "a", label: "a", min: 0, max: 3, step: 0.05, value: 0 },
+  { name: "b", label: "b", min: 1, max: 4, step: 0.05, value: 3 },
+  { name: "n", label: "n", min: 2, max: 40, step: 1, value: 8, digits: 0 },
+  { name: "method", label: "method", type: "select", value: "midpoint", options: ["left", "midpoint", "right"] },
 ];
 
 function f(x) {
@@ -66,13 +66,13 @@ export function mountRiemannIntegralWidget(root, spec = {}) {
     });
     appendCurve(svg, scales, model.f, { stroke: "#9a341b", strokeWidth: 4 });
     appendPlotTag(svg, `${model.method} sum: ${formatNumber(model.sum, 3)}`, {
-      x: scales.width - scales.padding,
+      x: scales.width - (scales.paddingRight ?? scales.padding),
       y: 24,
       anchor: "end",
       tone: "accent",
     });
     appendPlotTag(svg, `a=${formatNumber(model.a, 2)}  b=${formatNumber(model.b, 2)}  Δx=${formatNumber(model.dx, 2)}`, {
-      x: scales.padding + 6,
+      x: (scales.paddingLeft ?? scales.padding) + 6,
       y: scales.height - 16,
       tone: "muted",
     });

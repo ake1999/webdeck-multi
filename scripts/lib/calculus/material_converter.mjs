@@ -1,7 +1,9 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { adaptCalculusMaterialToDeck } from "../../../shared/calculus_material_adapter.js";
+import { getCourseConfig } from "../../../shared/course_catalog.js";
 import { buildTopicRuntime } from "../../../shared/deck_model.js";
+import { materialSlugFromTopicId, sessionTopicNumber } from "../../../shared/topic_naming.js";
 import { projectRoot } from "../export_runtime.mjs";
 import { generateBaselineLecturePlan } from "../lecture/plan_generator.mjs";
 import { validateLecturePlan } from "../lecture/contracts.mjs";
@@ -34,6 +36,30 @@ function humanizeCourseTitle(course) {
 
 function relativeProjectPath(filePath) {
   return path.relative(projectRoot, filePath).split(path.sep).join("/");
+}
+
+function resolveTopicId({ course, session, topic, materialSlug }) {
+  const slug = materialSlug || materialSlugFromTopicId(topic);
+  if (sessionTopicNumber(topic)) {
+    return topic;
+  }
+
+  const explicit = String(topic || "").trim();
+  const courseCfg = getCourseConfig(course);
+  const sessionCfg = courseCfg?.sessions?.find((item) => item.id === session);
+  const topics = Array.isArray(sessionCfg?.topics) ? sessionCfg.topics : [];
+
+  if (explicit) {
+    const exact = topics.find((item) => item.id === explicit);
+    if (exact) return exact.id;
+    const bySlug = topics.find((item) => materialSlugFromTopicId(item.id) === explicit);
+    if (bySlug) return bySlug.id;
+  }
+
+  const byMaterialSlug = topics.find((item) => materialSlugFromTopicId(item.id) === slug);
+  if (byMaterialSlug) return byMaterialSlug.id;
+
+  return explicit || slug;
 }
 
 function topicReviewKey({ school, course, session, topic }) {
@@ -178,7 +204,8 @@ export async function convertCalculusMaterialToTopic({
     ? materialPath
     : path.resolve(projectRoot, materialPath);
   const material = JSON.parse(await readFile(absoluteMaterialPath, "utf8"));
-  const topicId = topic || path.basename(absoluteMaterialPath, ".json");
+  const materialSlug = path.basename(absoluteMaterialPath, ".json");
+  const topicId = resolveTopicId({ course, session, topic, materialSlug });
   const topicDir = path.join(outputRoot, school, course, "sessions", session);
   const slidesPath = path.join(topicDir, `${topicId}.slides.js`);
   const planPath = path.join(topicDir, `${topicId}.lecture.plan.json`);

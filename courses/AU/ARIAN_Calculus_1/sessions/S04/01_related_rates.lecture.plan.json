@@ -1,0 +1,185 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_related_rates",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Session 3 is complete, derivatives now answer how fast linked quantities change in geometry and physics.",
+    "progression": "Four-step workflow → warm-ups (square, balloon) → Pythagorean ladder → similar-triangle shadow & cone → applications → common mistake → lab → close.",
+    "destination": "Students set up related-rates problems: symbolic link, differentiate w.r.t. t, substitute last.",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "visual intuition",
+      "workflow checklist",
+      "math_solution_steps",
+      "guided prediction",
+      "misconception_compare",
+      "recap"
+    ]
+  },
+  "audience_level": "first-year university / advanced high school",
+  "topic_goal": "Teach related rates as implicit differentiation with respect to time, using chain rule callbacks from Topics 13–14.",
+  "topic_takeaways": [
+    "Four-step workflow: draw, link, differentiate w.r.t. t, substitute last",
+    "Chain rule links rates of variables sharing a clock",
+    "Never substitute numeric values before differentiating",
+    "Templates: square area, balloon volume, Pythagorean ladder, shadow, cone, radar"
+  ],
+  "style_notes": [
+    "Welcome back, Session 3 complete; Session 4 opens applications of derivatives.",
+    "Callback Topic 13 chain rule and Topic 14 implicit differentiation on t.",
+    "Roadmap currentId path_topic_15; Topic 16 Critical Points next.",
+    "Narrate flex_plot probes before revealing algebra on math_solution_steps slides.",
+    "YouTube pauses on s03, s05, s08, s10, real think beats, not decorative.",
+    "visual_lab s13: demo one tab ~30s on YouTube; mention site tabs.",
+    "misconception_compare s11: substitute-before vs differentiate-first."
+  ],
+  "transition_style": "Move from changing-world hook to workflow, then ladder/shadow/cone worked examples, then mistake + lab + close.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "Related Rates" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back, Session 3 derivative rules are done. Topic 15 opens Session 4: related rates, how fast linked quantities change.",
+      "must_cover": ["Session 3 complete", "Topic 15 Related Rates", "changing-world problems"],
+      "must_say": ["Welcome back to Arian University."],
+      "transition_to_next": "Objectives + roadmap path_topic_15.",
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Roadmap: Topics 8–14 done. Five objectives, workflow, chain rule, ladder, shadow, cone.",
+      "must_cover": ["path_topic_15 current", "path_topic_16 next", "five objectives"],
+      "transition_from_previous": "From title into roadmap promise.",
+      "transition_to_next": "Spider web + balloon hook."
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "The Spider Web of Change" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "Balloon metaphor. step_1 differentiate V=4/3 pi r^3. step_2 solve dr/dt. step_3 evaluate at r=5. Graph: r linear, V cubic.",
+      "must_cover": ["linked rates", "balloon step_1 chain rule", "step_3 dr/dt at r=5"],
+      "must_say": ["Everything changes with respect to the same clock t."],
+      "prop_suggestions": ["flex_plot balloon r-V"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "The Fundamental Strategy" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box chain rule for time. Four nested_bullets workflow. Circle area rate example on right.",
+      "must_cover": ["wf_1 draw", "wf_2 link", "wf_3 differentiate", "wf_4 substitute last", "theorem_box dy/dt"],
+      "transition_to_next": "Warm-up expanding square."
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "Warm-Up: Expanding Square" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "step_1 dA/dt=2s ds/dt. step_2 substitute s=5, ds/dt=3. step_3 answer 30. Pause: substituting before differentiating trap.",
+      "must_cover": ["math_solution_steps step_1 through step_3", "pause_and_reveal common mistake"],
+      "likely_student_confusion": ["Substituting before differentiating"],
+      "prop_suggestions": ["flex_plot A=s^2"]
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "The Pythagorean Model" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "x^2+y^2=z^2 differentiate w.r.t. t. Do not substitute before differentiating. Ladder triangle graph.",
+      "must_cover": ["Pythagorean template", "differentiate first rule"],
+      "transition_to_next": "Pause ladder try."
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "Pause & Try: Sliding Ladder (Pause)" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Pause, 10-ft ladder, dx/dt=2, x=6. Hint reveal: 2x xdot+2y ydot=0, y=8, expect negative ydot.",
+      "must_cover": ["pause_and_reveal", "four-step checklist"]
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "Sliding Ladder: Solution" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "step_1 differentiate. step_2 solve dy/dt. step_3 y=8. step_4 dy/dt=-1.5 ft/s. Sign means downward.",
+      "must_cover": ["step_1 through step_4", "negative dy/dt interpretation"],
+      "prop_suggestions": ["flex_plot ladder at (6,8)"]
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Similar Triangles + Moving Shadow" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "Similar triangles for cone and shadow. Shadow: s=5/3 x, ds/dt=25/3 at x=10. Cone ratio r/h constant.",
+      "must_cover": ["body_shadow step_1 similar triangles", "step_3 ds/dt at x=10", "cone r/h ratio"],
+      "transition_to_next": "Conical tank worked example."
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Tricky: Conical Tank (Pause · Medium)" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "step_1 V cone + r=h/3. step_2 V=pi/27 h^3. step_3 differentiate. step_4 dh/dt about 0.398. Pause estimate.",
+      "must_cover": ["splitAfter step_3", "step_4 dh/dt", "pause_and_reveal"],
+      "prop_suggestions": ["flex_plot V(h)"]
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "[Challenge, Optional] Ladder Hits the Ground" },
+      "slide_role": "example",
+      "importance": "low",
+      "narration_seed": "Optional: as x→10, dy/dt→-∞. Model assumes top stays on wall, fails physically.",
+      "must_cover": ["model limitation", "optional skip"],
+      "prop_suggestions": ["flex_plot dy/dt blow-up"]
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "Application: Radar Gun & Speeding (Pause · Medium)" },
+      "slide_role": "example",
+      "importance": "medium",
+      "narration_seed": "s^2=x^2+2500. step_4 dx/dt about 86.67 ft/s ≈ 59 mph. Radar measures ds/dt not dx/dt.",
+      "must_cover": ["step_1 through step_4", "pause highway speed larger than 80"],
+      "prop_suggestions": ["flex_plot radar triangle"]
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "Common Mistake: Substituting Before Differentiating" },
+      "slide_role": "misconception",
+      "importance": "high",
+      "narration_seed": "misconception_compare: plug x=6,y=8 first gives 0=0 vs differentiate first then substitute.",
+      "must_cover": ["misconception_compare pairs", "Topic 14 callback"],
+      "must_say": ["Differentiate the general equation before substituting."]
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "[Challenge, Optional] IFT for Related Rates" },
+      "slide_role": "definition",
+      "importance": "low",
+      "narration_seed": "Optional IFT: F_x dx/dt+F_y dy/dt=0. Same as Topic 14. Circle constraint graph.",
+      "must_cover": ["optional theorem_box", "step_3 dy/dt formula"]
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "Lab: Three Related-Rates Templates" },
+      "slide_role": "lab",
+      "importance": "medium",
+      "narration_seed": "visual_lab, square, circle area, cone tabs. YouTube: demo square tab briefly.",
+      "must_cover": ["lab_ex_square", "lab_ex_circle", "lab_ex_cone"],
+      "prop_suggestions": ["visual_lab related_rates"]
+    },
+    {
+      "slide_ref": { "index": 15, "source_title": "Key Takeaways, Session 4 Underway" },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Six bullets + final check dA/dt=24. Teaser Topic 16 Critical Points. Thank students.",
+      "must_cover": ["workflow recap", "trap substitute first", "next Topic 16", "final_check reveal"],
+      "must_say": ["Next topic: Critical Points and Extrema on an Interval."],
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "center_bottom" }
+    }
+  ]
+}

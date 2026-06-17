@@ -4,7 +4,12 @@ import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { discoverTopics, filterTopics, summarizeSelector, toReviewLabel } from "./lib/catalog.mjs";
 import { buildTopicArtifactDir, projectRoot } from "./lib/export_runtime.mjs";
+import { buildManualAlignmentPath } from "./lib/lecture/contracts.mjs";
 import { validateSlideVideoControls } from "./lib/lecture/slide_video_controls.mjs";
+import {
+  validateProductionScripts,
+  validateTtsJobsMatchManifest,
+} from "./lib/lecture/script_quality.mjs";
 import { relativeProjectPath } from "./lib/lecture/utils.mjs";
 
 function parseArgs(argv) {
@@ -49,94 +54,16 @@ function words(value) {
   return String(value || "").split(/\s+/).filter(Boolean);
 }
 
-function genericPhraseCount(value) {
-  const text = String(value || "").toLowerCase();
-  const patterns = [
-    /next key term/g,
-    /once .* is clear/g,
-    /this slide covers/g,
-    /use .* to introduce/g,
-    /carry this idea forward/g,
-    /last session/g,
-    /continuing from our (previous|last) discussion/g,
-    /building on our previous discussion/g,
-  ];
-  return patterns.reduce((total, pattern) => total + asArray(text.match(pattern)).length, 0);
-}
-
-function restartLanguagePattern() {
-  return /\b(hello everyone|welcome everyone|last session|today|continuing from our (previous|last) discussion|building on our previous discussion|let'?s dive right in)\b/i;
-}
-
-function finalTextHasClosing(text) {
-  return /\b(remember|finish|wrap|next class|next time|next session|question|questions|check|takeaway|before you leave|you should|as you work|leave knowing|always keep in mind|before starting|before operating)\b/i
-    .test(String(text || ""));
-}
-
-function isTransitionFragment(value) {
-  const text = String(value || "").trim();
-  return words(text).length <= 5 && /^(first|firstly|next|moving on|last|lastly|finally),?\s+/i.test(text);
-}
-
 function validateScriptQuality(scriptManifest, topicPlan, options) {
-  const issues = [];
+  const issues = validateProductionScripts(scriptManifest, {
+    requireLlm: options.requireLlm,
+    requireYoutubeRetention: options.requireYoutubeRetention !== false,
+  });
   const slides = asArray(scriptManifest?.slides);
-  if (!slides.length) issues.push("script.manifest.json has no slides.");
-  if (options.requireLlm) {
-    slides.forEach((slide) => {
-      if (slide.provider_used !== "llm_local") {
-        issues.push(`${slide.slide_id}: provider_used is ${slide.provider_used || "missing"}, expected llm_local.`);
-      }
-      if (slide.fallback_reason) {
-        issues.push(`${slide.slide_id}: fallback_reason is present: ${slide.fallback_reason}`);
-      }
-    });
-  }
   if (!topicPlan) issues.push("script.topic_plan.json is missing.");
   if (topicPlan && asArray(topicPlan.slides).length !== slides.length) {
     issues.push("topic plan slide count does not match script manifest slide count.");
   }
-
-  const allText = slides.flatMap((slide) => asArray(slide.segments).map((segment) => segment.text)).join(" ");
-  const genericCount = genericPhraseCount(allText);
-  if (genericCount > Math.max(2, Math.ceil(slides.length * 0.08))) {
-    issues.push(`spoken script contains too many generic transition phrases: ${genericCount}`);
-  }
-
-  const firstText = asArray(slides[0]?.segments).map((segment) => segment.text).join(" ");
-  const lastText = asArray(slides[slides.length - 1]?.segments).map((segment) => segment.text).join(" ");
-  if (slides.length && !/\b(welcome|today|we('|’)re|we are|this (course|session|topic|lesson))\b/i.test(firstText)) {
-    issues.push(`${slides[0].slide_id}: opening does not sound like a class start.`);
-  }
-  if (slides.length && !finalTextHasClosing(lastText)) {
-    issues.push(`${slides[slides.length - 1].slide_id}: final slide does not sound like a closing or handoff.`);
-  }
-  if (slides.length && /\b(before we move on|as we move on|when we move on|let'?s move on)\b/i.test(lastText)) {
-    issues.push(`${slides[slides.length - 1].slide_id}: final slide sounds like another middle slide.`);
-  }
-
-  slides.forEach((slide) => {
-    const slideWords = words(asArray(slide.segments).map((segment) => segment.text).join(" ")).length;
-    if (slideWords < 12) issues.push(`${slide.slide_id}: script is very short (${slideWords} words).`);
-    asArray(slide.segments).forEach((segment) => {
-      if (/\.{3,}\s*$/.test(String(segment?.text || "").trim())) {
-        issues.push(`${slide.slide_id}: segment ${segment.segment_id || "unknown"} ends with an unfinished ellipsis.`);
-      }
-      if (/^\.{3,}/.test(String(segment?.text || "").trim())) {
-        issues.push(`${slide.slide_id}: segment ${segment.segment_id || "unknown"} starts with an unfinished ellipsis.`);
-      }
-      if (isTransitionFragment(segment?.text)) {
-        issues.push(`${slide.slide_id}: segment ${segment.segment_id || "unknown"} is a transition fragment instead of a complete idea.`);
-      }
-      if (/\b(finally|lastly),\s+sometimes\s+\w+/i.test(String(segment?.text || ""))) {
-        issues.push(`${slide.slide_id}: segment ${segment.segment_id || "unknown"} is missing a subject after the final transition.`);
-      }
-    });
-    if (slide !== slides[0] && restartLanguagePattern().test(asArray(slide.segments).map((segment) => segment.text).join(" "))) {
-      issues.push(`${slide.slide_id}: script restarts the lecture mid-topic.`);
-    }
-  });
-
   return issues;
 }
 
@@ -222,14 +149,26 @@ async function main() {
     const motionPath = path.join(artifactDir, "motion.manifest.json");
     const issues = [];
 
+    let scriptManifest = null;
     if (!await fileExists(scriptPath)) {
       issues.push(`Missing ${relativeProjectPath(scriptPath)}`);
     } else {
+      scriptManifest = await readJson(scriptPath);
       issues.push(...validateScriptQuality(
-        await readJson(scriptPath),
+        scriptManifest,
         await readJson(topicPlanPath).catch(() => null),
         args,
       ));
+      const alignmentPath = buildManualAlignmentPath(descriptor);
+      if (await fileExists(alignmentPath)) {
+        const alignmentManifest = await readJson(alignmentPath);
+        issues.push(...await validateTtsJobsMatchManifest({
+          descriptor,
+          scriptManifest,
+          alignmentManifest,
+          providerId: alignmentManifest?.provider?.requested_provider || "qwen3_tts",
+        }));
+      }
     }
     if (!await fileExists(motionPath)) {
       issues.push(`Missing ${relativeProjectPath(motionPath)}`);

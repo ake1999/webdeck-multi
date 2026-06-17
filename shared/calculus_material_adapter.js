@@ -197,7 +197,7 @@ function titleCase(value) {
 
 function compactSessionTitle(value) {
   return String(value || "")
-    .replace(/^Session\s+(0?\d+)\s+[—-]\s*/i, (_match, number) => `S${String(number).padStart(2, "0")} `)
+    .replace(/^(?:Session|Unit)\s+(0?\d+)\s+[—-]\s*/i, (_match, number) => `S${String(number).padStart(2, "0")} `)
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -236,7 +236,7 @@ function buildCourseRoadmapBlock(context = {}) {
         number: index + 1,
         session: topic.session,
         label: topic.title,
-        note: isPreviousNeighbor ? "Previous" : isCurrent ? "This topic" : isNextNeighbor ? "Next" : "",
+        note: isPreviousNeighbor ? "Previous" : isCurrent ? "This lesson" : isNextNeighbor ? "Next" : "",
         status: index < safeIndex ? "completed" : isCurrent ? "current" : isNextNeighbor ? "next" : "upcoming",
         expanded: isPreviousNeighbor || isCurrent || isNextNeighbor || undefined,
       };

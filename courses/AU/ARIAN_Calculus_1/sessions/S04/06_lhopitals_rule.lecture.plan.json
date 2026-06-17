@@ -1,0 +1,193 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "06_lhopitals_rule",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Welcome back, callback Session 2 Topic 4 (0/0 holes) and Topic 6 (sin x / x squeeze); motivate L'Hôpital when algebra/squeeze is heavy.",
+    "progression": "Race intuition → theorem_box → direct ∞/∞ examples → transform products/differences/powers → misconception on wrong form → recap.",
+    "destination": "Students check indeterminate form first, apply f'/g' correctly, transform non-quotient forms, and know when Topic 4 algebra beats L'Hôpital.",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "squeeze callback",
+      "theorem_box",
+      "math_solution_steps",
+      "misconception_compare",
+      "pause_and_reveal MCQ",
+      "recap"
+    ]
+  },
+  "audience_level": "First-year university / advanced high school",
+  "topic_goal": "Teach L'Hôpital's Rule for 0/0 and ∞/∞ limits, with transformations for other indeterminate forms and explicit form-check discipline.",
+  "topic_takeaways": [
+    "Check 0/0 or ∞/∞ before applying; differentiate numerator and denominator separately.",
+    "Transform 0·∞, ∞−∞, and indeterminate powers before L'Hôpital.",
+    "Repeat the rule when the derivative ratio stays indeterminate.",
+    "Do not apply when direct substitution works (Topic 4 contrast).",
+    "sin x / x: Topic 6 squeeze; L'Hôpital is an alternative when derivatives are ready."
+  ],
+  "style_notes": [
+    "Welcome back, callback Topic 19 optimization; path_topic_20 current.",
+    "Session 2 callbacks: Topic 4 rational holes, Topic 6 squeeze on sin(x)/x.",
+    "Prefer flex_plot over limit_epsilon and secant_tangent.",
+    "theorem_box on s03, formal conditions non-negotiable.",
+    "pause_and_reveal MCQ on s04, s08; challenge pauses on s13–s14.",
+    "misconception_compare s09: (x²+1)/cos x is NOT 0/0.",
+    "math_solution_steps step IDs aligned for generation cues."
+  ],
+  "transition_style": "Indeterminate hook → formal rule → worked limits → transform tricks → pitfalls → Newton teaser.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "L'Hôpital's Rule" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back. Topic 19 optimization is done; Topic 20 tackles limits that hide behind 0/0 and ∞/∞.",
+      "must_cover": ["Welcome back", "Topic 19 previous", "indeterminate forms"],
+      "must_say": ["Welcome back to Arian University."],
+      "transition_to_next": "Objectives + roadmap path_topic_20."
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Recognize forms, apply f'/g', transform products and powers, repeat when needed.",
+      "must_cover": ["path_topic_20 current", "five objectives"],
+      "transition_from_previous": "Roadmap orients Session 4 arc."
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "When Limits Play Hide-and-Seek" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "sin x / x gives 0/0. Topic 6 squeezed it; Topic 4 factored holes; L'Hôpital uses derivative rates.",
+      "must_cover": ["sin(x)/x 0/0", "Topic 4 callback", "Topic 6 squeeze flex_plot"],
+      "prop_suggestions": ["flex_plot squeeze"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "A Race Between Functions" },
+      "slide_role": "intuition",
+      "importance": "high",
+      "narration_seed": "Probe x toward 0, sin x, x, and sin(x)/x together; f'/g' approaches 1.",
+      "must_cover": ["race intuition", "flex_plot triple curves", "not quotient rule"],
+      "prop_suggestions": ["flex_plot probe"],
+      "likely_student_confusion": ["Compare f/g and f'/g' at x=0.2"]
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "The Formula and Conditions" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box: lim f/g = lim f'/g' when 0/0 or ∞/∞. Form table on the right.",
+      "must_cover": ["theorem_box L'Hôpital", "conditions nested_bullets", "form check table"],
+      "must_say": ["Differentiate numerator and denominator separately"]
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "Example 1: Warm-Up, Direct Application (Pause)" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Worked ln x/(x-1); pause MCQ on (e^x-1)/x → B) 1.",
+      "must_cover": ["math_solution_steps ln example", "pause_and_reveal MCQ", "flex_plot near x=1"],
+      "likely_student_confusion": ["Try e^x-1 over x, A B C D"]
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "Example 2: Repeated Application, ∞/∞" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "e^x/x²: apply twice → ∞. flex_plot shows exponential dominating.",
+      "must_cover": ["math_solution_steps repeated", "e^x beats x^n", "flex_plot exp vs poly"]
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "One-Sided and Infinite Limits" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Same rule for a+ and ∞; Topic 5 callback; ln x / x → 0 example.",
+      "must_cover": ["one-sided formula", "limits at infinity", "Topic 5 callback"]
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Transforming $0 \\cdot \\infty$ Forms" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Rewrite f·g as f/(1/g); flex_plot x ln x and quotient form.",
+      "must_cover": ["0·∞ rewrite strategy", "flex_plot x ln x"]
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Example 3: $0 \\cdot \\infty$ (Pause)" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Worked x ln x → 0; pause MCQ x e^{-x} → A) 0.",
+      "must_cover": ["math_solution_steps x ln x", "pause_and_reveal", "rewrite before L'Hôpital"]
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "Common Pitfall: Applying When Not Indeterminate" },
+      "slide_role": "misconception",
+      "importance": "high",
+      "narration_seed": "misconception_compare: (x²+1)/cos x = 1 at 0, not 0/0; wrong L'Hôpital gives -2.",
+      "must_cover": ["misconception_compare", "Topic 4 contrast", "flex_plot limit 1 at 0"]
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "Transforming $\\infty - \\infty$ Forms" },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Combine fractions; flex_plot sec x, tan x, and difference → 0.",
+      "must_cover": ["∞−∞ strategy", "flex_plot sec minus tan"]
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "Example 4: $\\infty - \\infty$ with Trig" },
+      "slide_role": "example",
+      "importance": "medium",
+      "narration_seed": "sec x − tan x → (1−sin x)/cos x → 0; math_solution_steps full chain.",
+      "must_cover": ["math_solution_steps sec-tan", "common denominator", "limit 0"]
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "[Challenge – Optional] Indeterminate Powers" },
+      "slide_role": "challenge",
+      "importance": "low",
+      "narration_seed": "ln y = g ln f; exponentiate at end. Optional skip.",
+      "must_cover": ["log transform", "1^∞ 0^0 preview"],
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "[Challenge – Optional] Example 5: $1^\\infty$ Form (Pause)" },
+      "slide_role": "challenge",
+      "importance": "low",
+      "narration_seed": "(1+sin 4x)^{cot x} → e^4; splitAfter math_solution_steps; pause parallel (1+2x)^{1/x} → e².",
+      "must_cover": ["math_solution_steps 1^∞", "pause_and_reveal e^2 hint"],
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_ref": { "index": 15, "source_title": "[Challenge – Optional] Pause and Try" },
+      "slide_role": "pause",
+      "importance": "low",
+      "narration_seed": "Standalone pause on (1+2x)^{1/x}; reveal e²; flex_plot guide line.",
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_ref": { "index": 16, "source_title": "[Challenge – Optional] Proof Sketch ($0/0$ case)" },
+      "slide_role": "challenge",
+      "importance": "low",
+      "narration_seed": "Difference quotient proof; rational_hole flex_plot callbacks Topic 4.",
+      "must_cover": ["proof_sketch", "rational_hole Topic 4 callback"],
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_ref": { "index": 17, "source_title": "Summary & Pro Tips" },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Form check first; transform then differentiate; algebra/squeeze when faster. Next: Newton's Method.",
+      "must_cover": ["form table recap", "Topic 4 and 6 callbacks", "tease Topic 21 Newton"],
+      "must_say": ["Newton's Method"],
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "center_bottom" }
+    }
+  ]
+}

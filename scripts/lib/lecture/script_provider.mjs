@@ -63,6 +63,22 @@ export function allowScriptFallback(value, fallback = true) {
   return normalizeBoolean(value, fallback);
 }
 
+export function resolveAllowScriptFallbackDefault({
+  scriptProvider = defaultScriptProvider(),
+  scriptModel = process.env.WEBDECK_SCRIPT_MODEL || "",
+  explicitValue = process.env.WEBDECK_ALLOW_SCRIPT_FALLBACK,
+} = {}) {
+  if (explicitValue != null && explicitValue !== "") {
+    return allowScriptFallback(explicitValue, true);
+  }
+  const provider = normalizeScriptProviderMode(scriptProvider);
+  const hasModel = Boolean(String(scriptModel || "").trim());
+  if (hasModel && (provider === "llm_local" || provider === "auto")) {
+    return false;
+  }
+  return true;
+}
+
 function cacheDirForSelector(selector, provider) {
   return path.join(
     projectRoot,

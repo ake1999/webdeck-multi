@@ -4,6 +4,7 @@ import { mountFunctionAnalysisWidget } from "./widgets/function_analysis.js";
 import { mountLimitEpsilonWidget } from "./widgets/limit_epsilon.js";
 import { mountSecantTangentWidget } from "./widgets/secant_tangent.js";
 import { mountRiemannIntegralWidget } from "./widgets/riemann_integral.js";
+import { mountUnitCircleTrigWidget } from "./widgets/unit_circle_trig.js";
 
 const registry = new Map();
 
@@ -75,3 +76,4 @@ registerCalculusWidget("function_analysis", mountFunctionAnalysisWidget);
 registerCalculusWidget("limit_epsilon", mountLimitEpsilonWidget);
 registerCalculusWidget("secant_tangent", mountSecantTangentWidget);
 registerCalculusWidget("riemann_integral", mountRiemannIntegralWidget);
+registerCalculusWidget("unit_circle_trig", mountUnitCircleTrigWidget);

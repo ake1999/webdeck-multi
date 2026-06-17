@@ -16,6 +16,20 @@ Phase 2 adds catalog-wide validation and smoke-export tooling so we can answer:
 - which topics have warnings but still export
 - which topics are blocked by real errors
 
+## Agent and course authoring docs
+
+Agents and contributors should read these before editing calculus topics:
+
+| Doc | Purpose |
+|-----|---------|
+| [`AGENTS.md`](AGENTS.md) | Repo contracts, tests, branch direction |
+| [`docs/calculus_course_authoring_guide.md`](docs/calculus_course_authoring_guide.md) | **Slides, plans, math steps, widgets, course consistency** |
+| [`.agents/project-map.md`](.agents/project-map.md) | Pipeline map and module hubs |
+| [`docs/project_handoff_for_new_chat.md`](docs/project_handoff_for_new_chat.md) | Full project context handoff |
+
+Gold-standard reference topics: `courses/AU/ARIAN_Calculus_1/sessions/S01/` and
+`S02/` — Topics 1–4 (`*.slides.js` + `*.lecture.plan.json`).
+
 ## Phase 1 Features
 
 - Stable semantic slide IDs and element IDs

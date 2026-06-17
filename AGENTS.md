@@ -1,8 +1,9 @@
 # Agent Notes
 
 This repository builds browser lecture decks and the generation pipeline around
-them. Read this file before editing, then read `.agents/project-map.md` and
-`docs/project_handoff_for_new_chat.md` for the current branch context.
+them. Read this file before editing, then read `.agents/project-map.md`,
+`docs/project_handoff_for_new_chat.md`, and
+`docs/calculus_course_authoring_guide.md` for calculus topic work.
 
 ## Project Shape
 
@@ -32,19 +33,37 @@ them. Read this file before editing, then read `.agents/project-map.md` and
 - Generation-side calculus tests now exist through
   `scripts/convert_calculus_material.mjs`. The first test topic is generated
   at
-  `courses/AU/ARIAN_Calculus_1/sessions/S01/review_of_functions_and_graphs.*`
+  `courses/AU/ARIAN_Calculus_1/sessions/S01/01_review_of_functions_and_graphs.*`
   from `courses/Calculus/Materials/review_of_functions_and_graphs.json`.
+- AU session topic files use a two-digit session order prefix:
+  `NN_<material_slug>.slides.js` and matching `.lecture.plan.json` (e.g.
+  `01_review_of_functions_and_graphs`). Catalog `topic.id`, `topicMeta.id`, and
+  `topic_id` in plans must match that stem; material JSON keeps the unprefixed
+  slug. Helpers live in `shared/topic_naming.js`.
+- **AU / YouTube display naming:** keep internal IDs and URL params as
+  `session` + `topic` (and folders under `sessions/Sxx/`). Learner-facing UI
+  uses **Unit** (5 thematic arcs) and **Lesson** (26 global episodes for Calc 1)
+  via `shared/course_labels.js` and `terminology: YOUTUBE_TERMINOLOGY` on AU
+  courses in `shared/course_catalog.js`. Do not rename catalog `id`s or URL
+  keys; rebrand at render/chooser boundaries (`sessions.html`, `deck_render.js`
+  roadmaps, HUD). Roadmap `path_topic_NN` stays as the global lesson index.
 - Calculus decks now have a reusable native browser layer in
   `shared/calculus/`. It supports block rendering plus inline
   `media.kind: "calculus_widget"` widgets; do not replace this with static
   Python plot screenshots as the primary visual path.
-- Current rich block types include `formula_block`, `derivation_steps`,
-  `theorem_box`, `example_solution`, `proof_sketch`,
-  `misconception_compare`, `pause_and_reveal`, `math_table`, `paragraph`, and
-  `nested_bullets`. `visual_lab` is the full-width interactive slide type.
-- Current native widgets are `function_transform`, `limit_epsilon`,
-  `secant_tangent`, and `riemann_integral`. Widgets expose formula, plot,
-  readout, controls, and optional `scriptedTimeline` elements as layout
+- Current rich block types include `math_solution_steps` (preferred for worked
+  algebra), `formula_block`, `derivation_steps`, `theorem_box`,
+  `example_solution`, `proof_sketch`, `misconception_compare`,
+  `pause_and_reveal`, `math_table`, `paragraph`, `nested_bullets`, and
+  `course_path`. `visual_lab` uses left steps + right plot (§3b in the authoring
+  guide) with optional `labExamples` tabs. See
+  `docs/calculus_course_authoring_guide.md` for when to use each block.
+- Current native widgets include `function_analysis` (many variants plus
+  configurable `flex_plot` via `shared/calculus/core/plot_spec.js`),
+  `function_transform`, `limit_epsilon`, `secant_tangent`, `riemann_integral`,
+  and `unit_circle_trig`. Prefer `flex_plot` + `plot` specs for new graphs instead
+  of reusing the same hardcoded variant on every slide. Widgets expose formula,
+  plot, readout, controls, and optional `scriptedTimeline` elements as layout
   targets.
 - Arian University lecture plans use `shared/arian.avatar.profile.json` so the
   personal-brand calculus voice does not inherit old robotics wording.
@@ -58,8 +77,19 @@ them. Read this file before editing, then read `.agents/project-map.md` and
 - Keep generated files out of Git unless the user explicitly asks otherwise.
 - For Graphify refreshes, use `graphify update .`; do not commit
   `graphify-out/`.
-- For calculus architecture checks, run `npm run test:calculus-widgets` plus
-  the existing topic-script and slide-video-control tests.
+- For calculus architecture checks, run `npm run test:calculus-widgets`,
+  `npm run test:math-solution-steps`, and the topic-script / slide-video-control
+  tests.
+- Hand-enhanced AU topics should follow `docs/calculus_course_authoring_guide.md`
+  for slide/plan consistency, `math_solution_steps` usage, and widget pairing.
+- **`nested_bullets` ordered lists:** default is `<ol>` (`ordered !== false`).
+  Do not prefix items with `**1.**` / `**2.**` (duplicates markers). Use
+  `ordered: false` only for bullet dots. Keep left-column lists short on dense
+  two-col slides to avoid footer overlap.
+- **Slide copy punctuation:** prefer commas, colons, or periods over em dashes
+  (`—`) in learner-facing text and narration seeds. Use `Arian University •
+  Calculus 1` for HUD branding (not `—`). Keep Unicode math minus (`−`) in
+  formulas; do not confuse it with an em dash.
 - Do not commit API keys. The user's DeepSeek key is expected outside the repo
   in `dsk.txt`; pass it only at runtime with `--scriptApiKeyFile` or
   `WEBDECK_SCRIPT_API_KEY_FILE`.

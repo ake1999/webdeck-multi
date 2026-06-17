@@ -6,7 +6,13 @@ import {
   getCourseConfig,
   getSchoolConfig,
 } from "./course_catalog.js";
+import {
+  buildLessonIndex,
+  formatLessonLabel,
+  getCourseTerminology,
+} from "./course_labels.js";
 import { adaptCalculusMaterialToDeck } from "./calculus_material_adapter.js";
+import { materialSlugFromTopicId } from "./topic_naming.js";
 
 export async function bootSession({ initDeck }) {
   const params = new URLSearchParams(window.location.search);
@@ -69,7 +75,7 @@ export async function bootSession({ initDeck }) {
   const courseCfg = getCourseConfig(course) || {};
 
   // Matches the authored deck structure:
-  // /courses/AU/ARIAN_Calculus_1/sessions/S01/review_of_functions_and_graphs.slides.js
+  // /courses/AU/ARIAN_Calculus_1/sessions/S01/01_review_of_functions_and_graphs.slides.js
   const modulePath =
     `/courses/${encodeURIComponent(school)}/` +
     `${encodeURIComponent(course)}/` +
@@ -90,9 +96,21 @@ export async function bootSession({ initDeck }) {
         : runtimeCfg.logoSrc;
 
     if (hudLabel) {
-      hudLabel.textContent =
-        (topicMeta && topicMeta.title) ||
-        `Session ${session} — ${topic.replace(/_/g, " ")}`;
+      const terminology = getCourseTerminology(courseCfg);
+      const lessonIndex = buildLessonIndex(courseCfg || {});
+      const globalNumber = lessonIndex.get(`${session}:${topic}`);
+      const catalogTopic = courseCfg?.sessions
+        ?.find((item) => item.id === session)
+        ?.topics
+        ?.find((item) => item.id === topic);
+      const lessonTitle = catalogTopic
+        ? formatLessonLabel(globalNumber, catalogTopic, terminology)
+        : topic.replace(/_/g, " ");
+      hudLabel.textContent = (topicMeta && topicMeta.title)
+        ? (globalNumber
+          ? `${terminology.lesson} ${globalNumber} — ${topicMeta.title}`
+          : topicMeta.title)
+        : lessonTitle;
     }
 
     return initDeck({
@@ -122,7 +140,8 @@ export async function bootSession({ initDeck }) {
 
   async function loadCalculusMaterialTopic() {
     const materialRoot = courseCfg.materialRoot || "/courses/Calculus/Materials";
-    const materialPath = `${materialRoot.replace(/\/+$/, "")}/${encodeURIComponent(topic)}.json`;
+    const materialSlug = materialSlugFromTopicId(topic);
+    const materialPath = `${materialRoot.replace(/\/+$/, "")}/${encodeURIComponent(materialSlug)}.json`;
     const response = await fetch(materialPath);
     if (!response.ok) {
       throw new Error(`Could not fetch calculus material ${materialPath}: HTTP ${response.status}`);

@@ -6,6 +6,37 @@
 // - Math support (KaTeX): $$...$$ or \[...\] for display, \( ... \) for inline
 
 import { mountCalculusWidget } from "./calculus/index.js";
+import { bindVisualLabSlide, renderVisualLabExampleTabs } from "./visual_lab.js";
+import {
+  bindMathSolutionStepsRoot,
+  normalizeTex,
+  stepLeadingOp,
+  stepLineGap,
+  stepParts,
+  stepSpeech,
+} from "./math_solution_steps.js";
+import { CLASSROOM_TERMINOLOGY, rebrandRoadmapLessonLabel, rebrandRoadmapNote, rebrandRoadmapSessionLabel } from "./course_labels.js";
+import { topicNavTargetFromItem } from "./topic_navigation.js";
+
+let deckRenderContext = {
+  terminology: CLASSROOM_TERMINOLOGY,
+};
+
+export function setDeckRenderContext(context = {}) {
+  deckRenderContext = {
+    terminology: context.terminology || CLASSROOM_TERMINOLOGY,
+  };
+}
+
+function applyTopicNavTarget(node, item, index) {
+  const { pathId, number } = topicNavTargetFromItem(item, index);
+  node.dataset.topicNavTarget = pathId;
+  node.dataset.topicGlobalNumber = String(number);
+  node.classList.add("course-nav-target");
+  node.setAttribute("role", "link");
+  node.setAttribute("tabindex", "0");
+  node.setAttribute("title", `Open topic ${number}`);
+}
 
 function typesetMath(root) {
   if (!window.katex) return;
@@ -138,6 +169,215 @@ function renderBulletList(items, slideId, counters) {
   });
 
   return list;
+}
+
+function finalizeSlide(slide, slideData = null) {
+  typesetMath(slide);
+  slide.querySelectorAll(".math-solution-steps").forEach((root) => {
+    bindMathSolutionStepsRoot(root);
+  });
+  if (slideData?.type === "visual_lab") {
+    bindVisualLabSlide(slide, slideData);
+  }
+  return slide;
+}
+
+function resolveMathSolutionStepLayout(block) {
+  const raw = String(block.stepLayout || block.layout || "flow").toLowerCase();
+  if (raw === "stack" || raw === "vertical") return "stack";
+  if (raw === "chain" || raw === "horizontal" || raw === "equal" || raw === "compact") return "chain";
+  return "flow";
+}
+
+function renderMathSolutionSteps(block, slideId, counters) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "content-block content-block--math_solution_steps math-solution-steps-shell";
+  applyElementMetadata(wrapper, {
+    slideId,
+    elementId: block.id,
+    elementType: "math_solution_steps",
+    label: plainTextForSay(block.title || block.problem || "Math solution"),
+  });
+
+  if (block.title) {
+    wrapper.appendChild(createRichTextElement(
+      "div",
+      block.title,
+      {
+        slideId,
+        parentElementId: block.id,
+        elementId: block.titleId || `${block.id}_title`,
+        elementType: "math_solution_steps_title",
+        label: plainTextForSay(block.title),
+      },
+      counters,
+      { className: "content-block-title math-solution-title", sayText: block.title },
+    ));
+  }
+
+  const steps = asArray(block.steps);
+  const stepLayout = resolveMathSolutionStepLayout(block);
+  const chainOp = block.chainOp || "=";
+  const splitAfter = Number(block.splitAfter ?? block.leftSteps ?? 0);
+  const useSplit = splitAfter > 0 && steps.length > splitAfter;
+  const lanes = useSplit
+    ? [
+      { key: "left", steps: steps.slice(0, splitAfter), startIndex: 0 },
+      { key: "right", steps: steps.slice(splitAfter), startIndex: splitAfter },
+    ]
+    : [{ key: "single", steps, startIndex: 0 }];
+
+  const board = document.createElement("div");
+  board.className = `math-solution-steps math-solution-steps--${stepLayout}`;
+  if (useSplit) {
+    board.classList.add("math-solution-steps--split");
+    board.dataset.splitAfter = String(splitAfter);
+  }
+  board.dataset.revealMode = block.revealMode || "sequential";
+  board.dataset.initialRevealed = String(Number(block.startVisible ?? 0));
+  board.dataset.slideId = slideId;
+  board.dataset.blockId = block.id;
+  board.dataset.stepLayout = stepLayout;
+  board.setAttribute("role", "group");
+  board.setAttribute("aria-label", plainTextForSay(block.title || "Step-by-step solution"));
+
+  if (block.problem) {
+    const problem = createRichTextElement(
+      "div",
+      normalizeTex(block.problem),
+      {
+        slideId,
+        parentElementId: block.id,
+        elementId: block.problemId || `${block.id}_problem`,
+        elementType: "math_solution_problem",
+        label: plainTextForSay(block.problem),
+      },
+      counters,
+      { className: "math-solution-problem", sayText: block.problemSay || block.problem },
+    );
+    board.appendChild(problem);
+  }
+
+  const columns = document.createElement("div");
+  columns.className = useSplit
+    ? "math-solution-columns"
+    : "math-solution-columns math-solution-columns--single";
+  board.appendChild(columns);
+
+  lanes.forEach((lane) => {
+    if (useSplit && lane.key === "right") {
+      const divider = document.createElement("div");
+      divider.className = "math-solution-split-divider";
+      divider.dataset.splitDivider = "true";
+      divider.setAttribute("aria-hidden", "true");
+      columns.appendChild(divider);
+    }
+
+    const laneEl = document.createElement("div");
+    laneEl.className = `math-solution-lane math-solution-lane--${lane.key}`;
+    if (stepLayout === "chain") {
+      laneEl.classList.add("math-solution-chain");
+    }
+    columns.appendChild(laneEl);
+
+    lane.steps.forEach((step, laneIndex) => {
+      const index = lane.startIndex + laneIndex;
+      const stepId = step.id || `${block.id}_step_${index + 1}`;
+      const parts = stepParts(step);
+      const stepEl = document.createElement("div");
+      stepEl.className = "math-solution-step";
+      stepEl.dataset.mathStepIndex = String(index);
+      stepEl.dataset.lineGap = stepLineGap(step);
+      applyElementMetadata(stepEl, {
+        slideId,
+        parentElementId: block.id,
+        elementId: stepId,
+        elementType: "math_solution_step",
+        label: plainTextForSay(stepSpeech(step) || parts.map((part) => part.math).join(" ") || `Step ${index + 1}`),
+      });
+      stepEl.setAttribute("aria-label", `Step ${index + 1}`);
+
+      const leadingOp = (stepLayout === "flow" || stepLayout === "chain")
+        ? stepLeadingOp(step, chainOp)
+        : "";
+      if (leadingOp) {
+        const opEl = document.createElement("span");
+        opEl.className = "math-solution-chain-op math-solution-chain-op--leading";
+        opEl.textContent = leadingOp;
+        opEl.setAttribute("aria-hidden", "true");
+        stepEl.appendChild(opEl);
+      }
+
+      const body = document.createElement("div");
+      body.className = parts.length > 1
+        ? "math-solution-step-body math-solution-step-body--merged"
+        : "math-solution-step-body";
+      stepEl.appendChild(body);
+
+      parts.forEach((part, partIndex) => {
+        if (part.op) {
+          const innerOp = document.createElement("span");
+          innerOp.className = "math-solution-chain-op math-solution-chain-op--inner";
+          innerOp.textContent = part.op;
+          innerOp.setAttribute("aria-hidden", "true");
+          body.appendChild(innerOp);
+        }
+
+        const mathLine = createRichTextElement(
+          "div",
+          normalizeTex(part.math),
+          {
+            slideId,
+            parentElementId: stepId,
+            elementId: parts.length === 1
+              ? `${stepId}_math`
+              : `${stepId}_math_${partIndex + 1}`,
+            elementType: "math",
+            label: plainTextForSay(part.math),
+          },
+          counters,
+          {
+            className: "math-solution-math",
+            sayText: partIndex === 0 ? (step.say || step.note || part.math) : part.math,
+          },
+        );
+        body.appendChild(mathLine);
+      });
+
+      const note = stepSpeech(step);
+      if (stepLayout === "stack" && note && parts.length) {
+        stepEl.appendChild(createRichTextElement(
+          "div",
+          note,
+          {
+            slideId,
+            parentElementId: stepId,
+            elementId: `${stepId}_note`,
+            elementType: "paragraph",
+            label: plainTextForSay(note),
+          },
+          counters,
+          { className: "math-solution-note", sayText: note },
+        ));
+      }
+
+      attachWidgetParams(stepEl, slideId, step);
+      laneEl.appendChild(stepEl);
+    });
+  });
+
+  const advance = document.createElement("button");
+  advance.type = "button";
+  advance.className = "math-solution-advance";
+  advance.textContent = block.advanceLabel || "Next step →";
+  board.appendChild(advance);
+
+  wrapper.appendChild(board);
+  return wrapper;
+}
+
+function asArray(value) {
+  return Array.isArray(value) ? value : [];
 }
 
 function renderBlockList(items, slideId, counters, ordered = false) {
@@ -326,6 +566,7 @@ function renderCoursePathBody(block, slideId, counters) {
       elementType: "course_path_item",
       label: plainTextForSay([item.label, item.note].filter(Boolean).join(": ")),
     });
+    applyTopicNavTarget(node, item, index);
 
     const marker = document.createElement("div");
     marker.className = "course-path-marker";
@@ -382,22 +623,29 @@ function renderCourseTopicGrid(block, items, slideId, counters) {
     group.items.push({ ...item, _index: index });
   });
 
+  const terminology = deckRenderContext.terminology || CLASSROOM_TERMINOLOGY;
+
   grouped.forEach((group, groupIndex) => {
     const section = document.createElement("div");
     section.className = "course-topic-session";
 
+    const sessionLabel = rebrandRoadmapSessionLabel(
+      group.session || `${terminology.unit} ${groupIndex + 1}`,
+      terminology,
+    );
+
     const heading = createRichTextElement(
       "div",
-      group.session || `Session ${groupIndex + 1}`,
+      sessionLabel,
       {
         slideId,
         parentElementId: block.id,
         elementId: `${block.id}_session_${groupIndex + 1}`,
         elementType: "course_path_session",
-        label: plainTextForSay(group.session || `Session ${groupIndex + 1}`),
+        label: plainTextForSay(sessionLabel),
       },
       counters,
-      { className: "course-topic-session-title", sayText: group.session || `Session ${groupIndex + 1}` },
+      { className: "course-topic-session-title", sayText: sessionLabel },
     );
     section.appendChild(heading);
 
@@ -420,6 +668,7 @@ function renderCourseTopicGrid(block, items, slideId, counters) {
         elementType: "course_path_item",
         label: plainTextForSay([item.number || item._index + 1, item.label, item.note].filter(Boolean).join(": ")),
       });
+      applyTopicNavTarget(node, item, item._index);
 
       const marker = document.createElement("span");
       marker.className = "course-topic-number";
@@ -429,32 +678,34 @@ function renderCourseTopicGrid(block, items, slideId, counters) {
       if (expanded) {
         const textWrap = document.createElement("span");
         textWrap.className = "course-topic-copy";
+        const lessonLabel = rebrandRoadmapLessonLabel(item, terminology);
         textWrap.appendChild(createRichTextElement(
           "span",
-          item.label || `Topic ${item.number || item._index + 1}`,
+          lessonLabel,
           {
             slideId,
             parentElementId: item.id || block.id,
             elementId: `${item.id || `${block.id}_topic_${item._index + 1}`}_label`,
             elementType: "course_path_label",
-            label: plainTextForSay(item.label || ""),
+            label: plainTextForSay(lessonLabel),
           },
           counters,
-          { className: "course-topic-label", sayText: item.say || item.label || "" },
+          { className: "course-topic-label", sayText: item.say || lessonLabel || "" },
         ));
-        if (item.note) {
+        const lessonNote = rebrandRoadmapNote(item.note, terminology);
+        if (lessonNote) {
           textWrap.appendChild(createRichTextElement(
             "span",
-            item.note,
+            lessonNote,
             {
               slideId,
               parentElementId: item.id || block.id,
               elementId: `${item.id || `${block.id}_topic_${item._index + 1}`}_note`,
               elementType: "course_path_note",
-              label: plainTextForSay(item.note),
-            },
-            counters,
-            { className: "course-topic-note", sayText: item.note },
+            label: plainTextForSay(lessonNote),
+          },
+          counters,
+          { className: "course-topic-note", sayText: lessonNote },
           ));
         }
         node.appendChild(textWrap);
@@ -492,6 +743,7 @@ function renderBlock(block, slideId, counters) {
     derivation_steps: "Derivation",
     theorem_box: "Theorem",
     example_solution: "Example",
+    math_solution_steps: "Solution",
     proof_sketch: "Proof sketch",
     misconception_compare: "Compare",
     pause_and_reveal: "Pause",
@@ -542,6 +794,10 @@ function renderBlock(block, slideId, counters) {
       );
     });
     return wrapper;
+  }
+
+  if (type === "math_solution_steps") {
+    return renderMathSolutionSteps(block, slideId, counters);
   }
 
   if (type === "derivation_steps" || type === "example_solution" || type === "proof_sketch") {
@@ -668,7 +924,8 @@ function renderBlock(block, slideId, counters) {
   }
 
   if (type === "nested_bullets") {
-    wrapper.appendChild(renderBlockList(block.items, slideId, counters, false));
+    const ordered = block.ordered !== false;
+    wrapper.appendChild(renderBlockList(block.items, slideId, counters, ordered));
     return wrapper;
   }
 
@@ -1115,8 +1372,7 @@ export function renderSlide(slideData, idx) {
     }
 
     slide.appendChild(wrap);
-    typesetMath(slide);
-    return slide;
+    return finalizeSlide(slide, slideData);
   }
 
   if (slideData.type === "bullets") {
@@ -1184,14 +1440,12 @@ export function renderSlide(slideData, idx) {
       slide.appendChild(body);
     }
 
-    typesetMath(slide);
-    return slide;
+    return finalizeSlide(slide, slideData);
   }
 
   if (slideData.type === "text") {
     renderTextSlide(slideData, slide, counters);
-    typesetMath(slide);
-    return slide;
+    return finalizeSlide(slide, slideData);
   }
 
   if (slideData.type === "visual_lab") {
@@ -1215,40 +1469,109 @@ export function renderSlide(slideData, idx) {
       );
     }
 
-    if (slideData.lead) {
-      slide.appendChild(
+    renderSlideQuestion(slideData, slide, counters);
+
+    const layout = document.createElement("div");
+    layout.className = "visual-lab-layout";
+
+    const side = document.createElement("div");
+    side.className = "visual-lab-side col";
+
+    const leftSource = slideData.left && typeof slideData.left === "object"
+      ? slideData.left
+      : {
+        lead: slideData.lead,
+        blocks: slideData.blocks,
+      };
+
+    if (leftSource.lead) {
+      side.appendChild(
         createRichTextElement(
           "p",
-          slideData.lead,
+          leftSource.lead,
           {
             slideId,
-            elementId: slideData.leadId,
+            elementId: slideData.leadId || "visual_lab_lead",
             elementType: "lead",
-            label: plainTextForSay(slideData.lead),
+            label: plainTextForSay(leftSource.lead),
           },
           counters,
           {
             className: "muted visual-lab-lead",
-            sayText: slideData.lead,
+            sayText: leftSource.lead,
           },
         ),
       );
     }
 
-    if (Array.isArray(slideData.blocks) && slideData.blocks.length) {
-      slide.appendChild(renderBlocks(slideData.blocks, slideId, counters));
+    const labExamples = Array.isArray(slideData.labExamples) ? slideData.labExamples : [];
+    if (labExamples.length) {
+      const tabs = renderVisualLabExampleTabs(labExamples, {
+        showGenerate: Boolean(slideData.labGeneratePresets?.length),
+      });
+      side.appendChild(tabs);
+
+      const activeLabel = document.createElement("div");
+      activeLabel.className = "visual-lab-active-label";
+      activeLabel.dataset.visualLabActiveLabel = "true";
+      side.appendChild(activeLabel);
+
+      const formula = document.createElement("div");
+      formula.className = "visual-lab-formula";
+      formula.dataset.visualLabFormula = "true";
+      formula.hidden = true;
+      side.appendChild(formula);
+
+      const stepsHost = document.createElement("div");
+      stepsHost.className = "visual-lab-steps";
+      stepsHost.dataset.visualLabSteps = "true";
+      side.appendChild(stepsHost);
     }
 
-    if (slideData.media) {
-      const media = renderMedia(slideData.media, {
+    if (Array.isArray(leftSource.blocks) && leftSource.blocks.length) {
+      side.appendChild(renderBlocks(leftSource.blocks, slideId, counters));
+    }
+
+    if (slideData.labSiteNote) {
+      side.appendChild(
+        createRichTextElement(
+          "p",
+          slideData.labSiteNote,
+          {
+            slideId,
+            elementId: "visual_lab_site_note",
+            elementType: "lab_note",
+            label: plainTextForSay(slideData.labSiteNote),
+          },
+          counters,
+          {
+            className: "visual-lab-site-note",
+            sayText: slideData.labSiteNote,
+          },
+        ),
+      );
+    }
+
+    const plotPane = document.createElement("div");
+    plotPane.className = "visual-lab-plot-pane col";
+
+    const mediaSpec = slideData.media
+      || (slideData.right && slideData.right.media)
+      || null;
+
+    if (mediaSpec) {
+      const media = renderMedia(mediaSpec, {
         slideId,
         parentElementId: "",
       }, counters);
-      if (media) slide.appendChild(media);
+      if (media) plotPane.appendChild(media);
     }
 
-    typesetMath(slide);
-    return slide;
+    layout.appendChild(side);
+    layout.appendChild(plotPane);
+    slide.appendChild(layout);
+
+    return finalizeSlide(slide, slideData);
   }
 
   if (slideData.type === "two-col") {
@@ -1286,8 +1609,7 @@ export function renderSlide(slideData, idx) {
     grid.appendChild(rightWrap);
     slide.appendChild(grid);
 
-    typesetMath(slide);
-    return slide;
+    return finalizeSlide(slide, slideData);
   }
 
   if (slideData.type === "mcq") {
@@ -1379,8 +1701,7 @@ export function renderSlide(slideData, idx) {
     quiz.appendChild(feedback);
 
     slide.appendChild(quiz);
-    typesetMath(slide);
-    return slide;
+    return finalizeSlide(slide, slideData);
   }
 
   if (slideData.html) {
@@ -1396,13 +1717,11 @@ export function renderSlide(slideData, idx) {
         counters,
       ),
     );
-    typesetMath(slide);
-    return slide;
+    return finalizeSlide(slide, slideData);
   }
 
   slide.innerHTML = `<h2>Empty slide</h2>`;
-  typesetMath(slide);
-  return slide;
+  return finalizeSlide(slide, slideData);
 }
 
 // --- Rich text helpers (SAFE) ---

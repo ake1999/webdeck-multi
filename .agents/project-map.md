@@ -73,22 +73,29 @@ project architecture. The important project-owned hubs are:
   topic data.
 - Generation-side testing uses `scripts/convert_calculus_material.mjs`. The
   package shortcut `npm run convert:calculus-test` creates
-  `courses/AU/ARIAN_Calculus_1/sessions/S01/review_of_functions_and_graphs.slides.js`
+  `courses/AU/ARIAN_Calculus_1/sessions/S01/01_review_of_functions_and_graphs.slides.js`
   and the matching `.lecture.plan.json`.
+- AU topic filenames are prefixed with session order (`01_`, `02_`, …) so file
+  sort order matches teaching order; see `shared/topic_naming.js`.
 - AU/calculus plans use `shared/arian.avatar.profile.json`; keep old robotics
   avatar wording out of personal-brand course outputs.
 - `llm_local` and topic-script planning accept `--scriptApiKeyFile` and
   `WEBDECK_SCRIPT_API_KEY_FILE` for OpenAI-compatible APIs such as DeepSeek.
   Never store the key in this repo.
-- The deck model/render path supports rich blocks:
+- The deck model/render path supports rich blocks including
+  `math_solution_steps` (progressive reveal, pipeline-synced step IDs),
   `formula_block`, `derivation_steps`, `theorem_box`, `example_solution`,
   `proof_sketch`, `misconception_compare`, `pause_and_reveal`, `math_table`,
-  `paragraph`, and `nested_bullets`.
+  `paragraph`, `nested_bullets`, and `course_path`.
 - `visual_lab` is the full-width slide type for interactive calculus visuals.
-- Inline widget media uses `media.kind: "calculus_widget"`. The first widgets
-  are `function_transform`, `limit_epsilon`, `secant_tangent`, and
-  `riemann_integral`; each uses shared parameter state so formula, plot,
-  readout, controls, and scripted playback stay synchronized.
+- Inline widget media uses `media.kind: "calculus_widget"`. Widgets include
+  `function_analysis`, `function_transform`, `limit_epsilon`, `secant_tangent`,
+  `riemann_integral`, and `unit_circle_trig`; each uses shared parameter state
+  so formula, plot, readout, controls, and scripted playback stay synchronized.
+- Agent authoring playbook:
+  `docs/calculus_course_authoring_guide.md` (slides.js, lecture.plan.json,
+  math steps, widgets, course consistency). Gold references: AU S01/S02 Topics
+  1–4 `*.slides.js` + plans.
 - Layout export sees widget sub-targets such as `_formula`, `_plot`,
   `_readout`, `_controls`, and per-control IDs. Script/planning code now reads
   block text and calculus widget labels.
@@ -98,5 +105,6 @@ project architecture. The important project-owned hubs are:
   fields, composition diagrams, even/odd symmetry, piecewise graph builders,
   and series partial sums.
 - Focused tests: `npm run test:calculus-widgets`,
-  `npm run test:topic-script-plan`, `npm run test:slide-video-controls`, and
-  focused `npm run validate -- --school AU --course ARIAN_Calculus_1 --session S01 --topic review_of_functions_and_graphs`.
+  `npm run test:math-solution-steps`, `npm run test:topic-script-plan`,
+  `npm run test:slide-video-controls`, and
+  focused `npm run validate -- --school AU --course ARIAN_Calculus_1 --session S01 --topic 01_review_of_functions_and_graphs`.

@@ -1,0 +1,196 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "02_critical_points_and_extrema_on_an_interval",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "After Topic 15 related rates, find where f hits absolute max/min on a closed interval.",
+    "progression": "Farmer hook → critical numbers → Fermat → worked examples → f' sign misconception → EVT + closed interval → |x-2| → farmer solution → polynomial lab → close.",
+    "destination": "Students find critical numbers, apply closed interval method, and distinguish critical from extremum.",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "optimization hook",
+      "theorem_box",
+      "math_solution_steps",
+      "misconception_compare",
+      "visual_lab",
+      "recap"
+    ]
+  },
+  "audience_level": "first-year university / advanced high school",
+  "topic_goal": "Teach critical numbers and absolute extrema on [a,b] using derivative rules from Topics 10–13.",
+  "topic_takeaways": [
+    "Critical number: f'(c)=0 or f'(c) DNE",
+    "Fermat: local extremum ⇒ critical; converse false (x³)",
+    "EVT + closed interval method: evaluate f at critical points and endpoints",
+    "Do not confuse f' sign with f sign; critical ≠ extremum"
+  ],
+  "style_notes": [
+    "Welcome back after Topic 15 Related Rates.",
+    "Callback f'(x)=0 using power/product/chain rules Topics 10–13.",
+    "Roadmap currentId path_topic_16; Topic 17 Rolle/MVT next.",
+    "theorem_box EVT on s07; Fermat on s03.",
+    "misconception_compare s06: f' sign vs f sign.",
+    "visual_lab s14: three polynomial tabs, demo one on YouTube.",
+    "pause_and_reveal on s05, s08, s10, s12, s16 final check.",
+    "Farmer problem opens s01 and closes s12–s13."
+  ],
+  "transition_style": "Hook with farmer area → definitions → examples → interval method → application → lab → MVT teaser.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "Critical Points and Extrema on an Interval" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back, Topic 15 linked rates. Topic 16: critical points and absolute extrema on an interval.",
+      "must_cover": ["Topic 16", "f'(x)=0"],
+      "must_say": ["Welcome back to Arian University."],
+      "transition_to_next": "Objectives + roadmap."
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Roadmap path_topic_16. Four objectives: critical numbers, closed interval, local vs absolute, farmer application.",
+      "must_cover": ["path_topic_15 completed", "path_topic_16 current", "path_topic_17 next"],
+      "transition_to_next": "Farmer hook."
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "Why Critical Points Matter" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "1200 m fence along river, maximize area. Preview parabola A(x). Returns at end.",
+      "must_cover": ["farmer setup", "area preview graph"],
+      "prop_suggestions": ["flex_plot A(x) parabola"]
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "Critical Numbers Defined" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box critical number. f'(c)=0 or DNE. Probe cubic x^3-3x at x=±1.",
+      "must_cover": ["theorem_box definition", "Topics 10-13 callback", "critical at ±1"],
+      "likely_student_confusion": ["Move probe to f'(c)=0"],
+      "prop_suggestions": ["flex_plot cubic critical vLines"]
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "Fermat's Theorem" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Fermat: local extremum with f' existing ⇒ f'(c)=0. Converse false. Graph local max/min.",
+      "must_cover": ["Fermat one-way implication", "converse false"],
+      "prop_suggestions": ["flex_plot local extrema"]
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "Warm-Up: Finding Critical Numbers" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "step_1 f'=6x^2-18x+12. step_2 factor. step_3 x=1,2. Power rule from Topic 10.",
+      "must_cover": ["step_1 through step_3", "critical numbers 1 and 2"],
+      "prop_suggestions": ["flex_plot warm-up cubic"]
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "Standard Example: x³ (Pause)" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "f'(x)=3x^2, critical at 0, but neither max nor min. pause_and_reveal. f' nonnegative both sides.",
+      "must_cover": ["step_1 through step_4", "pause neither extremum", "f' sign chart"],
+      "likely_student_confusion": ["Is x=0 a local extremum?"]
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "Common Mistake: f' Sign vs f Sign" },
+      "slide_role": "misconception",
+      "importance": "high",
+      "narration_seed": "misconception_compare: f'>0 means increasing not f>0. Test f' sign change for extrema.",
+      "must_cover": ["misconception_compare pairs", "first derivative test preview"],
+      "must_say": ["Critical number is not the same as extremum."]
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Closed Interval Method" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box EVT. nested_bullets three steps. Compare f at critical 0,2 and endpoints on [-1,4].",
+      "must_cover": ["EVT continuous on [a,b]", "ci_1 ci_2 ci_3 workflow"],
+      "prop_suggestions": ["flex_plot cubic interval"]
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Try It: Absolute Extrema of |x-2| (Pause)" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Pause |x-2| on [0,4]. Corner x=2, f' DNE. Candidates 0,2,4.",
+      "must_cover": ["pause_and_reveal candidates", "corner critical"],
+      "prop_suggestions": ["flex_plot piecewise abs"]
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "Solution: |x-2| on [0,4]" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "step_1 f' DNE at 2. step_2 evaluate. step_3 min 0 at 2, max 2 at endpoints.",
+      "must_cover": ["step_1 through step_3", "endpoints for absolute max"],
+      "prop_suggestions": ["math_table candidates"]
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "[Challenge, Optional] Critical Numbers with DNE (Pause)" },
+      "slide_role": "pause",
+      "importance": "low",
+      "narration_seed": "Optional fractional powers. Pause, hint x=0,4,6 and x=4.",
+      "must_cover": ["optional challenge", "f' DNE at endpoints"]
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "[Challenge, Optional] Solution: x^{2/3}(6-x)^{1/3}" },
+      "slide_role": "example",
+      "importance": "low",
+      "narration_seed": "step_1 derivative formula. step_2 x=4. step_3 DNE at 0,6. Product/chain Topics 12-13.",
+      "must_cover": ["step_1 through step_3", "three critical numbers"]
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "Try It: Farmer's Fence (Pause)" },
+      "slide_role": "pause",
+      "importance": "medium",
+      "narration_seed": "Pause farmer, A'(x)=1200-4x=0 gives x=300. Endpoints area 0.",
+      "must_cover": ["pause hint x=300", "connect to slide 1 hook"]
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "Solution: Farmer's Fence" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "step_1 A'. step_2 x=300. step_3 y=600. step_4 area 180000 m².",
+      "must_cover": ["step_1 through step_4", "absolute max at critical point"],
+      "prop_suggestions": ["flex_plot vertex (300,180000)"]
+    },
+    {
+      "slide_ref": { "index": 15, "source_title": "Lab: Critical Points on Three Polynomials" },
+      "slide_role": "lab",
+      "importance": "medium",
+      "narration_seed": "visual_lab tabs: cubic, quartic, warm-up cubic. Find f'(x)=0 on each.",
+      "must_cover": ["lab_ex_cubic", "lab_ex_quartic", "lab_ex_cubic2"],
+      "prop_suggestions": ["visual_lab polynomials"]
+    },
+    {
+      "slide_ref": { "index": 16, "source_title": "[Challenge, Optional] Proof Sketch: Fermat" },
+      "slide_role": "definition",
+      "importance": "low",
+      "narration_seed": "Optional proof_sketch one-sided limits squeeze f'(c)=0. secant_tangent demo.",
+      "must_cover": ["optional proof", "step_1 step_2 step_3 proof sketch"]
+    },
+    {
+      "slide_ref": { "index": 17, "source_title": "Key Takeaways, Session 4 Continues" },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Six bullets. Final check x^2 on [0,3] max at endpoint x=3. Teaser Topic 17 Rolle/MVT.",
+      "must_cover": ["EVT recap", "f' sign misconception", "final_check endpoint max", "Topic 17 next"],
+      "must_say": ["Next topic: Rolle's Theorem and the Mean Value Theorem."],
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "center_bottom" }
+    }
+  ]
+}

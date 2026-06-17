@@ -1,0 +1,799 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "04_power_rule_constant_multiple_and_sum_difference_rules",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Linearity idea: differentiation distributes over addition and pulls constants out, callback Topic 10 power rule.",
+    "progression": "Linearity preview → power recap → warm-up → constant multiple → misconception traps → sum/difference → multi-curve flex_plot check → full polynomial → pause → fractional/edge/application → summary tease Product Rule.",
+    "destination": "Students differentiate any polynomial term-by-term; know when to simplify first; ready for Topic 12 Product Rule.",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "callback_to_topic_10",
+      "theorem_box",
+      "math_solution_steps",
+      "multi_curve_flex_plot",
+      "pause_and_reveal",
+      "misconception_compare",
+      "motion_application",
+      "recap"
+    ]
+  },
+  "audience_level": "first-year university / advanced high school",
+  "topic_goal": "Teach Power Rule, Constant Multiple, and Sum-Difference Rules with a balance of visual intuition, formal language, and guided student checks.",
+  "topic_takeaways": [
+    "Apply the Power Rule to differentiate x^n for any real n",
+    "Use the Constant Multiple Rule to factor constants out of derivatives",
+    "Combine Sum and Difference Rules with Power Rule to differentiate polynomials efficiently",
+    "Simplify expressions before differentiating to avoid unnecessary work"
+  ],
+  "style_notes": [
+    "Welcome back, Topic 10 gave power + constant rules; Topic 11 adds linearity.",
+    "Callback Topics 8–9: derivative = tangent slope; Topic 4 sum law analogy on s06.",
+    "Roadmap currentId path_topic_11; Topic 12 Product Rule is next.",
+    "theorem_box: power recap (s02), constant multiple (s04), sum/difference (s06).",
+    "math_solution_steps on s03–s07, s09–s12, s14–s15, target step IDs for generation.",
+    "s06 multi-curve flex_plot: f, g, f+g and f', g', (f+g)', narrate slope of sum = sum of slopes.",
+    "misconception_compare on s05: d/dx(c)=0 and 2^x vs x^2.",
+    "pause_and_reveal on s08, s11, s17, real answers, not placeholder reveals.",
+    "Tease Product Rule on s13 and s17, when factors multiply, linearity fails."
+  ],
+  "transition_style": "Move from a visual question to the formal calculus language, then close with a tiny test students can try immediately.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Power Rule, Constant Multiple, and Sum-Difference Rules"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "You should understand the limit definition of the derivative and be comfortable with basic algebra.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Course topic: Power Rule, Constant Multiple, and Sum-Difference Rules",
+        "Differentiation rules for polynomials and power functions"
+      ],
+      "must_say": [
+        "Welcome back to Arian University."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Open by framing the topic goal: Help students understand power rule constant multiple and sum difference rules in a way they can explain, apply, and build on later.",
+      "transition_to_next": "Carry this idea forward into Learning Objectives so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Frame Power Rule, Constant Multiple, and Sum-Difference Rules as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Power Rule, Constant Multiple, and Sum-Difference Rules connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand how Power Rule, Constant Multiple, and Sum-Difference Rules sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Learning Objectives"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Frame the learning objectives as a promise for what students will be able to do: Apply the Power Rule to differentiate x^n for any real n Use the Constant Multiple Rule to factor constants out of derivatives Combine Sum and Difference Rules with Power Rule to differentiate polynomials efficiently Simplify expressions before differentiating to avoid unnecessary work",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Apply the Power Rule to differentiate x^n for any real n",
+        "Use the Constant Multiple Rule to factor constants out of derivatives",
+        "Combine Sum and Difference Rules with Power Rule to differentiate polynomials efficiently",
+        "Simplify expressions before differentiating to avoid unnecessary work"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Power Rule, Constant Multiple, and Sum-Difference Rules into Learning Objectives so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into Why Derivatives Matter so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Learning Objectives to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Learning Objectives connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand how Learning Objectives sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "Differentiation Is Linear"
+      },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "Think about a ball dropped from a height. Its position changes with time. The slope of the tangent line at any moment tells us the ball's instantaneous velocity. Today we'll learn simple rules to compute these slopes without limits. Watch how the tangent line steepens as time increases, that's acceleration due to gravity. This visual helps you see the connection between the curve and its slope at every point, making the concept of derivative more intuitive.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Derivatives measure instantaneous rate of change. Slope of tangent line = derivative.",
+        "The derivative gives us the instantaneous rate of change.",
+        "It’s the slope of the tangent line at any point on a curve.",
+        "Interactive plot of a falling object's position s(t) = -4.9t^2 + 100 (m) with tangent line"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Why Derivatives Matter so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Use the prompt to surface this check: Predict: as time increases, does the slope (velocity) become more negative or less negative?"
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "curve",
+        "tangent line",
+        "secant line",
+        "slope marker",
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Why Derivatives Matter by narrating what students should notice and why it matters.",
+      "story_hint": "Tell it through the object students can see first: a graph, curve, area, slope, sequence, or vector field.",
+      "delivery_goal": "Students should understand what to watch for on Why Derivatives Matter and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot a downward-opening parabola for position vs time (t from 0 to 5). Show a tangent line at a point that can be dragged. On the tangent line, display its slope (velocity). Label axes: Time (s) and Position (m). Use blue for curve, red for tangent."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "The Power Rule"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "The Power Rule is our first shortcut. It says: bring the exponent down as a coefficient, then decrease the exponent by one. For x cubed, we get 3x squared. Notice the derivative function is one degree lower, a cubic becomes a quadratic. This works for any real exponent: positive, negative, fractional. It's a powerful tool that saves us from using the limit definition every time, and it's the foundation for differentiating all polynomial functions efficiently.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Power Rule: d/dx[x^n] = n x^{n-1}. Valid for any real n.",
+        "$$\\frac{d}{dx}[x^n] = n x^{n-1}$$",
+        "Graphs of f(x)=x^3 and f'(x)=3x^2"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of The Power Rule so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Graphs of f(x)=x^3 and f'(x)=3x^2",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on The Power Rule by narrating what students should notice and why it matters.",
+      "story_hint": "Keep The Power Rule connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on The Power Rule and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot two subplots: left: f(x)=x^3 (blue curve) with tangent lines at x=-2,-1,0,1,2; right: f'(x)=3x^2 (red curve). Use x-range from -2.5 to 2.5. For the left subplot, set y-limits to -10 to 10. For the right subplot, set y-limits to 0 to 12. Highlight that derivative is one degree lower. Add grid. Title: 'Function and its Derivative'."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Warm-Up: Apply the Power Rule"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Here's a simple start. We bring down the 5 and reduce the exponent from 5 to 4. The derivative is 5x to the fourth. Notice the original function's shape, it's increasing everywhere because its derivative is always positive except at zero. This is a key insight: the sign of the derivative tells us whether the function is increasing or decreasing. For x^5, the derivative is zero only at x=0, where the function has a flat tangent.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Differentiate f(x)=x^5: n=5 → 5x^4",
+        "**Problem:** Differentiate $f(x) = x^5$ 1.",
+        "Identify $n=5$ 2.",
+        "Graph of f(x)=x^5 (blue) and f'(x)=5x^4 (red)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Warm-Up: Apply the Power Rule so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Graph of f(x)=x^5 (blue) and f'(x)=5x^4 (red)",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Warm-Up: Apply the Power Rule by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Warm-Up: Apply the Power Rule connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Warm-Up: Apply the Power Rule and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot x from -2 to 2. Show f(x)=x^5 in blue and f'(x)=5x^4 in red dashed. Set y-limits to -35 to 85 to accommodate both curves. Label axes. Note that derivative is always non-negative (since x^4 >=0). Add grid."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Constant Multiple Rule"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "When a constant multiplies a function, the constant just tags along. For 4 times x squared, we differentiate x squared to get 2x, then multiply by 4 to get 8x. The constant is a factor that stays unchanged. This works for any constant, positive, negative, fractions, or even pi. It's a simple but powerful rule that lets us handle coefficients without extra work, and it combines naturally with the power rule for efficient differentiation.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Constant Multiple Rule: derivative of constant times function = constant times derivative.",
+        "$$\\frac{d}{dx}[c \\cdot f(x)] = c \\cdot f'(x)$$",
+        "Graphs of 4x^2 and its derivative 8x"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Constant Multiple Rule so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Graphs of 4x^2 and its derivative 8x",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Constant Multiple Rule by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Constant Multiple Rule connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Constant Multiple Rule and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot f(x)=4x^2 (blue) and f'(x)=8x (red dashed) for x from -3 to 3. Add a point and tangent line at x=1 (slope=8). Display the slope value next to the tangent line. Add grid."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Watch Out: Common Mistakes"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Two big traps: first, the derivative of a constant is always zero, constants don't change. Second, the power rule only works when the variable is in the base. For 2 to the x, the base is constant and exponent is variable, that requires a different rule called the exponential rule. We'll cover that later. These mistakes are common, so always check: is the variable in the base? If yes, power rule applies. If the variable is in the exponent, you need a different approach.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Common mistake: derivative of constant is 0, not the constant itself. Power rule does not apply to functions like 2^x.",
+        "**Wrong:** $\\frac{d}{dx}[3x^2] = 3 \\cdot 2x = 6x$ is correct, but common errors: - Forgetting constant disappears: $\\frac{d}{dx}[7] = 7$?",
+        "**No, it's 0** - Misapplying to $2^x$: $\\frac{d}{dx}[2^x] \\neq x \\cdot 2^{x-1}$ (power rule only when variable is base)",
+        "Animated reveal of right vs wrong bullets"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Watch Out: Common Mistakes to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Watch Out: Common Mistakes is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [
+        "Use the prompt to surface this check: Think: why is derivative of 2^x not x·2^{x-1}? What's the difference from x^2?"
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Define Watch Out: Common Mistakes in plain mathematical language, then connect the formula to a graph, example, or student prediction.",
+      "story_hint": "Keep Watch Out: Common Mistakes connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should be able to explain Watch Out: Common Mistakes accurately and use it in the next step of the lesson.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Show two columns: left 'Wrong answer' right 'Correct answer'. For constant: Wrong: '7' → Correct: '0'. For exponential: Wrong: 'x 2^{x-1}' → Correct: '2^x ln 2'. Use arrow toggle button to reveal. Highlight in red the errors."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Sum and Difference Rules"
+      },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "Differentiation distributes over addition and subtraction. If you have two functions added, just differentiate each separately and keep the signs. This works for any finite number of terms. So a polynomial with a hundred terms? Just differentiate term by term. The interactive visual shows that the slope of the sum curve exactly equals the sum of the slopes. This linearity property is one of the most useful features of derivatives, making them easy to compute for complex expressions.",
+      "voice_style": "compare_explain",
+      "tone": "compare_explain",
+      "energy": 0.6,
+      "pace": 0.95,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Sum Rule: derivative of sum = sum of derivatives. Difference rule: same with minus.",
+        "**Sum Rule:** $$\\frac{d}{dx}[f(x)+g(x)] = f'(x)+g'(x)$$ **Difference Rule:** $$\\frac{d}{dx}[f(x)-g(x)] = f'(x)-g'(x)$$",
+        "Interactive plot showing how derivative of sum is sum of derivatives"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Move from Watch Out: Common Mistakes into a direct contrast so students can see the trade-off rather than treating the ideas separately.",
+      "transition_to_next": "Use the next slide to show the consequence of this contrast in a more concrete example or visual.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "compare_then_summarize",
+      "avatar_hint": {
+        "preferred_behavior": "explain_open_hand",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Contrast the alternatives on Sum and Difference Rules explicitly, then end with the simplest decision rule students should keep.",
+      "story_hint": "Keep Sum and Difference Rules connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should clearly remember the contrast at the center of Sum and Difference Rules and know which side fits which situation.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Two subplots: top: f(x)=x^2 (blue), g(x)=3x (green), f+g (black) with tangent lines at a point (shown as dots). Bottom: derivative curves f', g', and f'+g'. Add a slider for x that moves tangent lines on all curves. Show that slope of f+g equals f'+g'."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Standard Example: Combining Rules"
+      },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Now we put it all together. We have four terms, each handled with the power rule and constant multiple. The derivative of 4x to the fifth is 20x to the fourth. Negative 3x squared becomes negative 6x. For 7x, it's just 7. And the constant minus 2 becomes zero. Always remember: constants vanish. That's why the derivative has one less term. This example shows how the rules work seamlessly together to differentiate any polynomial quickly.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Combine Power Rule, Constant Multiple, and Sum/Difference: f'(x)=20x^4-6x+7.",
+        "Differentiate: $f(x) = 4x^5 - 3x^2 + 7x - 2$ | Term | Derivative | |------|------------| | $4x^5$ | $4 \\cdot 5x^4 = 20x^4$ | | $-3x^2$ | $-3 \\cdot 2x = -6x$ | | $7x$ | $7 \\cdot 1 = 7$ | | $-2$ | $0$ | **Result:** $f'(x) = 20x^4 - 6x + 7$"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Standard Example: Combining Rules to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Standard Example: Combining Rules is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Define Standard Example: Combining Rules in plain mathematical language, then connect the formula to a graph, example, or student prediction.",
+      "story_hint": "Keep Standard Example: Combining Rules connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should be able to explain Standard Example: Combining Rules accurately and use it in the next step of the lesson."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Your Turn: Practice (Pause)"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Now it's your turn. Pause the video and try to differentiate this polynomial. Use the power rule for each term, and remember that the derivative of x is 1, and the derivative of the constant 8 is zero. When you're ready, resume to check your answer. This practice will help solidify the rules we've learned, so take your time and work through each term carefully.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Pause and try: differentiate g(x)=2x^4+5x^3-x+8",
+        "**Problem:** Differentiate $g(x) = 2x^4 + 5x^3 - x + 8$",
+        "Graph of g(x) with tangent line at a random point (not interactive yet)"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Your Turn: Practice (Pause) and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Your Turn: Practice (Pause) without first stating the reasoning steps.",
+        "Use the prompt to surface this check: Compute g'(x). Hint: term-by-term."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph"
+      ],
+      "explanation_style": "Turn Your Turn: Practice (Pause) into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell it like a student prediction moment: pause, make the reasoning visible, then reveal the answer.",
+      "delivery_goal": "Students should be able to answer a similar Your Turn: Practice (Pause) question on their own and explain the reasoning.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot g(x)=2x^4+5x^3-x+8 from x=-3 to 3. Set y-limits to -50 to 250. Show a tangent line at x=0 as a hint. Label the derivative formula not shown."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Solution: Practice Problem"
+      },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Here's the solution. The derivative of 2x to the fourth is 8x cubed, of 5x cubed is 15x squared, of negative x is just negative 1, and 8 vanishes. So the answer is 8x cubed plus 15x squared minus 1. Check that the derivative graph correctly shows the slopes of the original function. Notice how the derivative is a quadratic, one degree lower than the original quartic, which is a pattern you'll see often.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "g'(x)=8x^3+15x^2-1. Derivative of -x is -1, constant 8 disappears.",
+        "$g(x) = 2x^4 + 5x^3 - x + 8$ - $\\frac{d}{dx}[2x^4] = 2 \\cdot 4x^3 = 8x^3$ - $\\frac{d}{dx}[5x^3] = 5 \\cdot 3x^2 = 15x^2$ - $\\frac{d}{dx}[-x] = -1$ - $\\frac{d}{dx}[8] = 0$ $g'(x) = 8x^3 + 15x^2 - 1$",
+        "Graph of g and g' side by side"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Turn the previous explanation into a decision on Solution: Practice Problem and let students test whether they can reason with the idea.",
+      "transition_to_next": "Use the next slide to generalize the reasoning students just practiced.",
+      "likely_student_confusion": [
+        "Students may rush to the answer on Solution: Practice Problem without first stating the reasoning steps."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph"
+      ],
+      "explanation_style": "Turn Solution: Practice Problem into a guided decision: pause for thought, then reveal the reasoning step by step.",
+      "story_hint": "Tell it like a student prediction moment: pause, make the reasoning visible, then reveal the answer.",
+      "delivery_goal": "Students should be able to answer a similar Solution: Practice Problem question on their own and explain the reasoning.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Two subplots: left: g(x) (blue) with tangent line at x=0.5 showing slope 8*(0.5)^3+15*(0.5)^2-1 = 8*0.125+15*0.25-1 = 1+3.75-1 = 3.75. Right: g'(x)=8x^3+15x^2-1 (red). Mark zero crossing. Add grid."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "Fractional and Negative Exponents (Medium)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "The power rule isn't just for positive whole numbers. It works for any real exponent, negative, fractional, even irrational. The key is to rewrite the function so the variable is in the base. For square root, we write x to the one half. For one over x cubed, we write x to the negative three. Then apply the rule exactly as before. This flexibility makes the power rule incredibly useful for a wide range of functions beyond simple polynomials.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Power Rule works for any real n. Rewrite roots and reciprocals as exponents first.",
+        "Rewrite before differentiating: - $\\sqrt{x} = x^{1/2}$ - $\\frac{1}{x^3} = x^{-3}$ - $\\sqrt[3]{x^2} = x^{2/3}$ - $\\frac{5}{x^4} = 5x^{-4}$ Then use Power Rule as usual.",
+        "Interactive plot: vary exponent n from -3 to 3, show function and derivative"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Fractional and Negative Exponents (Medium) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Interactive plot: vary exponent n from -3 to 3, show function and derivative",
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Fractional and Negative Exponents (Medium) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Fractional and Negative Exponents (Medium) connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Fractional and Negative Exponents (Medium) and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot x^n (blue) and n x^{n-1} (red dashed) for a fixed range (x from 0.5 to 2 to avoid negative base issues). Slider for n from -3 to 3 step 0.1. Display formula of derivative. Highlight changes in shape."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Pause and Try: Fractional and Negative Exponents (Pause · Medium)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Try this one. First rewrite each term as a power of x. Then apply the constant multiple and power rules. Pay attention to the negative exponent. Pause the video and attempt it. When you're ready, I'll show you the solution. This problem tests your ability to handle fractional and negative exponents, which is a key skill for applying the power rule to a broader class of functions.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Rewrite: 3/x^2 = 3x^{-2}, sqrt{x} = x^{1/2}. Then differentiate.",
+        "**Problem:** Differentiate $h(x) = \\frac{3}{x^2} - 5\\sqrt{x}$",
+        "Graph of h(x) with tangent line at x=1"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Pause and Try: Fractional and Negative Exponents (Pause · Medium) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Use the prompt to surface this check: Compute h'(x). Remember: derivative of x^{-2} is -2x^{-3}."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Graph of h(x) with tangent line at x=1",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Pause and Try: Fractional and Negative Exponents (Pause · Medium) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Pause and Try: Fractional and Negative Exponents (Pause · Medium) connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Pause and Try: Fractional and Negative Exponents (Pause · Medium) and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot h(x) from 0.1 to 3. Set y-limits to -10 to 10. Show tangent line at x=1 (slope = -6*1^{-3} - 2.5*1^{-0.5} = -6 - 2.5 = -8.5)."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Solution: Tricky Example (Medium)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "After rewriting, we differentiate each term. For 3x to the negative 2, we bring down -2 to get negative 6 x to the negative 3. For minus 5 x to the one-half, the derivative is minus five halves times x to the negative one-half. You can leave it with negative exponents or rewrite with fractions, both are acceptable. The key is to be comfortable with exponent arithmetic, as it's essential for handling these types of functions correctly.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "h'(x) = -6/x^3 - 5/(2√x). Check for negative exponents.",
+        "$h(x) = 3x^{-2} - 5x^{1/2}$ - $\\frac{d}{dx}[3x^{-2}] = 3 \\cdot (-2)x^{-3} = -6x^{-3}$ - $\\frac{d}{dx}[-5x^{1/2}] = -5 \\cdot \\frac{1}{2}x^{-1/2} = -\\frac{5}{2}x^{-1/2}$ $h'(x) = -6x^{-3} - \\frac{5}{2}x^{-1/2}$ Rewritten: $h'(x) = -\\frac{6}{x^3} - \\frac{5}{2\\sqrt{x}}$",
+        "Graph of h and h' with labeled slopes"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Solution: Tricky Example (Medium) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Graph of h and h' with labeled slopes",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Solution: Tricky Example (Medium) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Solution: Tricky Example (Medium) connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Solution: Tricky Example (Medium) and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Two panels: left h(x) with tangent at x=1 showing slope -8.5; right h'(x) as a red dashed curve. Use x-range from 0.1 to 3. Set y-limits to -10 to 10 for both panels. Label axes."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Edge Case: Simplify Before Differentiating (Medium)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Sometimes a function looks more complicated than it is. Here we have a fraction, but simple division gives a polynomial. Differentiating the simplified version is much easier than using the quotient rule. This is a golden rule: always look for algebraic simplifications before you start taking derivatives. It saves time and reduces errors, especially when dealing with rational expressions that can be simplified to power functions.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Simplify algebraically before differentiating whenever possible. Avoid unnecessary quotient rule.",
+        "**Problem:** Differentiate $f(x) = \\frac{x^3 + 2x^2 - 5x}{x}$ **Simplify first:** Divide each term by $x$: $f(x) = x^2 + 2x - 5$ **Then differentiate:** $f'(x) = 2x + 2$ If you used quotient rule, you'd get the same but with more work!",
+        "Graph of original f(x) and simplified version (same graph) and derivative"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Edge Case: Simplify Before Differentiating (Medium) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Graph of original f(x) and simplified version (same graph) and derivative",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Edge Case: Simplify Before Differentiating (Medium) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Edge Case: Simplify Before Differentiating (Medium) connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Edge Case: Simplify Before Differentiating (Medium) and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot f(x) = (x^3+2x^2-5x)/x for x!=0 as blue curve; note hole at x=0. Also plot the line x^2+2x-5 (black) that matches for all x≠0. Derivative 2x+2 shown as red dashed. Use x-range from -5 to 5. Set y-limits to -10 to 30."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Application: Motion Along a Line"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "In physics, these rules have direct meaning. The derivative of position is velocity, and the derivative of velocity is acceleration. For this position function, we get a quadratic velocity and a linear acceleration. The interactive plot lets you see how all three change together. Notice where velocity is zero, those are times when the particle might be changing direction. This application shows why derivatives are so important in understanding motion and change in the real world.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Velocity = derivative of position. Acceleration = derivative of velocity.",
+        "If $s(t)$ is position, then: - Velocity: $v(t) = s'(t)$ - Acceleration: $a(t) = v'(t) = s''(t)$ **Example:** $s(t)=2t^3 -9t^2+12t+5$",
+        "Interactive plots of position, velocity, acceleration"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Application: Motion Along a Line so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Interactive plots of position, velocity, acceleration",
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Application: Motion Along a Line by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Application: Motion Along a Line connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Application: Motion Along a Line and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Three subplots stacked: top: position s(t) with tangent line; middle: velocity v(t)=6t^2-18t+12; bottom: acceleration a(t)=12t-18. Add a vertical line at a slider-chosen time t. Show numerical values of s, v, a at that time. Highlight when velocity is zero (rest)."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Application: Find When Particle is at Rest"
+      },
+      "slide_role": "reference",
+      "importance": "medium",
+      "narration_seed": "A particle is at rest when its velocity is zero. We set the derivative equal to zero and solve for t. Dividing by 6 and factoring gives t=1 and t=2 seconds. At those times, the position graph has horizontal tangents, the particle stops momentarily. You can verify this on the interactive graph by moving the slider to those times. This problem connects differentiation to real-world motion analysis, showing how derivatives help us find critical points in physical systems.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Set v(t)=0 and solve quadratic. Particle at rest at t=1s and t=2s.",
+        "**Given:** $s(t) = 2t^3 - 9t^2 + 12t + 5$ Find times at which particle is at rest (v=0).",
+        "| Step | Action | Result | |------|--------|--------| | 1 | Compute velocity | $v(t)=6t^2 -18t+12$ | | 2 | Set to zero | $6t^2-18t+12=0$ | | 3 | Divide by 6 | $t^2 -3t+2=0$ | | 4 | Factor | $(t-1)(t-2)=0$ | | 5 | Solutions | $t=1$ s, $t=2$ s |"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "After the concept slide, move into the concrete workflow or command sequence students will actually run.",
+      "transition_to_next": "After the procedure, remind students what successful output or behavior they should expect next.",
+      "likely_student_confusion": [
+        "Students may copy steps mechanically and miss the verification point that tells them the step actually worked."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Keep Application: Find When Particle is at Rest focused on the visual pattern, the formula, and the reasoning step students can reuse.",
+      "story_hint": "Keep Application: Find When Particle is at Rest connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should know the minimum reliable workflow on Application: Find When Particle is at Rest and what to verify before moving on."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "[Challenge – Optional] Proof of Power Rule for Positive Integers (Optional · Challenge)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "This is an optional challenge for those who want to see why the power rule works. We start with the limit definition, expand (x+h) to the n using the binomial theorem, and notice that after subtracting x to the n and dividing by h, every term except the first contains a factor of h. As h approaches zero, those terms vanish, leaving n x to the n minus one. The same rule holds for any real exponent, but the proof is more advanced.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "For integer n, binomial expansion shows all terms with h vanish except the linear term nx^{n-1}h.",
+        "Prove $\\frac{d}{dx}[x^n] = nx^{n-1}$ for $n \\in \\mathbb{N}$ 1.",
+        "Limit definition: $\\lim_{h\\to0} \\frac{(x+h)^n - x^n}{h}$ 2.",
+        "Binomial expansion illustration for n=3"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of [Challenge – Optional] Proof of Power Rule for Positive Integers (Optional · Challenge) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Binomial expansion illustration for n=3",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on [Challenge – Optional] Proof of Power Rule for Positive Integers (Optional · Challenge) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep [Challenge – Optional] Proof of Power Rule for Positive Integers (Optional · Challenge) connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on [Challenge – Optional] Proof of Power Rule for Positive Integers (Optional · Challenge) and why that visible behavior matters technically.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Visually show expansion of (x+h)^3 as a cube with side x+h, volume decomposition: x^3 + 3x^2h + 3xh^2 + h^3. Highlight the 3x^2h term as the linear part. Animate with h shrinking to emphasize the limit."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Summary and Key Formulas"
+      },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Let's recap. The power rule lets us differentiate any x to the n by bringing down the exponent and reducing it by one. The constant multiple rule says constants just ride along. The sum and difference rules mean we can differentiate term by term. Combine these to handle any polynomial or power function. And always check if you can simplify algebraically first, it can save you a lot of work. These skills will be the foundation for all future differentiation techniques.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Three core rules: Power, Constant Multiple, Sum/Difference. Simplify before differentiating.",
+        "**Power Rule:** $$\\frac{d}{dx}[x^n] = n x^{n-1}$$ **Constant Multiple Rule:** $$\\frac{d}{dx}[c\\cdot f(x)] = c\\cdot f'(x)$$ **Sum/Difference Rules:** $$\\frac{d}{dx}[f\\pm g] = f' \\pm g'$$ **Simplify First** – avoid quotient rule by dividing.",
+        "**Application:** Velocity = derivative of position; Acceleration = derivative of velocity."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Summary and Key Formulas to consolidate what the last few slides have built up and turn it into memory.",
+      "transition_to_next": "Close by restating the destination of the topic: End with students able to explain the concept in words and apply it to a nearby problem.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Summary and Key Formulas as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Summary and Key Formulas connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should leave Summary and Key Formulas with the main takeaways of the topic compressed into usable memory."
+    }
+  ]
+}

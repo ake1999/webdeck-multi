@@ -1,0 +1,195 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "02_formal_definition_of_the_derivative",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Callback Topic 8, instantaneous rate as limit; resolve 0/0 at an instant.",
+    "progression": "f′(a) notation & theorem_box → tangent line y=f(a)+f′(a)(x−a) → x² at a=2 worked limit → secant_tangent lab → edge cases → tease power rule.",
+    "destination": "Students compute f′(a) from the definition, write tangent lines, and spot non-differentiable points.",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "theorem_box",
+      "notation",
+      "math_solution_steps",
+      "visual_lab",
+      "misconception_compare",
+      "pause_and_reveal",
+      "flex_plot gallery",
+      "recap"
+    ]
+  },
+  "audience_level": "first-year university / advanced high school",
+  "topic_goal": "Formalize f′(a), the tangent line equation, and limit-of-difference-quotient algebra, bridge to Power Rule (Topic 10).",
+  "topic_takeaways": [
+    "f′(a)=lim_{h→0}(f(a+h)−f(a))/h when the limit exists",
+    "Tangent line: y=f(a)+f′(a)(x−a)",
+    "Cancel h before evaluating; plugging h=0 gives misleading 0/0",
+    "Corners: one-sided difference quotients differ ⇒ f′(a) DNE",
+    "Next: power rule nx^{n−1} for fast polynomial derivatives"
+  ],
+  "style_notes": [
+    "Welcome back; callback Topic 8 instantaneous ROC and Session 2 limits.",
+    "theorem_box on s02 is the formal statement students must remember.",
+    "Narrate secant_tangent: vary a and h; timelines shrink h toward 0; include negative h in s06 lab.",
+    "math_solution_steps on s05: canonical x² at a=2 → f′(2)=4 → tangent y=4+4(x−2).",
+    "misconception_compare s07: 0/0 ≠ derivative DNE.",
+    "pause_and_reveal on s03, s05, s06, s10, s15, real think beats.",
+    "End tease Topic 10 Power Rule by name."
+  ],
+  "transition_style": "0/0 hook → formal definition → notation & tangent → worked example → lab → misconceptions & edge cases → power rule teaser.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "Formal Definition of the Derivative" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back, Topic 8 gave the intuition; Topic 9 formalizes f′(a) and the tangent line.",
+      "must_cover": ["Topic 9 opens formal derivative", "callback Topic 8"],
+      "must_say": ["Welcome back to Arian University."],
+      "transition_to_next": "Roadmap path_topic_09 current.",
+      "prop_suggestions": ["secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Topic 8 done; today f′(a), tangent line, limit algebra; Topic 10 Power Rule next.",
+      "must_cover": ["path_topic_09 current", "path_topic_10 next", "four objectives"],
+      "transition_to_next": "0/0 problem at an instant."
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "The 0/0 Problem at an Instant" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "0/0 at an instant, limit of secant slopes fixes it. Shrink h on timeline.",
+      "must_cover": ["0/0 hook", "secant_tangent h→0"],
+      "prop_suggestions": ["secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "The Formal Definition of the Derivative" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box: f′(a)=lim_{h→0}(f(a+h)−f(a))/h. Do not plug h=0 first.",
+      "must_cover": ["theorem_box formal definition", "f′(a) notation", "tangent slope"],
+      "prop_suggestions": ["theorem_box", "secant_tangent"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "Warm-Up: Linear Function" },
+      "slide_role": "example",
+      "importance": "medium",
+      "narration_seed": "3x+1 at a=2 → f′(2)=3. Pause: f(x)=4x−7 → f′(1)=4.",
+      "must_cover": ["math_solution_steps", "pause_and_reveal answer 4"],
+      "prop_suggestions": ["math_solution_steps"]
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "Notation and the Tangent Line" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "f′(a), f′(x), dy/dx, tangent y=f(a)+f′(a)(x−a). Widget at a=2.",
+      "must_cover": ["tangent line equation", "Leibniz not a fraction", "alternative x→a form"],
+      "prop_suggestions": ["formula_block", "secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "Standard Example: f(x) = x² at a = 2" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "Canonical example: step_1 through step_5 → f′(2)=4. Tangent y=4+4(x−2). Stretch: f′(x)=2x+3 for x²+3x.",
+      "must_cover": ["math_solution_steps step_1..step_5", "tangent line at (2,4)", "pause stretch 2x+3"],
+      "prop_suggestions": ["math_solution_steps", "secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "Lab: Secant Lines → Tangent" },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "visual_lab: h>0, shrink h, h<0, same tangent. pause_and_reveal on negative h.",
+      "must_cover": ["visual_lab three tabs", "negative h same tangent", "pause_and_reveal"],
+      "prop_suggestions": ["secant_tangent", "visual_lab"]
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Misconception: Plugging h = 0" },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "misconception_compare: 0/0 then cancel → 2a. math_solution_steps correct path.",
+      "must_cover": ["misconception_compare", "cancel h then limit"],
+      "prop_suggestions": ["misconception_compare", "math_solution_steps"]
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Challenge (Optional): Constant Function" },
+      "slide_role": "challenge",
+      "importance": "low",
+      "narration_seed": "Optional: f(x)=c ⇒ f′=0. Skip if ready for power rule.",
+      "must_cover": ["theorem_box constant", "flex_plot horizontal"],
+      "prop_suggestions": ["theorem_box", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "Edge Case: |x| at x = 0" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "step_1 right +1, step_2 left −1, step_3 DNE. |x−2| not differentiable at x=2.",
+      "must_cover": ["math_solution_steps", "flex_plot corner", "one-sided limits"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "Challenge (Optional): Wild Function at 0" },
+      "slide_role": "pause",
+      "importance": "low",
+      "narration_seed": "Optional pause: x² sin(1/x). Predict f′(0) before squeeze solution.",
+      "must_cover": ["pause_and_reveal", "flex_plot squeeze envelope"],
+      "prop_suggestions": ["flex_plot", "pause_and_reveal"]
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "Challenge Solution: Squeeze at 0" },
+      "slide_role": "example",
+      "importance": "low",
+      "narration_seed": "Optional: h sin(1/h) squeezed by ±|h| → f′(0)=0. Callback Squeeze Theorem.",
+      "must_cover": ["math_solution_steps squeeze", "f′(0)=0"],
+      "prop_suggestions": ["math_solution_steps"]
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "Application: Dropped Ball Velocity" },
+      "slide_role": "example",
+      "importance": "medium",
+      "narration_seed": "h(t)=100−4.9t². v(2)=h′(2)=−19.6 m/s via x→2 form. Pattern h′(t)=−9.8t.",
+      "must_cover": ["math_solution_steps splitAfter 3", "v(2)=−19.6", "flex_plot height"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "Lab: Differentiability Gallery" },
+      "slide_role": "demo",
+      "importance": "medium",
+      "narration_seed": "visual_lab: x² smooth, |x| corner, x^{1/3} vertical tangent. Finite slope required.",
+      "must_cover": ["visual_lab three plots", "differentiability vs continuity"],
+      "prop_suggestions": ["flex_plot", "visual_lab"]
+    },
+    {
+      "slide_ref": { "index": 15, "source_title": "Pro Tips for the Definition" },
+      "slide_role": "recap",
+      "importance": "medium",
+      "narration_seed": "Cancel h, tangent line formula, trap f(a) vs a. Power rule checks work, Topic 10 next.",
+      "must_cover": ["pro tips", "tease power rule"],
+      "prop_suggestions": ["secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 16, "source_title": "Quick Check and Summary" },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Summary four bullets. pause_and_reveal: f(x)=x³, f′(2)=12. Next Topic 10 Power Rule.",
+      "must_cover": ["definition recap", "tangent recap", "pause f′(2)=12", "Topic 10 Power Rule teaser"],
+      "prop_suggestions": ["pause_and_reveal"],
+      "transition_to_next": "Topic 10 Power Rule and Basic Properties."
+    }
+  ]
+}

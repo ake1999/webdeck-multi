@@ -14,8 +14,10 @@
   },
   "voice": {
     "provider": "qwen3_tts",
-    "mode": "clone",
-    "primary_reference_text": "Hi, I'm Arian, and welcome to Arian University. Today we are going to build calculus from pictures, formulas, and experiments until the idea feels natural.",
+    "mode": "custom_voice",
+    "model_id": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+    "speaker": "Aiden",
+    "primary_reference_text": "Hi, I'm Arian, and welcome to Arian University. We'll build calculus from pictures, formulas, and experiments until each idea feels natural and worth remembering.",
     "fallback_provider": "ffmpeg_flite",
     "defaults": {
       "voice_style": "clear_teacher",
@@ -31,7 +33,7 @@
       "energy": 0.58,
       "pace": 0.96,
       "pitch": 0.0,
-      "instruction": "Speak like a clear calculus teacher for a personal YouTube course. Calm, confident, visual, and easy to follow."
+      "instruction": "Speak like a clear calculus professor for a personal YouTube course. Warm, confident, visual, and easy to follow."
     },
     "serious_clear": {
       "tone": "serious_clear",

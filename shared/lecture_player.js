@@ -1,3 +1,5 @@
+import { revealMathSolutionStep } from "./math_solution_steps.js";
+
 const DEFAULT_REFERENCE_RESOLUTION = [1920, 1080];
 const DEFAULT_AVATAR_RENDER_RESOLUTION = [896, 1200];
 const DERIVED_ORDERED_VIDEO_LIMIT = 12;
@@ -652,6 +654,8 @@ function isTextLikeElementType(type) {
     "question",
     "option",
     "math",
+    "math_solution_step",
+    "math_solution_problem",
   ].includes(String(type || "").toLowerCase());
 }
 
@@ -802,6 +806,8 @@ export function createLecturePlayer({
       clearFocus();
       return false;
     }
+
+    revealMathSolutionStep(slideId, elementId);
 
     const baseBox = deckController.getElementBox?.(slideId, elementId);
     if (!baseBox) {

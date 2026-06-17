@@ -10,6 +10,7 @@ import { synthesizeTopicAudio } from "../tts/synthesize.mjs";
 import { writeSubtitles } from "./subtitles.mjs";
 import { compileTimeline } from "./timeline.mjs";
 import { writeAvatarJobs, writeSlideVideoJobs, writeTtsJobs } from "./jobs.mjs";
+import { assertProductionScriptsReady, shouldRequireProductionScripts } from "./script_quality.mjs";
 import { compileMotionManifest, writeMotionArtifacts } from "./motion_planning.mjs";
 import { getTopicScriptPlanWithCache } from "./topic_script_plan.mjs";
 import { writeLectureReview } from "./review.mjs";
@@ -207,6 +208,10 @@ export async function buildLectureScriptArtifacts({
   const scriptManifestPath = path.join(artifactDir, "script.manifest.json");
   await writeFile(scriptManifestPath, `${JSON.stringify(scriptManifest, null, 2)}\n`, "utf8");
 
+  if (shouldRequireProductionScripts(options)) {
+    assertProductionScriptsReady(scriptManifest, options);
+  }
+
   return {
     descriptor,
     topic_id: topicRuntime.topicId,
@@ -254,6 +259,11 @@ export async function buildLectureAudioArtifacts({
   });
   const manualOutputDirs = await ensureCanonicalAudioDirs(descriptor);
 
+  assertProductionScriptsReady(scriptManifest, {
+    ...options,
+    requireProductionScripts: true,
+  });
+
   const alignmentManifest = await synthesizeTopicAudio({
     scriptManifest,
     audioDir: manualOutputDirs.audio,
@@ -264,12 +274,31 @@ export async function buildLectureAudioArtifacts({
   const alignmentPath = buildManualAlignmentPath(descriptor);
   await writeFile(alignmentPath, `${JSON.stringify(alignmentManifest, null, 2)}\n`, "utf8");
 
+  const ttsJobs = await writeTtsJobs({
+    descriptor,
+    scriptManifest,
+    alignmentManifest,
+    providerId,
+    options,
+  });
+
+  let subtitles = [];
+  if (options.writeSubtitles !== false) {
+    subtitles = await writeSubtitles({
+      scriptManifest,
+      alignmentManifest,
+      subtitlesDir: path.join(artifactDir, "subtitles"),
+    });
+  }
+
   return {
     descriptor,
     topic_id: scriptManifest.topic_id,
     script_manifest: relativeProjectPath(scriptManifestPath),
     audio_dir: relativeContractPath(manualOutputDirs.audio),
     tts_alignment: relativeContractPath(alignmentPath),
+    tts_jobs: ttsJobs,
+    subtitles,
     provider: alignmentManifest.provider,
     slide_count: alignmentManifest.slides.length,
     total_duration: Math.round(

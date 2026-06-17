@@ -6,6 +6,7 @@ import {
   buildScriptWriterJsonSchema,
   validateScriptWriterPayload,
 } from "../llm_schema.mjs";
+import { normalizeLlmBaseUrl, normalizeLlmEndpointKind } from "../utils.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const promptsDir = path.resolve(__dirname, "..", "prompts");
@@ -16,22 +17,6 @@ function asArray(value) {
 
 function isObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function normalizeBaseUrl(value) {
-  const raw = String(value || "http://127.0.0.1:11434").trim();
-  return raw.replace(/\/+$/, "");
-}
-
-function normalizeEndpointKind(endpoint) {
-  const normalized = normalizeBaseUrl(endpoint);
-  if (normalized.includes("/v1") || normalized.endsWith("/chat/completions")) {
-    return "openai";
-  }
-  if (normalized.includes("11434") || normalized.includes("/api")) {
-    return "ollama";
-  }
-  return "openai";
 }
 
 function resolvePromptVersion(value) {
@@ -641,8 +626,8 @@ export async function generateLocalScriptSegments({
   }
 
   const promptBundle = await loadPromptBundle(options.scriptPromptVersion);
-  const endpoint = normalizeBaseUrl(options.scriptEndpoint);
-  const endpointKind = normalizeEndpointKind(endpoint);
+  const endpoint = normalizeLlmBaseUrl(options.scriptEndpoint);
+  const endpointKind = normalizeLlmEndpointKind(endpoint);
   const timeoutMs = Number(options.scriptTimeoutMs || 60000);
   const maxRetries = Math.max(0, Number(options.scriptMaxRetries ?? 3));
   const temperature = Number(options.scriptTemperature ?? 0.2);

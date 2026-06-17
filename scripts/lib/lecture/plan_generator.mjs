@@ -172,7 +172,7 @@ function isFirstVideoInCourse(descriptor) {
   return descriptor.school === "AU"
     && descriptor.course === "ARIAN_Calculus_1"
     && descriptor.session === "S01"
-    && descriptor.topic === "review_of_functions_and_graphs";
+    && descriptor.topic === "01_review_of_functions_and_graphs";
 }
 
 function keySignals(rawSlide, slide, descriptor) {

@@ -1,0 +1,545 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_the_intuitive_concept_of_a_limit",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Students know functions and trig from Session 1, but may still think a limit equals the function value at a point.",
+    "progression": "Open with approach intuition on a parabola, formalize the limit definition with a hole, build one-sided limits and existence, run epsilon–delta lab, table pause, misconception trap, jump discontinuity pause, optional oscillation challenge, sum law bridge, recap.",
+    "destination": "Students can read limits from graphs and tables, test one-sided agreement, separate f(a) from the limit, and name why a limit fails.",
+    "tone": "Clear, warm, visual, active, and personal-brand friendly.",
+    "methods": [
+      "visual intuition",
+      "formalize",
+      "guided prediction",
+      "worked reasoning",
+      "recap",
+      "Use interactive limit graphs as the main explanation surface, not static plot placeholders.",
+      "Use short worked steps for examples so students can follow without a wall of text.",
+      "Name the f(a) vs limit mistake before it becomes a habit.",
+      "During narrated playback, move probe x, ε, or zoom when the instructor names them."
+    ]
+  },
+  "audience_level": "first-year university and advanced high-school students who completed Topics 1–2 (functions and trig) and are starting Session 2 limits",
+  "topic_goal": "Build intuitive and graphical fluency with limits, approach, one-sided limits, existence, and the epsilon–delta picture, before algebraic limit laws.",
+  "topic_takeaways": [
+    "A limit describes nearby approach, not necessarily f(a).",
+    "One-sided limits must agree for a two-sided limit to exist.",
+    "Removable holes, jumps, and oscillations show three ways limits behave at trouble points.",
+    "Tables and graphs both reveal approach values.",
+    "Sum law previews the algebraic toolkit in Topic 4, Limit Laws."
+  ],
+  "style_notes": [
+    "Keep the tone personal, warm, and precise, as if teaching directly to a YouTube viewer.",
+    "Welcome students back to Arian University, do NOT re-introduce Arian from scratch; Topics 1–2 already did that.",
+    "On learning-objective slides, orient students on the course roadmap before listing skills.",
+    "Name Topics 1–2 as completed, this topic as current, Topic 4 Limit Laws as next.",
+    "Move between graph, formula, table, and plain-language interpretation on every example.",
+    "Use student-prediction moments before revealing limits, existence, or misconception answers.",
+    "When a widget is present, call out probe x, ε, or zoom, then let the scripted timeline move while explaining.",
+    "For website mode, invite students to drag controls after the narrated pass.",
+    "On dense visual slides, keep the avatar low so the graph carries focus.",
+    "For pause slides, give a real beat, then answer with one concrete number or one-sided pair."
+  ],
+  "transition_style": "Use each slide as one teaching beat: name the task, point to the visual, move the interactive state, preview the next representation.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "The Intuitive Concept of a Limit" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back to Session 2, Limits. The word approach is the whole game. Quick hook: as x nears 2 on x², outputs march to 4 even if we never 'plug in' 2.",
+      "voice_style": "energetic_demo",
+      "tone": "curious and direct",
+      "energy": 0.64,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Welcome back, Topic 3, first topic of Session 2 Limits and Continuity.",
+        "Session 1 (functions + trig) is the foundation; limits ask what happens near a point.",
+        "This session stays visual and interactive, graphs and tables before heavy algebra.",
+        "Topic 4 Limit Laws comes next for computing limits faster."
+      ],
+      "must_say": [
+        "Welcome back to Arian University.",
+        "Calculus starts with one idea: approach.",
+        "A limit tells us where a function is heading, not necessarily where it lands."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Topic 2 gave periodic intuition; Topic 3 opens the limit chapter.",
+      "transition_to_next": "Show the roadmap and four skills for this session.",
+      "likely_student_confusion": [
+        "Students may think limits are just substitution. Tease that holes break substitution immediately."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "right_bottom", "allow_half_out": true },
+      "prop_suggestions": ["approach on parabola"],
+      "explanation_style": "Brief welcome-back, then immediate approach hook, no long re-introduction.",
+      "story_hint": "Walking toward a wall, distance goes to zero even if you stop short.",
+      "delivery_goal": "Students feel Session 2 has begun within 15 seconds.",
+      "scene_hint": "Face camera for welcome-back, then gesture toward the approaching-x widget."
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Roadmap: Topics 1–2 done, Topic 3 current, Topic 4 next. Four objectives, graphs/tables, one-sided limits, f(a) vs limit, epsilon–delta + sum law preview.",
+      "voice_style": "clear_teacher",
+      "tone": "focused and brisk",
+      "energy": 0.6,
+      "pace": 0.94,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Point to the course roadmap before reading objectives.",
+        "Session 2 framing: Limits and Continuity; five topics in this session.",
+        "Do not say topic X of Y aloud, the grid shows progress.",
+        "Four skills map to the four blocks of the lecture."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Title named the session; this slide turns it into a promise.",
+      "transition_to_next": "Drop into the approach hook on the parabola.",
+      "likely_student_confusion": [
+        "Too many representations at once, tell them each block adds one tool."
+      ],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" },
+      "prop_suggestions": ["course roadmap grid"],
+      "explanation_style": "Brisk checklist; do not read every roadmap cell.",
+      "story_hint": "Session 1 built language; Session 2 asks about nearby behavior.",
+      "delivery_goal": "Students know where they are in the course and what today covers."
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "What Is a Limit?" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "Approach metaphor + parabola widget. Animate x: 0 → 1.5 → 1.9 → 1.99; f(x) → 4, |x−2| shrinks.",
+      "voice_style": "energetic_demo",
+      "tone": "visual and inviting",
+      "energy": 0.66,
+      "pace": 0.93,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Limit = destination the function approaches.",
+        "Arrival at the point is not required.",
+        "Today: graphs, tables, one-sided limits, epsilon–delta picture."
+      ],
+      "must_say": [
+        "The word approach is all you need to start."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Objectives listed skills; now show the core picture.",
+      "transition_to_next": "Formalize with notation and a hole example.",
+      "likely_student_confusion": [
+        "Confusing x approaching a with actually reaching a."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom", "allow_half_out": true },
+      "prop_suggestions": ["approach_parabola widget"],
+      "explanation_style": "Let the moving point narrate; keep prose short.",
+      "story_hint": "Wall-walking distance → shrinking |x−2|.",
+      "delivery_goal": "Students can say 'approach' in their own words with the parabola example.",
+      "scene_hint": "Avatar low; graph carries focus."
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "The Core Definition" },
+      "slide_role": "core",
+      "importance": "high",
+      "narration_seed": "Read theorem_box once. Rational hole (x²−4)/(x−2): undefined at 2, limit 4. Drag x from both sides toward the open circle.",
+      "voice_style": "clear_teacher",
+      "tone": "precise but calm",
+      "energy": 0.58,
+      "pace": 0.92,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Symbolic limit notation lim x→a f(x) = L.",
+        "f(a) need not exist or equal L.",
+        "Removable hole at (2, 4) as the canonical example."
+      ],
+      "must_say": [
+        "What matters is nearby behavior, not the point itself."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Intuition on parabola; now notation + hole.",
+      "transition_to_next": "One-sided limits when left and right stories differ.",
+      "likely_student_confusion": [
+        "Thinking undefined at x=a means no limit."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom", "allow_half_out": true },
+      "prop_suggestions": ["rational_hole widget"],
+      "explanation_style": "Theorem first, then one graph proof.",
+      "story_hint": "Hole ≠ broken limit.",
+      "delivery_goal": "Students connect notation to the open-circle picture."
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "One-Sided Limits" },
+      "slide_role": "core",
+      "importance": "high",
+      "narration_seed": "Define x→a⁻ and x→a⁺. |x|/x: left −1, right +1. Timeline sweeps x negative to positive.",
+      "voice_style": "clear_teacher",
+      "tone": "active",
+      "energy": 0.62,
+      "pace": 0.94,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Left-hand limit: smaller x values.",
+        "Right-hand limit: larger x values.",
+        "|x|/x plateaus differ, two-sided limit will fail."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Two-sided definition assumed one story; now split the story.",
+      "transition_to_next": "State the existence test: sides must match.",
+      "likely_student_confusion": [
+        "Mixing up which side is negative vs positive for |x|/x."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom", "allow_half_out": true },
+      "prop_suggestions": ["abs_quotient widget"],
+      "explanation_style": "Name sides, then drive x across 0.",
+      "story_hint": "Two doors into the same point, different hallways.",
+      "delivery_goal": "Students read one-sided notation and match it to graph branches."
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "When Does a Two-Sided Limit Exist?" },
+      "slide_role": "core",
+      "importance": "high",
+      "narration_seed": "IFF statement. Piecewise at 2: branches → 3, f(2)=4. Drag x along each branch; hollow vs solid dot.",
+      "voice_style": "clear_teacher",
+      "tone": "focused",
+      "energy": 0.6,
+      "pace": 0.93,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Two-sided limit exists iff one-sided limits exist and are equal.",
+        "f(2)=4 while limit=3, both true.",
+        "Preview misconception slide explicitly."
+      ],
+      "must_say": [
+        "Equal one-sided limits, that is the whole test."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "One-sided limits defined; now combine them.",
+      "transition_to_next": "Epsilon–delta lab makes 'arbitrarily close' visual.",
+      "likely_student_confusion": [
+        "Assuming the filled dot is the limit."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom", "allow_half_out": true },
+      "prop_suggestions": ["piecewise_limit widget"],
+      "explanation_style": "State rule, then show dot vs hollow.",
+      "story_hint": "Branches agree at 3; party at 4 is separate.",
+      "delivery_goal": "Students can apply the existence test on a graph."
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "Epsilon–Delta Lab: Making “Approach” Precise" },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Full-width visual_lab. f(x)=x², a=2, L=4. Shrink ε, move probe x; green point when inside ε-band. Intuition only, not a full proof drill.",
+      "voice_style": "energetic_demo",
+      "tone": "curious and exploratory",
+      "energy": 0.64,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "ε-band on outputs around L.",
+        "δ-band on inputs around a (computed in widget).",
+        "Smaller ε usually forces smaller usable δ.",
+        "Formal definition named once; depth comes later."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Existence test was graphical; now precision bands.",
+      "transition_to_next": "Table pause, limits without sketching.",
+      "likely_student_confusion": [
+        "Quantifier fear, keep language geometric."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom", "allow_half_out": true },
+      "prop_suggestions": ["limit_epsilon lab full width"],
+      "explanation_style": "Shorter narration; let bands and colors teach.",
+      "story_hint": "Tolerance zone on outputs demands a closeness zone on inputs.",
+      "delivery_goal": "Students connect epsilon–delta to the approach idea, not fear it.",
+      "scene_hint": "Avatar small; lab dominates."
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "Pause: Estimate a Limit from a Table" },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "YouTube pause. Table for (x²−1)/(x−1). Read left column then right. Widget mirrors x→1. Silence for guess.",
+      "voice_style": "clear_teacher",
+      "tone": "interactive",
+      "energy": 0.58,
+      "pace": 0.88,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Table shows approach from both sides.",
+        "f(1) undefined, ignore the point.",
+        "Pattern → limit 2."
+      ],
+      "must_say": [
+        "Pause here and write your guess before continuing."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Lab was formal; table is data-driven.",
+      "transition_to_next": "Reveal limit 2 with algebra.",
+      "likely_student_confusion": [
+        "Plugging x=1 into the fraction."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "center_bottom", "allow_center": true },
+      "prop_suggestions": ["math_table", "rational_hole_1"],
+      "explanation_style": "Real pause beat, then reveal block.",
+      "story_hint": "Same hole family as (2,4) example.",
+      "delivery_goal": "Students trust tables for approach values."
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Table Example, Solution" },
+      "slide_role": "practice",
+      "importance": "medium",
+      "narration_seed": "Answer: limit 2. Simplify to x+2 for x≠1. Widget confirms hole at (1,2). Mention derivative preview.",
+      "voice_style": "clear_teacher",
+      "tone": "confident",
+      "energy": 0.58,
+      "pace": 0.94,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Limit = 2.",
+        "Removable discontinuity / hole.",
+        "0/0 pattern returns in derivatives."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause guess; now close the loop.",
+      "transition_to_next": "Name the f(a) misconception before more examples.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "worked_example",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" },
+      "prop_suggestions": ["example_solution steps"],
+      "explanation_style": "Short steps; one line on derivatives foreshadow.",
+      "story_hint": "Table answer meets graph answer.",
+      "delivery_goal": "Students see table, graph, and algebra agree."
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Misconception: f(a) vs Limit" },
+      "slide_role": "core",
+      "importance": "high",
+      "narration_seed": "misconception_compare pairs. Same piecewise: f(2)=4, limit 3. emphasizeMisconception on widget.",
+      "voice_style": "clear_teacher",
+      "tone": "corrective but kind",
+      "energy": 0.6,
+      "pace": 0.92,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Wrong: limit equals f(a) because of the dot.",
+        "Right: limit reads branch approach, hollow at 3.",
+        "Repeat: both statements can be true simultaneously."
+      ],
+      "must_say": [
+        "The limit is not the dot, it is the nearby trend."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Table example worked; now the biggest conceptual trap.",
+      "transition_to_next": "Second pause, does |x|/x have a two-sided limit?",
+      "likely_student_confusion": [
+        "Students double down on the green dot."
+      ],
+      "teacher_strategy": "misconception_repair",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom", "allow_half_out": true },
+      "prop_suggestions": ["misconception_compare", "piecewise_limit"],
+      "explanation_style": "Read pairs clearly; point at hollow vs solid.",
+      "story_hint": "Snapshot vs movie.",
+      "delivery_goal": "Students stop equating f(a) with the limit."
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "Pause: Does This Limit Exist?" },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "YouTube pause on |x|/x. Widget hides side labels, question mark only. Demand Yes/No plus one-sided values.",
+      "voice_style": "clear_teacher",
+      "tone": "interactive",
+      "energy": 0.58,
+      "pace": 0.86,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Left approaches −1.",
+        "Right approaches +1.",
+        "Unequal → two-sided limit DNE."
+      ],
+      "must_say": [
+        "Pause, does the two-sided limit exist?"
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Misconception was about dots; this is about disagreeing sides.",
+      "transition_to_next": "Worked jump discontinuity answer.",
+      "likely_student_confusion": [
+        "Saying DNE because f(0) is undefined, clarify one-sided limits still exist."
+      ],
+      "teacher_strategy": "guided_practice",
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "center_bottom", "allow_center": true },
+      "prop_suggestions": ["abs_quotient hideLabels"],
+      "explanation_style": "Silence for thinking; require one-sided numbers.",
+      "story_hint": "Callback to slide 4 with a test.",
+      "delivery_goal": "Students apply existence test without hints."
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "Jump Discontinuity, Limit DNE" },
+      "slide_role": "practice",
+      "importance": "high",
+      "narration_seed": "Reveal: left −1, right +1, DNE. Jump discontinuity vocabulary. Widget shows labeled branches.",
+      "voice_style": "clear_teacher",
+      "tone": "confident",
+      "energy": 0.58,
+      "pace": 0.94,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "One-sided limits exist but differ.",
+        "Two-sided limit does not exist.",
+        "Jump discontinuity, clean failure mode."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Pause answer; name the discontinuity type.",
+      "transition_to_next": "Optional oscillation challenge.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "worked_example",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" },
+      "prop_suggestions": ["abs_quotient labeled"],
+      "explanation_style": "Three-step solution read crisply.",
+      "story_hint": "Opposite of hole, sides disagree.",
+      "delivery_goal": "Students classify jump vs hole."
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "Challenge (Optional): sin(1/x)" },
+      "slide_role": "challenge",
+      "importance": "medium",
+      "narration_seed": "Optional, skip if time-limited. Zoom sin(1/x); frequency explodes. Limit DNE by oscillation. Sets up future Squeeze topic.",
+      "voice_style": "clear_teacher",
+      "tone": "intrigued",
+      "energy": 0.62,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Oscillations densify near 0.",
+        "Different sequences → different approach values.",
+        "Third failure mode beyond jumps and holes."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Jump was a clean split; oscillation is messy.",
+      "transition_to_next": "Sum law, bridge to algebra.",
+      "likely_student_confusion": [
+        "Thinking graph 'looks continuous' enough for a limit."
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom", "allow_half_out": true },
+      "prop_suggestions": ["sin_reciprocal zoom"],
+      "explanation_style": "Let zoom slider narrate; keep theory light.",
+      "story_hint": "Zoom in, never settles.",
+      "delivery_goal": "Students know limits can fail without a visible jump."
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "Sum Law for Limits" },
+      "slide_role": "core",
+      "importance": "high",
+      "narration_seed": "theorem_box sum law. Widget: f→3, g→5, sum→8 at x=1. Bridge to Topic 4 Limit Laws, full toolkit next.",
+      "voice_style": "clear_teacher",
+      "tone": "forward-looking",
+      "energy": 0.6,
+      "pace": 0.94,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Limit of sum = sum of limits when both exist.",
+        "Graphical confirmation at x=1.",
+        "Topic 4 adds product, quotient, and computation shortcuts."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Intuition complete; one algebraic law preview.",
+      "transition_to_next": "Six-bullet recap and next-topic handoff.",
+      "likely_student_confusion": [
+        "Applying sum law when one limit DNE."
+      ],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" },
+      "prop_suggestions": ["limit_sum widget"],
+      "explanation_style": "State law, show green sum curve.",
+      "story_hint": "Addition commutes with taking limits.",
+      "delivery_goal": "Students see why limit laws will matter next video."
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "Key Takeaways" },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Six bullets, map each to a moment in the video. Teaser Topic 4 Limit Laws. End warmly; Session 2 is underway.",
+      "voice_style": "calm_recap",
+      "tone": "confident and encouraging",
+      "energy": 0.56,
+      "pace": 0.95,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Approach vs arrival; f(a) optional.",
+        "One-sided agreement test.",
+        "Hole, jump, oscillation failure modes.",
+        "Tables and epsilon–delta intuition.",
+        "Sum law preview.",
+        "Next: Limit Laws and Algebraic Evaluation."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Sum law previewed algebra; summary is the checklist.",
+      "transition_to_next": "Topic 4, Limit Laws and Algebraic Evaluation.",
+      "likely_student_confusion": [
+        "Leaving without the f(a) vs limit separation, restate once."
+      ],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "center_bottom", "allow_center": true, "allow_half_out": true },
+      "prop_suggestions": [],
+      "explanation_style": "One takeaway per breath; point backward to widgets.",
+      "story_hint": "Close Session 2 opener; algebra speed comes next.",
+      "delivery_goal": "Students leave with a limit toolkit and know what Topic 4 assumes."
+    }
+  ]
+}

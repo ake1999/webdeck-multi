@@ -6,7 +6,11 @@ import { discoverTopics, filterTopics, summarizeSelector, toReviewLabel } from "
 import { projectRoot } from "./lib/export_runtime.mjs";
 import { buildLectureAudioArtifacts } from "./lib/lecture/pipeline.mjs";
 
-const BOOLEAN_FLAGS = new Set(["write-report"]);
+const BOOLEAN_FLAGS = new Set([
+  "write-report",
+  "skip-production-script-check",
+  "no-require-youtube-retention",
+]);
 
 function normalizeKey(key) {
   return key.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
@@ -66,6 +70,9 @@ function makeOptions(args) {
     avatarProfile: args.avatarProfile || "",
     referenceAssets: args.referenceAssets || "",
     lecturePlan: args.lecturePlan || "",
+    skipProductionScriptCheck: Boolean(args.skipProductionScriptCheck),
+    requireYoutubeRetention: !args.noRequireYoutubeRetention,
+    writeSubtitles: args.writeSubtitles !== false,
   };
 }
 
@@ -138,7 +145,10 @@ async function main() {
         status: "success",
         ...built,
       });
-      console.log(`Built audio for ${toReviewLabel(descriptor)} -> ${built.tts_alignment}`);
+      console.log(
+        `Built audio for ${toReviewLabel(descriptor)} -> ${built.tts_alignment} `
+        + `(tts_jobs=${built.tts_jobs?.files?.length || 0}, subtitles=${Object.keys(built.subtitles?.slide_files || {}).length})`,
+      );
     } catch (error) {
       report.summary.failed += 1;
       report.topics.push({

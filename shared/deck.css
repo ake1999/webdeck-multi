@@ -300,6 +300,15 @@ body.print-mode .slide .print-page-number {
   min-width: 58px;
 }
 
+.topic-nav-btn {
+  font-size: 16px;
+  letter-spacing: -0.04em;
+}
+
+.topic-nav-btn[hidden] {
+  display: none !important;
+}
+
 /* Slides */
 .slide {
   position: absolute;
@@ -307,14 +316,29 @@ body.print-mode .slide .print-page-number {
   left: 0;
   width: 100%;
   height: 100%;
-  padding: 40px 60px;
+  padding: var(--slide-pad-top) var(--slide-pad-inline);
   opacity: 0;
   transform: translateX(50px);
   transition: all 0.35s ease-in-out;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow: visible; /* allow tall steps/blocks to bleed into footer reserve */
   pointer-events: none;
   background: #fff;
+}
+
+/* Debug / analysis: highlight when authored content bleeds into footer reserve */
+.slide.slide--footer-overflow {
+  outline: 3px solid rgba(220, 38, 38, 0.55);
+  outline-offset: -3px;
+}
+
+body[data-footer-debug="1"] .theme-arian .slide::before,
+body[data-footer-debug="1"] .theme-ac .slide::before,
+body[data-footer-debug="1"] .theme-uo .slide::before {
+  outline: 1px dashed rgba(220, 38, 38, 0.45);
+  outline-offset: -1px;
 }
 
 .slide.active {
@@ -410,18 +434,19 @@ li::marker {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap: 40px;
-  height: calc(100% - 96px); /* adjust if your header height differs */
+  flex: 1 1 auto;
   min-height: 0;
-  align-items: stretch;
+  align-items: start;
   padding-top: 10px;
-  align-items: center;
+  overflow: visible;
 }
 
 .two-col > div {
-  height: 100%;
+  height: auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: visible;
 }
 
 .two-col .col {
@@ -1090,15 +1115,23 @@ body.analysis-mode .deck-container {
 /* ---------- Footer watermark (theme-aware) ---------- */
 
 :root {
-  --footer-h: 90px;          /* footer height */
+  --footer-h: 90px;          /* footer watermark height */
   --footer-opacity: 1;       /* watermark opacity */
+  --slide-pad-top: 40px;
+  --slide-pad-inline: 60px;
+  --slide-footer-gap: 16px;
+  /* Bottom padding = base pad + watermark + gap (content stays above ::before) */
+  --slide-bottom-reserve: calc(var(--slide-pad-top) + var(--footer-h) + var(--slide-footer-gap));
+  --deck-height: 720px;
+  --slide-safe-height: calc(var(--deck-height) - var(--slide-pad-top) - var(--slide-bottom-reserve));
 }
 
-/* Reserve space so content never overlaps footer */
+/* Reserve space so content never overlaps footer watermark */
 .theme-ac .slide,
 .theme-uo .slide,
 .theme-arian .slide {
-  padding-bottom: calc(40px + var(--footer-h) + 16px);
+  padding-bottom: var(--slide-bottom-reserve);
+  --slide-safe-height: calc(var(--deck-height) - var(--slide-pad-top) - var(--slide-bottom-reserve));
 }
 
 /* Base pseudo element for both themes */
@@ -1146,8 +1179,8 @@ body.analysis-mode .deck-container {
   background: linear-gradient(90deg, #5f1b16 0%, #9a341b 46%, #c65a28 100%);
 }
 
-/* Keep actual slide content above the watermark */
-.slide > * {
+/* Keep actual slide content above footer + brand watermarks */
+.slide > *:not(.slide-brand-watermark) {
   position: relative;
   z-index: 2;
 }
@@ -1278,6 +1311,22 @@ body.analysis-mode .deck-container {
 
 .theme-arian .brand-bar {
   background: linear-gradient(90deg, #5f1b16 0%, #9a341b 46%, #c65a28 100%);
+}
+
+.theme-arian .slide-brand-watermark {
+  position: absolute;
+  top: var(--slide-pad-top);
+  right: var(--slide-pad-inline);
+  bottom: var(--slide-bottom-reserve);
+  left: var(--slide-pad-inline);
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--deck-slide-watermark-image, url("./media/au-icon-light.png"));
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: min(42%, 340px);
+  opacity: var(--slide-watermark-opacity, 0.07);
+  filter: grayscale(1);
 }
 
 .theme-arian .slide {
@@ -1624,6 +1673,28 @@ body.analysis-mode .deck-container {
   box-shadow: 0 3px 8px rgba(15, 23, 42, 0.05);
 }
 
+.deck--topic-nav .course-nav-target {
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.deck--topic-nav .course-nav-target:hover,
+.deck--topic-nav .course-nav-target:focus-visible {
+  transform: translateY(-1px);
+  outline: none;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.deck--topic-nav .course-topic-item.course-nav-target:hover,
+.deck--topic-nav .course-topic-item.course-nav-target:focus-visible {
+  border-color: rgba(198, 90, 40, 0.72);
+}
+
+.deck--topic-nav .course-path-node.course-nav-target:hover,
+.deck--topic-nav .course-path-node.course-nav-target:focus-visible {
+  filter: brightness(1.03);
+}
+
 .course-topic-item--compact {
   width: 24px;
   height: 24px;
@@ -1718,6 +1789,211 @@ body.analysis-mode .deck-container {
   white-space: nowrap;
 }
 
+.content-block--math_solution_steps {
+  margin: 8px 0;
+  padding: 10px 14px;
+  overflow: visible;
+}
+
+.two-col .content-block--math_solution_steps {
+  margin: 6px 0;
+  padding: 8px 10px;
+  overflow: visible;
+}
+
+.math-solution-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.math-solution-problem {
+  font-size: 21px;
+  line-height: 1.24;
+}
+
+.two-col .math-solution-problem {
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.math-solution-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 8px 12px;
+  align-items: start;
+}
+
+.math-solution-columns--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.math-solution-split-divider {
+  width: 1px;
+  min-height: 48px;
+  margin: 2px 2px 0;
+  background: rgba(148, 163, 184, 0.5);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
+}
+
+.math-solution-split-divider--visible {
+  opacity: 1;
+}
+
+.math-solution-lane {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.math-solution-step[data-line-gap="tight"] {
+  margin-bottom: 0;
+}
+
+.math-solution-step[data-line-gap="normal"] {
+  margin-bottom: 1px;
+}
+
+.math-solution-step[data-line-gap="loose"] {
+  margin-bottom: 5px;
+}
+
+.math-solution-steps--flow .math-solution-step,
+.math-solution-steps--stack .math-solution-step {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+
+.math-solution-step-body {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  min-width: 0;
+}
+
+.math-solution-step-body--merged {
+  gap: 3px 5px;
+}
+
+.math-solution-steps--chain .math-solution-chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+
+.math-solution-steps--chain .math-solution-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+
+.math-solution-step--pending {
+  display: none !important;
+}
+
+.math-solution-steps--flow .math-solution-step--revealed,
+.math-solution-steps--stack .math-solution-step--revealed {
+  display: flex;
+}
+
+.math-solution-steps--chain .math-solution-step--revealed {
+  display: inline-flex;
+}
+
+.math-solution-step--active,
+.math-solution-step.lecture-active-element {
+  background: rgba(198, 90, 40, 0.1);
+  border-color: rgba(198, 90, 40, 0.28);
+}
+
+.math-solution-chain-op {
+  flex: 0 0 auto;
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+
+.math-solution-chain-op--inner {
+  font-size: 15px;
+}
+
+.two-col .math-solution-chain-op {
+  font-size: 15px;
+}
+
+.two-col .math-solution-chain-op--inner {
+  font-size: 14px;
+}
+
+.math-solution-math {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 18px;
+  line-height: 1.22;
+}
+
+.two-col .math-solution-math {
+  font-size: 17px;
+  line-height: 1.18;
+}
+
+.math-solution-note {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.math-solution-advance {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border: 1px solid rgba(198, 90, 40, 0.34);
+  border-radius: 8px;
+  background: rgba(255, 247, 237, 0.9);
+  color: #9a341b;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.math-solution-advance:hover,
+.math-solution-advance:focus-visible {
+  background: rgba(254, 243, 199, 0.95);
+  outline: none;
+}
+
+.lecture-mode .math-solution-advance {
+  display: none !important;
+}
+
+.lecture-mode .math-solution-step--revealed {
+  opacity: 0.48;
+}
+
+.lecture-mode .math-solution-step--active,
+.lecture-mode .math-solution-step.lecture-active-element,
+.lecture-mode .math-solution-problem.lecture-active-element {
+  opacity: 1 !important;
+  transform: translateX(2px);
+}
+
 .calculus-step-list {
   margin: 8px 0 0;
   padding-left: 26px;
@@ -1725,6 +2001,15 @@ body.analysis-mode .deck-container {
 
 .calculus-step-list li {
   margin: 7px 0;
+}
+
+.two-col .content-block--nested_bullets .calculus-step-list {
+  margin: 4px 0 8px;
+}
+
+.two-col .content-block--nested_bullets .calculus-step-list li,
+.two-col .content-block--example_solution .calculus-step-list li {
+  margin: 4px 0;
 }
 
 .widget-step-trigger {
@@ -1887,6 +2172,7 @@ tr.widget-step-trigger:focus-visible {
 
 .lecture-mode .content-block--example_solution .calculus-step-list li,
 .lecture-mode .content-block--derivation_steps .calculus-step-list li,
+.lecture-mode .content-block--math_solution_steps .math-solution-step--revealed,
 .lecture-mode .content-block--proof_sketch .calculus-step-list li,
 .lecture-mode .content-block--pause_and_reveal .reveal-body,
 .lecture-mode .bullets li {
@@ -1906,16 +2192,152 @@ tr.widget-step-trigger:focus-visible {
 .visual-lab-slide {
   display: flex;
   flex-direction: column;
-}
-
-.visual-lab-slide .media-fill {
   min-height: 0;
+  overflow: visible;
 }
 
-.visual-lab-slide .media-stage {
+.visual-lab-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.34fr) minmax(0, 0.66fr);
+  gap: 22px;
+  flex: 1 1 auto;
+  min-height: 0;
+  align-items: start;
+  padding-top: 6px;
+  overflow: visible;
+}
+
+.visual-lab-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  overflow: auto;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.visual-lab-side .content-block {
+  margin: 0;
+}
+
+.visual-lab-side .content-block--nested_bullets,
+.visual-lab-side .content-block--paragraph {
+  font-size: 14px;
+}
+
+.visual-lab-lead {
+  margin: 0;
+  font-size: 15px;
+}
+
+.visual-lab-example-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.visual-lab-example-tab {
+  appearance: none;
+  border: 1px solid rgba(198, 90, 40, 0.35);
+  background: rgba(255, 255, 255, 0.9);
+  color: #7c2d12;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.visual-lab-example-tab.is-active,
+.visual-lab-example-tab:hover {
+  background: rgba(198, 90, 40, 0.14);
+  border-color: rgba(198, 90, 40, 0.55);
+}
+
+.visual-lab-generate-tab {
+  border-style: dashed;
+}
+
+.visual-lab-active-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9a341b;
+}
+
+.visual-lab-formula {
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(198, 90, 40, 0.2);
+}
+
+.visual-lab-formula .katex-display {
+  margin: 0;
+}
+
+.visual-lab-step-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.visual-lab-step-list li + li {
+  margin-top: 4px;
+}
+
+.visual-lab-site-note {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.visual-lab-plot-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow: visible;
+}
+
+.visual-lab-plot-pane .media-fill {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.visual-lab-plot-pane .media-stage {
   width: 100%;
   max-width: none;
-  height: 448px;
+  flex: 1 1 auto;
+  min-height: 400px;
+  height: auto;
+  overflow: visible;
+}
+
+.visual-lab-plot-pane .calculus-widget-mount,
+.visual-lab-plot-pane .calculus-widget {
+  height: 100%;
+  min-height: 440px;
+}
+
+.visual-lab-plot-pane .calculus-widget-body {
+  flex: 1 1 auto;
+  min-height: 280px;
+  overflow: visible;
+}
+
+.visual-lab-plot-pane .calculus-widget-plot {
+  min-height: 260px;
+  flex: 1 1 auto;
+  overflow: visible;
+}
+
+.visual-lab-plot-pane .calculus-plot-svg {
+  max-height: none;
 }
 
 .calculus-widget-mount,
@@ -2034,10 +2456,12 @@ tr.widget-step-trigger:focus-visible {
 
 .calculus-control {
   display: grid;
-  grid-template-columns: minmax(68px, 0.9fr) minmax(72px, 1fr);
-  gap: 6px;
-  align-items: center;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  gap: 4px;
+  align-items: stretch;
   font-size: 11px;
+  min-width: 0;
 }
 
 .calculus-control-top {
@@ -2069,15 +2493,46 @@ tr.widget-step-trigger:focus-visible {
 }
 
 .calculus-control input[type="range"] {
-  height: 14px;
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
 }
 
 .calculus-control input[type="range"]::-webkit-slider-runnable-track {
-  height: 3px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(100, 116, 139, 0.35);
+}
+
+.calculus-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: #c65a28;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.22);
 }
 
 .calculus-control input[type="range"]::-moz-range-track {
-  height: 3px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(100, 116, 139, 0.35);
+}
+
+.calculus-control input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: #c65a28;
+  box-shadow: 0 0 0 2px #fff, 0 1px 3px rgba(15, 23, 42, 0.22);
 }
 
 .calculus-grid line {
@@ -2155,29 +2610,33 @@ tr.widget-step-trigger:focus-visible {
   stroke-width: 1;
 }
 
+.calculus-plot-tag {
+  opacity: 0.9;
+}
+
 .calculus-plot-tag rect {
-  fill: rgba(255, 255, 255, 0.9);
-  stroke: rgba(148, 163, 184, 0.4);
+  fill: rgba(255, 255, 255, 0.72);
+  stroke: rgba(148, 163, 184, 0.32);
   stroke-width: 1;
 }
 
 .calculus-plot-tag--accent rect {
-  fill: rgba(255, 247, 237, 0.94);
-  stroke: rgba(198, 90, 40, 0.48);
+  fill: rgba(255, 247, 237, 0.78);
+  stroke: rgba(198, 90, 40, 0.38);
 }
 
 .calculus-plot-tag--muted rect {
-  fill: rgba(248, 250, 252, 0.9);
+  fill: rgba(248, 250, 252, 0.72);
 }
 
 .calculus-plot-tag--warn rect {
-  fill: rgba(254, 242, 242, 0.94);
-  stroke: rgba(220, 38, 38, 0.42);
+  fill: rgba(254, 242, 242, 0.78);
+  stroke: rgba(220, 38, 38, 0.34);
 }
 
 .calculus-plot-tag-text {
-  fill: #1f2937;
-  font-size: 12px;
+  fill: rgba(31, 41, 55, 0.86);
+  font-size: 13.5px;
   font-weight: 780;
 }
 

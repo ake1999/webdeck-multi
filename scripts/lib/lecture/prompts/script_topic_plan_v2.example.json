@@ -1,0 +1,28 @@
+{
+  "opening_intent": "Hook with a counterintuitive graph question, welcome students to Arian University, and place this toolkit video inside Session 1 Preliminaries.",
+  "closing_intent": "Close with three portable function skills and a handoff to the vending-machine model on the next slide.",
+  "lesson_arc": [
+    "Earn attention with a sign puzzle students usually miss.",
+    "Orient students in the course path and name the payoff.",
+    "Promise the concrete skills this session will build.",
+    "Hand off to the simplest function model."
+  ],
+  "slides": [
+    {
+      "slide_id": "topic_title",
+      "speaking_goal": "Hook curiosity, welcome students, and frame why this review matters for calculus.",
+      "bridge_in": "Open cold with the horizontal-shift prediction, then welcome and course placement.",
+      "bridge_out": "Move from the session promise into the roadmap and learning objectives.",
+      "key_terms_introduced": [
+        "function toolkit",
+        "preliminaries"
+      ],
+      "likely_callbacks": [
+        "limits",
+        "derivatives",
+        "graph reading"
+      ],
+      "student_memory": "Students should feel curious and know this review is essential groundwork, not optional filler."
+    }
+  ]
+}

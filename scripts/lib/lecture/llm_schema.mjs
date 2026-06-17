@@ -1,4 +1,4 @@
-export const SCRIPT_WRITER_PROMPT_VERSION = "script_writer_v2";
+export const SCRIPT_WRITER_PROMPT_VERSION = "script_writer_v3";
 
 export const DELIVERY_KINDS = [
   "introduce",

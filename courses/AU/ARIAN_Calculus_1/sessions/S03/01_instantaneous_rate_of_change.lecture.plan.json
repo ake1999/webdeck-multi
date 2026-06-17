@@ -1,0 +1,216 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "01_instantaneous_rate_of_change",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Speedometer hook, average speed over an interval vs speed 'right now'.",
+    "progression": "Average ROC (secant) → limit as h→0 → visual_lab → theorem linking f′(a) → velocity & marginal cost → corner DNE.",
+    "destination": "Students distinguish average vs instantaneous rates and know when the limit of difference quotients fails.",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "speedometer hook",
+      "secant_tangent timelines",
+      "visual_lab",
+      "math_solution_steps",
+      "pause_and_reveal",
+      "misconception_compare",
+      "recap"
+    ]
+  },
+  "audience_level": "First-year university / advanced high school",
+  "topic_goal": "Build instantaneous rate of change as the limit of secant slopes, bridge from Session 2 limits to Session 3 derivatives.",
+  "topic_takeaways": [
+    "Average ROC = secant slope; instantaneous ROC = limit as h→0",
+    "When the limit exists it equals f′(a) and tangent slope",
+    "Apply to velocity and marginal cost via difference quotients",
+    "Average over a finite interval ≠ instantaneous on nonlinear curves",
+    "Corners: unequal one-sided difference-quotient limits ⇒ no instantaneous rate"
+  ],
+  "style_notes": [
+    "Welcome back: Session 2 complete through IVT (Topic 7); Session 3 opens derivatives.",
+    "Callback to Session 2 limits and 0/0 algebra when canceling h.",
+    "Narrate secant_tangent scriptedTimeline: call h, then let timeline shrink it toward 0.",
+    "visual_lab s04: demo one tab (~30s) on YouTube; mention site tabs.",
+    "math_solution_steps: target step_1…step_n in reveal order for generation.",
+    "pause_and_reveal on s08 and s12, real think beats, not decorative.",
+    "Do not re-introduce Arian from scratch."
+  ],
+  "transition_style": "Hook with motion → formal limit → lab → worked examples → misconception → corner case → tease Topic 9.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "Instantaneous Rate of Change" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back, Session 2 limits are done. Topic 8 opens Session 3: rates at a single instant, not over an interval.",
+      "must_cover": ["Session 2 complete (IVT)", "Session 3 derivatives begin", "Topic 8 title"],
+      "must_say": ["Welcome back to Arian University."],
+      "transition_from_previous": "Bridge from Session 2 IVT into derivative intuition.",
+      "transition_to_next": "Roadmap on learning objectives, path_topic_08 current.",
+      "prop_suggestions": ["secant_tangent", "curve"],
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Orient on roadmap: Topics 1–7 done. Today instantaneous rate; next Topic 9 formalizes f′(a).",
+      "must_cover": ["path_topic_08 current", "path_topic_09 next", "five objectives"],
+      "transition_to_next": "Speedometer vs average speed hook.",
+      "avatar_hint": { "preferred_behavior": "idle_talk", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "Speedometer vs. Average Speed" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "Speedometer reads now; trip average is secant slope. Timeline shrinks h, secant approaches tangent.",
+      "must_cover": ["instantaneous vs average", "secant vs tangent on widget"],
+      "prop_suggestions": ["secant_tangent"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "Average Rate of Change" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Average ROC = Δy/Δx = secant slope. Set x₂=a+h, this is the difference quotient we will limit.",
+      "must_cover": ["average ROC formula", "difference quotient f(a+h)-f(a) over h"],
+      "prop_suggestions": ["secant_tangent"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "Instantaneous Rate of Change" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Instantaneous ROC = limit of secant slopes as h→0. Session 2 limit machinery applies.",
+      "must_cover": ["limit definition", "h→0 on widget at a=2"],
+      "prop_suggestions": ["secant_tangent"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "Lab: Secant → Tangent" },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Lab: three h presets. Demo tab B, secant rotates to tangent. Site: try negative h and all tabs.",
+      "must_cover": ["visual_lab labExamples", "wide/mid/tiny h", "secant slope → tangent slope"],
+      "prop_suggestions": ["secant_tangent", "visual_lab"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "Alternative Limit Form" },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "h-form and two-point form are equivalent. Negative h still approaches the same tangent.",
+      "must_cover": ["equivalent limit forms"],
+      "prop_suggestions": ["secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "Instantaneous ROC = Derivative" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box: when differentiable, instantaneous ROC = f′(a) = tangent slope. Preview Topic 9.",
+      "must_cover": ["theorem_box", "f′(a) notation", "three names one limit"],
+      "prop_suggestions": ["theorem_box", "secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Example 1: Warm-Up" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "3x² at x=2: step_1 definition, step_2 expand, step_3 collect, step_4 cancel h, step_5 answer 12.",
+      "must_cover": ["math_solution_steps step_1 through step_5", "cancel h pattern"],
+      "prop_suggestions": ["math_solution_steps", "secant_tangent"]
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Pause: Velocity Problem" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Pause: find v(1) for s(t)=t³−6t²+9t. Use h-formula before reveal.",
+      "must_cover": ["pause_and_reveal", "velocity as s′(t)", "flex_plot position graph"],
+      "likely_student_confusion": ["linear h term cancels → 0"],
+      "avatar_hint": { "preferred_behavior": "idle_talk", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "Example 2: Velocity Solution" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "Reveal: expand, linear h cancels, limit 0 m/s at t=1. Graph shows flat tangent.",
+      "must_cover": ["math_solution_steps splitAfter 3", "v(1)=0"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "Misconception: Average vs Instantaneous" },
+      "slide_role": "comparison",
+      "importance": "high",
+      "narration_seed": "misconception_compare: average over [3,4] is 8000, not instantaneous at t=3 (~5545).",
+      "must_cover": ["misconception_compare pairs", "exponential secant overestimates"],
+      "prop_suggestions": ["misconception_compare", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "Example 3: Exponential Growth" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "Correct limit: 8000 ln 2 ≈ 5545. step_1 quotient, step_2 factor, step_3 ln 2 limit, step_4 ≈5545.",
+      "must_cover": ["math_solution_steps", "8000 vs 5545 contrast"],
+      "prop_suggestions": ["math_solution_steps"]
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "Pause: Rate at a Corner?" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Pause: |x−2| at x=2. One-sided difference quotients: left −1, right +1.",
+      "must_cover": ["pause_and_reveal", "flex_plot corner", "one-sided slopes"],
+      "prop_suggestions": ["flex_plot", "pause_and_reveal"]
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "Edge Case: |x − 2| at the Corner" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "step_1 right limit 1, step_2 left limit −1, step_3 DNE. Callback Topic 5 one-sided limits.",
+      "must_cover": ["math_solution_steps", "derivative DNE at corner"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 15, "source_title": "Application: Marginal Cost" },
+      "slide_role": "example",
+      "importance": "medium",
+      "narration_seed": "Marginal cost = C′(50). Cancel h → $30/unit. Economics application.",
+      "must_cover": ["math_solution_steps splitAfter 3", "marginal cost $30"],
+      "prop_suggestions": ["math_solution_steps", "flex_plot"]
+    },
+    {
+      "slide_ref": { "index": 16, "source_title": "Recap: Key Formulas" },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Three formulas: average, h-form, two-point. Secant→tangent widget recap.",
+      "must_cover": ["three equivalent forms", "f′(a) connection"],
+      "prop_suggestions": ["secant_tangent", "formula_block"]
+    },
+    {
+      "slide_ref": { "index": 17, "source_title": "Key Takeaways" },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Recap five bullets. Tease Topic 9: formal f′(a) and tangent line equation.",
+      "must_cover": ["average vs instantaneous", "corners DNE", "next Topic 9 Formal Definition"],
+      "transition_to_next": "Hand off to Topic 9 formal derivative definition."
+    },
+    {
+      "slide_ref": { "index": 18, "source_title": "Challenge (Optional): x sin(1/x)" },
+      "slide_role": "challenge",
+      "importance": "low",
+      "narration_seed": "Optional: x sin(1/x), difference quotient oscillates, f′(0) DNE. Contrast x² sin(1/x) in Topic 9.",
+      "must_cover": ["oscillation failure", "squeeze flex_plot"],
+      "prop_suggestions": ["flex_plot squeeze"]
+    }
+  ]
+}

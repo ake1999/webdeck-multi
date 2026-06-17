@@ -6,6 +6,42 @@ export function clamp(value, min, max) {
   return Math.min(max, Math.max(min, Number(value)));
 }
 
+export function normalizeLlmBaseUrl(value) {
+  const raw = String(value || "http://127.0.0.1:11434").trim();
+  return raw.replace(/\/+$/, "");
+}
+
+export function normalizeLlmEndpointKind(endpoint) {
+  const normalized = normalizeLlmBaseUrl(endpoint);
+  if (normalized.includes("/v1") || normalized.endsWith("/chat/completions")) {
+    return "openai";
+  }
+
+  try {
+    const { hostname, port } = new URL(normalized);
+    const host = hostname.toLowerCase();
+    if (
+      host === "api.deepseek.com"
+      || host === "api.openai.com"
+      || host === "openrouter.ai"
+      || host.endsWith(".openai.azure.com")
+    ) {
+      return "openai";
+    }
+    if (host === "localhost" || host === "127.0.0.1" || port === "11434" || normalized.includes(":11434")) {
+      return "ollama";
+    }
+  } catch {
+    // Fall through to path-based detection.
+  }
+
+  if (/\/api\/(chat|generate)\b/.test(normalized)) {
+    return "ollama";
+  }
+
+  return "openai";
+}
+
 export function ensureSentence(value) {
   const text = String(value || "").trim();
   if (!text) return "";

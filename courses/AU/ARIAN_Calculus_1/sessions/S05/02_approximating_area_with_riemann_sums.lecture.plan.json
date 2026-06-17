@@ -1,0 +1,778 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "02_approximating_area_with_riemann_sums",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Students know antiderivatives (Topic 22) but need the forward geometric story: curved boundaries cannot be measured with a ruler, slice into rectangles.",
+    "progression": "Garden hook → Riemann sum formula → left/right/midpoint numeric walkthrough on f(x)=x²+1, [0,2], n=4 → visual_lab → pause pair on increasing f → limit definition → optional challenge → worked examples → index misconception → recap teasing Topic 24.",
+    "destination": "Students compute Lₙ, Rₙ, Mₙ, write sigma sums with correct indices, bracket area for monotone f, and state the limit definition of ∫ₐᵇ f.",
+    "tone": "Warm, visual, rigorous without intimidation, Session 5 integration arc.",
+    "methods": [
+      "visual intuition",
+      "formalize",
+      "guided prediction",
+      "worked reasoning",
+      "recap",
+      "Use riemann_integral widget as the main explanation surface.",
+      "Vary n, method, a, b when narrating widget readouts.",
+      "Keep optional s10 skippable in live delivery."
+    ]
+  },
+  "audience_level": "first-year university and advanced high-school students who completed Topic 22 (antiderivatives) and need the slice-and-sum foundation before the definite integral",
+  "topic_goal": "Teach left, right, and midpoint Riemann sums, sigma notation, and the limit definition of area so students can approximate and bracket exact integrals.",
+  "topic_takeaways": [
+    "Compute left, right, and midpoint sums with equal subintervals on [a,b].",
+    "For increasing f: Lₙ < true area < Rₙ; midpoint is often closest at the same n.",
+    "Write Riemann sums in sigma notation with correct index ranges.",
+    "Interpret ∫ₐᵇ f(x) dx as the limit of Riemann sums as n → ∞.",
+    "Avoid index confusion: left uses x_{i-1} or i = 0…n−1; right uses x_i or i = 1…n."
+  ],
+  "style_notes": [
+    "Welcome back, do NOT re-introduce Arian from scratch.",
+    "Callback Topic 22: antiderivatives reverse differentiation; Riemann sums build area forward.",
+    "Roadmap: Topics 1–22 done, Topic 23 current, Topic 24 (Definite Integral) next.",
+    "Canonical numeric example: f(x)=x²+1 on [0,2], n=4 for L₄, R₄, M₄.",
+    "riemann_integral on core slides, narrate n and method before stating the rule.",
+    "pause_and_reveal on s07–s08 with a real think beat; final check on s16.",
+    "s10 optional challenge, OK to skip; three-step sketch only.",
+    "End teasing Topic 24 net area and signed regions."
+  ],
+  "transition_style": "One beat per slide: name the sampling choice, point at rectangles, read the sum, preview the next method or the limit.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": {
+        "index": 0,
+        "source_title": "Approximating Area With Riemann Sums"
+      },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back, Topic 22 reversed differentiation; Topic 23 is slice-and-sum area. Session 5 integration arc continues.",
+      "voice_style": "clear_teacher",
+      "tone": "curious and direct",
+      "energy": 0.6,
+      "pace": 0.94,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Topic 23 after antiderivatives (Topic 22).",
+        "Forward problem: area under a curve.",
+        "Topic 24 Definite Integral is next."
+      ],
+      "must_say": [
+        "Welcome back to Arian University.",
+        "Topic 22 asked what function has this derivative, today we approximate area under a curve."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Topic 22 ended with antiderivative families and +C; this topic builds the geometric definition of area.",
+      "transition_to_next": "Roadmap and five objectives, slice, sum, limit.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "shaded area",
+        "slicing controls"
+      ],
+      "explanation_style": "Frame Approximating Area With Riemann Sums as the question or capability the rest of the topic is going to answer.",
+      "story_hint": "Keep Approximating Area With Riemann Sums connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand how Approximating Area With Riemann Sums sets up the lesson and why the topic matters.",
+      "scene_hint": "Use a graph with shaded area or sliced regions so students can see the accumulation before naming the formula."
+    },
+    {
+      "slide_ref": {
+        "index": 1,
+        "source_title": "Learning Objectives"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Roadmap first: Topic 22 done, Topic 23 today, Topic 24 next. Five objectives, three sampling methods, sigma notation, limit definition, bracketing for monotone f.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Calculate Riemann sums using left, right, and midpoint sample points for continuous functions on closed intervals",
+        "Interpret the definite integral as the limit of Riemann sums as the number of subintervals approaches infinity",
+        "Apply Riemann sum approximations to estimate areas under curves when exact integration is difficult",
+        "Analyze how the choice of sample points affects approximation accuracy",
+        "Construct Riemann sum expressions in sigma notation"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Approximating Area With Riemann Sums into Learning Objectives so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into From Curved Garden Beds to Area so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Learning Objectives to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep Learning Objectives connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand how Learning Objectives sets up the lesson and why the topic matters."
+    },
+    {
+      "slide_ref": {
+        "index": 2,
+        "source_title": "From Curved Garden Beds to Area"
+      },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Imagine you're a landscape architect designing a curved garden bed. You need the area to order soil, but a curved edge can't be measured with a simple ruler. Here's the big idea: slice the region into thin vertical strips, each nearly a rectangle. Add their areas, and as the strips get thinner and thinner, the approximation becomes exact. This 'slice and sum' strategy is the foundation of integral calculus.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Slice → approximate rectangle sum → exact integral.",
+        "You're a landscape architect.",
+        "A garden bed has a curved edge."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Bridge from Learning Objectives into From Curved Garden Beds to Area so the lesson feels like one continuous explanation rather than isolated slides.",
+      "transition_to_next": "Carry this idea forward into What is a Riemann Sum? so students feel the lesson progressing intentionally toward the topic goal.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "shaded area",
+        "slicing controls",
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Use From Curved Garden Beds to Area to orient students, preview the route, and tell them what to listen for next.",
+      "story_hint": "Keep From Curved Garden Beds to Area connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand how From Curved Garden Beds to Area sets up the lesson and why the topic matters.",
+      "scene_hint": "riemann_integral: a=0, b=2, n=4, method=left; animate n→24. Garden-bed hook; callback Topic 22."
+    },
+    {
+      "slide_ref": {
+        "index": 3,
+        "source_title": "What is a Riemann Sum?"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "A Riemann sum gives a concrete way to approximate the area under a curve. We break the interval from a to b into n equal subintervals, each of width Δx. In each subinterval we pick a sample point, say x_i star, and build a rectangle of height f of that point. The total area is the sum of these rectangles. The more rectangles we use, the better the approximation.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Riemann sum = sum of rectangle areas: Σ f(x_i^*) Δx",
+        "$$S_n = \\sum_{i=1}^{n} f(x_i^*) \\Delta x$$ - $n$: number of rectangles - $\\Delta x = \\frac{b-a}{n}$: width - $x_i^*$: sample point in $i$th subinterval - $f(x_i^*)$: height"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of What is a Riemann Sum? so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "shaded area",
+        "slicing controls",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on What is a Riemann Sum? by narrating what students should notice and why it matters.",
+      "story_hint": "Keep What is a Riemann Sum? connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on What is a Riemann Sum? and why that visible behavior matters technically.",
+      "scene_hint": "formula_block left; riemann_integral right with n increasing. Name Δx, x_i^*, f(x_i^*)."
+    },
+    {
+      "slide_ref": {
+        "index": 4,
+        "source_title": "Left Endpoint Riemann Sum"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "The left endpoint Riemann sum uses the left edge of each subinterval as the sample point. Let's compute it for f(x)=x^2+1 from 0 to 2 with just 4 rectangles. The width is 0.5. Our left points are 0, 0.5, 1, and 1.5. Evaluate the function at each, multiply by the width, and add. We get an approximate area of 3.75. Notice that the left endpoints are below the curve for an increasing function, so this sum underestimates the true area.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "L_n uses left edge of each strip as sample point.",
+        "**Formula:** $$L_n = \\sum_{i=1}^{n} f(x_{i-1}) \\Delta x$$ **Example:** $\\int_0^2 (x^2+1)\\,dx$, $n=4$ - $\\Delta x = 0.5$ - Left points: $x_0=0$, $x_1=0.5$, $x_2=1$, $x_3=1.5$ - Heights: $f(0)=1$, $f(0.5)=1.25$, $f(1)=2$, $f(1.5)=3.25$ - $L_4 = 0.5 (1 + 1.25 + 2 + 3.25) = 3.75$"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Left Endpoint Riemann Sum so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "shaded area",
+        "slicing controls",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Left Endpoint Riemann Sum by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Left Endpoint Riemann Sum connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Left Endpoint Riemann Sum and why that visible behavior matters technically.",
+      "scene_hint": "math_solution_steps: L₄=3.75 on f(x)=x²+1, [0,2], n=4. Widget method=left, n=4."
+    },
+    {
+      "slide_ref": {
+        "index": 5,
+        "source_title": "Right Endpoint Riemann Sum"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Now the right endpoint sum uses the right edge of each strip. For the same function and same number of rectangles, the right endpoints are higher because the function is increasing, so each rectangle overestimates the area. Our sum is 5.75, while the left sum was 3.75. The true area – which we'll compute later – is about 4.67, so the left and right sums bracket the exact answer.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "R_n uses right edge. For increasing f, R_n overestimates.",
+        "**Formula:** $$R_n = \\sum_{i=1}^{n} f(x_i) \\Delta x$$ **Example:** Same function & $n$: - $\\Delta x = 0.5$ - Right points: $x_1=0.5$, $x_2=1$, $x_3=1.5$, $x_4=2$ - Heights: $1.25, 2, 3.25, 5$ - $R_4 = 0.5 (1.25 + 2 + 3.25 + 5) = 5.75$ > **Compare:** $L_4=3.75$, $R_4=5.75$.",
+        "True area lies between."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Right Endpoint Riemann Sum so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "shaded area",
+        "slicing controls",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Right Endpoint Riemann Sum by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Right Endpoint Riemann Sum connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Right Endpoint Riemann Sum and why that visible behavior matters technically.",
+      "scene_hint": "math_solution_steps: R₄=5.75; bracket with L₄ and 14/3. Widget method=right."
+    },
+    {
+      "slide_ref": {
+        "index": 6,
+        "source_title": "Midpoint Riemann Sum"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "The midpoint Riemann sum uses the middle of each subinterval. For our increasing function, the midpoint height is much closer to the average height of the curve over that strip. With n=4, the midpoint sum gives 4.625, while the true area – which we can compute exactly as 14/3 or about 4.667 – is only 0.042 away. That's a huge improvement over the left and right sums.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Midpoint rule often gives best approximation for same n.",
+        "**Formula:** $$M_n = \\sum_{i=1}^{n} f\\!\\left(\\frac{x_{i-1}+x_i}{2}\\right) \\Delta x$$ **Example:** Same function & $n$: - Midpoints: $0.25, 0.75, 1.25, 1.75$ - Heights: $1.0625, 1.5625, 2.5625, 4.0625$ - $M_4 = 0.5 (1.0625 + 1.5625 + 2.5625 + 4.0625) = 4.625$ > True area: $\\frac{14}{3} \\approx 4.667$, remarkably close!"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Midpoint Riemann Sum so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "shaded area",
+        "slicing controls",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Midpoint Riemann Sum by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Midpoint Riemann Sum connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Midpoint Riemann Sum and why that visible behavior matters technically.",
+      "scene_hint": "math_solution_steps: M₄=4.625 ≈ 14/3. Widget method=midpoint."
+    },
+    {
+      "slide_ref": {
+        "index": 7,
+        "source_title": "Explore Riemann Sums Interactively"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "Now you can explore Riemann sums yourself. Use the slider to increase the number of rectangles from 1 to 50, and switch between left, right, and midpoint methods. Watch how the rectangles crowd under the curve and the sum approaches the exact integral of 14 over 3. Notice that midpoint is often more accurate than left or right for the same n.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Change n and method. Watch the rectangles and the sum update.",
+        "Use the controls to change the number of rectangles and the sampling method.",
+        "Observe how the sum changes as n increases."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Explore Riemann Sums Interactively so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "shaded area",
+        "slicing controls",
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Explore Riemann Sums Interactively by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Explore Riemann Sums Interactively connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Explore Riemann Sums Interactively and why that visible behavior matters technically.",
+      "scene_hint": "visual_lab full-width riemann_integral; cycle left/right/midpoint, crank n, try a=1,b=3."
+    },
+    {
+      "slide_ref": {
+        "index": 8,
+        "source_title": "Pause: Which Sum is Larger? (Pause)"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "YouTube pause on f(x)=x², [1,3], n=4. Increasing f → compare endpoint heights per strip. Do not reveal numeric answer, hint monotonicity only.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Pause: For f(x)=x^2 on [1,3], n=4: which sum is larger?",
+        "For $f(x) = x^2$ on $[1,3]$, predict: **Will the left sum or right sum be larger for n=4?** Take 15 seconds to think before clicking the button."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Pause: Which Sum is Larger? (Pause) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [
+        "Use the prompt to surface this check: Pause: Will left sum or right sum be larger for f(x)=x^2 on [1,3] with n=4?"
+      ],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Pause: Which Sum is Larger?",
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Pause: Which Sum is Larger? (Pause) by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Pause: Which Sum is Larger? (Pause) connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Pause: Which Sum is Larger? (Pause) and why that visible behavior matters technically.",
+      "scene_hint": "pause_and_reveal + riemann_integral a=1,b=3,n=4,method=left. Fifteen-second think beat."
+    },
+    {
+      "slide_ref": {
+        "index": 9,
+        "source_title": "Answer: Right Sum is Larger"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "If you predicted right sum larger, you're correct. For an increasing function, right endpoints are always higher than left endpoints, so each rectangle is taller. That gives a larger total – here, 10.875 versus 5.875. The true area is 26 over 3, about 8.667, so left underestimates and right overestimates. This bracketing property is very useful for error bounds.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Right sum is larger because the function is increasing.",
+        "**Explanation:** For an increasing function, right endpoints are higher than left endpoints, so $R_n > L_n$.",
+        "**Check:** - $\\Delta x = 0.5$ - Left points: $1, 1.5, 2, 2.5$ → $L_4 \\approx 5.875$ - Right points: $1.5, 2, 2.5, 3$ → $R_4 \\approx 10.875$ - True area $= \\frac{26}{3} \\approx 8.667$"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Answer: Right Sum is Larger so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Answer: Right Sum is Larger",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Answer: Right Sum is Larger by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Answer: Right Sum is Larger connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Answer: Right Sum is Larger and why that visible behavior matters technically.",
+      "scene_hint": "math_solution_steps L₄≈5.875, R₄≈10.875, area 26/3. Widget timeline left→right."
+    },
+    {
+      "slide_ref": {
+        "index": 10,
+        "source_title": "Definite Integral as a Limit"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "The definite integral is defined as the limit of Riemann sums as the number of rectangles goes to infinity, making each rectangle infinitely thin. For any continuous function on [a,b], this limit exists and, remarkably, does not depend on which sample points we choose. This is a powerful result: it means we can use any convenient sampling method and still get the same exact answer in the limit.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Definite integral = limit of Riemann sums as n→∞.",
+        "$$\\int_a^b f(x)\\,dx = \\lim_{n \\to \\infty} \\sum_{i=1}^{n} f(x_i^*) \\Delta x$$ **Key idea:** The exact area is the limit of Riemann sums as the number of rectangles approaches infinity (or equivalently, as the width of each rectangle approaches zero).",
+        "**Important:** For continuous functions on [a,b], this limit exists and is independent of the choice of sample points."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Definite Integral as a Limit so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "shaded area",
+        "slicing controls",
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Definite Integral as a Limit by narrating what students should notice and why it matters.",
+      "story_hint": "Tell it through the object students can see first: a graph, curve, area, slope, sequence, or vector field.",
+      "delivery_goal": "Students should understand what to watch for on Definite Integral as a Limit and why that visible behavior matters technically.",
+      "scene_hint": "formula_block limit definition; riemann_integral n=4→40. Bridge to Topic 24; callback Session 2 limits."
+    },
+    {
+      "slide_ref": {
+        "index": 11,
+        "source_title": "[Challenge – Optional] Evaluating the Limit for x² (Optional · Challenge)"
+      },
+      "slide_role": "practice",
+      "importance": "low",
+      "narration_seed": "Optional, skip if short on time. Three-step sketch: setup Rₙ on [1,3], expand, limit → 26/3. Full Σi algebra is homework.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.52,
+      "pace": 0.96,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Optional, skippable in live delivery.",
+        "Three-step sketch only; full Σi expansion is homework.",
+        "Limit of right sums on [1,3] gives 26/3."
+      ],
+      "must_say": [
+        "This slide is optional, skip if you are short on time."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of [Challenge – Optional] Evaluating the Limit for x² (Optional · Challenge) so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "approach markers",
+        "parameter slider",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on [Challenge – Optional] Evaluating the Limit for x² (Optional · Challenge) by narrating what students should notice and why it matters.",
+      "story_hint": "Tell it through the object students can see first: a graph, curve, area, slope, sequence, or vector field.",
+      "delivery_goal": "Students should understand what to watch for on [Challenge – Optional] Evaluating the Limit for x² (Optional · Challenge) and why that visible behavior matters technically.",
+      "scene_hint": "math_solution_steps 3-step flow; riemann_integral a=1,b=3,method=right,n increasing. Mark skippable."
+    },
+    {
+      "slide_ref": {
+        "index": 12,
+        "source_title": "Example 1: Warm-Up – Square Root"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Let's work a warm-up problem. Approximate the integral of the square root function from 0 to 4 using 4 right endpoint rectangles. Width is 2 minus 0 over 4, that's 1. The right endpoints are 1, 2, 3, and 4. Their square roots are roughly 1, 1.414, 1.732, and 2. Adding and multiplying by 1 gives 6.146. This is a straightforward calculation to build confidence.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Warm-up: R₄ for √x from 0 to 4 gives 6.146.",
+        "**Problem:** Approximate $\\int_0^4 \\sqrt{x}\\,dx$ using right endpoints with $n=4$.",
+        "1."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example 1: Warm-Up – Square Root to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example 1: Warm-Up – Square Root is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph"
+      ],
+      "explanation_style": "Define Example 1: Warm-Up – Square Root in plain mathematical language, then connect the formula to a graph, example, or student prediction.",
+      "story_hint": "Keep Example 1: Warm-Up – Square Root connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should be able to explain Example 1: Warm-Up – Square Root accurately and use it in the next step of the lesson.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot f(x)=√x from 0 to 4 with 4 shaded rectangles touching the curve at the right endpoints. The first rectangle is very short, the tallest is at x=4."
+    },
+    {
+      "slide_ref": {
+        "index": 13,
+        "source_title": "Example 2: Standard – ln x in Sigma"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Here's a standard exercise: express the left Riemann sum for natural log from 1 to 4 with 6 rectangles in sigma notation. The width is 0.5. Left endpoints are 1 plus 0.5 i, where i runs from 0 to 5. Make sure you don't include i=6 – that would be the right endpoint of the last rectangle. The sum is 0.5 times the sum of ln of 1 plus 0.5 i for i from 0 to 5.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Standard: Write the sum in sigma, careful with indices.",
+        "**Problem:** Write the left endpoint Riemann sum for $\\int_1^4 \\ln x\\,dx$ with $n=6$ in sigma notation.",
+        "1."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example 2: Standard – ln x in Sigma to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example 2: Standard – ln x in Sigma is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph"
+      ],
+      "explanation_style": "Define Example 2: Standard – ln x in Sigma in plain mathematical language, then connect the formula to a graph, example, or student prediction.",
+      "story_hint": "Keep Example 2: Standard – ln x in Sigma connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should be able to explain Example 2: Standard – ln x in Sigma accurately and use it in the next step of the lesson.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot of ln x from 1 to 4 with 6 left endpoint rectangles. The rectangles are thin, showing the left edges. Indices i=0 to 5 labeled on x-axis."
+    },
+    {
+      "slide_ref": {
+        "index": 14,
+        "source_title": "Example 3: Tricky – sin x and Concavity (Medium)"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "This example challenges a common assumption. For sine from 0 to pi, the right sum with 4 rectangles gives about 1.896, which is less than the true area of 2. Wait – you might have thought right sums always overestimate. That's only true for increasing functions. Here sine is increasing then decreasing, but more importantly it's concave down. For a concave down function, the curve lies above the chords, so even right endpoint rectangles can underestimate.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Tricky: Right sum underestimates concave down function.",
+        "**Problem:** For $f(x)=\\sin x$ on $[0,\\pi]$, compute $R_4$ and explain why it underestimates.",
+        "1."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example 3: Tricky – sin x and Concavity (Medium) to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example 3: Tricky – sin x and Concavity (Medium) is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "parameter sliders"
+      ],
+      "explanation_style": "Define Example 3: Tricky – sin x and Concavity (Medium) in plain mathematical language, then connect the formula to a graph, example, or student prediction.",
+      "story_hint": "Keep Example 3: Tricky – sin x and Concavity (Medium) connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should be able to explain Example 3: Tricky – sin x and Concavity (Medium) accurately and use it in the next step of the lesson.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Plot sin x from 0 to π with 4 right endpoint rectangles. The curve is a bump. The fourth rectangle at x=π has height 0. The rectangles are shaded."
+    },
+    {
+      "slide_ref": {
+        "index": 15,
+        "source_title": "Example 4: Edge Case – Constant Function"
+      },
+      "slide_role": "definition",
+      "importance": "medium",
+      "narration_seed": "Edge cases help solidify understanding. For a constant function, every rectangle has the same height. So left, right, or midpoint sums all give the same result, and that result is exactly the area – 7 times the width, which is 21. This shows that Riemann sums are not just approximations: they can be exact when the function is flat. It also reminds us that the approximation error comes from variation in the function.",
+      "voice_style": "clear_teacher",
+      "tone": "clear_teacher",
+      "energy": 0.58,
+      "pace": 0.96,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Edge: Constant f → any Riemann sum is exact.",
+        "**Problem:** Approximate $\\int_2^5 7\\,dx$ using midpoint rule with $n=3$.",
+        "1."
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Use Example 4: Edge Case – Constant Function to introduce the next key term students need before the lesson can move forward.",
+      "transition_to_next": "Once Example 4: Edge Case – Constant Function is clear, use the next slide to apply or test the term instead of leaving it abstract.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "define_then_example",
+      "avatar_hint": {
+        "preferred_behavior": "idle_talk",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "function graph",
+        "parameter sliders",
+        "highlighted point",
+        "function graph"
+      ],
+      "explanation_style": "Define Example 4: Edge Case – Constant Function in plain mathematical language, then connect the formula to a graph, example, or student prediction.",
+      "story_hint": "Tell it through the object students can see first: a graph, curve, area, slope, sequence, or vector field.",
+      "delivery_goal": "Students should be able to explain Example 4: Edge Case – Constant Function accurately and use it in the next step of the lesson.",
+      "scene_hint": "Convert this visual plan into an actual calculus visual when possible: Horizontal line y=7 from x=2 to 5. Three rectangles (1 wide each) fill perfectly under the line. The area is a simple rectangle of width 3, height 7."
+    },
+    {
+      "slide_ref": {
+        "index": 16,
+        "source_title": "Common Mistake: Index Confusion"
+      },
+      "slide_role": "demo",
+      "importance": "high",
+      "narration_seed": "misconception_compare: 'left sum' with Σ f(x_i) i=1..4 is actually right endpoints. Correct left: i=0..3 or x_{i-1}. Widget flips left→right.",
+      "voice_style": "energetic_demo",
+      "tone": "energetic_demo",
+      "energy": 0.66,
+      "pace": 0.98,
+      "attention_mode": "hybrid_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Mistake: Don't use xi for left sum. Use x_{i-1}.",
+        "**Wrong approach:** A student writes the left endpoint sum for $\\int_0^2 x^2\\,dx$ with $n=4$ as: $$\\sum_{i=1}^{4} f(x_i)\\Delta x$$ using $x_i = 0.5i$.",
+        "This is actually the **right** endpoint sum!"
+      ],
+      "must_say": [],
+      "emphasis_words": [],
+      "transition_from_previous": "Shift from explanation into a visual or interactive view of Common Mistake: Index Confusion so students can watch the concept, not just hear it.",
+      "transition_to_next": "After the visual explanation, step back out and explain the decision rule or takeaway students should keep.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "intuitive_visual_explanation",
+      "avatar_hint": {
+        "preferred_behavior": "point_left_mid",
+        "preferred_anchor": "right_bottom"
+      },
+      "prop_suggestions": [
+        "Common Mistake: Index Confusion",
+        "function graph"
+      ],
+      "explanation_style": "Teach through the visual or interactive material on Common Mistake: Index Confusion by narrating what students should notice and why it matters.",
+      "story_hint": "Keep Common Mistake: Index Confusion connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should understand what to watch for on Common Mistake: Index Confusion and why that visible behavior matters technically.",
+      "scene_hint": "misconception_compare pairs + riemann timeline left→right on [0,2], n=4."
+    },
+    {
+      "slide_ref": {
+        "index": 17,
+        "source_title": "Summary: What You've Learned"
+      },
+      "slide_role": "exit_check",
+      "importance": "high",
+      "narration_seed": "Six-bullet recap + final pause (Lₙ vs Mₙ vs Rₙ on increasing f). Tease Topic 24 Definite Integral: net area and signed regions. FTC (Topic 25) will link back to Topic 22.",
+      "voice_style": "calm_recap",
+      "tone": "calm_recap",
+      "energy": 0.48,
+      "pace": 0.92,
+      "attention_mode": "slide_focus",
+      "scene_policy": "hybrid",
+      "object_policy": "suggested",
+      "must_cover": [
+        "Riemann sums → limit → definite integral.",
+        "**Core Ideas:** - Riemann sums approximate area by summing rectangles: $S_n = \\sum f(x_i^*)\\Delta x$ - Left, right, and midpoint are common choices for $x_i^*$ - The definite integral $\\int_a^b f\\,dx$ is the limit of Riemann sums as $n\\to\\infty$ - For increasing functions: left sum < integral < right sum - Error typically decreases as $n$ increases **You should now be able to:** - Compute left, right, and midpoint sums for any continuous function - Write Riemann sums in sigma notation - Interpret the integral as a limit - Recognize how function behavior (monotonicity, concavity) affects approximation accuracy"
+      ],
+      "must_say": [
+        "Next topic is The Definite Integral, we make ∫ₐᵇ f(x) dx a number you can compute.",
+        "Riemann sums are the bridge from limits to integrals."
+      ],
+      "emphasis_words": [],
+      "transition_from_previous": "Index misconception → compress into usable memory.",
+      "transition_to_next": "Hand off to Topic 24 definite integral and net area.",
+      "likely_student_confusion": [],
+      "teacher_strategy": "recap_and_reinforce",
+      "avatar_hint": {
+        "preferred_behavior": "face_viewer",
+        "preferred_anchor": "center_bottom"
+      },
+      "prop_suggestions": [],
+      "explanation_style": "Use Summary: What You've Learned as a final self-check so students leave knowing what they should now be able to explain or do.",
+      "story_hint": "Keep Summary: What You've Learned connected to a mathematical question students can answer with a graph, formula, or short calculation.",
+      "delivery_goal": "Students should leave Summary: What You've Learned with the main takeaways of the topic compressed into usable memory."
+    }
+  ]
+}

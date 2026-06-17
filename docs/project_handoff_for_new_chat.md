@@ -18,9 +18,12 @@ Current calculus source state:
 - The browser bridge uses `shared/calculus_material_adapter.js` to convert
   material JSON into WebDeck slide data at runtime.
 - A first generation-side test topic has been created from material JSON:
-  `courses/AU/ARIAN_Calculus_1/sessions/S01/review_of_functions_and_graphs.slides.js`
+  `courses/AU/ARIAN_Calculus_1/sessions/S01/01_review_of_functions_and_graphs.slides.js`
   and
-  `courses/AU/ARIAN_Calculus_1/sessions/S01/review_of_functions_and_graphs.lecture.plan.json`.
+  `courses/AU/ARIAN_Calculus_1/sessions/S01/01_review_of_functions_and_graphs.lecture.plan.json`.
+- Session topic files use `NN_<material_slug>` prefixes (`01_`, `02_`, …) for
+  slides and plans; material JSON under `courses/Calculus/Materials/` stays
+  unprefixed. See `shared/topic_naming.js`.
 - The converter is `scripts/convert_calculus_material.mjs`; the shortcut
   command is `npm run convert:calculus-test`.
 - Arian University lecture plans use `shared/arian.avatar.profile.json` for the
@@ -28,14 +31,19 @@ Current calculus source state:
 - Calculus slide rendering now supports rich content blocks and native inline
   widgets rather than only old bullets/paragraphs. The reusable runtime lives in
   `shared/calculus/`.
-- Supported rich block types are `formula_block`, `derivation_steps`,
-  `theorem_box`, `example_solution`, `proof_sketch`,
-  `misconception_compare`, `pause_and_reveal`, `math_table`, `paragraph`, and
-  `nested_bullets`.
+- Supported rich block types include `math_solution_steps` (worked algebra with
+  progressive reveal and generation-synced step IDs), `formula_block`,
+  `derivation_steps`, `theorem_box`, `example_solution`, `proof_sketch`,
+  `misconception_compare`, `pause_and_reveal`, `math_table`, `paragraph`,
+  `nested_bullets`, and `course_path`.
 - `visual_lab` is available for full-width interactive slides.
-- Inline widget media uses `media.kind: "calculus_widget"`. The first native
-  widgets are `function_transform`, `limit_epsilon`, `secant_tangent`, and
-  `riemann_integral`.
+- Inline widget media uses `media.kind: "calculus_widget"`. Native widgets
+  include `function_analysis`, `function_transform`, `limit_epsilon`,
+  `secant_tangent`, `riemann_integral`, and `unit_circle_trig`.
+- **Agent authoring playbook:** `docs/calculus_course_authoring_guide.md`
+  documents slide/plan patterns, `math_solution_steps` rules, widget pairing,
+  and AU course consistency. Reference implementations: Topics 1–4 under
+  `courses/AU/ARIAN_Calculus_1/sessions/`.
 - Widgets use shared parameter state so controls, formula text, numeric
   readout, plot, and `scriptedTimeline` animation remain synchronized. Website
   mode is manually draggable; lecture playback can drive the same parameters
@@ -144,7 +152,7 @@ npm run validate -- \
   --school AU \
   --course ARIAN_Calculus_1 \
   --session S01 \
-  --topic review_of_functions_and_graphs
+  --topic 01_review_of_functions_and_graphs
 ```
 
 Build deterministic professor scripts for the calculus test topic:
@@ -154,7 +162,7 @@ npm run build:prof-scripts -- \
   --school AU \
   --course ARIAN_Calculus_1 \
   --session S01 \
-  --topic review_of_functions_and_graphs \
+  --topic 01_review_of_functions_and_graphs \
   --scriptProvider deterministic \
   --write-report
 ```
@@ -167,7 +175,7 @@ npm run build:prof-scripts -- \
   --school AU \
   --course ARIAN_Calculus_1 \
   --session S01 \
-  --topic review_of_functions_and_graphs \
+  --topic 01_review_of_functions_and_graphs \
   --scriptProvider llm_local \
   --scriptEndpoint <deepseek-openai-compatible-url> \
   --scriptModel <deepseek-model> \

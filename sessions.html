@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Choose Session & Topic — Teaching Decks</title>
+  <title>Choose Unit & Lesson — Teaching Decks</title>
   <style>
     :root {
       --page-bg: #0f172a;
@@ -132,7 +132,7 @@
 <body>
   <div class="wrap">
     <a id="backLink" class="back-link" href="courses.html">← Back to courses</a>
-    <h1 id="title">Choose session & topic</h1>
+    <h1 id="title">Choose unit & lesson</h1>
     <p id="subtitle"></p>
 
     <div id="sessionsContainer"></div>
@@ -143,6 +143,12 @@
       getCourseConfig,
       getSchoolConfig,
     } from "./shared/course_catalog.js";
+    import {
+      buildLessonIndex,
+      formatLessonLabel,
+      formatUnitLabel,
+      getCourseTerminology,
+    } from "./shared/course_labels.js";
 
     const params = new URLSearchParams(window.location.search);
     const school = params.get("school") || "AC";
@@ -162,36 +168,41 @@
     if (!cfg) {
       titleEl.textContent = "Unknown or unconfigured course";
       subtitleEl.textContent = `course="${courseId}"`;
-      sessionsEl.innerHTML = "<p>No sessions configured yet for this course.</p>";
+      sessionsEl.innerHTML = "<p>No units configured yet for this course.</p>";
     } else {
+      const terminology = getCourseTerminology(cfg);
+      const lessonIndex = buildLessonIndex(cfg);
+
+      document.title = `${terminology.chooserTitle} — ${cfg.displayName}`;
       titleEl.textContent = cfg.displayName;
-      subtitleEl.textContent =
-        cfg.subtitle || schoolCfg.fallbackSubtitle;
+      subtitleEl.textContent = cfg.subtitle || schoolCfg.fallbackSubtitle;
 
       sessionsEl.innerHTML = "";
 
-      cfg.sessions.forEach(sess => {
+      cfg.sessions.forEach((sess, unitIndex) => {
+        const unitLabel = formatUnitLabel(sess, unitIndex + 1, terminology);
         const box = document.createElement("div");
         box.className = "session-card";
         box.innerHTML = `
           <div class="session-header">
             <div>
-              <h2 style="margin:6px 0 4px 0; color:${cfg.color};">${sess.label}</h2>
+              <h2 style="margin:6px 0 4px 0; color:${cfg.color};">${unitLabel}</h2>
             </div>
             <div style="font-size:13px; color:var(--page-muted);">${sess.desc}</div>
           </div>
           <p style="margin:8px 0 4px 0; font-size:14px; color:var(--page-muted);">
-            Choose a topic to open its slide deck.
+            ${terminology.chooserHint}
           </p>
         `;
 
         const topicsWrap = document.createElement("div");
         topicsWrap.className = "topic-grid";
 
-        sess.topics.forEach(t => {
+        sess.topics.forEach((t) => {
+          const globalNumber = lessonIndex.get(`${sess.id}:${t.id}`);
           const a = document.createElement("a");
           a.className = "topic-btn";
-          a.textContent = t.label;
+          a.textContent = formatLessonLabel(globalNumber, t, terminology);
 
           a.href =
             `session.html?` +

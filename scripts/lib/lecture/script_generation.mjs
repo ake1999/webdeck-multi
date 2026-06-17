@@ -117,8 +117,13 @@ function blockLabel(block) {
     block?.text,
     block?.formula,
     block?.prompt,
+    block?.problem,
     ...asArray(block?.items).map((item) => item.text || item.say || ""),
-    ...asArray(block?.steps).map((item) => item.text || item.say || ""),
+    ...asArray(block?.steps).flatMap((item) => {
+      const parts = asArray(item?.parts).map((part) => part.math || part.text || "");
+      if (parts.length) return [item.math, ...parts, item.say].filter(Boolean);
+      return [item.math || item.text || item.say || ""];
+    }),
     ...asArray(block?.pairs).map((item) => `${item.label || ""} ${item.text || ""}`),
   ];
   return plainTextSummary(pieces.filter(Boolean).join(" "));
@@ -132,10 +137,11 @@ function addBlockTargets(push, blocks, layoutContext) {
       label: blockLabel(block),
     });
     asArray(block.steps).forEach((step) => {
+      const isMathSolution = String(block.type || "").toLowerCase() === "math_solution_steps";
       push({
         id: step.id,
-        type: "step",
-        label: plainTextSummary(step.say || step.text),
+        type: isMathSolution ? "math_solution_step" : "step",
+        label: plainTextSummary(isMathSolution ? (step.say || step.math || step.text) : (step.say || step.text)),
       });
     });
     asArray(block.items).forEach((item) => {

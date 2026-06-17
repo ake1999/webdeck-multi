@@ -9,7 +9,7 @@
     "build:prof-scripts": "node scripts/build_prof_scripts.mjs",
     "build:audio": "node scripts/build_audio.mjs",
     "build:demo-audio": "node scripts/build_demo_audio.mjs",
-    "convert:calculus-test": "node scripts/convert_calculus_material.mjs --material courses/Calculus/Materials/review_of_functions_and_graphs.json --school AU --course ARIAN_Calculus_1 --session S01 --topic review_of_functions_and_graphs --force",
+    "convert:calculus-test": "node scripts/convert_calculus_material.mjs --material courses/Calculus/Materials/review_of_functions_and_graphs.json --school AU --course ARIAN_Calculus_1 --session S01 --topic 01_review_of_functions_and_graphs --force",
     "prepare:generation": "node scripts/prepare_generation.mjs",
     "clean:generated": "node scripts/clean_generated_artifacts.mjs",
     "refresh:motion": "node scripts/refresh_motion.mjs",
@@ -21,7 +21,12 @@
     "test:slide-video-controls": "node scripts/test_slide_video_controls.mjs",
     "test:topic-script-plan": "node scripts/test_topic_script_plan.mjs",
     "test:calculus-widgets": "node scripts/test_calculus_architecture.mjs",
+    "test:math-solution-steps": "node scripts/test_math_solution_steps.mjs",
+    "test:plot-spec": "node scripts/test_plot_spec.mjs",
+    "test:topic-navigation": "node scripts/test_topic_navigation.mjs",
+    "test:course-labels": "node scripts/test_course_labels.mjs",
     "check:topic-generation": "node scripts/check_topic_generation_quality.mjs",
+    "test:script-quality": "node scripts/test_script_quality.mjs",
     "check:generation": "node scripts/check_generation_ready.mjs"
   },
   "dependencies": {

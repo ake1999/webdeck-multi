@@ -86,6 +86,17 @@ export function renderTex(target, tex, displayMode = false) {
   target.textContent = value;
 }
 
+/** Prefer short formulaLabel / formulaTex from slide spec; fall back to computed tex or f. */
+export function renderWidgetFormula(shell, spec = {}, tex = "", options = {}) {
+  const explicit = spec.formulaTex || spec.plot?.formulaTex;
+  const label = spec.formulaLabel || spec.plot?.formulaLabel;
+  const forceShort = spec.formulaShort === true || options.short === true;
+  const longThreshold = options.longThreshold ?? 72;
+  const isLong = String(tex || "").length > longThreshold;
+  const value = explicit || (forceShort || isLong ? (label || options.fallback || "f") : tex) || label || "f";
+  renderTex(shell.formula, value, true);
+}
+
 export function buildStateFromControls(params = {}, controls = []) {
   const initial = { ...params };
   controls.forEach((control) => {

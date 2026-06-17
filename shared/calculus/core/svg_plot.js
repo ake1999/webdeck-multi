@@ -17,13 +17,48 @@ export function scaleLinear([d0, d1], [r0, r1]) {
   return (value) => r0 + ((Number(value) - d0) / span) * (r1 - r0);
 }
 
-export function plotScales({ width = 640, height = 390, padding = 34, xDomain = [-4, 4], yDomain = [-3, 6] } = {}) {
+export function resolvePlotPadding(scales = {}) {
+  const fallback = scales.padding ?? 34;
+  return {
+    left: scales.paddingLeft ?? scales.paddingX ?? fallback,
+    right: scales.paddingRight ?? scales.paddingX ?? fallback,
+    top: scales.paddingTop ?? scales.paddingY ?? fallback,
+    bottom: scales.paddingBottom ?? scales.paddingY ?? fallback,
+  };
+}
+
+export function plotScales({
+  width = 640,
+  height = 390,
+  padding = 34,
+  paddingX = 18,
+  paddingY = 22,
+  paddingLeft,
+  paddingRight,
+  paddingTop,
+  paddingBottom,
+  xDomain = [-4, 4],
+  yDomain = [-3, 6],
+} = {}) {
+  const pad = resolvePlotPadding({
+    padding,
+    paddingX,
+    paddingY,
+    paddingLeft,
+    paddingRight,
+    paddingTop,
+    paddingBottom,
+  });
   return {
     width,
     height,
-    padding,
-    x: scaleLinear(xDomain, [padding, width - padding]),
-    y: scaleLinear(yDomain, [height - padding, padding]),
+    padding: pad.left,
+    paddingLeft: pad.left,
+    paddingRight: pad.right,
+    paddingTop: pad.top,
+    paddingBottom: pad.bottom,
+    x: scaleLinear(xDomain, [pad.left, width - pad.right]),
+    y: scaleLinear(yDomain, [height - pad.bottom, pad.top]),
     xDomain,
     yDomain,
   };
@@ -128,7 +163,8 @@ export function clippedLinePath(samples = [], scales) {
 }
 
 export function appendGrid(svg, scales, options = {}) {
-  const { x, y, width, height, padding, xDomain, yDomain } = scales;
+  const { x, y, width, height, xDomain, yDomain } = scales;
+  const pad = resolvePlotPadding(scales);
   const grid = svgEl("g", { class: "calculus-grid" });
   const xStart = Math.ceil(xDomain[0]);
   const xEnd = Math.floor(xDomain[1]);
@@ -138,16 +174,16 @@ export function appendGrid(svg, scales, options = {}) {
   for (let value = xStart; value <= xEnd; value += 1) {
     grid.appendChild(svgEl("line", {
       x1: x(value),
-      y1: padding,
+      y1: pad.top,
       x2: x(value),
-      y2: height - padding,
+      y2: height - pad.bottom,
     }));
   }
   for (let value = yStart; value <= yEnd; value += 1) {
     grid.appendChild(svgEl("line", {
-      x1: padding,
+      x1: pad.left,
       y1: y(value),
-      x2: width - padding,
+      x2: width - pad.right,
       y2: y(value),
     }));
   }
@@ -155,22 +191,22 @@ export function appendGrid(svg, scales, options = {}) {
 
   const axes = svgEl("g", { class: "calculus-axes" });
   if (xDomain[0] <= 0 && xDomain[1] >= 0) {
-    axes.appendChild(svgEl("line", { x1: x(0), y1: padding, x2: x(0), y2: height - padding }));
+    axes.appendChild(svgEl("line", { x1: x(0), y1: pad.top, x2: x(0), y2: height - pad.bottom }));
   }
   if (yDomain[0] <= 0 && yDomain[1] >= 0) {
-    axes.appendChild(svgEl("line", { x1: padding, y1: y(0), x2: width - padding, y2: y(0) }));
+    axes.appendChild(svgEl("line", { x1: pad.left, y1: y(0), x2: width - pad.right, y2: y(0) }));
   }
   svg.appendChild(axes);
 
   if (options.labels !== false) {
     svg.appendChild(svgEl("text", {
-      x: width - padding + 8,
+      x: width - pad.right + 8,
       y: y(0) + 4,
       class: "calculus-axis-label",
     })).textContent = "x";
     svg.appendChild(svgEl("text", {
       x: x(0) + 6,
-      y: padding - 8,
+      y: pad.top - 8,
       class: "calculus-axis-label",
     })).textContent = "y";
   }
@@ -189,11 +225,11 @@ export function appendCurve(svg, scales, fn, attrs = {}) {
   return path;
 }
 
-export function appendPlotTag(svg, text, { x = 46, y = 24, anchor = "start", tone = "default" } = {}) {
+export function appendPlotTag(svg, text, { x = 46, y = 25, anchor = "start", tone = "default" } = {}) {
   const label = String(text || "").trim();
   if (!label) return null;
-  const width = Math.max(72, Math.min(310, label.length * 7.1 + 18));
-  const height = 24;
+  const width = Math.max(76, Math.min(320, label.length * 7.6 + 20));
+  const height = 26;
   const left = anchor === "end" ? x - width : x;
   const group = svgEl("g", { class: `calculus-plot-tag calculus-plot-tag--${tone}` });
   group.appendChild(svgEl("rect", {

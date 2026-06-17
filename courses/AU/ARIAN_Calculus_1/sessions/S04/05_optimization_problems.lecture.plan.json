@@ -1,0 +1,186 @@
+{
+  "schema_version": "phase6-lecture-plan-v2",
+  "topic_id": "05_optimization_problems",
+  "avatar_profile": "shared/arian.avatar.profile.json",
+  "reference_assets": "shared/arian.reference_assets.json",
+  "teaching_arc": {
+    "entry_point": "Welcome back, callback Topic 18 derivative tests; open with a concrete fencing problem where area depends on one width.",
+    "progression": "Five-step workflow → verify extrema (endpoints vs interior) → classic worked examples with math_solution_steps → cost/geometry applications → recap.",
+    "destination": "Students translate word problems to f(x), find and verify optima, and interpret with units; tease Topic 20 L'Hopital.",
+    "tone": "warm, visual, rigorous without intimidation",
+    "methods": [
+      "visual intuition",
+      "workflow checklist",
+      "guided prediction",
+      "math_solution_steps",
+      "misconception_compare",
+      "recap"
+    ]
+  },
+  "audience_level": "first-year university / advanced high school",
+  "topic_goal": "Teach optimization from word problems through constraint reduction, critical points, and endpoint verification, building on Topic 18 derivative tests.",
+  "topic_takeaways": [
+    "Five-step workflow: diagram, constraint, objective, critical points, verify (with endpoints).",
+    "Reduce multivariable setups using the constraint before differentiating.",
+    "Pair interior critical points with domain endpoint checks.",
+    "Interpret answers with units; avoid face-count and open-top traps.",
+    "Classic templates: farmer pen, open box, mixed-material cost."
+  ],
+  "style_notes": [
+    "Welcome back, do not re-introduce Arian from scratch.",
+    "Callback Topic 18 first/second derivative tests when confirming max vs min.",
+    "path_topic_19 current; Topic 20 L'Hopital marked next on roadmap.",
+    "visual_lab s02: demo tab A on YouTube; mention B/C on site.",
+    "pause_and_reveal on s05 and s07, real think beats before solutions.",
+    "Narrate flex_plot probe motion before naming the optimum.",
+    "math_solution_steps: target step_1..step_n in reveal order for generation."
+  ],
+  "transition_style": "Word problem → constraint/objective → calculus → verify → interpret.",
+  "scene_policy_default": "hybrid",
+  "object_policy_default": "suggested",
+  "topic_defaults": {
+    "voice_style": "clear_teacher",
+    "tone": "clear_teacher",
+    "energy": 0.6,
+    "pace": 0.94,
+    "attention_mode": "hybrid_focus",
+    "scene_policy": "hybrid",
+    "avatar_anchor": "right_bottom",
+    "autoplay": false
+  },
+  "slides": [
+    {
+      "slide_ref": { "index": 0, "source_title": "Optimization Problems: From Word Problems to Calculus Solutions" },
+      "slide_role": "intro",
+      "importance": "high",
+      "narration_seed": "Welcome back to Arian University. Topic 18 gave you derivative tests; Topic 19 applies them to real constraints, fencing, boxes, cost.",
+      "must_cover": ["Welcome back", "Topic 18 callback", "Topic 19 optimization"],
+      "must_say": ["Welcome back to Arian University."],
+      "transition_to_next": "Roadmap on objectives, path_topic_19 current, L'Hopital next.",
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "right_bottom" },
+      "prop_suggestions": []
+    },
+    {
+      "slide_ref": { "index": 1, "source_title": "Learning Objectives" },
+      "slide_role": "setup",
+      "importance": "high",
+      "narration_seed": "Five objectives: translate constraints, follow the workflow, verify endpoints, interpret units, reduce variables.",
+      "must_cover": ["course_path path_topic_19", "five-step workflow preview"],
+      "transition_from_previous": "From title hook into roadmap promise.",
+      "avatar_hint": { "preferred_behavior": "idle_talk", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 2, "source_title": "Why Optimization Matters" },
+      "slide_role": "hook",
+      "importance": "high",
+      "narration_seed": "2400 ft fence beside a river, drag width on the area parabola. Prediction before the peak at 600.",
+      "must_cover": ["farmer area flex_plot", "constraint 2x+y=2400", "Topic 18 connection"],
+      "prop_suggestions": ["function_analysis flex_plot", "probe slider"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" },
+      "likely_student_confusion": ["Predict optimal width before reveal"]
+    },
+    {
+      "slide_ref": { "index": 3, "source_title": "The Five-Step Optimization Workflow" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Nested five steps on the left; visual_lab tabs farmer, box, cost, each with distinct objective curve.",
+      "must_cover": ["nested_bullets five-step workflow", "visual_lab three tabs", "distinct plot specs per tab"],
+      "must_say": ["Draw a picture", "Write the constraint", "Verify endpoints"],
+      "prop_suggestions": ["visual_lab", "flex_plot"],
+      "avatar_hint": { "preferred_behavior": "point_left_mid", "preferred_anchor": "right_bottom" }
+    },
+    {
+      "slide_ref": { "index": 4, "source_title": "Core Equations & Notation" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "Q=f(x) after elimination; dual-curve plot shows objective and constraint-bound length.",
+      "must_cover": ["objective Q=f(x)", "constraint equation", "endpoint check in flow"],
+      "prop_suggestions": ["flex_plot dual curves"]
+    },
+    {
+      "slide_ref": { "index": 5, "source_title": "Verifying Extrema: Open Domains & Endpoints" },
+      "slide_role": "definition",
+      "importance": "high",
+      "narration_seed": "theorem_box for single critical point on open interval; misconception_compare endpoints vs interior only; quadratic family max then min.",
+      "must_cover": ["theorem_box open interval test", "misconception_compare endpoints vs interior", "function_transform quadratic"],
+      "prop_suggestions": ["function_transform", "misconception_compare"]
+    },
+    {
+      "slide_ref": { "index": 6, "source_title": "Pause: Try the Farmer Problem" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Pause, five steps on your own. flex_plot without optimum label; reveal width 600 after think beat.",
+      "must_cover": ["pause_and_reveal", "farmer problem statement", "flex_plot exploration"],
+      "slide_role_note": "pause",
+      "likely_student_confusion": ["What width and length maximize area?"]
+    },
+    {
+      "slide_ref": { "index": 7, "source_title": "Farmer Problem Solution" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "math_solution_steps: constraint, A(x), A'=0, x=600, y=1200, area 720000. Widget marks vertex.",
+      "must_cover": ["math_solution_steps step_1 through step_5", "720000 sq ft", "flex_plot maximum marker"],
+      "narration_seed_detail": "Direct sub on step_1 constraint. step_4 x=600. step_5 parts y and area."
+    },
+    {
+      "slide_ref": { "index": 8, "source_title": "Pause: Box with Square Base" },
+      "slide_role": "pause",
+      "importance": "high",
+      "narration_seed": "Volume 32000 cm³, minimize open-top surface. Pause on S(x) shape before solution.",
+      "must_cover": ["pause_and_reveal", "S=x^2+4xh", "flex_plot S(x)"],
+      "likely_student_confusion": ["Optimal base side length?"]
+    },
+    {
+      "slide_ref": { "index": 9, "source_title": "Box Problem Solution" },
+      "slide_role": "example",
+      "importance": "high",
+      "narration_seed": "splitAfter math_solution_steps: h=32000/x², S(x), S'=0, x=40, h=20, S=4800.",
+      "must_cover": ["math_solution_steps splitAfter 3", "40×40×20 cm", "minimum at x=40"]
+    },
+    {
+      "slide_ref": { "index": 10, "source_title": "Common Mistake: Wrong Side Count" },
+      "slide_role": "misconception",
+      "importance": "medium",
+      "narration_seed": "misconception_compare open top five faces vs six; flex_plot overlays S_open and S_closed.",
+      "must_cover": ["misconception_compare open vs closed", "S=x^2+4xh correct formula"]
+    },
+    {
+      "slide_ref": { "index": 11, "source_title": "Tricky Example: Box with Different Material Costs" },
+      "slide_role": "example",
+      "importance": "medium",
+      "narration_seed": "Side area 6wh not 8wh; math_solution_steps on C(w); minimum near w=1.65 m.",
+      "must_cover": ["math_solution_steps cost problem", "6wh side area", "flex_plot C(w)"]
+    },
+    {
+      "slide_ref": { "index": 12, "source_title": "Edge Case: Point on a Line Closest to Origin" },
+      "slide_role": "example",
+      "importance": "medium",
+      "narration_seed": "Minimize d²=5x²+4x+1; closest point (-2/5, 1/5). flex_plot line + markers.",
+      "must_cover": ["math_solution_steps distance squared", "flex_plot closest point"]
+    },
+    {
+      "slide_ref": { "index": 13, "source_title": "Application: Lifeguard Problem (Snell's Law)" },
+      "slide_role": "application",
+      "importance": "medium",
+      "narration_seed": "Minimize T(x); Snell's Law sin θ1/v1 = sin θ2/v2; flex_plot total time curve.",
+      "must_cover": ["T(x) time objective", "Snell's Law", "flex_plot lifeguard"]
+    },
+    {
+      "slide_ref": { "index": 14, "source_title": "[Challenge – Optional] Proof of the First Derivative Test for Absolute Extrema" },
+      "slide_role": "challenge",
+      "importance": "low",
+      "narration_seed": "Optional MVT proof sketch for single critical point on open interval.",
+      "must_cover": ["proof_sketch", "Topic 17 MVT callback"],
+      "skip_if_time_limited": true
+    },
+    {
+      "slide_ref": { "index": 15, "source_title": "Summary: Optimization Problem-Solving" },
+      "slide_role": "recap",
+      "importance": "high",
+      "narration_seed": "Translate, reduce, differentiate, verify with endpoints, interpret. Next: L'Hopital's Rule.",
+      "must_cover": ["five-step recap", "endpoint verification", "tease Topic 20 L'Hopital"],
+      "must_say": ["L'Hopital's Rule"],
+      "avatar_hint": { "preferred_behavior": "face_viewer", "preferred_anchor": "center_bottom" }
+    }
+  ]
+}

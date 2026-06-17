@@ -3,12 +3,17 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { projectRoot } from "../export_runtime.mjs";
-import { plainTextForSpeech, plainTextSummary } from "./utils.mjs";
+import {
+  normalizeLlmBaseUrl,
+  normalizeLlmEndpointKind,
+  plainTextForSpeech,
+  plainTextSummary,
+} from "./utils.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const promptsDir = path.resolve(__dirname, "prompts");
 
-export const TOPIC_SCRIPT_PLAN_PROMPT_VERSION = "script_topic_plan_v1";
+export const TOPIC_SCRIPT_PLAN_PROMPT_VERSION = "script_topic_plan_v2";
 export const TOPIC_SCRIPT_PLAN_CACHE_SCHEMA_VERSION = "phase7-topic-script-plan-cache-v1";
 
 function asArray(value) {
@@ -21,18 +26,6 @@ function isObject(value) {
 
 function hashObject(value) {
   return crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex").slice(0, 16);
-}
-
-function normalizeBaseUrl(value) {
-  const raw = String(value || "http://127.0.0.1:11434").trim();
-  return raw.replace(/\/+$/, "");
-}
-
-function normalizeEndpointKind(endpoint) {
-  const normalized = normalizeBaseUrl(endpoint);
-  if (normalized.includes("/v1") || normalized.endsWith("/chat/completions")) return "openai";
-  if (normalized.includes("11434") || normalized.includes("/api")) return "ollama";
-  return "openai";
 }
 
 function normalizeBoolean(value, fallback = true) {
@@ -948,8 +941,8 @@ export async function getTopicScriptPlanWithCache({
   }
 
   const promptBundle = await loadPromptBundle(promptVersion);
-  const endpoint = normalizeBaseUrl(options.scriptEndpoint);
-  const endpointKind = normalizeEndpointKind(endpoint);
+  const endpoint = normalizeLlmBaseUrl(options.scriptEndpoint);
+  const endpointKind = normalizeLlmEndpointKind(endpoint);
   const timeoutMs = Number(options.topicPlanTimeoutMs || options.scriptTimeoutMs || 180000);
   const temperature = Number(options.topicPlanTemperature ?? options.scriptTemperature ?? 0.15);
   const apiKey = endpointKind === "openai" ? await readApiKey(options) : "";
