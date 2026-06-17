@@ -63,6 +63,9 @@ export function plainTextForSpeech(value) {
 }
 
 const SPOKEN_REPLACEMENTS = [
+  // Brand name: flite reads "Arian" as "AIR-ee-an"; "Arun" gives a short /ʌ/ (as in cup).
+  [/\bArian University\b/gi, "Arun University"],
+  [/\bArian\b/gi, "Arun"],
   [/\bROS\s*2\b/gi, "Ross two"],
   [/\bros2(?=\b|_)/gi, "Ross two"],
   [/(?<![A-Za-z0-9])ros(?=$|[^A-Za-z0-9]|_)/gi, "Ross"],

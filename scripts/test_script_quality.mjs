@@ -6,6 +6,7 @@ import {
   shouldRequireProductionScripts,
   validateProductionScripts,
 } from "./lib/lecture/script_quality.mjs";
+import { ttsTextForSpeech } from "./lib/lecture/utils.mjs";
 
 assert.equal(
   looksLikeStageDirection("Open with the counterintuitive horizontal-shift question, then anchor Review of Functions and Graphs."),
@@ -75,5 +76,10 @@ const badManifest = {
 };
 
 assert.ok(validateProductionScripts(badManifest).length >= 2);
+
+assert.equal(
+  ttsTextForSpeech("Hi, I'm Arian, and welcome to Arian University."),
+  "Hi, I'm Arun, and welcome to Arun University.",
+);
 
 console.log("script quality tests passed");
