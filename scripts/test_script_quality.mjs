@@ -79,7 +79,7 @@ assert.ok(validateProductionScripts(badManifest).length >= 2);
 
 assert.equal(
   ttsTextForSpeech("Hi, I'm Arian, and welcome to Arian University."),
-  "Hi, I'm Ah-ree-an, and welcome to Ah-ree-an University.",
+  "Hi, I'm Ahreean, and welcome to Ahreean University.",
 );
 
 console.log("script quality tests passed");

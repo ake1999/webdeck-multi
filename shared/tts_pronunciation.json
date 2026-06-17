@@ -1,17 +1,17 @@
 {
   "schema_version": "tts-pronunciation-v1",
-  "description": "Spoken-only replacements for TTS. On-screen text, subtitles, and segment.text stay unchanged. Arian (Persian آرین) is ah-ree-an, not English AIR-ee-an.",
+  "description": "Spoken-only replacements for TTS. On-screen text, subtitles, and segment.text stay unchanged. Arian (Persian آرین) is spoken Ahreean (no hyphens; dashes stretch flite/Qwen).",
   "phrase_replacements": [
     {
       "match": "Arian University",
-      "speak": "Ah-ree-an University",
+      "speak": "Ahreean University",
       "word_boundary": true,
       "ignore_case": true,
-      "note": "Persian آرین — ah-ree-an"
+      "note": "Persian آرین — Ahreean, one smooth word"
     },
     {
       "match": "Arian",
-      "speak": "Ah-ree-an",
+      "speak": "Ahreean",
       "word_boundary": true,
       "ignore_case": true,
       "note": "Persian given name آرین"
