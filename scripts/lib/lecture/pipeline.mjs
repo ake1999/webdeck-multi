@@ -6,6 +6,7 @@ import { loadTopicModule } from "../catalog.mjs";
 import { loadLectureAuthoring } from "./authoring.mjs";
 import { buildManualAlignmentPath, buildManualOutputsDir, relativeContractPath } from "./contracts.mjs";
 import { generateScriptManifest } from "./script_generation.mjs";
+import { applyTtsNormalizationToScriptManifest } from "./tts_normalization.mjs";
 import { synthesizeTopicAudio } from "../tts/synthesize.mjs";
 import { writeSubtitles } from "./subtitles.mjs";
 import { compileTimeline } from "./timeline.mjs";
@@ -244,7 +245,7 @@ export async function buildLectureAudioArtifacts({
     throw new Error(`Missing required script manifest: ${relativeProjectPath(scriptManifestPath)}. Run build:prof-scripts first.`);
   }
 
-  const scriptManifest = await readJson(scriptManifestPath);
+  const scriptManifest = applyTtsNormalizationToScriptManifest(await readJson(scriptManifestPath));
   const { slidesData, topicMeta } = await loadTopicModule(descriptor);
   const topicRuntime = buildTopicRuntime({
     topicMeta,

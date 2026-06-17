@@ -27,6 +27,8 @@
     "test:course-labels": "node scripts/test_course_labels.mjs",
     "check:topic-generation": "node scripts/check_topic_generation_quality.mjs",
     "test:script-quality": "node scripts/test_script_quality.mjs",
+    "test:tts-normalization": "node scripts/test_tts_normalization.mjs",
+    "normalize:script-tts": "node scripts/normalize_script_tts.mjs",
     "check:generation": "node scripts/check_generation_ready.mjs"
   },
   "dependencies": {

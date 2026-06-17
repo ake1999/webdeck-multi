@@ -7,8 +7,11 @@ import {
   plainTextForSpeech,
   plainTextSummary,
   summarizeMediaLabel,
-  ttsTextForSpeech,
 } from "./utils.mjs";
+import {
+  applyTtsNormalizationToScriptManifest,
+  attachTtsTextToSegment,
+} from "./tts_normalization.mjs";
 import {
   extractExplicitLecturePlanNarrationSource,
   extractLecturePlanGuidanceSource,
@@ -373,7 +376,6 @@ function finalizeSegments(segments, slide, layoutContext, slideDefaults, planSli
     .map((segment, index) => {
       const text = cleanNarrationSeed(segment.text);
       if (!text) return null;
-      const spokenText = ttsTextForSpeech(text);
       const targetElement = layoutContext.availableIds.has(segment.target_element)
         ? segment.target_element
         : "slide";
@@ -400,28 +402,27 @@ function finalizeSegments(segments, slide, layoutContext, slideDefaults, planSli
         index,
         total: segments.length,
       });
-      return {
+      return attachTtsTextToSegment({
         segment_id: `seg_${String(index + 1).padStart(2, "0")}`,
         text: ensureSentence(text),
-        ...(spokenText && spokenText !== ensureSentence(text) ? { tts_text: spokenText } : {}),
         target_element: targetElement,
         attention_mode: segment.attention_mode || slideDefaults.attention_mode || defaultAttentionMode(targetType),
         voice: mergeSegmentVoice(segment, slideDefaults),
         ...(emphasisWords.length ? { emphasis_words: emphasisWords } : {}),
         ...(avatarBehaviorHint ? { avatar_behavior_hint: avatarBehaviorHint } : {}),
         ...(deliveryKind ? { delivery_kind: deliveryKind } : {}),
-      };
+      });
     })
     .filter(Boolean);
 
   if (finalized.length <= maxSegments) return finalized;
   const head = finalized.slice(0, maxSegments - 1);
   const tail = finalized.slice(maxSegments - 1);
-  head.push({
+  head.push(attachTtsTextToSegment({
     ...tail[0],
     segment_id: `seg_${String(maxSegments).padStart(2, "0")}`,
     text: ensureSentence(tail.map((segment) => segment.text).join(" ")),
-  });
+  }));
   return head;
 }
 
@@ -1027,7 +1028,7 @@ export async function generateScriptManifest({
     }
   }
 
-  return {
+  return applyTtsNormalizationToScriptManifest({
     topic_id: runtime.topicId,
     selector: {
       school: descriptor.school,
@@ -1055,5 +1056,5 @@ export async function generateScriptManifest({
       }
       : {}),
     slides: scriptSlides,
-  };
+  });
 }

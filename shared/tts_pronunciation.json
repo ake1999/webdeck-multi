@@ -1,0 +1,25 @@
+{
+  "schema_version": "tts-pronunciation-v1",
+  "description": "Spoken-only replacements for TTS. On-screen text, subtitles, and segment.text stay unchanged.",
+  "phrase_replacements": [
+    {
+      "match": "Arian University",
+      "speak": "Arun University",
+      "word_boundary": true,
+      "ignore_case": true
+    },
+    {
+      "match": "Arian",
+      "speak": "Arun",
+      "word_boundary": true,
+      "ignore_case": true
+    }
+  ],
+  "short_forms": [
+    { "match": "lim", "speak": "limit", "word_boundary": true, "ignore_case": true },
+    { "match": "sqrt", "speak": "square root", "word_boundary": true, "ignore_case": true },
+    { "match": "sin", "speak": "sine", "word_boundary": true, "ignore_case": true },
+    { "match": "cos", "speak": "cosine", "word_boundary": true, "ignore_case": true },
+    { "match": "tan", "speak": "tangent", "word_boundary": true, "ignore_case": true }
+  ]
+}

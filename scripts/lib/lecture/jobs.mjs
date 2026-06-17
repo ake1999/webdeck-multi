@@ -128,6 +128,7 @@ export function buildTtsJobRecord({
     segments: asArray(slide.segments).map((segment) => ({
       segment_id: segment.segment_id,
       text: segment.text,
+      ...(segment.tts_text ? { tts_text: segment.tts_text } : {}),
       tone: segment.voice?.tone || "",
       energy: Number(segment.voice?.energy || 0),
       pace: Number(segment.voice?.pace || 0),

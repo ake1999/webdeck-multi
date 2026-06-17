@@ -78,6 +78,11 @@ them. Read this file before editing, then read `.agents/project-map.md`,
   segment. Avatar head/body shifts under plots are video-only, not spoken.
 - Lecture plans may include `playback_contract` and per-slide `interaction_hints`;
   generation uses `script_writer_v3` + `llm_local` with those hints in context.
+- **TTS vs transcript text:** `segment.text` and subtitle VTT cues keep written copy
+  (e.g. `Arian`). TTS uses `segment.tts_text` when present, built by
+  `scripts/lib/lecture/tts_normalization.mjs` from `shared/tts_pronunciation.json`
+  plus math/symbol verbalization. Script generation applies this pass automatically;
+  re-run `npm run normalize:script-tts` on existing manifests before `build:audio`.
 - Arian University lecture plans use `shared/arian.avatar.profile.json` so the
   personal-brand calculus voice does not inherit old robotics wording.
 - The historical robotics/university course pipeline is useful reference, but
