@@ -48,6 +48,12 @@ Current calculus source state:
   readout, plot, and `scriptedTimeline` animation remain synchronized. Website
   mode is manually draggable; lecture playback can drive the same parameters
   from timeline events.
+- **Topic 01 (2026-06) playback pass:** think-pause playback mapping,
+  `scriptedTimelines` keys for transform slides, `family_gallery` mini-plot
+  domains for exp/log, `composition_sqrt` readout box, step-block split
+  (`math_solution_steps` vs `example_solution`). Agent rules consolidated in
+  `AGENTS.md`. **Next:** script/plan action DSL syncing cues to widgets/focus
+  (replacing primary reliance on `focus_plan.mjs` heuristics).
 - Python snippets in material JSON are preserved as source metadata. They are
   not the primary rendering path for calculus visuals.
 - The remaining 69 calculus material JSON files are not yet bulk-converted into

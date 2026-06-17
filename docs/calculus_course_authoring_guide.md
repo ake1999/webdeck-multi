@@ -478,7 +478,8 @@ check, transform gallery).
 | `pause_and_reveal` | YouTube think-pause with MC or short reveal (§5b) |
 | `proof_sketch` | Light proof intuition (not full epsilon proofs) |
 | `derivation_steps` | Non-algebraic narrative steps (still prose-first) |
-| `example_solution` | Legacy prose solutions — prefer `math_solution_steps` for computation |
+| `example_solution` | Proofs, evaluate-and-sketch, mixed prose+formula steps (all visible; lecture dims non-active lines). Prefer over `math_solution_steps` when steps overflow or need explanatory text beside math |
+| `math_solution_steps` | Equation-first worked examples with progressive reveal and **Next step →** (hidden when complete). Auto line gap from math height |
 | `nested_bullets` | Short reminders (law names, workflow checklist) |
 | `paragraph` | One or two sentences when bullets are too heavy |
 

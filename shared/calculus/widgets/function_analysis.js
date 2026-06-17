@@ -1,6 +1,6 @@
 import { createSvg, appendCurve, appendGrid, appendPlotTag, clearSvg, plotScales, svgEl } from "../core/svg_plot.js";
 import { controlsForFlexPlot, drawFlexPlot, resolvePlotSpec } from "../core/plot_spec.js";
-import { bindControls, buildStateFromControls, createWidgetShell, formatNumber, renderWidgetFormula } from "../core/widget_ui.js";
+import { bindControls, buildStateFromControls, createWidgetShell, formatNumber, renderWidgetFormula, setWidgetReadout } from "../core/widget_ui.js";
 
 const CONTROLS = {
   composition_sqrt: [
@@ -114,16 +114,17 @@ function drawComposition(svg, shell, params, spec = {}) {
   const scales = plotScales({ xDomain: [-1.5, 4], yDomain: [-0.5, 3] });
   appendGrid(svg, scales);
   appendCurve(svg, scales, (x) => (x + 1 >= 0 ? Math.sqrt(x + 1) : NaN), { stroke: "#c65a28", strokeWidth: 4 });
-  guide(svg, scales, xValue, yValue);
-  point(svg, scales, xValue, yValue);
-  appendPlotTag(svg, "domain starts at x=-1", { x: scales.x(-1) + 8, y: scales.y(0) - 8, tone: "muted" });
-  appendPlotTag(svg, `x=${formatNumber(xValue, 2)}  g(x)=${formatNumber(gx, 2)}  f(g(x))=${formatNumber(yValue, 2)}`, {
-    x: scales.width - (scales.paddingRight ?? scales.padding),
-    y: 24,
-    anchor: "end",
-    tone: "accent",
-  });
-  renderWidgetFormula(shell, spec, `(f\\circ g)(x)=\\sqrt{x+1}\\quad x\\ge -1`, { fallback: "f" });
+  if (Number.isFinite(yValue)) {
+    guide(svg, scales, xValue, yValue);
+    point(svg, scales, xValue, yValue);
+  }
+  appendPlotTag(svg, "domain: x ≥ −1", { x: scales.x(-1) + 8, y: scales.y(0) - 8, tone: "muted" });
+  const fogText = Number.isFinite(yValue) ? formatNumber(yValue, 2) : "undefined";
+  setWidgetReadout(
+    shell.readout,
+    `x = ${formatNumber(xValue, 2)}\ng(x) = ${formatNumber(gx, 2)}\n(f∘g)(x) = ${fogText}`,
+  );
+  renderWidgetFormula(shell, spec, `(f\\circ g)(x)=\\sqrt{x+1}\\quad g(x)=x+1\\quad x\\ge -1`, { fallback: "f" });
 }
 
 function drawDomainSqrt(svg, shell, params, spec = {}) {
@@ -587,7 +588,9 @@ export function mountFunctionAnalysisWidget(root, spec = {}) {
     if (formula) {
       renderWidgetFormula(shell, spec, formula, { fallback: spec.formulaLabel || "f" });
     }
-    shell.readout.textContent = "";
+    if (variant !== "composition_sqrt" && variant !== "composition_exclusion") {
+      setWidgetReadout(shell.readout, "");
+    }
   });
 
   return { state, destroy: unsubscribe };

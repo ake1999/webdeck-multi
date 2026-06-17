@@ -1,5 +1,7 @@
 import { defaultAttentionMode, relativeProjectPath, slideAnchor } from "./utils.mjs";
 import { compileAvatarAction } from "./avatar.mjs";
+import { enrichTimelineWithThinkPauses } from "./think_pause.mjs";
+import { enrichTimelineWithFocusPlan } from "./focus_plan.mjs";
 import {
   buildManualAlignmentPath,
   buildManualAudioPath,
@@ -14,11 +16,8 @@ function findSlide(manifest, slideId) {
   return asArray(manifest?.slides).find((slide) => slide.slide_id === slideId) || null;
 }
 
-function cueActions(targetElement) {
-  if (!targetElement || targetElement === "slide") {
-    return [{ type: "clear_highlights" }];
-  }
-  return [{ type: "highlight", element: targetElement }];
+function cueActions() {
+  return [];
 }
 
 function resolveTarget(layoutSlide, targetElement) {
@@ -87,8 +86,32 @@ export function compileTimeline({
         target_bbox: resolvedTarget.bbox,
         words: segmentAlignment.words || [],
         alignment_quality: segmentAlignment.alignment_quality || "segment_only",
-        actions: cueActions(resolvedTarget.target_element),
+        actions: cueActions(),
       };
+
+      if (segmentScript.widget_params && typeof segmentScript.widget_params === "object") {
+        cue.widget_params = segmentScript.widget_params;
+      }
+      if (segmentScript.widget_media_id) {
+        cue.widget_media_id = segmentScript.widget_media_id;
+      }
+      const stepIds = asArray(planSlide?.interaction_hints?.step_ids);
+      const targetsWidgetStep = stepIds.includes(segmentScript.target_element);
+      if (planSlide?.interaction_hints?.widget_media_id && (!cue.widget_media_id || targetsWidgetStep)) {
+        cue.widget_media_id = planSlide.interaction_hints.widget_media_id;
+      }
+      if (segmentScript.widget_media_id) {
+        cue.widget_media_id = segmentScript.widget_media_id;
+      }
+      if (segmentScript.delivery_kind) {
+        cue.delivery_kind = segmentScript.delivery_kind;
+      }
+      if (planSlide?.interaction_hints?.reveal_element_id) {
+        cue.reveal_element_id = planSlide.interaction_hints.reveal_element_id;
+      }
+      if (planSlide?.interaction_hints?.pause_block_id) {
+        cue.pause_block_id = planSlide.interaction_hints.pause_block_id;
+      }
 
       const avatarAction = compileAvatarAction({
         descriptor,
@@ -106,6 +129,21 @@ export function compileTimeline({
       return cue;
     }).filter(Boolean);
 
+    const withThinkPauses = enrichTimelineWithThinkPauses({
+      timeline,
+      slideScript,
+      planSlide,
+      authoring,
+    });
+    const enrichedTimeline = {
+      ...withThinkPauses,
+      timeline: enrichTimelineWithFocusPlan({
+        timeline: withThinkPauses.timeline,
+        layoutSlide: slideLayout,
+        slideScript,
+      }),
+    };
+
     slides.push({
       slide_id: slideScript.slide_id,
       slide_type: slideScript.slide_type,
@@ -121,9 +159,10 @@ export function compileTimeline({
         },
       },
       subtitles_file: subtitles.slide_files[slideScript.slide_id] || "",
-      duration: slideAlignment.duration,
+      duration: enrichedTimeline.duration || slideAlignment.duration,
+      speech_duration_sec: slideAlignment.duration,
       zones: slideLayout.zones || {},
-      timeline,
+      timeline: enrichedTimeline.timeline,
     });
   });
 

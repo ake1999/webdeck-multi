@@ -6,6 +6,8 @@ import { discoverTopics, filterTopics, summarizeSelector, toReviewLabel } from "
 import { buildTopicArtifactDir, projectRoot } from "./lib/export_runtime.mjs";
 import { writeTtsJobs } from "./lib/lecture/jobs.mjs";
 import { applyTtsNormalizationToScriptManifest } from "./lib/lecture/tts_normalization.mjs";
+import { getCourseConfig } from "../shared/course_catalog.js";
+import { getCourseTerminology } from "../shared/course_labels.js";
 
 function parseArgs(argv) {
   const args = {
@@ -69,7 +71,8 @@ async function main() {
     const artifactDir = buildTopicArtifactDir(args.outputDir, descriptor);
     const manifestPath = path.join(artifactDir, "script.manifest.json");
     const raw = JSON.parse(await readFile(manifestPath, "utf8"));
-    const scriptManifest = applyTtsNormalizationToScriptManifest(raw);
+    const terminology = getCourseTerminology(getCourseConfig(descriptor.course));
+    const scriptManifest = applyTtsNormalizationToScriptManifest(raw, terminology);
     const alignmentManifest = stubAlignmentManifest(scriptManifest, args.provider);
     const jobs = await writeTtsJobs({
       descriptor,

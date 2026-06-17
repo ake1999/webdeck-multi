@@ -121,7 +121,7 @@
       },
       "slide_role": "setup",
       "importance": "high",
-      "narration_seed": "Use the roadmap first at the session level: five sessions total, current Session 1 is Preliminaries, next Session 2 is Limits and Continuity, and this topic builds the graph language that limits assume. Then keep the objectives short and visual.",
+      "narration_seed": "Use the roadmap first at the unit level: five units total, current Unit 1 is Preliminaries, next Unit 2 is Limits and Continuity, and this topic builds the graph language that limits assume. Then keep the objectives short and visual.",
       "voice_style": "clear_teacher",
       "tone": "focused and brisk",
       "energy": 0.6,
@@ -131,10 +131,10 @@
       "object_policy": "suggested",
       "must_cover": [
         "Point to the course roadmap/progress visual before reading or summarizing the learning objectives.",
-        "Use session-level course framing; do not say topic X of Y in spoken roadmap narration.",
+        "Use unit-level course framing; do not say lesson X of Y in spoken roadmap narration.",
         "Name where this topic sits in the course and what this topic covers.",
         "Identify and classify essential function families (linear, quadratic, power, polynomial, rational, trigonometric, exponential, logarithmic).",
-        "Use the course roadmap at session level: five sessions total, current Session 1 Preliminaries, next Session 2 Limits and Continuity.",
+        "Use the course roadmap at unit level: five units total, current Unit 1 Preliminaries, next Unit 2 Limits and Continuity.",
         "Do not say topic X of Y out loud; the numbered roadmap boxes show exact progress visually.",
         "By the end, formulas should feel like visual instructions.",
         "Inputs, graph movement, composition restrictions, symmetry, and piecewise boundaries are the main checklist."

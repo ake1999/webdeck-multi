@@ -7,7 +7,23 @@ import {
   formatSigned,
   renderTex,
   renderWidgetFormula,
+  setWidgetReadout,
 } from "../core/widget_ui.js";
+
+const FAMILY_SPOTLIGHT_TEX = {
+  linear: "f(x)=x",
+  quadratic: "f(x)=x^2",
+  power: "f(x)=\\sqrt{|x|}",
+  polynomial: "f(x)=\\tfrac{x^3}{4}-x",
+  rational: "f(x)=\\frac{1}{x}",
+  sine: "f(x)=\\sin x",
+  cosine: "f(x)=\\cos x",
+  tangent: "f(x)=\\tan x",
+  exponential: "f(x)=2^x",
+  log: "f(x)=\\log_2 x",
+  cubic: "f(x)=\\tfrac{x^3}{4}",
+  absolute: "f(x)=|x|",
+};
 
 const DEFAULT_CONTROLS = [
   { name: "h", label: "h-shift", min: -3, max: 3, step: 0.1, value: 0 },
@@ -25,12 +41,51 @@ const EVEN_ODD_CONTROLS = [
 ];
 
 function baseFunction(name = "quadratic") {
+  if (name === "linear") return (x) => x;
+  if (name === "quadratic") return (x) => x ** 2;
+  if (name === "power") return (x) => (x < 0 ? NaN : Math.sqrt(x));
+  if (name === "polynomial") return (x) => x ** 3 / 4 - x;
+  if (name === "rational") return (x) => (Math.abs(x) < 0.12 ? NaN : 1 / x);
+  if (name === "exponential") return (x) => 2 ** x;
+  if (name === "log") return (x) => (x <= 0 ? NaN : Math.log2(x));
   if (name === "sine") return (x) => Math.sin(x);
   if (name === "cosine") return (x) => Math.cos(x);
   if (name === "tangent") return (x) => Math.tan(x);
   if (name === "cubic") return (x) => x ** 3 / 4;
   if (name === "absolute") return (x) => Math.abs(x);
   return (x) => x ** 2;
+}
+
+function plotDomainsForFamily(family = "quadratic") {
+  if (family === "log") return { xDomain: [0.08, 4], yDomain: [-2.2, 3] };
+  if (family === "exponential") return { xDomain: [-2, 3], yDomain: [-0.5, 8] };
+  if (family === "power") return { xDomain: [0, 4], yDomain: [-0.5, 2.2] };
+  if (family === "rational") return { xDomain: [-4, 4], yDomain: [-4, 4] };
+  if (family === "tangent") return { xDomain: [-1.35, 1.35], yDomain: [-4, 4] };
+  if (family === "sine" || family === "cosine") return { xDomain: [-4, 4], yDomain: [-1.5, 1.5] };
+  return { xDomain: [-4, 4], yDomain: [-2, 8] };
+}
+
+function drawFamilySpotlight(svg, shell, params, spec = {}) {
+  const family = params.family || "linear";
+  const f = baseFunction(family);
+  const { xDomain, yDomain } = plotDomainsForFamily(family);
+  clearSvg(svg);
+  const scales = plotScales({ xDomain, yDomain });
+  appendGrid(svg, scales);
+  appendCurve(svg, scales, f, { stroke: "#c65a28", strokeWidth: 4, samples: 240 });
+  appendPlotTag(svg, family, {
+    x: (scales.paddingLeft ?? scales.padding) + 8,
+    y: 28,
+    tone: "accent",
+  });
+  renderWidgetFormula(
+    shell,
+    spec,
+    FAMILY_SPOTLIGHT_TEX[family] || "f(x)",
+    { fallback: "f" },
+  );
+  setWidgetReadout(shell.readout, family);
 }
 
 export function computeFunctionTransform(params = {}) {
@@ -54,32 +109,69 @@ export function computeFunctionTransform(params = {}) {
   };
 }
 
-function drawFamilyGallery(svg) {
+function miniGalleryDomains(name) {
+  if (name === "exponential") return { xDomain: [-1, 2.2], yDomain: [-0.2, 4.5] };
+  if (name === "log") return { xDomain: [0.12, 3], yDomain: [-1.8, 2.2] };
+  if (name === "power") return { xDomain: [0, 3], yDomain: [-0.2, 2] };
+  if (name === "tangent") return { xDomain: [-1.2, 1.2], yDomain: [-3.5, 3.5] };
+  if (name === "rational") return { xDomain: [-3, 3], yDomain: [-3.5, 3.5] };
+  return { xDomain: [-3, 3], yDomain: [-3, 5] };
+}
+
+function drawFamilyGallery(svg, highlightFamily = "") {
   clearSvg(svg);
   const width = 640;
   const height = 390;
+  const active = String(highlightFamily || "").trim().toLowerCase();
   const names = [
     ["linear", (x) => x],
     ["quadratic", (x) => x ** 2],
     ["cubic", (x) => x ** 3 / 4],
     ["sine", (x) => Math.sin(x)],
-    ["cosine", (x) => Math.cos(x)],
+    ["power", (x) => (x < 0 ? NaN : Math.sqrt(x))],
     ["tangent", (x) => Math.tan(x)],
     ["absolute", (x) => Math.abs(x)],
-    ["rational", (x) => Math.abs(x) < 0.2 ? NaN : 1 / x],
-    ["exponential", (x) => 2 ** x / 3],
-    ["log", (x) => x <= 0 ? NaN : Math.log2(x)],
+    ["rational", (x) => (Math.abs(x) < 0.2 ? NaN : 1 / x)],
+    ["exponential", (x) => 2 ** x],
+    ["log", (x) => (x <= 0 ? NaN : Math.log2(x))],
   ];
   names.forEach(([name, fn], index) => {
     const col = index % 4;
     const row = Math.floor(index / 4);
     const x0 = 12 + col * (width / 4);
     const y0 = 18 + row * (height / 2);
-    const group = svgEl("g", { transform: `translate(${x0} ${y0})`, class: "calculus-mini-plot" });
-    const scales = plotScales({ width: 140, height: 150, padding: 20, xDomain: [-3, 3], yDomain: [-3, 5] });
+    const isActive = !active || name === active;
+    const group = svgEl("g", {
+      transform: `translate(${x0} ${y0})`,
+      class: `calculus-mini-plot${isActive && active ? " calculus-mini-plot--active" : ""}${!isActive && active ? " calculus-mini-plot--dim" : ""}`,
+      opacity: !active || isActive ? 1 : 0.28,
+    });
+    const { xDomain, yDomain } = miniGalleryDomains(name);
+    const scales = plotScales({ width: 140, height: 150, padding: 20, xDomain, yDomain });
     appendGrid(group, scales, { labels: false });
-    appendCurve(group, scales, fn, { stroke: "#9a341b", strokeWidth: 2 });
-    group.appendChild(svgEl("text", { x: 8, y: 142, class: "calculus-mini-label" })).textContent = name;
+    appendCurve(group, scales, fn, {
+      stroke: isActive && active ? "#c65a28" : "#9a341b",
+      strokeWidth: isActive && active ? 3 : 2,
+    });
+    if (isActive && active) {
+      group.appendChild(svgEl("rect", {
+        x: 2,
+        y: 2,
+        width: 136,
+        height: 146,
+        rx: 8,
+        fill: "none",
+        stroke: "#c65a28",
+        "stroke-width": 2.5,
+        opacity: 0.9,
+      }));
+    }
+    const label = group.appendChild(svgEl("text", {
+      x: 8,
+      y: 142,
+      class: `calculus-mini-label${isActive && active ? " calculus-mini-label--active" : ""}`,
+    }));
+    label.textContent = name;
     svg.appendChild(group);
   });
 }
@@ -178,8 +270,8 @@ function drawEvenOddDemo(svg, shell, params, spec) {
 export function mountFunctionTransformWidget(root, spec = {}) {
   const shell = createWidgetShell(root, spec);
   const variant = spec.variant || spec.plot?.variant || "";
-  const controls = variant === "family_gallery"
-    ? []
+  const controls = variant === "family_gallery" || variant === "family_spotlight"
+    ? (Array.isArray(spec.controls) ? spec.controls : [])
     : variant === "even_odd_demo"
       ? (spec.controls?.length ? spec.controls : EVEN_ODD_CONTROLS)
       : variant === "trig_period"
@@ -202,9 +294,15 @@ export function mountFunctionTransformWidget(root, spec = {}) {
   const unsubscribe = state.subscribe((params) => {
     if (variant === "family_gallery") {
       clearSvg(svg);
-      drawFamilyGallery(svg);
+      const highlightFamily = params.family || params.highlightFamily || "";
+      drawFamilyGallery(svg, highlightFamily);
       renderWidgetFormula(shell, spec, "\\text{function families}", { fallback: "f" });
-      shell.readout.textContent = "";
+      setWidgetReadout(shell.readout, highlightFamily || "");
+      return;
+    }
+
+    if (variant === "family_spotlight") {
+      drawFamilySpotlight(svg, shell, params, spec);
       return;
     }
 
@@ -222,11 +320,8 @@ export function mountFunctionTransformWidget(root, spec = {}) {
 
     const model = computeFunctionTransform(params);
     clearSvg(svg);
-    const yDomain =
-      model.family === "sine" || model.family === "cosine" || model.family === "tangent"
-        ? [-4, 4]
-        : [-2, 8];
-    const scales = plotScales({ xDomain: [-4, 4], yDomain });
+    const { xDomain, yDomain } = plotDomainsForFamily(model.family);
+    const scales = plotScales({ xDomain, yDomain });
     appendGrid(svg, scales);
     appendCurve(svg, scales, model.f, { stroke: "#64748b", strokeWidth: 2, class: "calculus-curve muted" });
     appendCurve(svg, scales, model.g, { stroke: "#c65a28", strokeWidth: 4 });

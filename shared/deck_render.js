@@ -8,6 +8,7 @@
 import { mountCalculusWidget } from "./calculus/index.js";
 import { bindVisualLabSlide, renderVisualLabExampleTabs } from "./visual_lab.js";
 import {
+  adjustMathSolutionStepSpacing,
   bindMathSolutionStepsRoot,
   normalizeTex,
   stepLeadingOp,
@@ -175,6 +176,7 @@ function finalizeSlide(slide, slideData = null) {
   typesetMath(slide);
   slide.querySelectorAll(".math-solution-steps").forEach((root) => {
     bindMathSolutionStepsRoot(root);
+    adjustMathSolutionStepSpacing(root);
   });
   if (slideData?.type === "visual_lab") {
     bindVisualLabSlide(slide, slideData);
@@ -287,6 +289,7 @@ function renderMathSolutionSteps(block, slideId, counters) {
       const stepEl = document.createElement("div");
       stepEl.className = "math-solution-step";
       stepEl.dataset.mathStepIndex = String(index);
+      stepEl.dataset.authoredGap = stepLineGap(step);
       stepEl.dataset.lineGap = stepLineGap(step);
       applyElementMetadata(stepEl, {
         slideId,
@@ -896,7 +899,7 @@ function renderBlock(block, slideId, counters) {
       {
         slideId,
         parentElementId: block.id,
-        elementId: block.bodyId || `${block.id}_prompt`,
+        elementId: block.promptId || block.bodyId || `${block.id}_prompt`,
         elementType: "prompt",
         label: plainTextForSay(block.prompt || block.text),
       },
@@ -911,7 +914,7 @@ function renderBlock(block, slideId, counters) {
         {
           slideId,
           parentElementId: block.id,
-          elementId: block.reveal.id,
+          elementId: block.reveal.id || `${block.id}_reveal`,
           elementType: "reveal",
           label: plainTextForSay(block.reveal.text),
         },

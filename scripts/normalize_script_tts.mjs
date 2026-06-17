@@ -9,6 +9,8 @@ import {
   auditTtsNormalization,
 } from "./lib/lecture/tts_normalization.mjs";
 import { relativeProjectPath } from "./lib/lecture/utils.mjs";
+import { getCourseConfig } from "../shared/course_catalog.js";
+import { getCourseTerminology } from "../shared/course_labels.js";
 
 function parseArgs(argv) {
   const args = {
@@ -88,7 +90,10 @@ async function main() {
 
     if (args.dryRun) continue;
 
-    const normalized = applyTtsNormalizationToScriptManifest(manifest);
+    const terminology = target.descriptor
+      ? getCourseTerminology(getCourseConfig(target.descriptor.course))
+      : null;
+    const normalized = applyTtsNormalizationToScriptManifest(manifest, terminology);
     await writeFile(target.manifestPath, `${JSON.stringify(normalized, null, 2)}\n`, "utf8");
     console.log(`  wrote ${relativeProjectPath(target.manifestPath)}`);
   }

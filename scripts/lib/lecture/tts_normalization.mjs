@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { projectRoot } from "../export_runtime.mjs";
 import { ensureSentence, plainTextForSpeech } from "./utils.mjs";
+import { rebrandSpokenCourseText } from "./course_terminology.mjs";
 
 const PRONUNCIATION_CONFIG_PATH = path.join(projectRoot, "shared/tts_pronunciation.json");
 
@@ -240,8 +241,11 @@ export function ttsTextForSpeech(value) {
   );
 }
 
-export function attachTtsTextToSegment(segment) {
-  const displayText = ensureSentence(String(segment?.text || "").trim());
+export function attachTtsTextToSegment(segment, terminology = null) {
+  const rawText = String(segment?.text || "").trim();
+  const displayText = ensureSentence(
+    terminology ? rebrandSpokenCourseText(rawText, terminology) : rawText,
+  );
   if (!displayText) return null;
   const spokenText = ttsTextForSpeech(displayText);
   return {
@@ -275,12 +279,17 @@ export function auditTtsNormalization(manifest) {
   return changes;
 }
 
-export function applyTtsNormalizationToScriptManifest(manifest) {
+export function applyTtsNormalizationToScriptManifest(manifest, terminology = null) {
   if (!manifest || typeof manifest !== "object") return manifest;
   const slides = asArray(manifest.slides).map((slide) => ({
     ...slide,
     segments: asArray(slide.segments)
-      .map((segment) => attachTtsTextToSegment(segment))
+      .map((segment) => {
+        const rebranded = terminology
+          ? { ...segment, text: rebrandSpokenCourseText(segment.text, terminology) }
+          : segment;
+        return attachTtsTextToSegment(rebranded, terminology);
+      })
       .filter(Boolean),
   }));
   const changes = auditTtsNormalization({ ...manifest, slides });

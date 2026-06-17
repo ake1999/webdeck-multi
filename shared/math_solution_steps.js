@@ -51,10 +51,29 @@ export function stepParts(step) {
 }
 
 export function stepLineGap(step) {
-  const gap = String(step?.gap ?? step?.lineGap ?? "normal").trim().toLowerCase();
+  const gap = String(step?.gap ?? step?.lineGap ?? "auto").trim().toLowerCase();
   if (gap === "tight" || gap === "compact" || gap === "small") return "tight";
   if (gap === "loose" || gap === "relaxed" || gap === "large") return "loose";
-  return "normal";
+  if (gap === "normal") return "normal";
+  return "auto";
+}
+
+export function adjustMathSolutionStepSpacing(root) {
+  if (!root) return;
+  const steps = Array.from(root.querySelectorAll(".math-solution-step"));
+  steps.forEach((stepEl) => {
+    const mathEl = stepEl.querySelector(".math-solution-math");
+    if (!mathEl) return;
+    const authoredGap = String(stepEl.dataset.authoredGap || "auto").toLowerCase();
+    if (authoredGap !== "auto") {
+      stepEl.dataset.lineGap = authoredGap;
+      return;
+    }
+    const height = Math.ceil(mathEl.getBoundingClientRect().height);
+    if (height <= 30) stepEl.dataset.lineGap = "tight";
+    else if (height <= 44) stepEl.dataset.lineGap = "normal";
+    else stepEl.dataset.lineGap = "loose";
+  });
 }
 
 export function createMathSolutionStepsController(root, options = {}) {
@@ -88,6 +107,7 @@ export function createMathSolutionStepsController(root, options = {}) {
     if (revealMode !== "sequential") return;
     revealedCount = Math.max(revealedCount, Math.min(steps.length, index + 1));
     applyState();
+    adjustMathSolutionStepSpacing(root);
     root.dispatchEvent(new CustomEvent("math-solution:reveal", {
       bubbles: true,
       detail: {
@@ -132,6 +152,7 @@ export function createMathSolutionStepsController(root, options = {}) {
   }
 
   applyState();
+  adjustMathSolutionStepSpacing(root);
 
   const controller = {
     root,

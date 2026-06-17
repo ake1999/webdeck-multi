@@ -12,6 +12,8 @@ import {
   applyTtsNormalizationToScriptManifest,
   attachTtsTextToSegment,
 } from "./tts_normalization.mjs";
+import { getCourseConfig } from "../../../shared/course_catalog.js";
+import { getCourseTerminology } from "../../../shared/course_labels.js";
 import {
   extractExplicitLecturePlanNarrationSource,
   extractLecturePlanGuidanceSource,
@@ -1028,6 +1030,8 @@ export async function generateScriptManifest({
     }
   }
 
+  const courseTerminology = getCourseTerminology(getCourseConfig(descriptor.course));
+
   return applyTtsNormalizationToScriptManifest({
     topic_id: runtime.topicId,
     selector: {
@@ -1056,5 +1060,5 @@ export async function generateScriptManifest({
       }
       : {}),
     slides: scriptSlides,
-  });
+  }, courseTerminology);
 }

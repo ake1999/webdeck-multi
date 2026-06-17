@@ -31,7 +31,7 @@ const slidesData = [
     type: "bullets",
     hud: "Arian University • Calculus 1",
     title: "Learning Objectives",
-    lead: "By the end of this session you will be able to:",
+    lead: "By the end of this lesson you will be able to:",
     blocks: [
       {
         id: "calculus1_roadmap",
@@ -342,9 +342,14 @@ const slidesData = [
           k: 0,
         },
         scriptedTimeline: [
-          { t: 0, params: { family: "linear", a: 1, b: 1, h: 0, k: 0 } },
-          { t: 4, params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 } },
-          { t: 8, params: { family: "exponential", a: 2, b: 1, h: 0, k: 0 } },
+          { t: 0, params: { family: "linear" } },
+          { t: 2.5, params: { family: "quadratic" } },
+          { t: 5, params: { family: "cubic" } },
+          { t: 7.5, params: { family: "sine" } },
+          { t: 10, params: { family: "exponential" } },
+          { t: 12.5, params: { family: "log" } },
+          { t: 15, params: { family: "absolute" } },
+          { t: 17.5, params: { family: "tangent" } },
         ],
       },
     },
@@ -368,32 +373,49 @@ const slidesData = [
       blocks: [
         {
           id: "left_steps",
-          type: "example_solution",
-          title: "Solution path",
-          text: "Find the domain and range of \\(f(x)=\\sqrt{x-3}+2\\).",
-          steps: [],
-        },
-        {
-          id: "left_table",
-          type: "math_table",
-          headers: ["Step", "Action", "Explanation"],
-          rows: [
-            [
-              "1",
-              "Restrict radicand",
-              "\\(x-3 \\ge 0 \\Rightarrow x \\ge 3\\)",
-            ],
-            ["2", "Domain", "\\([3,\\infty)\\)"],
-            ["3", "Min value at \\(x=3\\)", "\\(f(3)=\\sqrt{0}+2=2\\)"],
-            ["4", "As \\(x\\to\\infty\\)", "\\(f(x)\\to\\infty\\)"],
-            ["5", "Range", "\\([2,\\infty)\\)"],
-          ],
-          rowActions: [
-            { widgetParams: { x: 3 } },
-            { widgetParams: { x: 3 } },
-            { widgetParams: { x: 3 } },
-            { widgetParams: { x: 9 } },
-            { widgetParams: { x: 9 } },
+          type: "math_solution_steps",
+          stepLayout: "stack",
+          problem: "f(x)=\\sqrt{x-3}+2",
+          steps: [
+            {
+              id: "step_1",
+              math: "x-3 \\ge 0 \\Rightarrow x \\ge 3",
+              gap: "tight",
+              say: "Restrict the radicand.",
+              widgetId: "right_function_analysis",
+              widgetParams: { x: 3 },
+            },
+            {
+              id: "step_2",
+              math: "\\text{Domain: }[3,\\infty)",
+              gap: "tight",
+              say: "Domain is all x from 3 onward.",
+              widgetId: "right_function_analysis",
+              widgetParams: { x: 3 },
+            },
+            {
+              id: "step_3",
+              math: "f(3)=\\sqrt{0}+2=2",
+              gap: "tight",
+              say: "Minimum value at the left endpoint.",
+              widgetId: "right_function_analysis",
+              widgetParams: { x: 3 },
+            },
+            {
+              id: "step_4",
+              math: "x\\to\\infty \\Rightarrow f(x)\\to\\infty",
+              gap: "tight",
+              say: "As x grows, so does the square root.",
+              widgetId: "right_function_analysis",
+              widgetParams: { x: 9 },
+            },
+            {
+              id: "step_5",
+              math: "\\text{Range: }[2,\\infty)",
+              say: "Range starts at the minimum 2.",
+              widgetId: "right_function_analysis",
+              widgetParams: { x: 9 },
+            },
           ],
         },
       ],
@@ -489,11 +511,18 @@ const slidesData = [
         title: "Interactive shift on f(x)=x²",
         caption: "",
         params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 },
-        scriptedTimeline: [
-          { t: 0, params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 } },
-          { t: 5, params: { family: "quadratic", a: 1, b: 1, h: 2, k: 0 } },
-          { t: 9, params: { family: "quadratic", a: 1, b: 1, h: -2, k: 3 } },
-        ],
+        scriptedTimelines: {
+          vertical_k: [
+            { t: 0, params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 } },
+            { t: 4, params: { family: "quadratic", a: 1, b: 1, h: 0, k: 3 } },
+            { t: 8, params: { family: "quadratic", a: 1, b: 1, h: 0, k: -1 } },
+          ],
+          horizontal_h: [
+            { t: 0, params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 } },
+            { t: 4, params: { family: "quadratic", a: 1, b: 1, h: 2, k: 0 } },
+            { t: 8, params: { family: "quadratic", a: 1, b: 1, h: -2, k: 0 } },
+          ],
+        },
       },
     },
     notes:
@@ -540,12 +569,18 @@ const slidesData = [
         title: "Interactive stretch/reflection on sin(x)",
         caption: "",
         params: { family: "sine", a: 1, b: 1, h: 0, k: 0 },
-        scriptedTimeline: [
-          { t: 0, params: { family: "sine", a: 1, b: 1, h: 0, k: 0 } },
-          { t: 4, params: { family: "sine", a: 2, b: 1, h: 0, k: 0 } },
-          { t: 7, params: { family: "sine", a: 2, b: 2, h: 0, k: 0 } },
-          { t: 10, params: { family: "sine", a: -1.5, b: 0.5, h: 0, k: 0 } },
-        ],
+        scriptedTimelines: {
+          vertical_a: [
+            { t: 0, params: { family: "sine", a: 1, b: 1, h: 0, k: 0 } },
+            { t: 4, params: { family: "sine", a: 2, b: 1, h: 0, k: 0 } },
+            { t: 8, params: { family: "sine", a: -1.5, b: 1, h: 0, k: 0 } },
+          ],
+          horizontal_b: [
+            { t: 0, params: { family: "sine", a: 1, b: 1, h: 0, k: 0 } },
+            { t: 4, params: { family: "sine", a: 1, b: 2, h: 0, k: 0 } },
+            { t: 8, params: { family: "sine", a: 1, b: 0.5, h: 0, k: 0 } },
+          ],
+        },
       },
     },
     notes:
@@ -569,11 +604,11 @@ const slidesData = [
           pairs: [
             {
               label: "❌ Tempting mistake",
-              text: "'\\(y = f(x+3)\\) shifts right 3 because +3 adds to x.'",
+              text: "'\\(y = f(x-5)\\) shifts **left** 5 because the minus feels backward.'",
             },
             {
               label: "✅ Correct reasoning",
-              text: "\\(y = f(x+3)\\) shifts **left** 3. To get \\(f(0)\\), solve \\(x+3=0 \\Rightarrow x=-3\\).",
+              text: "\\(y = f(x-5)\\) shifts **right** 5. To get \\(f(0)\\), solve \\(x-5=0 \\Rightarrow x=5\\).",
             },
           ],
         },
@@ -597,12 +632,10 @@ const slidesData = [
         title: "Three parabolas: original, shifted left, shifted right",
         caption: "",
         params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 },
-        // Fixed: the scripted timeline now actually shows both shifts clearly,
-        // not an irrelevant (h=1.5, k=1) animation that contradicts the lesson.
         scriptedTimeline: [
           { t: 0, params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 } },
-          { t: 4, params: { family: "quadratic", a: 1, b: 1, h: -2, k: 0 } },
-          { t: 8, params: { family: "quadratic", a: 1, b: 1, h: 2, k: 0 } },
+          { t: 4, params: { family: "quadratic", a: 1, b: 1, h: 5, k: 0 } },
+          { t: 8, params: { family: "quadratic", a: 1, b: 1, h: -5, k: 0 } },
         ],
       },
     },
@@ -640,28 +673,39 @@ const slidesData = [
         },
         {
           id: "left_steps",
-          type: "example_solution",
-          title: "Sketch \\(y=-2(x+1)^2+3\\) from \\(f(x)=x^2\\)",
-          text: "",
+          type: "math_solution_steps",
+          stepLayout: "stack",
+          problem: "y=-2(x+1)^2+3",
           steps: [
             {
               id: "left_step_1",
-              text: "**Start:** parent \\(y=x^2\\), vertex at \\((0,0)\\).",
+              math: "y=x^2,\\; vertex\\;(0,0)",
+              gap: "tight",
+              say: "Start with the parent parabola.",
+              widgetId: "right_function_transform",
               widgetParams: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 },
             },
             {
               id: "left_step_2",
-              text: "**Horizontal shift left 1:** replace \\(x\\) with \\((x+1)\\) → vertex moves to \\((-1,0)\\).",
+              math: "x\\mapsto x+1 \\Rightarrow vertex\\;(-1,0)",
+              gap: "tight",
+              say: "Horizontal shift left 1.",
+              widgetId: "right_function_transform",
               widgetParams: { family: "quadratic", a: 1, b: 1, h: -1, k: 0 },
             },
             {
               id: "left_step_3",
-              text: "**Vertical stretch × 2 and reflect:** multiply output by \\(-2\\) → parabola opens down, twice as tall.",
+              math: "\\times(-2):\\; opens\\;down,\\; twice\\;as\\;tall",
+              gap: "tight",
+              say: "Vertical stretch by 2 and reflect.",
+              widgetId: "right_function_transform",
               widgetParams: { family: "quadratic", a: -2, b: 1, h: -1, k: 0 },
             },
             {
               id: "left_step_4",
-              text: "**Vertical shift up 3:** add 3 → vertex at \\((-1, 3)\\).",
+              math: "+3 \\Rightarrow vertex\\;(-1,3)",
+              say: "Vertical shift up 3.",
+              widgetId: "right_function_transform",
               widgetParams: { family: "quadratic", a: -2, b: 1, h: -1, k: 3 },
             },
           ],
@@ -680,13 +724,7 @@ const slidesData = [
         variant: "",
         title: "Step-by-step transformation of y = x²",
         caption: "",
-        params: { family: "quadratic", a: -2, b: 1, h: -1, k: 3 },
-        scriptedTimeline: [
-          { t: 0, params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 } },
-          { t: 3, params: { family: "quadratic", a: 1, b: 1, h: -1, k: 0 } },
-          { t: 6, params: { family: "quadratic", a: -2, b: 1, h: -1, k: 0 } },
-          { t: 9, params: { family: "quadratic", a: -2, b: 1, h: -1, k: 3 } },
-        ],
+        params: { family: "quadratic", a: 1, b: 1, h: 0, k: 0 },
       },
     },
     notes:
@@ -742,20 +780,9 @@ const slidesData = [
         id: "right_function_analysis",
         kind: "calculus_widget",
         widget: "function_analysis",
-        variant: "flex_plot",
-        plot: {
-          plotType: "y_equals",
-          expr: "sqrt(x+1)",
-          formula: "(f\\circ g)(x)=\\sqrt{x+1}\\quad x\\ge -1",
-          xDomain: [-1.5, 4],
-          yDomain: [-0.5, 3],
-          probeMin: -1,
-          probeMax: 4,
-          probeDefault: 0,
-          tags: [{ text: "domain starts at x=-1", x: -1, y: 0, tone: "muted" }],
-        },
-        title: "Two-step composition diagram",
-        caption: "",
+        variant: "composition_sqrt",
+        title: "Composition pipeline: x → g(x) → f(g(x))",
+        caption: "f(x)=√x, g(x)=x+1",
         params: { x: 0 },
         scriptedTimeline: [
           { t: 0, params: { x: 0 } },
@@ -782,33 +809,37 @@ const slidesData = [
           type: "example_solution",
           title: "Find \\((f\\circ g)(x)\\) and its domain",
           text: "\\(f(x)=\\dfrac{1}{x-1},\\quad g(x)=\\sqrt{x}\\).",
-          steps: [],
-        },
-        {
-          id: "body_table",
-          type: "math_table",
-          headers: ["Step", "Action", "Why"],
-          rows: [
-            ["1", "Substitute: \\(f(g(x))=f(\\sqrt{x})\\)", "Apply g first"],
-            ["2", "Simplify: \\(\\dfrac{1}{\\sqrt{x}-1}\\)", "Plug √x into f"],
-            ["3", "Inner domain: \\(x\\ge0\\)", "√x needs non-negative input"],
-            [
-              "4",
-              "Outer: denominator \\(\\neq0\\): \\(\\sqrt{x}\\neq1 \\Rightarrow x\\neq1\\)",
-              "f undefined when denom = 0",
-            ],
-            [
-              "5",
-              "Domain: \\([0,1)\\cup(1,\\infty)\\)",
-              "Combine both restrictions",
-            ],
-          ],
-          rowActions: [
-            { widgetParams: { x: 0.5 } },
-            { widgetParams: { x: 0.5 } },
-            { widgetParams: { x: 0 } },
-            { widgetParams: { x: 1 } },
-            { widgetParams: { x: 2 } },
+          steps: [
+            {
+              id: "step_1",
+              text: "**Substitute:** \\(f(g(x))=f(\\sqrt{x})\\), apply \\(g\\) first.",
+              widgetId: "body_function_analysis",
+              widgetParams: { x: 0.5 },
+            },
+            {
+              id: "step_2",
+              text: "**Simplify:** \\(\\dfrac{1}{\\sqrt{x}-1}\\).",
+              widgetId: "body_function_analysis",
+              widgetParams: { x: 0.5 },
+            },
+            {
+              id: "step_3",
+              text: "**Inner domain:** \\(x\\ge0\\) (\\(\\sqrt{x}\\) needs a non-negative input).",
+              widgetId: "body_function_analysis",
+              widgetParams: { x: 0 },
+            },
+            {
+              id: "step_4",
+              text: "**Outer filter:** \\(\\sqrt{x}\\neq1 \\Rightarrow x\\neq1\\) (denominator cannot be 0).",
+              widgetId: "body_function_analysis",
+              widgetParams: { x: 1 },
+            },
+            {
+              id: "step_5",
+              text: "**Domain:** \\([0,1)\\cup(1,\\infty)\\).",
+              widgetId: "body_function_analysis",
+              widgetParams: { x: 2 },
+            },
           ],
         },
       ],
@@ -948,32 +979,47 @@ const slidesData = [
     type: "two-col",
     hud: "Arian University • Calculus 1",
     title: "Example 4: Classify a Rational Function",
-    question: "Is \\(f(x)=x^2+1\\) even, odd, or neither?",
+    question: "Is \\(h(x)=\\dfrac{x^3}{x^2+1}\\) even, odd, or neither?",
     left: {
       paragraphs: [],
       bullets: [],
       blocks: [
         {
           id: "left_steps",
-          type: "example_solution",
-          title: "Classify \\(h(x)=\\dfrac{x^3}{x^2+1}\\)",
-          text: "",
+          type: "math_solution_steps",
+          stepLayout: "stack",
+          problem: "h(x)=\\frac{x^3}{x^2+1}",
           steps: [
             {
               id: "step_1",
-              text: "Compute \\(h(-x)=\\dfrac{(-x)^3}{(-x)^2+1}=\\dfrac{-x^3}{x^2+1}\\).",
+              math: "h(-x)=\\frac{(-x)^3}{(-x)^2+1}=\\frac{-x^3}{x^2+1}",
+              gap: "tight",
+              say: "Substitute −x and simplify.",
+              widgetId: "right_function_analysis",
+              widgetParams: { a: 2 },
             },
             {
               id: "step_2",
-              text: "Compare to \\(h(x)=\\dfrac{x^3}{x^2+1}\\).",
+              math: "h(x)=\\frac{x^3}{x^2+1}",
+              gap: "tight",
+              say: "Compare to the original formula.",
+              widgetId: "right_function_analysis",
+              widgetParams: { a: 1.5 },
             },
             {
               id: "step_3",
-              text: "Observe: \\(h(-x) = -h(x)\\) → **odd function**.",
+              math: "h(-x)=-h(x)",
+              gap: "tight",
+              say: "Sign flips: odd function.",
+              widgetId: "right_function_analysis",
+              widgetParams: { a: 2.5 },
             },
             {
               id: "step_4",
-              text: "**Why?** Numerator: odd power \\((-x)^3=-x^3\\). Denominator: even power \\((-x)^2=x^2\\), no sign change. Net result: sign of numerator flips, denominator unchanged → \\(-h(x)\\).",
+              math: "\\text{odd power} \\div \\text{even power} \\Rightarrow \\text{odd}",
+              say: "Numerator flips sign; denominator does not.",
+              widgetId: "right_function_analysis",
+              widgetParams: { a: 3 },
             },
           ],
         },
@@ -999,7 +1045,6 @@ const slidesData = [
           probeMin: 0.5,
           probeMax: 3.2,
           probeDefault: 2,
-          probe: false,
           tags: [
             { text: "origin symmetry → odd", anchor: "end", tone: "accent" },
           ],
@@ -1015,7 +1060,7 @@ const slidesData = [
       },
     },
     notes:
-      "This example pairs nicely with the previous slide, students just learned the concept, now they apply the algebraic test to a less-obvious function.\n\nThe trick: identify the parity of numerator and denominator separately. Numerator x³ is odd (odd power → sign flips). Denominator x²+1 is even (even power → no sign change; constant also even). Odd ÷ even = odd. So the function is odd.\n\nThe dashed line through the origin on the graph is a nice visual, it emphasises that for an odd function, the points (a, f(a)) and (−a, f(−a)) are always directly across the origin from each other.\n\nPause answer: f(x)=x²+1. f(−x)=(−x)²+1=x²+1=f(x) → EVEN.",
+      "This example pairs nicely with the previous slide, students just learned the concept, now they apply the algebraic test to a less-obvious function.\n\nThe trick: identify the parity of numerator and denominator separately. Numerator x³ is odd (odd power → sign flips). Denominator x²+1 is even (even power → no sign change; constant also even). Odd ÷ even = odd. So the function is odd.\n\nThe dashed line through the origin on the graph is a nice visual, it emphasises that for an odd function, the points (a, f(a)) and (−a, f(−a)) are always directly across the origin from each other.\n\nPause answer: h(x)=x³/(x²+1). h(−x)=−h(x) → ODD.",
   },
   {
     id: "s13_challenge_product_even_odd",
@@ -1033,14 +1078,27 @@ const slidesData = [
           text: "**Theorem:** If \\(f\\) is even and \\(g\\) is odd, then \\(h(x)=f(x)g(x)\\) is **odd**.",
         },
         {
-          id: "body_table",
-          type: "math_table",
-          headers: ["Step", "Derivation"],
-          rows: [
-            ["1", "\\(h(-x)=f(-x)\\cdot g(-x)\\)"],
-            ["2", "\\(f(-x)=f(x)\\) and \\(g(-x)=-g(x)\\)"],
-            ["3", "\\(h(-x)=f(x)\\cdot(-g(x))=-f(x)g(x)=-h(x)\\)"],
-            ["4", "Therefore \\(h\\) is odd."],
+          id: "body_proof",
+          type: "example_solution",
+          title: "Proof sketch",
+          text: "\\(h(x)=f(x)g(x)\\), with \\(f\\) even and \\(g\\) odd.",
+          steps: [
+            {
+              id: "step_1",
+              text: "\\(h(-x)=f(-x)\\cdot g(-x)\\)",
+            },
+            {
+              id: "step_2",
+              text: "\\(f(-x)=f(x)\\) and \\(g(-x)=-g(x)\\)",
+            },
+            {
+              id: "step_3",
+              text: "\\(h(-x)=f(x)\\cdot(-g(x))=-f(x)g(x)=-h(x)\\)",
+            },
+            {
+              id: "step_4",
+              text: "Therefore \\(h\\) is **odd** (even × odd = odd).",
+            },
           ],
         },
         {
@@ -1341,6 +1399,25 @@ export default slidesData;
  *   - s10: removed pause_and_reveal ("Pause and test") and footer question;
  *     left column is definitions + examples only.
  *   - s07: nested_bullets order list without manual step numbers.
+ *
+ * Topic 01 UX pass (2026-06-17, page-number refs)
+ *   - Page 4 (families): gallery restored; cosine→power mini plot; exp/log
+ *     use per-family mini-plot domains.
+ *   - Page 13: footer question matches h(x)=x³/(x²+1).
+ *   - Page 10 (composition): pipeline readout box under plot (x, g(x), f∘g).
+ *   - Page 11 (composition domain): example_solution (fits slide; mixed text).
+ *   - Page 14 (challenge proof): example_solution like page 15 piecewise.
+ *
+ * Topic 01 slide sync pass (2026-06-17)
+ *   - s02: eight-family scriptedTimeline (incl. log, rational, trig); gallery
+ *     highlights active family via params.family.
+ *   - s03, s09, s13: math_table / example_solution → math_solution_steps with
+ *     widgetId + widgetParams on paired plots.
+ *   - s05: scriptedTimelines split vertical_a / horizontal_b (mirror s04 k/h).
+ *   - s06: misconception + timeline aligned to f(x−5), h=±5.
+ *   - s07, s11: transformation / odd-classification as math_solution_steps.
+ *   - s08: composition_sqrt variant for live x → g(x) → f(g(x)) readout.
+ *   - s11: probe enabled on odd_symmetry plot.
  *
  * ═══════════════════════════════════════════════════════════════════════════════
  */

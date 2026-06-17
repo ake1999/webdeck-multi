@@ -617,6 +617,12 @@ li::marker {
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.75);
 }
 
+.lecture-mode .element-highlight {
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+}
+
 .deck-overlay-layer,
 .deck-debug-layer {
   position: absolute;
@@ -980,11 +986,19 @@ body.lecture-controls-visible .lecture-page-number {
 }
 
 .lecture-focus-target--halo {
-  border-radius: 14px;
+  border-radius: 22px;
   border: 3px solid rgba(0, 112, 60, 0.5);
   box-shadow:
     0 0 0 5px rgba(0, 112, 60, 0.12),
     0 0 22px rgba(0, 112, 60, 0.28);
+}
+
+.lecture-focus-target--cell {
+  border-radius: 10px;
+  border: 2px solid rgba(0, 112, 60, 0.55);
+  box-shadow:
+    0 0 0 3px rgba(0, 112, 60, 0.1),
+    0 0 14px rgba(0, 112, 60, 0.22);
 }
 
 .theme-uo .lecture-focus-target--underline {
@@ -1013,6 +1027,13 @@ body.lecture-controls-visible .lecture-page-number {
   box-shadow:
     0 0 0 5px rgba(138, 21, 56, 0.12),
     0 0 22px rgba(138, 21, 56, 0.28);
+}
+
+.theme-uo .lecture-focus-target--cell {
+  border-color: rgba(138, 21, 56, 0.58);
+  box-shadow:
+    0 0 0 3px rgba(138, 21, 56, 0.1),
+    0 0 14px rgba(138, 21, 56, 0.24);
 }
 
 /* ------------------- PRINT / PDF ------------------- */
@@ -1415,6 +1436,13 @@ body.analysis-mode .deck-container {
     0 0 22px rgba(154, 52, 27, 0.28);
 }
 
+.theme-arian .lecture-focus-target--cell {
+  border-color: rgba(154, 52, 27, 0.58);
+  box-shadow:
+    0 0 0 3px rgba(198, 90, 40, 0.1),
+    0 0 14px rgba(154, 52, 27, 0.24);
+}
+
 /* ---------- Calculus blocks and native widgets ---------- */
 
 .content-block {
@@ -1796,26 +1824,37 @@ body.analysis-mode .deck-container {
 }
 
 .two-col .content-block--math_solution_steps {
-  margin: 6px 0;
-  padding: 8px 10px;
+  margin: 4px 0;
+  padding: 4px 8px;
   overflow: visible;
 }
 
 .math-solution-steps {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 2px;
+  margin-top: 0;
 }
 
 .math-solution-problem {
   font-size: 21px;
-  line-height: 1.24;
+  line-height: 1.15;
+  margin: 0 0 2px;
+  padding: 0;
+}
+
+.math-solution-problem .katex-display {
+  margin: 0;
+}
+
+.math-solution-problem .katex {
+  line-height: 1.12;
 }
 
 .two-col .math-solution-problem {
   font-size: 19px;
-  line-height: 1.2;
+  line-height: 1.12;
+  margin-bottom: 1px;
 }
 
 .math-solution-columns {
@@ -1846,30 +1885,41 @@ body.analysis-mode .deck-container {
 .math-solution-lane {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
   min-width: 0;
 }
 
 .math-solution-step[data-line-gap="tight"] {
   margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .math-solution-step[data-line-gap="normal"] {
-  margin-bottom: 1px;
+  margin-bottom: 2px;
+  padding-top: 1px;
+  padding-bottom: 1px;
 }
 
 .math-solution-step[data-line-gap="loose"] {
-  margin-bottom: 5px;
+  margin-bottom: 4px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .math-solution-steps--flow .math-solution-step,
 .math-solution-steps--stack .math-solution-step {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 7px;
   padding: 2px 5px;
   border-radius: 6px;
   border: 1px solid transparent;
+}
+
+.math-solution-steps .math-solution-lane > .math-solution-step:first-child {
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .math-solution-step-body {
@@ -1948,6 +1998,14 @@ body.analysis-mode .deck-container {
   line-height: 1.22;
 }
 
+.math-solution-math .katex-display {
+  margin: 0;
+}
+
+.math-solution-math .katex {
+  line-height: 1.15;
+}
+
 .two-col .math-solution-math {
   font-size: 17px;
   line-height: 1.18;
@@ -1979,12 +2037,13 @@ body.analysis-mode .deck-container {
   outline: none;
 }
 
-.lecture-mode .math-solution-advance {
-  display: none !important;
+.lecture-mode .math-solution-advance:not([hidden]) {
+  display: inline-flex;
+  opacity: 0.92;
 }
 
 .lecture-mode .math-solution-step--revealed {
-  opacity: 0.48;
+  opacity: 0.8;
 }
 
 .lecture-mode .math-solution-step--active,
@@ -2170,13 +2229,17 @@ tr.widget-step-trigger:focus-visible {
   border-top: 1px solid rgba(148, 163, 184, 0.28);
 }
 
+.lecture-mode .pause-reveal:not([open]) .reveal-body {
+  display: none;
+}
+
 .lecture-mode .content-block--example_solution .calculus-step-list li,
 .lecture-mode .content-block--derivation_steps .calculus-step-list li,
 .lecture-mode .content-block--math_solution_steps .math-solution-step--revealed,
 .lecture-mode .content-block--proof_sketch .calculus-step-list li,
 .lecture-mode .content-block--pause_and_reveal .reveal-body,
 .lecture-mode .bullets li {
-  opacity: 0.48;
+  opacity: 0.8;
   transition:
     opacity 0.18s ease,
     transform 0.18s ease,
@@ -2428,7 +2491,9 @@ tr.widget-step-trigger:focus-visible {
   border-radius: 8px;
   background: rgba(15, 23, 42, 0.06);
   font-size: 12px;
-  line-height: 1.25;
+  line-height: 1.35;
+  white-space: pre-line;
+  font-variant-numeric: tabular-nums;
 }
 
 .calculus-widget-readout:empty,

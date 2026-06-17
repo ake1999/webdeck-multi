@@ -51,13 +51,22 @@ them. Read this file before editing, then read `.agents/project-map.md`,
   `shared/calculus/`. It supports block rendering plus inline
   `media.kind: "calculus_widget"` widgets; do not replace this with static
   Python plot screenshots as the primary visual path.
-- Current rich block types include `math_solution_steps` (preferred for worked
-  algebra), `formula_block`, `derivation_steps`, `theorem_box`,
-  `example_solution`, `proof_sketch`, `misconception_compare`,
-  `pause_and_reveal`, `math_table`, `paragraph`, `nested_bullets`, and
-  `course_path`. `visual_lab` uses left steps + right plot (§3b in the authoring
-  guide) with optional `labExamples` tabs. See
+- Current rich block types include `math_solution_steps`, `formula_block`,
+  `derivation_steps`, `theorem_box`, `example_solution`, `proof_sketch`,
+  `misconception_compare`, `pause_and_reveal`, `math_table`, `paragraph`,
+  `nested_bullets`, and `course_path`. `visual_lab` uses left steps + right plot
+  (§3b in the authoring guide) with optional `labExamples` tabs. See
   `docs/calculus_course_authoring_guide.md` for when to use each block.
+- **Worked steps: pick the right block.** Use `math_solution_steps` for
+  equation-heavy examples with progressive reveal (domain/range algebra,
+  transformation sequence, classify-by-formula). Use `example_solution` for
+  proofs, piecewise evaluate-and-sketch, composition walkthroughs with mixed
+  prose + formulas, or any slide where all steps should stay visible and
+  lecture focus dims non-active lines (~80% opacity). Do not use `math_table`
+  for step-by-step examples when either block fits.
+- **Slide numbering in conversation:** refer to **deck page order** (title =
+  page 1, objectives = page 2, …), not internal slide ids like `s02_…`.
+  File ids stay `sNN_` / `NN_` prefixed; page index matches browser counter.
 - Current native widgets include `function_analysis` (many variants plus
   configurable `flex_plot` via `shared/calculus/core/plot_spec.js`),
   `function_transform`, `limit_epsilon`, `secant_tangent`, `riemann_integral`,
@@ -71,11 +80,38 @@ them. Read this file before editing, then read `.agents/project-map.md`,
   script segment targets that step id). Scripts use `delivery_kind: demo` on the
   widget media id; plan entries carry `interaction_hints` (`widget_media_id`,
   `step_ids`, `scripted_params`). See authoring guide §5b–§7b.
+- **`scriptedTimelines` (plural):** when one slide narrates two control stories
+  (e.g. vertical **k** vs horizontal **h**, or amplitude **a** vs period **b**),
+  put keyed timelines on the widget (`vertical_k`, `horizontal_h`, `vertical_a`,
+  `horizontal_b`). `shared/calculus/registry.js` picks the key from cue speech
+  when `widget_timeline_key` is absent.
+- **Function families gallery (Topic 1 page 4):** keep
+  `function_transform` variant `family_gallery` (grid of mini plots), not
+  single-plot spotlight. Exponential and logarithmic cells need
+  per-family mini-plot domains in `function_transform.js` (`miniGalleryDomains`);
+  cosine slot was replaced with **power** (√x). Timeline highlights families via
+  `params.family` while the full grid stays visible.
+- **Composition widget (Topic 1 page 10):** use `function_analysis` variant
+  `composition_sqrt`; live pipeline values belong in
+  `shell.readout` (box under plot): `x`, `g(x)`, `(f∘g)(x)` updating with the
+  **x** slider. Do not rely on `flex_plot` for this readout (it clears readout).
 - **Pause beats:** use `pause_and_reveal` only for real prediction moments (not
   decorative filler). Script splits quiz (`delivery_kind: quiz_prompt`, targets
   prompt id) from reveal (targets reveal element). The composite video inserts a
   **silent think beat** between them; TTS does not speak the answer in the quiz
   segment. Avatar head/body shifts under plots are video-only, not spoken.
+  Think-pause duration is mapped in `shared/lecture_player.js`
+  (`playbackTimeFromAudioTime`, `slideQuestionPauseSeconds`) so progress bars do
+  not double-count silent tails at slide end.
+- **Lecture-mode step UX:** `math_solution_steps` keeps **Next step →** visible
+  in lecture mode until all steps are revealed (then hidden). Non-active
+  revealed lines dim to ~**80%** opacity; active target stays full opacity.
+  Step line spacing auto-tightens from rendered math height
+  (`adjustMathSolutionStepSpacing`); problem line uses minimal KaTeX margins.
+- **Focus (interim):** `scripts/lib/lecture/focus_plan.mjs` word heuristics are
+  secondary. Next direction: script/plan **action DSL** → alignment → timeline
+  cues (`focus`, `widget_set`, `reveal_step`) with element dimming, not orange
+  underline. Do not expand heuristic focus until that lands.
 - Lecture plans may include `playback_contract` and per-slide `interaction_hints`;
   generation uses `script_writer_v3` + `llm_local` with those hints in context.
 - **TTS vs transcript text:** `segment.text` and subtitle VTT cues keep written copy
