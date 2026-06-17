@@ -9,7 +9,7 @@ import {
 
 assert.equal(
   ttsTextForSpeech("Hi, I'm Arian, and welcome to Arian University."),
-  "Hi, I'm Arun, and welcome to Arun University.",
+  "Hi, I'm Ah-ree-ahn, and welcome to Ah-ree-ahn University.",
 );
 
 assert.match(
@@ -22,7 +22,7 @@ const segment = attachTtsTextToSegment({
   text: "Hi, I'm Arian from Arian University.",
 });
 assert.equal(segment.text, "Hi, I'm Arian from Arian University.");
-assert.equal(segment.tts_text, "Hi, I'm Arun from Arun University.");
+assert.equal(segment.tts_text, "Hi, I'm Ah-ree-ahn from Ah-ree-ahn University.");
 
 const manifest = applyTtsNormalizationToScriptManifest({
   topic_id: "demo",
@@ -40,7 +40,7 @@ const manifest = applyTtsNormalizationToScriptManifest({
 });
 
 assert.equal(manifest.slides[0].segments[0].text, "Hi, I'm Arian, and sin(x)/x matters here.");
-assert.ok(manifest.slides[0].segments[0].tts_text.includes("Arun"));
+assert.ok(manifest.slides[0].segments[0].tts_text.includes("Ah-ree-ahn"));
 assert.equal(manifest.tts_normalization.display_field, "text");
 assert.equal(manifest.tts_normalization.speech_field, "tts_text");
 

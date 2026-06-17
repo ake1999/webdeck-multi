@@ -1,18 +1,20 @@
 {
   "schema_version": "tts-pronunciation-v1",
-  "description": "Spoken-only replacements for TTS. On-screen text, subtitles, and segment.text stay unchanged.",
+  "description": "Spoken-only replacements for TTS. On-screen text, subtitles, and segment.text stay unchanged. Arian (Persian آریان) is ah-ree-ahn, not English AIR-ee-an.",
   "phrase_replacements": [
     {
       "match": "Arian University",
-      "speak": "Arun University",
+      "speak": "Ah-ree-ahn University",
       "word_boundary": true,
-      "ignore_case": true
+      "ignore_case": true,
+      "note": "Persian آریان — three syllables, stress on last: ah-ree-AHN"
     },
     {
       "match": "Arian",
-      "speak": "Arun",
+      "speak": "Ah-ree-ahn",
       "word_boundary": true,
-      "ignore_case": true
+      "ignore_case": true,
+      "note": "Persian male given name آریان (âryân / âriyân)"
     }
   ],
   "short_forms": [
