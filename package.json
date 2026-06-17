@@ -29,6 +29,7 @@
     "test:script-quality": "node scripts/test_script_quality.mjs",
     "test:tts-normalization": "node scripts/test_tts_normalization.mjs",
     "normalize:script-tts": "node scripts/normalize_script_tts.mjs",
+    "refresh:tts-jobs": "node scripts/refresh_tts_jobs.mjs",
     "check:generation": "node scripts/check_generation_ready.mjs"
   },
   "dependencies": {

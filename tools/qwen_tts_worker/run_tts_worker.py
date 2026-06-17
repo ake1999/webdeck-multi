@@ -103,8 +103,9 @@ def process_job_file(
         segment_audio_items: list[dict[str, Any]] = []
         for segment in job["segments"]:
             instruction = build_instruction(segment, str(config.get("default_instruction") or ""))
+            spoken_text = str(segment.get("tts_text") or segment.get("text") or "").strip()
             waveform, sample_rate, metadata = backend.synthesize_segment(
-                text=str(segment["text"]),
+                text=spoken_text,
                 instruction=instruction,
             )
             segment_audio_items.append(
