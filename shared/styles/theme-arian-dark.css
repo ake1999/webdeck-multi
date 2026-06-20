@@ -108,18 +108,9 @@ body.dark-mode .theme-arian .math-solution-math {
   color: var(--deck-text-body);
 }
 
-.theme-arian.theme-dark .math-table th,
-.theme-arian.theme-dark .math-table td,
-body.dark-mode .theme-arian .math-table th,
-body.dark-mode .theme-arian .math-table td {
-  color: var(--deck-text-body);
-  border-color: var(--deck-border-subtle);
-}
-
-.theme-arian.theme-dark .math-table th,
-body.dark-mode .theme-arian .math-table th {
-  background: rgba(50, 25, 18, 0.78);
-  color: var(--deck-text);
+.theme-arian.theme-dark .math-table .katex,
+body.dark-mode .theme-arian .math-table .katex {
+  color: var(--katex-color) !important;
 }
 
 .theme-arian.theme-dark .content-block-title,

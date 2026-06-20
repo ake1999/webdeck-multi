@@ -129,6 +129,42 @@
   line-height: 1.4;
 }
 
+.theme-arian .math-table {
+  background: var(--deck-table-bg);
+  border: 1px solid var(--deck-border-subtle);
+}
+
+.theme-arian .math-table th,
+.theme-arian .math-table td {
+  border-color: var(--deck-border-subtle);
+}
+
+.theme-arian .math-table th {
+  background: var(--deck-table-header-bg);
+  color: var(--deck-table-header-text);
+}
+
+.theme-arian .math-table td {
+  background: var(--deck-table-cell-bg);
+  color: var(--deck-text-body);
+}
+
+.theme-arian .math-table tbody tr:nth-child(even) td {
+  background: var(--deck-table-row-alt);
+}
+
+.theme-arian tr.widget-step-trigger:hover td,
+.theme-arian tr.widget-step-trigger:focus-visible td {
+  background: rgba(198, 90, 40, 0.14);
+}
+
+.theme-arian.theme-dark tr.widget-step-trigger:hover td,
+body.dark-mode .theme-arian tr.widget-step-trigger:hover td,
+.theme-arian.theme-dark tr.widget-step-trigger:focus-visible td,
+body.dark-mode .theme-arian tr.widget-step-trigger:focus-visible td {
+  background: rgba(154, 52, 27, 0.38);
+}
+
 .theme-arian .katex,
 .theme-arian .katex-display,
 .theme-arian .katex .mord,

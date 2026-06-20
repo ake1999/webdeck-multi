@@ -26,6 +26,8 @@ assert.ok(arianCss.includes("--deck-plot-surface"), "arian theme should bind plo
 assert.ok(arianCss.includes(".lead"), "arian theme should style column lead copy");
 assert.ok(arianCss.includes("pause_and_reveal"), "arian theme should style pause blocks");
 assert.ok(tokens.includes("--deck-pause-prompt"), "tokens should define pause block colors");
+assert.ok(tokens.includes("--deck-table-bg"), "tokens should define math table colors");
+assert.ok(arianCss.includes(".math-table"), "arian theme should style math tables");
 
 const svgPlot = readFileSync(path.join(projectRoot, "shared/calculus/core/svg_plot.js"), "utf8");
 assert.ok(svgPlot.includes("calculus-plot-bg"), "plots should render a themeable background rect");

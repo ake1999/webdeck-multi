@@ -25,6 +25,11 @@
   --deck-pause-prompt: #7c2d12;
   --deck-pause-reveal: #334155;
   --deck-lead-strong: #0f172a;
+  --deck-table-bg: rgba(255, 255, 255, 0.72);
+  --deck-table-header-bg: rgba(154, 52, 27, 0.12);
+  --deck-table-header-text: #7c2d12;
+  --deck-table-cell-bg: rgba(255, 255, 255, 0.55);
+  --deck-table-row-alt: rgba(255, 247, 237, 0.45);
   --deck-heading-rule: #e2e8f0;
   --deck-watermark-opacity: 0.07;
   --deck-plot-surface: rgba(255, 255, 255, 0.72);
@@ -63,6 +68,11 @@ body.dark-mode .theme-arian {
   --deck-pause-prompt: #fde68a;
   --deck-pause-reveal: #fff7ed;
   --deck-lead-strong: #fff7ed;
+  --deck-table-bg: rgba(24, 14, 10, 0.96);
+  --deck-table-header-bg: rgba(69, 26, 14, 0.95);
+  --deck-table-header-text: #fde68a;
+  --deck-table-cell-bg: rgba(32, 18, 14, 0.92);
+  --deck-table-row-alt: rgba(42, 24, 18, 0.94);
   --deck-heading-rule: rgba(247, 162, 98, 0.28);
   --deck-watermark-opacity: 0.05;
   --deck-plot-surface: #2a1812;
