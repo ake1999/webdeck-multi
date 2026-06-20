@@ -3,6 +3,7 @@ import { YOUTUBE_TERMINOLOGY } from "./course_labels.js";
 export const SCHOOL_CATALOG = {
   AC: {
     id: "AC",
+    chooserVisible: false,
     coursesTitle: "Algonquin College — Choose a course",
     coursesSubtitle: "School of Advanced Technology (OTFT / SAT).",
     fallbackSubtitle: "Algonquin College • School of Advanced Technology",
@@ -15,6 +16,7 @@ export const SCHOOL_CATALOG = {
   },
   UO: {
     id: "UO",
+    chooserVisible: false,
     coursesTitle: "University of Ottawa — Choose a course",
     coursesSubtitle: "MCG 5138 Autonomous Mobile Robots and MCG 5353 Robotics.",
     fallbackSubtitle: "University of Ottawa",
@@ -27,6 +29,7 @@ export const SCHOOL_CATALOG = {
   },
   AU: {
     id: "AU",
+    chooserVisible: true,
     displayName: "Arian University",
     coursesTitle: "Arian University — Choose a course",
     coursesSubtitle: "Personal-brand courses for YouTube and the website.",
@@ -355,8 +358,7 @@ export const COURSE_CATALOG = {
     subtitle: "Arian University • 5 units • 26 lessons",
     color: "#c65a28",
     defaultHud: "ARIAN UNIVERSITY — CALCULUS 1",
-    sourceKind: "calculus_material_json",
-    materialRoot: "/courses/Calculus/Materials",
+    sourceKind: "topic_slides",
     terminology: YOUTUBE_TERMINOLOGY,
     sessions: [
       {
@@ -434,8 +436,7 @@ export const COURSE_CATALOG = {
     subtitle: "Arian University • YouTube course",
     color: "#c65a28",
     defaultHud: "ARIAN UNIVERSITY — CALCULUS 2",
-    sourceKind: "calculus_material_json",
-    materialRoot: "/courses/Calculus/Materials",
+    sourceKind: "topic_slides",
     terminology: YOUTUBE_TERMINOLOGY,
     sessions: [
       {
@@ -500,8 +501,7 @@ export const COURSE_CATALOG = {
     subtitle: "Arian University • YouTube course",
     color: "#c65a28",
     defaultHud: "ARIAN UNIVERSITY — CALCULUS 3",
-    sourceKind: "calculus_material_json",
-    materialRoot: "/courses/Calculus/Materials",
+    sourceKind: "topic_slides",
     terminology: YOUTUBE_TERMINOLOGY,
     sessions: [
       {
@@ -570,7 +570,12 @@ export const COURSE_CATALOG = {
 export const COURSE_LIST = Object.values(COURSE_CATALOG);
 
 export function getSchoolConfig(school) {
-  return SCHOOL_CATALOG[school] || SCHOOL_CATALOG.AC;
+  return SCHOOL_CATALOG[school] || SCHOOL_CATALOG.AU;
+}
+
+export function isSchoolChooserVisible(school) {
+  const cfg = SCHOOL_CATALOG[school];
+  return cfg != null && cfg.chooserVisible !== false;
 }
 
 export function getCourseConfig(courseId) {

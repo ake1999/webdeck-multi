@@ -38,11 +38,16 @@ project architecture. The important project-owned hubs are:
   requests for slide video work.
 - `shared/deck*.js`, `shared/lecture_player.js`, and `shared/session_loader.js`:
   browser runtime, rendering, layout analysis, and lecture playback.
+- `shared/lecture/timing.js` and `shared/lecture/paths.js`: extracted lecture
+  playback helpers (think-pause mapping, generated artifact paths).
+- `shared/deck_color_mode.js` + `shared/styles/`: Arian light/dark tokens and
+  theme CSS imported from `shared/deck.css`.
 - `shared/calculus/`: reusable calculus widget runtime. `core/` owns parameter
   state, SVG plot helpers, widget shell/control helpers, and scripted timeline
   interpolation; `widgets/` owns the first native calculus visuals.
-- `shared/calculus_material_adapter.js`: maps generated calculus material JSON
-  into normal WebDeck slides, rich content blocks, and inline calculus widgets.
+- `shared/calculus_material_adapter.js`: build-time bridge from calculus
+  material JSON into slides + plans (`convert_calculus_material.mjs`). Not used
+  at browser runtime.
 
 ## Cleanup Rules
 
@@ -50,11 +55,10 @@ project architecture. The important project-owned hubs are:
 - Do not move or rename contract-heavy modules unless the task explicitly
   includes compatibility work.
 - Keep browser course metadata centralized in `shared/course_catalog.js`.
-- Arian University calculus topics load directly from material JSON through
-  `shared/calculus_material_adapter.js`; do not generate duplicate
-  `*.slides.js` files for the same lectures unless the user asks.
-- Prefer adding an adapter for calculus materials over creating a separate
-  calculus-only pipeline.
+- Arian University topics load from authored `*.slides.js` + `.lecture.plan.json`
+  only (`shared/session_loader.js`). Keep material JSON as archive/bootstrap;
+  do not reintroduce browser fallback to `courses/Calculus/Materials/`.
+- The calculus slide block syntax is the global standard for new courses.
 - Prefer native browser SVG/Canvas/Three.js widgets for calculus visuals. Keep
   Python snippets as source/reference metadata unless the user explicitly asks
   for static plot screenshots.
@@ -66,11 +70,9 @@ project architecture. The important project-owned hubs are:
 - `courses/Calculus/Materials/` has 70 lecture JSON files, 70 preview markdown
   files, and 8 `debug_pass1` files.
 - `shared/course_catalog.js` exposes Arian University (`AU`) with Calculus 1,
-  Calculus 2, and Calculus 3. Topics are grouped by natural module/session.
-- `courses/Calculus/lectures.txt` is useful context for module ordering, but
-  the browser catalog now maps directly to material JSON filenames.
-- The browser runtime has a generic bridge from material JSON into WebDeck
-  topic data.
+  Calculus 2, and Calculus 3. AC/UO robotics schools are `chooserVisible: false`.
+- `courses/Calculus/lectures.txt` and `courses/Calculus/Materials/` are useful
+  for module ordering and first-pass conversion, not browser loading.
 - Generation-side testing uses `scripts/convert_calculus_material.mjs`. The
   package shortcut `npm run convert:calculus-test` creates
   `courses/AU/ARIAN_Calculus_1/sessions/S01/01_review_of_functions_and_graphs.slides.js`
@@ -88,10 +90,13 @@ project architecture. The important project-owned hubs are:
   `proof_sketch`, `misconception_compare`, `pause_and_reveal`, `math_table`,
   `paragraph`, `nested_bullets`, and `course_path`.
 - `visual_lab` is the full-width slide type for interactive calculus visuals.
-- Inline widget media uses `media.kind: "calculus_widget"`. Widgets include
+- Inline widget media uses `media.kind: "calculus_widget"`. Widget packages live
+  under `shared/calculus/widget_packages/<id>/` (`manifest.js`, `mount.js`,
+  `widget.js`). Registry loads topic-scoped packages via
+  `collectWidgetIdsFromSlides` + `ensureCalculusWidgetsRegistered`. Current ids:
   `function_analysis`, `function_transform`, `limit_epsilon`, `secant_tangent`,
-  `riemann_integral`, and `unit_circle_trig`; each uses shared parameter state
-  so formula, plot, readout, controls, and scripted playback stay synchronized.
+  `riemann_integral`, `unit_circle_trig`, `area_between_curves`. Validate with
+  `npm run test:widget-packages` (all 70 AU Calc 1–3 slide files).
 - Agent authoring playbook:
   `docs/calculus_course_authoring_guide.md` (slides.js, lecture.plan.json,
   math steps, widgets, course consistency). Gold references: AU S01/S02 Topics

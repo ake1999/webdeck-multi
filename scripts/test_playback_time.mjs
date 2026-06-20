@@ -6,7 +6,7 @@ import {
   audioTimeForPlaybackTime,
   findThinkPauseCueAtPlaybackTime,
   playbackTimeFromAudioTime,
-} from "../shared/lecture_player.js";
+} from "../shared/lecture/timing.js";
 
 const timelinePath = path.join(
   projectRoot,

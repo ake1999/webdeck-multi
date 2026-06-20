@@ -1,4 +1,26 @@
 import { revealMathSolutionStep } from "./math_solution_steps.js";
+import { cueDefersWidgetParamsToOps } from "./lecture_action_catalog.js";
+import { createLectureActionRuntime } from "./lecture_action_runtime.js";
+import {
+  audioTimeForPlaybackTime,
+  findThinkPauseCueAtPlaybackTime,
+  playbackTimeFromAudioTime,
+} from "./lecture/timing.js";
+import {
+  buildAlignmentPath,
+  buildAvatarOutputRoot,
+  buildDefaultAvatarVideoJobPath,
+  buildDefaultTimelinePath,
+  selectorFromDescriptor,
+} from "./lecture/paths.js";
+
+export {
+  audioTimeForPlaybackTime,
+  findThinkPauseCueAtPlaybackTime,
+  playbackTimeFromAudioTime,
+  buildDefaultAvatarVideoJobPath,
+  buildDefaultTimelinePath,
+};
 
 const DEFAULT_REFERENCE_RESOLUTION = [1920, 1080];
 const DEFAULT_AVATAR_RENDER_RESOLUTION = [896, 1200];
@@ -19,55 +41,6 @@ function asArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
-export function findThinkPauseCueAtPlaybackTime(slide, playbackTime) {
-  const time = Number(playbackTime || 0);
-  return asArray(slide?.timeline).find(
-    (cue) => cue.think_pause
-      && time >= Number(cue.t0 || 0)
-      && time < Number(cue.t1 || 0),
-  ) || null;
-}
-
-export function playbackTimeFromAudioTime(slide, audioTime) {
-  const cues = asArray(slide?.timeline);
-  const time = Number(audioTime || 0);
-  if (!cues.length) return time;
-
-  const speechCues = cues.filter((cue) => !cue.think_pause);
-  if (!speechCues.length) return time;
-
-  let activeCue = speechCues[0];
-  for (const cue of speechCues) {
-    const audioT0 = Number(cue.audio_t0 ?? cue.t0 ?? 0);
-    if (time + 0.001 >= audioT0) activeCue = cue;
-  }
-
-  const audioT0 = Number(activeCue.audio_t0 ?? activeCue.t0 ?? 0);
-  const playbackT0 = Number(activeCue.t0 ?? 0);
-  return playbackT0 + Math.max(0, time - audioT0);
-}
-
-export function audioTimeForPlaybackTime(slide, playbackTime) {
-  const cues = asArray(slide?.timeline);
-  const time = Number(playbackTime || 0);
-
-  const thinkCue = findThinkPauseCueAtPlaybackTime(slide, time);
-  if (thinkCue) {
-    const priorSpeech = [...cues].reverse().find(
-      (cue) => !cue.think_pause && Number(cue.t0 || 0) < Number(thinkCue.t0 || 0),
-    );
-    if (priorSpeech) {
-      return Number(priorSpeech.audio_t1 ?? priorSpeech.audio_t0 ?? priorSpeech.t1 ?? 0);
-    }
-    return 0;
-  }
-
-  const speechCue = [...cues].reverse().find((cue) => !cue.think_pause && time >= Number(cue.t0 || 0));
-  if (!speechCue) return time;
-  const playbackOffset = time - Number(speechCue.t0 || 0);
-  return Number(speechCue.audio_t0 ?? speechCue.t0 ?? 0) + Math.max(0, playbackOffset);
-}
-
 function clampNumber(value, min, max, fallback = min) {
   const number = Number(value);
   if (!Number.isFinite(number)) return fallback;
@@ -77,70 +50,6 @@ function clampNumber(value, min, max, fallback = min) {
 function normalizeMediaSourceMode(value, fallback = "compiled") {
   const normalized = String(value || fallback).trim().toLowerCase();
   return ["compiled", "manual", "auto"].includes(normalized) ? normalized : fallback;
-}
-
-function encodePathTokens(tokens) {
-  return tokens.map((token, index) => (index < 2 ? token : encodeURIComponent(token))).join("/");
-}
-
-function selectorFromDescriptor(descriptor = {}) {
-  return {
-    school: descriptor.school || "AC",
-    course: descriptor.course || "",
-    session: descriptor.session || "",
-    topic: descriptor.topic || "",
-  };
-}
-
-export function buildDefaultTimelinePath(descriptor) {
-  const selector = selectorFromDescriptor(descriptor);
-  return encodePathTokens([
-    "generated",
-    "lectures",
-    selector.school,
-    selector.course,
-    selector.session,
-    selector.topic,
-    "timeline.json",
-  ]);
-}
-
-export function buildDefaultAvatarVideoJobPath(descriptor) {
-  const selector = selectorFromDescriptor(descriptor);
-  return encodePathTokens([
-    "generated",
-    "jobs",
-    "avatar_video",
-    selector.school,
-    selector.course,
-    selector.session,
-    `${selector.topic}.json`,
-  ]);
-}
-
-function buildAvatarOutputRoot(selector) {
-  return encodePathTokens([
-    "generated",
-    "outputs",
-    "avatar_video",
-    selector.school,
-    selector.course,
-    selector.session,
-    selector.topic,
-  ]);
-}
-
-function buildAlignmentPath(selector) {
-  return encodePathTokens([
-    "generated",
-    "outputs",
-    "alignment",
-    selector.school,
-    selector.course,
-    selector.session,
-    selector.topic,
-    "tts_alignment.json",
-  ]);
 }
 
 function formatTime(seconds) {
@@ -869,6 +778,63 @@ export function createLecturePlayer({
   let thinkPauseActive = false;
   let thinkPauseEndsAtMs = 0;
 
+  function dispatchWidgetParams(slideId, mediaId, params, durationMs = 0) {
+    if (!slideId || !mediaId || !params || typeof params !== "object") return;
+    const key = `${slideId}::${mediaId}::${JSON.stringify(params)}::${durationMs}`;
+    if (key === lastWidgetSyncKey) return;
+    lastWidgetSyncKey = key;
+    window.dispatchEvent(
+      new CustomEvent("webdeck:widget-params", {
+        detail: {
+          slideId,
+          widgetId: mediaId,
+          params,
+          duration: durationMs,
+        },
+      }),
+    );
+  }
+
+  function slideFocusMode(slide) {
+    return slide?.playback_contract?.focus_mode || "heuristic";
+  }
+
+  function slideUsesOpsOnlyFocus(slide) {
+    return slideFocusMode(slide) === "ops_only";
+  }
+
+  function applySlideFocusMode(slide) {
+    document.body.dataset.lectureFocusMode = slideFocusMode(slide);
+  }
+
+  const actionRuntime = createLectureActionRuntime({
+    showFocus: (slideId, elementId, context) => showFocusForTarget(slideId, elementId, context),
+    clearFocus: () => clearFocus(),
+    revealElement: (slideId, elementId, cue) => {
+      revealMathSolutionStep(slideId, elementId);
+      syncPauseRevealForCue(slideId, {
+        ...cue,
+        target_element: elementId,
+        target_type: "reveal",
+      });
+    },
+    setWidgetParams: dispatchWidgetParams,
+    activateWidgetTimeline: (slideId, cue, op) => {
+      window.dispatchEvent(
+        new CustomEvent("webdeck:lecture-cue", {
+          detail: {
+            slide_id: slideId,
+            cue: {
+              ...cue,
+              widget_media_id: op.media_id || cue?.widget_media_id,
+              widget_timeline_key: op.timeline_key || cue?.widget_timeline_key || "default",
+            },
+          },
+        }),
+      );
+    },
+  });
+
   function slideOffsets() {
     return buildSlideOffsets(activeTimelineManifest);
   }
@@ -932,17 +898,41 @@ export function createLecturePlayer({
       activeElement.classList.remove("lecture-active-element");
       activeElement = null;
     }
+    document.body.classList.remove("lecture-focus-active");
     ui.focusTarget.className = "lecture-focus-target";
     ui.focusTarget.style.opacity = "0";
   }
 
+  function resolveFocusDomElement(slideId, elementId) {
+    if (!slideId || !elementId) return null;
+    const byId = document.getElementById(`${slideId}__${elementId}`);
+    if (byId) return byId;
+    const slideEl = document.getElementById(`slide__${slideId}`)
+      || document.querySelector(`[data-slide-id="${slideId}"]`);
+    if (!slideEl) return null;
+    const escaped = typeof CSS !== "undefined" && CSS.escape
+      ? CSS.escape(elementId)
+      : elementId.replace(/"/g, '\\"');
+    return slideEl.querySelector(`[data-element-id="${escaped}"]`);
+  }
+
   function setActiveElement(slideId, elementId) {
+    const nextElement = resolveFocusDomElement(slideId, elementId);
+    if (activeElement === nextElement && nextElement) {
+      document.body.classList.add("lecture-focus-active");
+      return;
+    }
     if (activeElement) {
       activeElement.classList.remove("lecture-active-element");
       activeElement = null;
     }
-    activeElement = document.getElementById(`${slideId}__${elementId}`);
-    if (activeElement) activeElement.classList.add("lecture-active-element");
+    document.body.classList.remove("lecture-focus-active");
+    activeElement = nextElement;
+    if (activeElement) {
+      activeElement.classList.add("lecture-active-element");
+      document.body.classList.add("lecture-focus-active");
+    }
+    revealMathSolutionStep(slideId, elementId);
   }
 
   function wordIndexAtTime(cue, time) {
@@ -970,7 +960,7 @@ export function createLecturePlayer({
     if (!elementId || elementId === "slide") return;
 
     const paramsFromCue = cue?.widget_params;
-    if (paramsFromCue && typeof paramsFromCue === "object") {
+    if (paramsFromCue && typeof paramsFromCue === "object" && !cueDefersWidgetParamsToOps(cue)) {
       const key = `${slideId}::${elementId}::cue::${JSON.stringify(paramsFromCue)}`;
       if (key === lastWidgetSyncKey) return;
       lastWidgetSyncKey = key;
@@ -1031,6 +1021,11 @@ export function createLecturePlayer({
 
     const cue = context.cue || null;
     const resolvedElementId = resolveFocusElementId(slideId, elementId, cue);
+    const domElement = slideElementById(slideId, resolvedElementId);
+    if (activeElement === domElement && domElement) {
+      return true;
+    }
+
     syncPauseRevealForCue(slideId, {
       ...cue,
       target_element: resolvedElementId,
@@ -1040,8 +1035,14 @@ export function createLecturePlayer({
 
     const baseBox = deckController.getElementBox?.(slideId, resolvedElementId)
       || bboxFocusBox(cue?.target_bbox, resolvedElementId, cue?.target_type);
+
+    activeFocus = { slideId, elementId: resolvedElementId, context };
+    setActiveElement(slideId, resolvedElementId);
+    syncWidgetParamsForTarget(slideId, resolvedElementId, context.cue);
+
     if (!baseBox) {
-      return false;
+      ui.focusTarget.style.opacity = "0";
+      return Boolean(domElement);
     }
 
     const focusStyle = focusModeForElementType(baseBox.elementType);
@@ -1056,12 +1057,10 @@ export function createLecturePlayer({
       }) || baseBox
       : baseBox;
     if (!box) {
-      return false;
+      ui.focusTarget.style.opacity = "0";
+      return Boolean(domElement);
     }
 
-    activeFocus = { slideId, elementId: resolvedElementId, context };
-    setActiveElement(slideId, resolvedElementId);
-    syncWidgetParamsForTarget(slideId, resolvedElementId, context.cue);
     const logicalSize = deckController.getLogicalSize?.() || { width: 1280, height: 720 };
     const cellFocus = focusStyle === "cell";
     const left = Math.max(0, box.left - (textLike ? 2 : cellFocus ? 3 : 4));
@@ -1121,10 +1120,19 @@ export function createLecturePlayer({
   }
 
   function showFocusForCue(slide, cue, time) {
+    if (slideFocusMode(slide) === "off") {
+      return false;
+    }
+
     if (cue?.think_pause) {
       const holdTarget = cue.focus_element || cue.target_element;
       return showFocusForTarget(slide.slide_id, holdTarget, { cue, time });
     }
+
+    if (slideUsesOpsOnlyFocus(slide)) {
+      return false;
+    }
+
     const focusFrame = activeFocusKeyframeForCue(cue, time);
     const target = activeFocusTargetForCue(cue, time);
     const focusCue = focusFrame
@@ -1828,14 +1836,30 @@ export function createLecturePlayer({
       return foundIndex;
     }, -1);
 
+    const opsOnlyFocus = slideUsesOpsOnlyFocus(slide);
+
     if (!force && activeCueIndex === currentCueIndex) {
       if (activeCueIndex >= 0) {
-        showFocusForCue(slide, cues[activeCueIndex], time);
+        const activeCue = cues[activeCueIndex];
+        if (actionRuntime.cueUsesOps(activeCue)) {
+          actionRuntime.applyOpsAtTime({
+            slideId: slide.slide_id,
+            cue: activeCue,
+            time,
+            opsOnlyFocus,
+          });
+        } else if (opsOnlyFocus) {
+          clearFocus();
+        }
+        if (!opsOnlyFocus || activeCue.think_pause) {
+          showFocusForCue(slide, activeCue, time);
+        }
       }
       return;
     }
 
     currentCueIndex = activeCueIndex;
+    lastWidgetSyncKey = "";
     deckController.clearOverlay();
 
     if (activeCueIndex < 0) {
@@ -1844,6 +1868,7 @@ export function createLecturePlayer({
     }
 
     const cue = cues[activeCueIndex];
+    actionRuntime.resetForCue(cue);
     if (cue.think_pause) {
       if (!thinkPauseActive) beginThinkPause(cue);
       showFocusForCue(slide, cue, time);
@@ -1852,7 +1877,19 @@ export function createLecturePlayer({
     thinkPauseActive = false;
     thinkPauseEndsAtMs = 0;
     setCaption(cue.speech || "");
-    showFocusForCue(slide, cue, time);
+    if (actionRuntime.cueUsesOps(cue)) {
+      actionRuntime.applyOpsAtTime({
+        slideId: slide.slide_id,
+        cue,
+        time,
+        opsOnlyFocus,
+      });
+    } else if (opsOnlyFocus) {
+      clearFocus();
+    }
+    if (!opsOnlyFocus || cue.think_pause) {
+      showFocusForCue(slide, cue, time);
+    }
     if (playing && !audio.paused && !audioDoneForSlide) {
       const desiredAudioTime = audioTimeForPlaybackTime(slide, time);
       if (Math.abs(Number(audio.currentTime || 0) - desiredAudioTime) > 0.35) {
@@ -1973,6 +2010,16 @@ export function createLecturePlayer({
   async function resolveAndLoadSlideAudio(slide) {
     const candidates = slideAudioCandidates(slide);
     let lastError = null;
+    const preferredPath = candidates.find((candidate) => candidate.path)?.path || "";
+
+    if (
+      preferredPath
+      && loadedMedia.audio?.path === preferredPath
+      && audio.src
+      && audio.readyState >= HTMLMediaElement.HAVE_METADATA
+    ) {
+      return loadedMedia.audio;
+    }
 
     for (let index = 0; index < candidates.length; index += 1) {
       const candidate = candidates[index];
@@ -2241,11 +2288,13 @@ export function createLecturePlayer({
     questionPauseDone = slideQuestionPauseSeconds(slide) <= 0;
     setCaption("");
     clearFocus();
+    actionRuntime.resetFocusState();
     resetPauseRevealOnSlide(slide.slide_id);
     deckController.clearHighlights();
     deckController.clearOverlay();
     clearAvatar();
     deckController.goToSlide(slide.slide_id, { preserveHighlights: true });
+    applySlideFocusMode(slide);
     await deckController.waitForSettledState();
 
     const audioMeta = await resolveAndLoadSlideAudio(slide);
@@ -2741,12 +2790,18 @@ export function createLecturePlayer({
     ui.time.textContent = `${formatTime(Number(ui.progress.value || 0))} / ${formatTime(slideDuration)} • ${formatTime(currentGlobalTime())} / ${formatTime(getTotalDuration())}`;
   });
   ui.progress.addEventListener("change", () => {
+    if (!progressDragging) return;
+    const target = Number(ui.progress.value || 0);
     progressDragging = false;
-    seekSlide(Number(ui.progress.value || 0)).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
+    seekSlide(target).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
     revealControls({ pin: !playing });
   });
   ui.progress.addEventListener("pointerup", () => {
+    if (!progressDragging) return;
+    const target = Number(ui.progress.value || 0);
     progressDragging = false;
+    seekSlide(target).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
+    revealControls({ pin: !playing });
   });
 
   ui.globalProgress.addEventListener("pointerdown", () => {
@@ -2757,16 +2812,23 @@ export function createLecturePlayer({
     ui.time.textContent = `${formatTime(slideLocalTime())} / ${formatTime(Number(currentSlide()?.duration || 0))} • ${formatTime(Number(ui.globalProgress.value || 0))} / ${formatTime(getTotalDuration())}`;
   });
   ui.globalProgress.addEventListener("change", () => {
+    if (!globalProgressDragging) return;
+    const target = Number(ui.globalProgress.value || 0);
     globalProgressDragging = false;
-    seek(Number(ui.globalProgress.value || 0)).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
+    seek(target).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
     revealControls({ pin: !playing });
   });
   ui.globalProgress.addEventListener("pointerup", () => {
+    if (!globalProgressDragging) return;
+    const target = Number(ui.globalProgress.value || 0);
     globalProgressDragging = false;
+    seek(target).catch((error) => setStatus(`Seek failed: ${error?.message || error}`));
+    revealControls({ pin: !playing });
   });
 
   function isEditableTarget(target) {
     if (!(target instanceof HTMLElement)) return false;
+    if (target.classList.contains("lecture-player-progress")) return false;
     const tagName = target.tagName;
     return target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(tagName);
   }
@@ -2908,11 +2970,30 @@ export function createLecturePlayer({
     refreshFocus();
   });
 
-  window.addEventListener("webdeck:slide-change", () => {
-    if (!playing) {
-      clearFocus();
-      clearAvatar();
+  let slideChangeSyncLock = false;
+
+  window.addEventListener("webdeck:slide-change", (event) => {
+    if (!activeTimelineManifest || slideChangeSyncLock || playing) return;
+
+    const slideId = event.detail?.slideId;
+    if (!slideId) return;
+
+    const slideIndex = asArray(activeTimelineManifest.slides)
+      .findIndex((slide) => slide.slide_id === slideId);
+    if (slideIndex < 0) return;
+
+    if (slideIndex !== currentSlideIndex) {
+      slideChangeSyncLock = true;
+      loadSlide(slideIndex, 0, false)
+        .catch(() => {})
+        .finally(() => {
+          slideChangeSyncLock = false;
+        });
+      return;
     }
+
+    clearAvatar();
+    syncCueAtTime(true);
   });
 
   const lectureMediaController = {

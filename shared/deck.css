@@ -1,3 +1,7 @@
+@import "./styles/tokens.css";
+@import "./styles/theme-arian.css";
+@import "./styles/theme-arian-dark.css";
+
 * {
   box-sizing: border-box;
 }
@@ -1325,124 +1329,6 @@ body.analysis-mode .deck-container {
 
 /* You can add more UO-specific tweaks later if you like */
 
-/* =========================================================
-   ARIAN UNIVERSITY THEME (EMBER)
-   These only apply when deck-container has class .theme-arian
-   ========================================================= */
-
-.theme-arian .brand-bar {
-  background: linear-gradient(90deg, #5f1b16 0%, #9a341b 46%, #c65a28 100%);
-}
-
-.theme-arian .slide-brand-watermark {
-  position: absolute;
-  top: var(--slide-pad-top);
-  right: var(--slide-pad-inline);
-  bottom: var(--slide-bottom-reserve);
-  left: var(--slide-pad-inline);
-  z-index: 0;
-  pointer-events: none;
-  background-image: var(--deck-slide-watermark-image, url("./media/au-icon-light.png"));
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: min(42%, 340px);
-  opacity: var(--slide-watermark-opacity, 0.07);
-  filter: grayscale(1);
-}
-
-.theme-arian .slide {
-  transform: none;
-  transition: opacity 0.28s ease-in-out;
-}
-
-.theme-arian .slide.active {
-  transform: none;
-}
-
-.theme-arian h2 {
-  color: #9a341b;
-}
-
-.theme-arian li::marker {
-  color: #c65a28;
-}
-
-.theme-arian .home-btn:hover,
-.theme-arian .nav-btn:hover {
-  background: #9a341b;
-  color: #fff;
-  border-color: #9a341b;
-}
-
-.theme-arian .home-btn--image:hover {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: #c65a28;
-}
-
-.theme-arian .quiz-container {
-  background: #fff7ed;
-  border-color: #c65a28;
-}
-
-.theme-arian .option-btn:hover {
-  border-color: #c65a28;
-}
-
-.theme-arian .tts-active {
-  outline: 3px solid rgba(154, 52, 27, 0.35);
-  background: rgba(198, 90, 40, 0.08);
-}
-
-.theme-arian .media-caption a {
-  color: #9a341b;
-}
-
-.theme-arian .lecture-player-btn:hover,
-.theme-arian .lecture-player-btn.active {
-  background: rgba(154, 52, 27, 0.78);
-  color: #fff;
-}
-
-.theme-arian .lecture-player-progress,
-.theme-arian .lecture-player-volume {
-  accent-color: #c65a28;
-}
-
-.theme-arian .lecture-focus-target--underline {
-  background: radial-gradient(
-    ellipse at var(--focus-shift, 50%) 50%,
-    rgba(154, 52, 27, 0.86) 0%,
-    rgba(198, 90, 40, 0.6) 34%,
-    rgba(198, 90, 40, 0.2) 68%,
-    rgba(198, 90, 40, 0) 100%
-  );
-  box-shadow: 0 2px 10px rgba(154, 52, 27, 0.2);
-}
-
-.theme-arian .lecture-focus-target--underline[data-focus-mode="word"] {
-  background: linear-gradient(
-    90deg,
-    rgba(198, 90, 40, 0),
-    rgba(154, 52, 27, 0.86),
-    rgba(198, 90, 40, 0)
-  );
-  box-shadow: 0 2px 8px rgba(154, 52, 27, 0.24);
-}
-
-.theme-arian .lecture-focus-target--halo {
-  border-color: rgba(154, 52, 27, 0.54);
-  box-shadow:
-    0 0 0 5px rgba(198, 90, 40, 0.12),
-    0 0 22px rgba(154, 52, 27, 0.28);
-}
-
-.theme-arian .lecture-focus-target--cell {
-  border-color: rgba(154, 52, 27, 0.58);
-  box-shadow:
-    0 0 0 3px rgba(198, 90, 40, 0.1),
-    0 0 14px rgba(154, 52, 27, 0.24);
-}
-
 /* ---------- Calculus blocks and native widgets ---------- */
 
 .content-block {
@@ -1970,6 +1856,14 @@ body.analysis-mode .deck-container {
   border-color: rgba(198, 90, 40, 0.28);
 }
 
+.lecture-mode .math-solution-step--active,
+.lecture-mode .math-solution-step.lecture-active-element {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
 .math-solution-chain-op {
   flex: 0 0 auto;
   color: #64748b;
@@ -2042,15 +1936,18 @@ body.analysis-mode .deck-container {
   opacity: 0.92;
 }
 
-.lecture-mode .math-solution-step--revealed {
-  opacity: 0.8;
+.lecture-mode:not(.lecture-focus-active) .math-solution-step--revealed {
+  opacity: 0.92;
+}
+
+.lecture-mode.lecture-focus-active .math-solution-step--revealed:not(.lecture-active-element):not(.math-solution-step--active) {
+  opacity: 0.85;
 }
 
 .lecture-mode .math-solution-step--active,
 .lecture-mode .math-solution-step.lecture-active-element,
 .lecture-mode .math-solution-problem.lecture-active-element {
   opacity: 1 !important;
-  transform: translateX(2px);
 }
 
 .calculus-step-list {
@@ -2233,23 +2130,97 @@ tr.widget-step-trigger:focus-visible {
   display: none;
 }
 
-.lecture-mode .content-block--example_solution .calculus-step-list li,
-.lecture-mode .content-block--derivation_steps .calculus-step-list li,
-.lecture-mode .content-block--math_solution_steps .math-solution-step--revealed,
-.lecture-mode .content-block--proof_sketch .calculus-step-list li,
-.lecture-mode .content-block--pause_and_reveal .reveal-body,
-.lecture-mode .bullets li {
-  opacity: 0.8;
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s ease,
-    color 0.18s ease;
+.lecture-mode:not([data-lecture-focus-mode="off"]) .deck-container [data-element-id] {
+  opacity: 0.92;
+  transition: opacity 0.22s ease;
 }
 
-.lecture-mode .lecture-active-element {
+.lecture-mode:not([data-lecture-focus-mode="off"]) .deck-container [data-element-type="title"],
+.lecture-mode:not([data-lecture-focus-mode="off"]) .deck-container [data-element-type="subtitle"],
+.lecture-mode:not([data-lecture-focus-mode="off"]) .deck-container [data-element-type="meta"],
+.lecture-mode:not([data-lecture-focus-mode="off"]) .deck-container [data-element-type="hud"],
+.lecture-mode:not([data-lecture-focus-mode="off"]) .deck-container [data-element-type="question"],
+.lecture-mode:not([data-lecture-focus-mode="off"]) .deck-container [data-element-type="lead"] {
   opacity: 1 !important;
-  transform: translateX(2px);
-  color: #1f2937;
+  filter: none !important;
+}
+
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container [data-element-id]:not(.lecture-active-element) {
+  opacity: 0.85;
+  filter: none;
+}
+
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container [data-element-id].lecture-active-element {
+  opacity: 1 !important;
+  position: relative;
+  z-index: 2;
+  transform: scale(1.03);
+  transform-origin: center center;
+  filter: saturate(1.04) contrast(1.02);
+}
+
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container .lecture-active-element [data-element-id] {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none;
+}
+
+.lecture-mode[data-lecture-focus-mode="off"] .deck-container [data-element-id],
+.lecture-mode[data-lecture-focus-mode="off"] .content-block--example_solution .calculus-step-list li,
+.lecture-mode[data-lecture-focus-mode="off"] .content-block--derivation_steps .calculus-step-list li,
+.lecture-mode[data-lecture-focus-mode="off"] .content-block--math_solution_steps .math-solution-step--revealed,
+.lecture-mode[data-lecture-focus-mode="off"] .content-block--proof_sketch .calculus-step-list li,
+.lecture-mode[data-lecture-focus-mode="off"] .content-block--pause_and_reveal .reveal-body,
+.lecture-mode[data-lecture-focus-mode="off"] .bullets li,
+.lecture-mode[data-lecture-focus-mode="off"] .calculus-mini-plot {
+  opacity: 1 !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .content-block--example_solution .calculus-step-list li:not(.lecture-active-element),
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .content-block--derivation_steps .calculus-step-list li:not(.lecture-active-element),
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .content-block--proof_sketch .calculus-step-list li:not(.lecture-active-element),
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .content-block--pause_and_reveal .reveal-body:not(.lecture-active-element),
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .bullets li:not(.lecture-active-element) {
+  opacity: 0.85;
+  transition: opacity 0.22s ease;
+}
+
+.lecture-mode .content-block--math_solution_steps .lecture-active-element,
+.lecture-mode .content-block--math_solution_steps .math-solution-step--active,
+.lecture-mode .content-block--example_solution .lecture-active-element,
+.lecture-mode .content-block--derivation_steps .lecture-active-element,
+.lecture-mode .content-block--proof_sketch .lecture-active-element {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container .content-block--math_solution_steps .lecture-active-element,
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container .content-block--math_solution_steps .math-solution-step--active,
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container .content-block--example_solution .lecture-active-element,
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container .content-block--derivation_steps .lecture-active-element,
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container .content-block--proof_sketch .lecture-active-element {
+  filter: none;
+}
+
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container .calculus-widget-shell.lecture-active-element,
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .deck-container [data-element-type="calculus_widget"].lecture-active-element {
+  filter: saturate(1.06) contrast(1.03);
+}
+
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .calculus-widget-shell:not(.lecture-active-element),
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) [data-element-type="calculus_widget"]:not(.lecture-active-element),
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) [data-element-type="plot"]:not(.lecture-active-element),
+.lecture-mode.lecture-focus-active:not([data-lecture-focus-mode="off"]) .calculus-mini-plot:not(.lecture-active-element) {
+  filter: none !important;
+}
+
+.lecture-mode .lecture-focus-target {
+  opacity: 0 !important;
+  pointer-events: none;
 }
 
 .visual-lab-slide {
@@ -2667,6 +2638,38 @@ tr.widget-step-trigger:focus-visible {
   stroke: rgba(37, 99, 235, 0.56);
   stroke-width: 2;
   stroke-dasharray: 5 5;
+}
+
+.calculus-guide.accent {
+  stroke: rgba(198, 90, 40, 0.85);
+  stroke-width: 2.5;
+  stroke-dasharray: none;
+}
+
+.calculus-area-fill {
+  fill: rgba(198, 90, 40, 0.2);
+  stroke: none;
+}
+
+.calculus-area-fill-negative {
+  fill: rgba(220, 38, 38, 0.28);
+  stroke: none;
+}
+
+.calculus-area-fill-split-a {
+  fill: rgba(34, 197, 94, 0.28);
+  stroke: none;
+}
+
+.calculus-area-fill-split-b {
+  fill: rgba(234, 88, 12, 0.28);
+  stroke: none;
+}
+
+.calculus-area-rect {
+  fill: rgba(34, 197, 94, 0.28);
+  stroke: rgba(22, 163, 74, 0.45);
+  stroke-width: 1;
 }
 
 .calculus-rectangle {

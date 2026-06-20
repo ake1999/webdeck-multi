@@ -7,6 +7,7 @@ import {
   renderDebugOverlay,
   waitForDeckAssets,
 } from "./deck_analysis.js";
+import { collectWidgetIdsFromSlides, ensureCalculusWidgetsRegistered } from "./calculus/index.js";
 import { buildTopicRuntime } from "./deck_model.js";
 import { getCourseConfig } from "./course_catalog.js";
 import {
@@ -16,6 +17,7 @@ import {
   getAdjacentTopic,
   resolveTopicByPathId,
 } from "./topic_navigation.js";
+import { initDeckColorMode } from "./deck_color_mode.js";
 
 function nextFrame() {
   return new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
@@ -182,6 +184,8 @@ export function initDeck(config) {
     nextTopicBtn.title = terminology.nextLesson;
     nextTopicBtn.setAttribute("aria-label", terminology.nextLesson);
   }
+
+  void ensureCalculusWidgetsRegistered(collectWidgetIdsFromSlides(runtime.slides));
 
   slidesRoot.innerHTML = "";
   runtime.slides.forEach((slideData, index) => {
@@ -880,6 +884,15 @@ export function initDeck(config) {
 
   window.addEventListener("resize", fitToScreen);
 
+  const colorMode = initDeckColorMode({
+    deckEl: deck,
+    theme,
+    homeIconSrc,
+    homeIconDarkSrc,
+    urlPreference: new URLSearchParams(window.location.search).get("color") || "",
+    controlsEl: document.querySelector(".controls"),
+  });
+
   fitToScreen();
   slides.forEach((slideEl, index) => slideEl.classList.toggle("active", index === 0));
   syncPauseState();
@@ -917,6 +930,7 @@ export function initDeck(config) {
     refreshDebugOverlay: refreshDebug,
     waitForSettledState,
     exportLayoutManifest,
+    colorMode,
   };
 
   window.deckController = controller;

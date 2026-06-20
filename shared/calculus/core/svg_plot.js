@@ -162,9 +162,28 @@ export function clippedLinePath(samples = [], scales) {
   return path;
 }
 
+function ensurePlotBackground(svg, scales) {
+  const { width, height } = scales;
+  let bg = svg.querySelector(".calculus-plot-bg");
+  if (!bg) {
+    bg = svgEl("rect", {
+      class: "calculus-plot-bg",
+      x: 0,
+      y: 0,
+      width,
+      height,
+    });
+    svg.insertBefore(bg, svg.firstChild);
+    return;
+  }
+  bg.setAttribute("width", String(width));
+  bg.setAttribute("height", String(height));
+}
+
 export function appendGrid(svg, scales, options = {}) {
   const { x, y, width, height, xDomain, yDomain } = scales;
   const pad = resolvePlotPadding(scales);
+  ensurePlotBackground(svg, scales);
   const grid = svgEl("g", { class: "calculus-grid" });
   const xStart = Math.ceil(xDomain[0]);
   const xEnd = Math.floor(xDomain[1]);

@@ -112,10 +112,15 @@
     import {
       getCoursesBySchool,
       getSchoolConfig,
+      isSchoolChooserVisible,
     } from "./shared/course_catalog.js";
 
     const params = new URLSearchParams(window.location.search);
-    const school = params.get("school") || "AC";
+    const school = params.get("school") || "AU";
+    if (!isSchoolChooserVisible(school)) {
+      window.location.replace("courses.html?school=AU");
+      throw new Error("redirect");
+    }
     const schoolCfg = getSchoolConfig(school);
     const knownSchool = schoolCfg.id === school;
     const bySchool = getCoursesBySchool(school);

@@ -16,6 +16,16 @@ Phase 2 adds catalog-wide validation and smoke-export tooling so we can answer:
 - which topics have warnings but still export
 - which topics are blocked by real errors
 
+## Arian University browser (current focus)
+
+- **Chooser:** `index.html` lists Arian University only. Legacy Algonquin / uOttawa
+  robotics courses remain in the repo but are hidden (`chooserVisible: false`).
+- **Topic source:** `courses/AU/.../sessions/Sxx/NN_<slug>.slides.js` +
+  matching `.lecture.plan.json`. No runtime fallback to `courses/Calculus/Materials/`.
+- **Serve locally:** `npm run serve` → open `http://127.0.0.1:8000/`
+- **Dark mode:** bottom-right control on slide player (light / dark / system).
+  URL override: `&color=dark` on `session.html`. Styles live under `shared/styles/`.
+
 ## Agent and course authoring docs
 
 Agents and contributors should read these before editing calculus topics:

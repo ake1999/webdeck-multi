@@ -7,6 +7,12 @@
   <title>Session Viewer</title>
   <link rel="stylesheet" href="./shared/deck.css" />
   <link rel="stylesheet" href="./shared/vendor/katex/katex.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
   <script src="./shared/vendor/katex/katex.min.js"></script>
 </head>
 
@@ -99,7 +105,7 @@
 
       if (params.get("lecture") && params.get("analysis") !== "1") {
         const descriptor = controller.descriptor || {
-          school: params.get("school") || "AC",
+          school: params.get("school") || "AU",
           course: params.get("course") || "",
           session: params.get("session") || "",
           topic: params.get("topic") || "",

@@ -142,6 +142,7 @@
     import {
       getCourseConfig,
       getSchoolConfig,
+      isSchoolChooserVisible,
     } from "./shared/course_catalog.js";
     import {
       buildLessonIndex,
@@ -151,7 +152,11 @@
     } from "./shared/course_labels.js";
 
     const params = new URLSearchParams(window.location.search);
-    const school = params.get("school") || "AC";
+    const school = params.get("school") || "AU";
+    if (!isSchoolChooserVisible(school)) {
+      window.location.replace("courses.html?school=AU");
+      throw new Error("redirect");
+    }
     const courseId = params.get("course") || "";
 
     const schoolCfg = getSchoolConfig(school);

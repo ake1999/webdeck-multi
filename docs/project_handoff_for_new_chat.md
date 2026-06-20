@@ -13,10 +13,13 @@ Current calculus source state:
 - `courses/Calculus/Materials/` contains 70 lecture JSON files.
 - It also contains 70 preview markdown files and 8 `debug_pass1` files.
 - `courses/Calculus/lectures.txt` describes the intended module/order source.
-- Calculus material JSON is wired into the browser picker under Arian
-  University (`AU`) as Calculus 1, Calculus 2, and Calculus 3.
-- The browser bridge uses `shared/calculus_material_adapter.js` to convert
-  material JSON into WebDeck slide data at runtime.
+- Arian University (`AU`) exposes Calculus 1, 2, and 3 in the browser chooser.
+  Legacy AC/UO robotics schools stay in the repo but are hidden from the picker.
+- Production topics load from `*.slides.js` + `.lecture.plan.json` only.
+  `shared/calculus_material_adapter.js` is build-time conversion, not runtime.
+- Browser chooser is AU-only; `shared/session_loader.js` imports slide modules
+  directly. Arian dark mode: `shared/deck_color_mode.js`, `shared/styles/*`.
+  Regression tests: `test:session-loader`, `test:deck-color-mode`.
 - A first generation-side test topic has been created from material JSON:
   `courses/AU/ARIAN_Calculus_1/sessions/S01/01_review_of_functions_and_graphs.slides.js`
   and

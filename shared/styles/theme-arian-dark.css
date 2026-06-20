@@ -1,0 +1,318 @@
+/* Arian dark mode — KaTeX, widgets, plots, blocks, visual lab */
+
+/* KaTeX: vendor CSS keeps black glyphs without forced overrides */
+body.dark-mode .theme-arian .katex,
+body.dark-mode .theme-arian .katex-display,
+.theme-arian.theme-dark .katex,
+.theme-arian.theme-dark .katex-display {
+  color: var(--katex-color) !important;
+}
+
+body.dark-mode .theme-arian .katex .mord,
+body.dark-mode .theme-arian .katex .mop,
+body.dark-mode .theme-arian .katex .mbin,
+body.dark-mode .theme-arian .katex .mrel,
+body.dark-mode .theme-arian .katex .mopen,
+body.dark-mode .theme-arian .katex .mclose,
+body.dark-mode .theme-arian .katex .mpunct,
+body.dark-mode .theme-arian .katex .minner,
+body.dark-mode .theme-arian .katex .mathnormal,
+body.dark-mode .theme-arian .katex .mathbf,
+body.dark-mode .theme-arian .katex .mathit,
+body.dark-mode .theme-arian .katex .amsrm,
+body.dark-mode .theme-arian .katex .mathbb,
+body.dark-mode .theme-arian .katex .mathcal,
+body.dark-mode .theme-arian .katex .mathfrak,
+body.dark-mode .theme-arian .katex .text,
+.theme-arian.theme-dark .katex .mord,
+.theme-arian.theme-dark .katex .mop,
+.theme-arian.theme-dark .katex .mbin,
+.theme-arian.theme-dark .katex .mrel,
+.theme-arian.theme-dark .katex .mopen,
+.theme-arian.theme-dark .katex .mclose,
+.theme-arian.theme-dark .katex .mpunct,
+.theme-arian.theme-dark .katex .minner,
+.theme-arian.theme-dark .katex .mathnormal,
+.theme-arian.theme-dark .katex .mathbf,
+.theme-arian.theme-dark .katex .mathit,
+.theme-arian.theme-dark .katex .amsrm,
+.theme-arian.theme-dark .katex .mathbb,
+.theme-arian.theme-dark .katex .mathcal,
+.theme-arian.theme-dark .katex .mathfrak,
+.theme-arian.theme-dark .katex .text {
+  color: var(--katex-color) !important;
+}
+
+body.dark-mode .theme-arian .formula-block-body,
+body.dark-mode .theme-arian .calculus-widget-formula,
+.theme-arian.theme-dark .formula-block-body,
+.theme-arian.theme-dark .calculus-widget-formula {
+  color: var(--katex-color);
+}
+
+/* Slide copy */
+.theme-arian.theme-dark .slide-question,
+body.dark-mode .theme-arian .slide-question {
+  color: #f7a35c;
+}
+
+.theme-arian.theme-dark .lead,
+.theme-arian.theme-dark .deck-paragraph,
+body.dark-mode .theme-arian .lead,
+body.dark-mode .theme-arian .deck-paragraph {
+  color: var(--deck-text-body);
+}
+
+.theme-arian.theme-dark .lead strong,
+.theme-arian.theme-dark .deck-paragraph strong,
+body.dark-mode .theme-arian .lead strong,
+body.dark-mode .theme-arian .deck-paragraph strong {
+  color: var(--deck-lead-strong);
+}
+
+.theme-arian.theme-dark .content-block--pause_and_reveal .content-block-title,
+body.dark-mode .theme-arian .content-block--pause_and_reveal .content-block-title {
+  color: var(--deck-pause-title);
+}
+
+.theme-arian.theme-dark .pause-reveal summary,
+body.dark-mode .theme-arian .pause-reveal summary {
+  color: var(--deck-pause-prompt);
+}
+
+.theme-arian.theme-dark .reveal-body,
+body.dark-mode .theme-arian .reveal-body {
+  color: var(--deck-pause-reveal);
+}
+
+.theme-arian.theme-dark .code-inline,
+body.dark-mode .theme-arian .code-inline {
+  background: rgba(247, 162, 98, 0.16) !important;
+  color: var(--deck-text-body) !important;
+}
+
+.theme-arian.theme-dark .math-solution-step,
+body.dark-mode .theme-arian .math-solution-step {
+  color: var(--deck-text-body);
+}
+
+.theme-arian.theme-dark .math-solution-step.is-active,
+body.dark-mode .theme-arian .math-solution-step.is-active {
+  color: var(--deck-text);
+}
+
+.theme-arian.theme-dark .math-solution-problem,
+.theme-arian.theme-dark .math-solution-math,
+body.dark-mode .theme-arian .math-solution-problem,
+body.dark-mode .theme-arian .math-solution-math {
+  color: var(--deck-text-body);
+}
+
+.theme-arian.theme-dark .math-table th,
+.theme-arian.theme-dark .math-table td,
+body.dark-mode .theme-arian .math-table th,
+body.dark-mode .theme-arian .math-table td {
+  color: var(--deck-text-body);
+  border-color: var(--deck-border-subtle);
+}
+
+.theme-arian.theme-dark .math-table th,
+body.dark-mode .theme-arian .math-table th {
+  background: rgba(50, 25, 18, 0.78);
+  color: var(--deck-text);
+}
+
+.theme-arian.theme-dark .content-block-title,
+body.dark-mode .theme-arian .content-block-title {
+  color: var(--deck-text);
+}
+
+/* Widget chrome */
+.theme-arian.theme-dark .calculus-widget-readout,
+body.dark-mode .theme-arian .calculus-widget-readout {
+  background: rgba(20, 12, 9, 0.88);
+  color: var(--deck-text-body);
+  border: 1px solid var(--deck-border-subtle);
+}
+
+.theme-arian.theme-dark .calculus-control-top,
+body.dark-mode .theme-arian .calculus-control-top {
+  color: var(--deck-text-body);
+}
+
+.theme-arian.theme-dark .calculus-control-value,
+body.dark-mode .theme-arian .calculus-control-value {
+  color: #f7a35c;
+}
+
+.theme-arian.theme-dark .calculus-control input[type="range"]::-webkit-slider-runnable-track,
+body.dark-mode .theme-arian .calculus-control input[type="range"]::-webkit-slider-runnable-track,
+.theme-arian.theme-dark .calculus-control input[type="range"]::-moz-range-track,
+body.dark-mode .theme-arian .calculus-control input[type="range"]::-moz-range-track {
+  background: rgba(247, 162, 98, 0.28);
+}
+
+.theme-arian.theme-dark .calculus-control input[type="range"]::-webkit-slider-thumb,
+body.dark-mode .theme-arian .calculus-control input[type="range"]::-webkit-slider-thumb {
+  border-color: var(--deck-plot-surface);
+}
+
+.theme-arian.theme-dark .calculus-control input[type="range"]::-moz-range-thumb,
+body.dark-mode .theme-arian .calculus-control input[type="range"]::-moz-range-thumb {
+  box-shadow: 0 0 0 2px var(--deck-plot-surface), 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.theme-arian.theme-dark .calculus-widget-plot,
+body.dark-mode .theme-arian .calculus-widget-plot {
+  border: 1px solid var(--deck-border-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Plot SVG — brighten muted/helper strokes on dark surfaces */
+.theme-arian.theme-dark path.calculus-curve.muted,
+.theme-arian.theme-dark line.calculus-curve.muted,
+body.dark-mode .theme-arian path.calculus-curve.muted,
+body.dark-mode .theme-arian line.calculus-curve.muted {
+  stroke: var(--deck-curve-muted) !important;
+  opacity: 1;
+}
+
+.theme-arian.theme-dark .calculus-plot-tag--accent rect,
+body.dark-mode .theme-arian .calculus-plot-tag--accent rect {
+  fill: rgba(61, 28, 16, 0.96);
+  stroke: rgba(247, 162, 98, 0.45);
+}
+
+.theme-arian.theme-dark .calculus-plot-tag--muted rect,
+body.dark-mode .theme-arian .calculus-plot-tag--muted rect {
+  fill: rgba(36, 22, 16, 0.94);
+}
+
+.theme-arian.theme-dark .calculus-plot-tag--warn rect,
+body.dark-mode .theme-arian .calculus-plot-tag--warn rect {
+  fill: rgba(76, 17, 17, 0.92);
+  stroke: rgba(248, 113, 113, 0.45);
+}
+
+.theme-arian.theme-dark .calculus-point,
+body.dark-mode .theme-arian .calculus-point {
+  stroke: var(--deck-plot-surface);
+}
+
+.theme-arian.theme-dark .calculus-point.open,
+body.dark-mode .theme-arian .calculus-point.open {
+  fill: var(--deck-plot-surface);
+}
+
+/* Visual lab */
+.theme-arian.theme-dark .visual-lab-formula,
+body.dark-mode .theme-arian .visual-lab-formula {
+  background: var(--deck-widget-formula-bg);
+  border-color: var(--deck-border);
+}
+
+.theme-arian.theme-dark .visual-lab-active-label,
+body.dark-mode .theme-arian .visual-lab-active-label {
+  color: #f7a35c;
+}
+
+.theme-arian.theme-dark .visual-lab-site-note,
+body.dark-mode .theme-arian .visual-lab-site-note {
+  color: var(--deck-text-muted);
+}
+
+.theme-arian.theme-dark .visual-lab-example-tab,
+body.dark-mode .theme-arian .visual-lab-example-tab {
+  background: rgba(40, 24, 18, 0.72);
+  border-color: var(--deck-border-subtle);
+  color: var(--deck-text-body);
+}
+
+.theme-arian.theme-dark .visual-lab-example-tab.is-active,
+.theme-arian.theme-dark .visual-lab-example-tab:hover,
+body.dark-mode .theme-arian .visual-lab-example-tab.is-active,
+body.dark-mode .theme-arian .visual-lab-example-tab:hover {
+  background: rgba(154, 52, 27, 0.42);
+  border-color: rgba(247, 162, 98, 0.5);
+  color: var(--deck-text);
+}
+
+.theme-arian.theme-dark .visual-lab-step-list,
+body.dark-mode .theme-arian .visual-lab-step-list {
+  color: var(--deck-text-body);
+}
+
+/* misconception_compare */
+.theme-arian.theme-dark .compare-panel--wrong,
+body.dark-mode .theme-arian .compare-panel--wrong {
+  background: rgba(76, 17, 17, 0.9);
+  border-color: rgba(248, 113, 113, 0.45);
+}
+
+.theme-arian.theme-dark .compare-panel--right,
+body.dark-mode .theme-arian .compare-panel--right {
+  background: rgba(14, 58, 38, 0.9);
+  border-color: rgba(74, 222, 128, 0.4);
+}
+
+.theme-arian.theme-dark .compare-label,
+body.dark-mode .theme-arian .compare-label {
+  color: var(--deck-text);
+}
+
+.theme-arian.theme-dark .compare-panel--wrong .compare-label,
+body.dark-mode .theme-arian .compare-panel--wrong .compare-label {
+  color: #fecaca;
+}
+
+.theme-arian.theme-dark .compare-panel--right .compare-label,
+body.dark-mode .theme-arian .compare-panel--right .compare-label {
+  color: #bbf7d0;
+}
+
+.theme-arian.theme-dark .compare-panel p,
+.theme-arian.theme-dark .compare-panel .deck-paragraph,
+body.dark-mode .theme-arian .compare-panel p,
+body.dark-mode .theme-arian .compare-panel .deck-paragraph {
+  color: var(--deck-text-body);
+}
+
+/* Lecture player */
+.theme-arian.theme-dark .lecture-player-shell,
+body.dark-mode .theme-arian .lecture-player-shell {
+  background: rgba(28, 16, 12, 0.94);
+  border-color: var(--deck-border);
+  color: var(--deck-text-body);
+}
+
+.theme-arian.theme-dark .lecture-player-btn,
+body.dark-mode .theme-arian .lecture-player-btn {
+  background: rgba(50, 25, 18, 0.92);
+  border-color: var(--deck-border);
+  color: var(--deck-text);
+}
+
+.theme-arian.theme-dark .lecture-player-time,
+body.dark-mode .theme-arian .lecture-player-time,
+.theme-arian.theme-dark .lecture-player-caption,
+body.dark-mode .theme-arian .lecture-player-caption {
+  color: var(--deck-text-muted);
+}
+
+.theme-arian.theme-dark .gallery-stack,
+body.dark-mode .theme-arian .gallery-stack {
+  background: rgba(36, 22, 16, 0.72);
+}
+
+.theme-arian.theme-dark .theorem-box-title,
+body.dark-mode .theme-arian .theorem-box-title {
+  color: var(--deck-text);
+}
+
+.theme-arian.theme-dark .course-path-node,
+body.dark-mode .theme-arian .course-path-node {
+  background: rgba(40, 24, 18, 0.92);
+  border-color: var(--deck-border-subtle);
+  color: var(--deck-text-body);
+}

@@ -1,0 +1,80 @@
+/* Arian University design tokens — light defaults, dark via .theme-dark */
+
+.theme-arian {
+  color-scheme: light;
+
+  --arian-accent: #9a341b;
+  --arian-accent-bright: #c65a28;
+  --arian-brand-gradient: linear-gradient(90deg, #5f1b16 0%, #9a341b 46%, #c65a28 100%);
+
+  --deck-surface: #ffffff;
+  --deck-surface-elevated: rgba(255, 255, 255, 0.92);
+  --deck-text: #0f172a;
+  --deck-text-body: #334155;
+  --deck-text-muted: #64748b;
+  --deck-border: #e2e8f0;
+  --deck-border-subtle: rgba(148, 163, 184, 0.26);
+  --deck-block-bg: rgba(255, 255, 255, 0.58);
+  --deck-block-formula-bg: rgba(255, 247, 237, 0.78);
+  --deck-block-theorem-bg: rgba(240, 253, 244, 0.72);
+  --deck-block-example-bg: rgba(248, 250, 252, 0.86);
+  --deck-block-proof-bg: rgba(239, 246, 255, 0.72);
+  --deck-quiz-bg: #fff7ed;
+  --deck-pause-bg: rgba(255, 247, 237, 0.78);
+  --deck-pause-title: #9a341b;
+  --deck-pause-prompt: #7c2d12;
+  --deck-pause-reveal: #334155;
+  --deck-lead-strong: #0f172a;
+  --deck-heading-rule: #e2e8f0;
+  --deck-watermark-opacity: 0.07;
+  --deck-plot-surface: rgba(255, 255, 255, 0.72);
+  --deck-plot-grid: rgba(100, 116, 139, 0.28);
+  --deck-plot-axis-stroke: rgba(15, 23, 42, 0.48);
+  --deck-plot-axis: #475569;
+  --deck-plot-tag-bg: rgba(255, 255, 255, 0.72);
+  --deck-plot-tag-text: rgba(31, 41, 55, 0.86);
+  --deck-widget-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 247, 237, 0.72));
+  --deck-widget-formula-bg: rgba(255, 255, 255, 0.72);
+  --deck-widget-title: #7c2d12;
+  --deck-curve-muted: #64748b;
+  --katex-color: #0f172a;
+  --deck-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.theme-arian.theme-dark,
+body.dark-mode .theme-arian {
+  color-scheme: dark;
+
+  --deck-surface: #1f120e;
+  --deck-surface-elevated: rgba(40, 24, 18, 0.94);
+  --deck-text: #fff7ed;
+  --deck-text-body: #f3d2bd;
+  --deck-text-muted: #d4a88a;
+  --deck-border: rgba(247, 162, 98, 0.22);
+  --deck-border-subtle: rgba(247, 162, 98, 0.18);
+  --deck-block-bg: rgba(50, 25, 18, 0.72);
+  --deck-block-formula-bg: rgba(61, 28, 16, 0.82);
+  --deck-block-theorem-bg: rgba(20, 45, 30, 0.65);
+  --deck-block-example-bg: rgba(36, 28, 24, 0.85);
+  --deck-block-proof-bg: rgba(24, 32, 52, 0.65);
+  --deck-quiz-bg: rgba(50, 25, 18, 0.88);
+  --deck-pause-bg: rgba(45, 22, 14, 0.92);
+  --deck-pause-title: #f7a35c;
+  --deck-pause-prompt: #fde68a;
+  --deck-pause-reveal: #fff7ed;
+  --deck-lead-strong: #fff7ed;
+  --deck-heading-rule: rgba(247, 162, 98, 0.28);
+  --deck-watermark-opacity: 0.05;
+  --deck-plot-surface: #2a1812;
+  --deck-plot-grid: rgba(247, 162, 98, 0.24);
+  --deck-plot-axis-stroke: rgba(243, 210, 189, 0.72);
+  --deck-plot-axis: #f3d2bd;
+  --deck-plot-tag-bg: rgba(40, 24, 18, 0.94);
+  --deck-plot-tag-text: rgba(255, 247, 237, 0.92);
+  --deck-widget-bg: linear-gradient(180deg, rgba(42, 24, 18, 0.96), rgba(28, 16, 12, 0.94));
+  --deck-widget-formula-bg: rgba(24, 14, 10, 0.92);
+  --deck-widget-title: #f7a35c;
+  --deck-curve-muted: #a8a29e;
+  --katex-color: #fff7ed;
+  --deck-shadow: 0 0 50px rgba(0, 0, 0, 0.72);
+}
